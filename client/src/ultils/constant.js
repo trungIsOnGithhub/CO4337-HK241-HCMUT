@@ -238,7 +238,7 @@ export const adminSidebar = [
     {
         id: 5,
         type: 'parent',
-        text: 'Manageeee staff',
+        text: 'Manageeeeee staff',
         submenu:[
             {
                 text: 'Add Stafffff',
