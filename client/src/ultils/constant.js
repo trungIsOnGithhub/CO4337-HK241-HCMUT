@@ -1,5 +1,6 @@
 import path from './path'
 import icons from './icon'
+import { FaUserGear } from "react-icons/fa6";
 export const navigation = [
     {
         id: 1,
@@ -234,7 +235,22 @@ export const adminSidebar = [
         path: `/${path.ADMIN}/${path.MANAGE_ORDER}`,
         icon: <RiBillLine size={20}/>
     },
-
+    {
+        id: 5,
+        type: 'parent',
+        text: 'Manage staff',
+        submenu:[
+            {
+                text: 'Add Staff',
+                path: `/${path.ADMIN}/${path.ADD_STAFF}`
+            },
+            {
+                text: 'Manage Staff',
+                path: `/${path.ADMIN}/${path.MANAGE_STAFF}`
+            }
+        ],
+        icon: <FaUserGear size={20}/>
+    },
 ]
 
 export const roles = [

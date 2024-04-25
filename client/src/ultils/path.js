@@ -20,9 +20,11 @@ const path = {
     ADMIN: 'admin',
     DASHBOARD: 'dashboard',
     MANAGE_USER: 'manage_user',
+    MANAGE_STAFF: 'manage_staff',
     MANAGE_PRODUCT: 'manage_product',
     MANAGE_ORDER: 'manage_order',
     CREATE_PRODUCT: 'create_product',
+    ADD_STAFF: 'add_staff',
 
     //User
     USER: 'user',
