@@ -245,7 +245,7 @@ export const adminSidebar = [
                 path: `/${path.ADMIN}/${path.ADD_STAFF}`
             },
             {
-                text: 'Manageeeeeee Staff',
+                text: 'Manage Staffff',
                 path: `/${path.ADMIN}/${path.MANAGE_STAFF}`
             }
         ],
