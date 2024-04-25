@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {Route, Routes} from 'react-router-dom'
 import {Login,Home,Public,Service,DetailProduct,FAQ,Products,Blogs,Final_Register,ResetPassword,DetailCart} from 'pages/public'
-import { AdminLayout, ManageOrder, ManageProduct, ManageUser, CreateProduct, DashBoard} from 'pages/admin'
+import { AdminLayout, ManageOrder, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff} from 'pages/admin'
 import { UserLayout, History, Personal, WishList, Checkout} from 'pages/user'
 import path from './ultils/path'
 import {getCategories} from 'store/app/asyncAction'
@@ -44,7 +44,9 @@ function App() {
         <Route path={path.MANAGE_ORDER} element={<ManageOrder/>}/>
         <Route path={path.MANAGE_PRODUCT} element={<ManageProduct/>}/>
         <Route path={path.MANAGE_USER} element={<ManageUser/>}/>
+        <Route path={path.MANAGE_STAFF} element={<ManageStaff/>}/>
         <Route path={path.CREATE_PRODUCT} element={<CreateProduct/>}/>
+        <Route path={path.ADD_STAFF} element={<AddStaff/>}/>
       </Route>
       <Route path={path.USER} element={<UserLayout />}>
         <Route path={path.PERSONAL} element={<Personal />}/>

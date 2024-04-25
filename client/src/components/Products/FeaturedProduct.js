@@ -5,7 +5,7 @@ const FeaturedProduct = () => {
     const [product, setProduct] = useState(null)
     const fetchProduct = async ()=>{
         const response = await apiGetProduct({limit:9, sort: '-totalRatings'})
-        if(response.success){
+        if(response?.success){
             setProduct(response.products)
         }
     }

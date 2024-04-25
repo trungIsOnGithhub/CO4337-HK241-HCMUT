@@ -75,7 +75,7 @@ const Login = () => {
             else{
                 // call api to login
                 const result = await apiLogin(data)
-                if(result.success){ 
+                if(result?.success){ 
                     dispatch(login({
                         isLogin: true,
                         token: result.accessToken,
@@ -85,7 +85,7 @@ const Login = () => {
     
                 }
                 else{
-                    Swal.fire('Opps!', result.mes,'error')
+                    Swal.fire('Opps!', result?.mes,'error')
                 }
             }
         }
