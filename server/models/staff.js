@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 
 // Declare the Schema of the Mongo model
-var userSchema = new mongoose.Schema({
+var staffSchema = new mongoose.Schema({
     firstName:{
         type:String,
         required:true,
@@ -31,4 +31,4 @@ var userSchema = new mongoose.Schema({
 
 
 //Export the model
-module.exports = mongoose.model('Staff', userSchema);
+module.exports = mongoose.model('Staff', staffSchema);

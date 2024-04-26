@@ -8,6 +8,8 @@ const couponRouter = require('./coupon')
 const orderRouter = require('./order')
 const insertRouter = require('./insert')
 const staffRouter = require('./staff')
+const serviceRouter = require('./service')
+
 
 const {notFound,errorHandler} = require('../middlewares/errorHandler')
 
@@ -22,6 +24,7 @@ const initRoutes = (app) => {
     app.use('/api/order', orderRouter)
     app.use('/api/insert', insertRouter)
     app.use('/api/staff', staffRouter)
+    app.use('/api/service', serviceRouter)
     
     app.use(notFound)
     app.use(errorHandler)

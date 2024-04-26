@@ -1,6 +1,7 @@
 import path from './path'
 import icons from './icon'
 import { FaUserGear } from "react-icons/fa6";
+import { BsFillTagsFill } from "react-icons/bs";
 export const navigation = [
     {
         id: 1,
@@ -208,14 +209,14 @@ export const adminSidebar = [
     {
         id: 2,
         type: 'single',
-        text: 'Manage user',
+        text: 'Manage User',
         path: `/${path.ADMIN}/${path.MANAGE_USER}`,
         icon: <MdGroups size={20}/>
     },
     {
         id: 3,
         type: 'parent',
-        text: 'Manage product',
+        text: 'Manage Product',
         submenu:[
             {
                 text: 'Create Product',
@@ -231,14 +232,14 @@ export const adminSidebar = [
     {
         id: 4,
         type: 'single',
-        text: 'Manage order',
+        text: 'Manage Order',
         path: `/${path.ADMIN}/${path.MANAGE_ORDER}`,
         icon: <RiBillLine size={20}/>
     },
     {
         id: 5,
         type: 'parent',
-        text: 'Manage staff',
+        text: 'Manage Staff',
         submenu:[
             {
                 text: 'Add Staff',
@@ -250,6 +251,22 @@ export const adminSidebar = [
             }
         ],
         icon: <FaUserGear size={20}/>
+    },
+    {
+        id: 6,
+        type: 'parent',
+        text: 'Manage Service',
+        submenu:[
+            {
+                text: 'Add Service',
+                path: `/${path.ADMIN}/${path.ADD_SERVICE}`
+            },
+            {
+                text: 'Manage Service',
+                path: `/${path.ADMIN}/${path.MANAGE_SERVICE}`
+            }
+        ],
+        icon: <BsFillTagsFill size={20}/>
     },
 ]
 
