@@ -4,3 +4,13 @@ export const apiAddStaff = (data) => axios({
     method: 'post',
     data,
 })
+export const apiGetAllStaffs = (params) => axios({
+    url: '/staff/',
+    method: 'get',
+    params,
+})
+export const apiModifyStaff = (data, sid) => axios({
+    url: '/staff/'+sid,
+    method: 'put',
+    data
+})
