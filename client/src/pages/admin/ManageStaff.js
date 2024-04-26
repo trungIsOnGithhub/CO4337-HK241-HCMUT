@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react'
 import { InputForm, Pagination, Variant} from 'components'
 import { useForm } from 'react-hook-form'
-import {apiGetAllStaffs, apiModifyStaff} from 'apis/staff'
+import {apiGetAllStaffs, apiDeleteStaff} from 'apis/staff'
 import moment from 'moment'
 import { useSearchParams, createSearchParams, useNavigate, useLocation} from 'react-router-dom'
 import useDebounce from 'hook/useDebounce'
@@ -22,28 +22,27 @@ const ManageProduct = () => {
   const [editStaff, setEditStaff] = useState(null)
   const [update, setUpdate] = useState(false)
 
-  // const handleDeleteProduct = async(pid) => {
-  //   Swal.fire({
-  //     title: 'Are you sure',
-  //     text: 'Are you sure you want to delete this product?',
-  //     icon: 'warning',
-  //     showCancelButton: true
-  //   }).then(async(rs)=>{
-  //     if(rs.isConfirmed){
-  //       const response = await apiDeleteProduct(pid)
-  //       if(response.success){
-  //         console.log('sure')
-  //        toast.success(response.mes)
-  //       }
-  //       else{
-  //         console.log('not sure')
-  //        toast.error(response.mes)
-  //       }
-  //       render()
-  //     }
-  //   })
-    
-  // }
+  const handleDeleteStaff = async(pid) => {
+    Swal.fire({
+      title: 'Are you sure',
+      text: 'Are you sure you want to delete this staff?',
+      icon: 'warning',
+      showCancelButton: true
+    }).then(async(rs)=>{
+      if(rs.isConfirmed){
+        const response = await apiDeleteStaff(pid)
+        if(response.success){
+          console.log('sure')
+          toast.success(response.mes)
+        }
+        else{
+          console.log('not sure')
+         toast.error(response.mes)
+        }
+        render()
+      }
+    }) 
+  }
 
   const render = useCallback(() => { 
     setUpdate(!update)
@@ -134,11 +133,9 @@ const ManageProduct = () => {
                 <span onClick={() => setEditStaff(el)} 
                 className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdModeEdit
                 size={24}/></span>
-                {/* <span onClick={() => handleDeleteProduct(el._id)} 
+                <span onClick={() => handleDeleteStaff(el._id)} 
                 className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>
-                <span onClick={() => setVariant(el)} 
-                className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><FaCopy 
-                size={22}/></span> */}
+
               </td>  
             </tr>
           ))}

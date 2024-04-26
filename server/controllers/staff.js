@@ -89,7 +89,7 @@ const getAllStaffs = asyncHandler(async (req, res) => {
     }
 })
 
-//update user by admin
+//update staff by admin
 const updateStaffByAdmin = asyncHandler(async (req, res) => {
     const {staffId} = req.params
     console.log(req.body)
@@ -105,8 +105,25 @@ const updateStaffByAdmin = asyncHandler(async (req, res) => {
     }
 })
 
+// delete staff by admin
+const deleteStaffByAdmin = asyncHandler(async (req, res) => {
+    const {staffId} = req.params
+    if(!staffId){
+        throw new Error("Missing input")
+    }
+    else{
+        const response = await Staff.findByIdAndDelete(staffId)  
+        return res.status(200).json({
+            success: response ? true : false,
+            mes: response ? `Staff with email ${response.email} deleted successfully` : "Something went wrong"
+        })
+    }
+})
+
+
 module.exports = {
     addStaff,
     getAllStaffs,
-    updateStaffByAdmin
+    updateStaffByAdmin,
+    deleteStaffByAdmin
 }

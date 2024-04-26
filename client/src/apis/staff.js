@@ -14,3 +14,7 @@ export const apiModifyStaff = (data, sid) => axios({
     method: 'put',
     data
 })
+export const apiDeleteStaff = (sid) => axios({
+    url: '/staff/'+sid,
+    method: 'delete',
+})
