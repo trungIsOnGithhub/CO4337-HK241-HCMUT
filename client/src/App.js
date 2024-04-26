@@ -5,6 +5,7 @@ import { AdminLayout, ManageOrder, ManageProduct, ManageUser, CreateProduct, Das
 import { UserLayout, History, Personal, WishList, Checkout} from 'pages/user'
 import path from './ultils/path'
 import {getCategories} from 'store/app/asyncAction'
+import {getCategorieService} from 'store/category/asyncAction'
 import {useDispatch, useSelector} from 'react-redux'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -16,7 +17,9 @@ function App() {
   const {isShowModal, modalChildren, isShowCart} = useSelector(state => state.app)
 
   useEffect(() =>{
+    console.log('call here')
     dispatch(getCategories())
+    dispatch(getCategorieService())
   },[])
   return (
     <div className="font-main h-screen">

@@ -12,6 +12,7 @@ import { showModal } from 'store/app/appSlice'
 const {RiDeleteBin6Line} = icons
 const CreateProduct = () => {
   const {categories} = useSelector(state => state.app)
+  console.log(categories)
 
   const dispatch = useDispatch()
   const {register, formState:{errors}, reset, handleSubmit, watch} = useForm()

@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect} from 'react'
-import {InputForm, Select, Button, MarkdownEditor, Loading} from 'components'
+import {InputForm, Select, Button, MarkdownEditor, Loading, MultiSelect} from 'components'
 import { useForm } from 'react-hook-form'
 import {useSelector, useDispatch} from 'react-redux'
 import { validate, getBase64 } from 'ultils/helper'
@@ -8,9 +8,15 @@ import icons from 'ultils/icon'
 import { apiAddStaff } from 'apis'
 import { showModal } from 'store/app/appSlice'
 import { FaUserGear } from "react-icons/fa6";
+import withBaseComponent from 'hocs/withBaseComponent'
+import { hour } from 'ultils/constant'
+import { minute } from 'ultils/constant'
 
-const AddStaff = () => {
-  const {categories} = useSelector(state => state.app)
+
+const AddService = () => {
+  console.log({hour, minute})
+  const {categories_service} = useSelector(state => state.category)
+  console.log(categories_service)
 
   const dispatch = useDispatch()
   const {register, formState:{errors}, reset, handleSubmit, watch} = useForm()
@@ -20,22 +26,14 @@ const AddStaff = () => {
     avatar: null
   })
 
+  const [payload, setPayload] = useState({
+    description: ''
+  })
+  const [invalidField, setInvalidField] = useState([])
   
 //   const changeValue = useCallback((e)=>{
 //     setPayload(e)
 //   },[payload])
-
-
-
-  const handlePreviewAvatar = async(file) => {
-    const base64Avatar = await getBase64(file)
-    setPreview({avatar: base64Avatar})
-  }
-
-
-  useEffect(() => {
-    handlePreviewAvatar(watch('avatar')[0])
-  }, [watch('avatar')])
 
 
 
@@ -56,6 +54,10 @@ const AddStaff = () => {
     }
   }
 
+  const changeValue = useCallback((e)=>{
+    setPayload(e)
+  },[payload])
+
 
   return (
     <div className='w-full'>
@@ -73,12 +75,12 @@ const AddStaff = () => {
               validate = {{
                 required: 'Need fill this field'
               }}
-              style='flex-auto'
-              placeholder='First Name ...'
+              style='flex-1'
+              placeholder='Name of service ...'
             />
             <Select 
               label = 'Category'
-              options = {categories?.map(el =>(
+              options = {categories_service?.map(el =>(
                 {code: el._id,
                 value: el.title}
               ))}
@@ -87,63 +89,120 @@ const AddStaff = () => {
               validate = {{
                 required: 'Need fill this field'
               }}
-              style='flex-auto'
+              style='flex-1'
               errors={errors}
               fullWidth
             />
           </div>
           <div className='w-full my-6 flex gap-4'>
-            <InputForm 
-              label = 'Email Address'
+            <div className='w-full flex flex-1 items-center gap-2'> 
+              <Select 
+                label = 'Hour'
+                options = {hour?.map(el =>(
+                  {code: el,
+                  value: `${el} hour(s)`}
+                ))}
+                register={register}
+                id = 'hour'
+                validate = {{
+                  required: 'Need fill this field'
+                }}
+                style='flex-auto italic'
+                errors={errors}
+                fullWidth
+                text='Hour'
+              />
+              <Select 
+                label = 'Minute'
+                options = {minute?.map(el =>(
+                  {
+                    code: el,
+                    value: `${el} minute(s)`
+                  }
+                ))}
+                register={register}
+                id = 'minute'
+                validate = {{
+                  required: 'Need fill this field'
+                }}
+                style='flex-auto italic'
+                errors={errors}
+                fullWidth
+                text='Minute'
+              />
+            </div>
+            <div className='w-full flex flex-1 items-center'> 
+            {/* <Select 
+              label = 'Staff'
+              options = {hour?.map(el =>(
+                {code: el,
+                value: `${el} hour(s)`}
+              ))}
               register={register}
+              id = 'hour'
+              validate = {{
+                required: 'Need fill this field'
+              }}
+              style='flex-auto italic'
               errors={errors}
-              id = 'email'
-              validate={{
-                    required: 'Require fill', 
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "invalid email address"
-                    }
-                }} 
-              style='flex-auto'
-              placeholder='Email Address ...'
-            />
-            <InputForm 
-              label = 'Phone Number'
-              register={register}
-              errors={errors}
-              id = 'mobile'
-              validate={{
-                    required: 'Require fill', 
-                    pattern: {
-                      value: /^((\+)33|0)[1-9](\d{2}){4}$/,
-                      message: "invalid phone number"
-                    }
-                  }} 
-              style='flex-auto'
-              placeholder='Phone Number ...'
-            />
+              fullWidth
+              text='Hour'
+            /> */}
+
+            <MultiSelect />
+            </div>
           </div>
-          
+          {/* <MarkdownEditor 
+            name = 'description'
+            changeValue={changeValue}
+            label = 'Description'
+            invalidField={invalidField}
+            setInvalidField={setInvalidField}
+          /> */}
           <div className='flex flex-col gap-2 mt-8'>
-            <label className='font-semibold' htmlFor='avatar'>Upload Avatar</label>
+            <label className='font-semibold' htmlFor='thumb'>Upload Thumb</label>
             <input 
-              {...register('avatar', {required: 'Need upload avatar'})}
+              {...register('thumb', {required: 'Need upload thumb'})}
               type='file' 
-              id='avatar'
+              id='thumb'
             />
-            {errors['avatar'] && <small className='text-xs text-red-500'>{errors['avatar']?.message}</small>}
+            {errors['thumb'] && <small className='text-xs text-red-500'>{errors['thumb']?.message}</small>}
           </div>
           
-          {preview.avatar 
+          {preview.thumb 
             && 
           <div className='my-4'>
-            <img src={preview.avatar} alt='avatar' className='w-[200px] object-contain'></img>
+            <img src={preview.thumb} alt='thumbnail' className='w-[200px] object-contain'></img>
           </div>
           }
+
+          <div className='flex flex-col gap-2 mt-8'>
+            <label className='font-semibold' htmlFor='product'>Upload Images Of Service</label>
+            <input 
+              {...register('images', {required: 'Need upload image of product'})}
+              type='file' 
+              id='product' 
+              multiple
+            />
+            {errors['images'] && <small className='text-xs text-red-500'>{errors['product']?.message}</small>}
+          </div>
+
+          {preview.images?.length > 0 
+            && 
+          <div className='my-4 flex w-full gap-2 flex-wrap'>
+            {
+              preview.images?.map((el,index) => (
+                <div key={index} className='w-fit relative'>
+                  <img src={el.path} alt='image of product' className='w-[200px] object-contain'></img>
+                </div>
+              ))
+            }
+          </div>
+          }
+
           <div className='mt-8'>
             <Button type='submit'>
-              Add a new staff
+              Create a new service
             </Button>
           </div>
         </form>
@@ -152,4 +211,4 @@ const AddStaff = () => {
   )
 }
 
-export default AddStaff
+export default AddService

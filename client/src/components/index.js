@@ -43,6 +43,7 @@ export {default as InputForm} from './Input/InputForm'
 export {default as Select} from './Input/Select'
 export {default as MarkdownEditor} from './Input/MarkdownEditor'
 export {default as CustomSelect} from './Input/CustomSelect'
+export {default as MultiSelect} from './Input/MultiSelect'
 
 export {default as Button} from './Buttons/Button'
 

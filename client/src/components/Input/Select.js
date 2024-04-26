@@ -1,7 +1,7 @@
 import React, { memo } from 'react'
 import clsx from 'clsx'
 
-const Select = ({label, options=[], register, errors, id, validate, style, fullWidth, defaultValue}) => {
+const Select = ({label, options=[], register, errors, id, validate, style, fullWidth, defaultValue,text}) => {
   return (
     <div className={clsx('flex flex-col gap-2', style)}>
       {label&& <label htmlFor={id}>{label}</label>}
@@ -11,7 +11,7 @@ const Select = ({label, options=[], register, errors, id, validate, style, fullW
         id={id} {...register(id, validate)}
         defaultValue={defaultValue}
         >
-        <option value=''>----CHOOSE----</option>
+        <option value=''>{text||`----CHOOSE----`}</option>
         {options?.map(el => (
           <option value={el.code}>{el.value}</option>
         )
