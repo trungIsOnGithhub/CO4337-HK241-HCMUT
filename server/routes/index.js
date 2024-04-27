@@ -8,6 +8,7 @@ const couponRouter = require('./coupon')
 const orderRouter = require('./order')
 const insertRouter = require('./insert')
 const staffRouter = require('./staff')
+const ServiceProviderRouter = require('./ServiceProvider');
 
 const {notFound,errorHandler} = require('../middlewares/errorHandler')
 const ServiceProvider = require('../models/ServiceProvider')

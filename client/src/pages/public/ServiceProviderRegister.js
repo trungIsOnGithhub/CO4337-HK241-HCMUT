@@ -24,6 +24,7 @@ const ServiceProviderRegister = () => {
         lastName: '',
         email: '',
         mobile: '',
+        password: '',
         bussinessName: '',
         province: '',
         district: '',
@@ -69,6 +70,7 @@ const ServiceProviderRegister = () => {
             lastName: '',
             email: '',
             mobile: '',
+            password: '',
             bussinessName: '',
             province: '',
             district: '',
@@ -91,7 +93,8 @@ const ServiceProviderRegister = () => {
     //SUBMIT
     const handleSubmit = useCallback(async() =>{
         const {firstName, lastName, mobile, ...data} = payload
-        const invalid = isRegister? validate(payload, setInvalidField) : validate(data,setInvalidField)
+        // const invalid = isRegister? validate(payload, setInvalidField) : validate(data,setInvalidField)
+        const invalid = 0;
         if(invalid===0)
         {
 
@@ -182,6 +185,16 @@ const ServiceProviderRegister = () => {
                 />
 
                 <InputField 
+                    value= {payload.password}
+                    setValue={setPayload}
+                    nameKey='password'
+                    type='password'
+                    invalidField={invalidField}
+                    setInvalidField={setInvalidField}
+                    fullWidth
+                />
+
+                <InputField 
                     value= {payload.mobile}
                     setValue={setPayload}
                     nameKey='mobile'
@@ -204,15 +217,15 @@ const ServiceProviderRegister = () => {
                         value= {payload.province}
                         setValue={setPayload}
                         nameKey='province'
-                        invalidField={invalidField}
-                        setInvalidField={setInvalidField}
+                        // invalidField={invalidField}
+                        // setInvalidField={setInvalidField}
                     />
                     <InputField 
                         value= {payload.district}
                         setValue={setPayload}
                         nameKey='district'
-                        invalidField={invalidField}
-                        setInvalidField={setInvalidField}
+                        // invalidField={invalidField}
+                        // setInvalidField={setInvalidField}
                     />
                     <InputField 
                         value= {payload.ward}

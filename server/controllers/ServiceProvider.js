@@ -1,5 +1,4 @@
 const ServiceProvider = require('../models/ServiceProvider')
-const ServiceProvider = require('../models/ServiceProvider')
 const asyncHandler = require('express-async-handler')
 
 const createServiceProvider = asyncHandler(async(req, res)=>{
@@ -95,7 +94,7 @@ const deleteServiceProvider = asyncHandler(async(req, res)=>{
 })
 
 module.exports = {
-    createNewServiceProvider,
+    createServiceProvider,
     getAllServiceProvider,
     updateServiceProvider,
     deleteServiceProvider
