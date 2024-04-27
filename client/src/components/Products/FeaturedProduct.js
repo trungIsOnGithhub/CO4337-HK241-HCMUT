@@ -1,5 +1,5 @@
 import React, {useState, useEffect, memo} from 'react' 
-import {ProductCard} from '../index'
+import {Product, ProductCard} from '../index'
 import {apiGetProduct} from 'apis'
 const FeaturedProduct = () => {
     const [product, setProduct] = useState(null)
@@ -17,15 +17,23 @@ const FeaturedProduct = () => {
         <h3 className='text-[20px] font-semibold py-[15px] border-b-2 border-main'>FEATURED PRODUCT</h3>
         <div className='flex flex-wrap mt-[15px] mx-[-10px]'>
             {product?.map(el => (
-                <ProductCard 
-                    key={el._id}
-                    pid={el._id}
-                    image = {el.thumb}
-                    title = {el.title}
-                    totalRating = {el.totalRatings}
-                    price = {el.price}
-                    category = {el.category}
+                // <ProductCard 
+                //     key={el._id}
+                //     pid={el._id}
+                //     image = {el.thumb}
+                //     title = {el.title}
+                //     totalRating = {el.totalRatings}
+                //     price = {el.price}
+                //     category = {el.category}
+                // />
+                <Product key={el._id} 
+                    productData={el}
+                    isNew={true}
+                    pid= {el._id}
+                    normal={false}
+                    widthFull={false}
                 />
+
             ))}
         </div>
         <div className='grid grid-cols-4 grid-rows-2 gap-4'>

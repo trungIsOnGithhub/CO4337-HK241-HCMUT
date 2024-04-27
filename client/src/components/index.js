@@ -7,6 +7,7 @@ export {default as Sidebar} from './SideBar/Sidebar'
 export {default as AdminSideBar} from './SideBar/AdminSideBar'
 export {default as UserSideBar} from './SideBar/UserSideBar'
 
+export {default as HomeSearchBar} from './Common/HomeSearchBar'
 export {default as Banner} from './Common/Banner'
 export {default as Countdown} from './Common/Countdown'
 export {default as CustomSlider} from './Common/CustomSlider'

@@ -9,6 +9,7 @@ const ProductCard = ({price, totalRating, image, title, pid, navigate, category}
 
       <div className='border flex-auto flex w-full'>
         <img src={image} alt='products' className='w-[120px] object-contain p-4'/>
+
         <div className='flex flex-col mt-[15px] items-start gap-1 w-full text-xs'>
           <span className='line-clamp-1 capitalize text-sm'>{title?.toLowerCase()}</span>
           <span className='flex h-4'>{renderStarfromNumber(totalRating, 14)?.map((el,index)=>(
