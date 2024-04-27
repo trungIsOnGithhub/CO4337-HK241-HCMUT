@@ -1,6 +1,7 @@
 import React ,{useState,useCallback,useEffect} from "react";
 import {InputField, Button, Loading} from '../../components'
 import { apiRegister, apiLogin, apiForgotPassword, apiFinalRegister} from "../../apis/user";
+import { createServiceProvider } from "../../apis/ServiceProvider";
 import Swal from 'sweetalert2'
 import {useNavigate, Link, useSearchParams} from 'react-router-dom'
 import path from "../../ultils/path";
@@ -19,6 +20,10 @@ const ServiceProviderRegister = () => {
     const hehe = ['asd', 'dada'];
 
     const [payload, setPayload] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        mobile: '',
         bussinessName: '',
         province: '',
         district: '',
@@ -60,6 +65,10 @@ const ServiceProviderRegister = () => {
 
     const resetPayload = () =>{
         setPayload({
+            firstName: '',
+            lastName: '',
+            email: '',
+            mobile: '',
             bussinessName: '',
             province: '',
             district: '',
@@ -68,13 +77,13 @@ const ServiceProviderRegister = () => {
             homeurl: '',
             phone: '',
             time: {
-                monday: '',
-                tuesday: '',
-                wednesday: '',
-                thursday: '',
-                friday: '',
-                saturday: '',
-                sunday: '',
+                monday: { start: '', time: '' },
+                tuesday: { start: '', time: '' },
+                wednesday: { start: '', time: '' },
+                thursday: { start: '', time: '' },
+                friday: { start: '', time: '' },
+                saturday: { start: '', time: '' },
+                sunday: { start: '', time: '' },
             }
         })
     }
@@ -85,33 +94,20 @@ const ServiceProviderRegister = () => {
         const invalid = isRegister? validate(payload, setInvalidField) : validate(data,setInvalidField)
         if(invalid===0)
         {
-            if(isRegister){
-                // call api to register
-                dispatch(showModal({isShowModal: true, modalChildren:<Loading />}))
-                const response = await apiRegister(payload)
-                dispatch(showModal({isShowModal: false, modalChildren:null}))
-                if(response.success){
-                    setIsVerify(true)
-                }
-                else{
-                    Swal.fire('Opps!', response.mes,'error')
-                }
+
+            dispatch(showModal({isShowModal: true, modalChildren:<Loading />}))
+            const response = await apiRegister(payload)
+            dispatch(showModal({isShowModal: false, modalChildren:null}))
+            if(response.success){
+                setIsVerify(true)
             }
             else{
-                // call api to login
-                const result = await apiLogin(data)
-                if(result?.success){ 
-                    dispatch(login({
-                        isLogin: true,
-                        token: result.accessToken,
-                        userData: result.userData
-                    }))
-                    searchParams.get('redirect') ? navigate(searchParams.get('redirect')) : navigate(`/${path.HOME}`)
-    
-                }
-                else{
-                    Swal.fire('Opps!', result?.mes,'error')
-                }
+                Swal.fire('Opps!', response.mes,'error')
+                return;
+            }
+            response = await createServiceProvider(payload);
+            if(!response.success){
+                Swal.fire('Opps!', response.mes,'error')
             }
         }
     },[payload, isRegister])
@@ -158,18 +154,46 @@ const ServiceProviderRegister = () => {
                 <div className="p-8 bg-white rounded-md min-w-[500px] flex flex-col items-center">
                 <h1 className="text-[28px] font-semibold text-main mb-8">Đăng ký Dịch vụ Kinh Doanh của Bạn</h1>
 
+
+                <div className="flex items-center gap-2">
+                    <InputField 
+                        value= {payload.firstName}
+                        setValue={setPayload}
+                        nameKey='firstName'
+                        invalidField={invalidField}
+                        setInvalidField={setInvalidField}
+                    />
+                    <InputField 
+                        value= {payload.lastName}
+                        setValue={setPayload}
+                        nameKey='lastName'
+                        invalidField={invalidField}
+                        setInvalidField={setInvalidField}
+                    />
+                </div>
+
                 <InputField 
-                    value={payload.bussinessName}
+                    value= {payload.email}
                     setValue={setPayload}
-                    nameKey='bussinessName'
+                    nameKey='email'
                     invalidField={invalidField}
                     setInvalidField={setInvalidField}
                     fullWidth
                 />
+
                 <InputField 
-                    value= {payload.category}
+                    value= {payload.mobile}
                     setValue={setPayload}
-                    nameKey='category'
+                    nameKey='mobile'
+                    invalidField={invalidField}
+                    setInvalidField={setInvalidField}
+                    fullWidth
+                />
+
+                <InputField 
+                    value={payload.bussinessName}
+                    setValue={setPayload}
+                    nameKey='bussinessName'
                     invalidField={invalidField}
                     setInvalidField={setInvalidField}
                     fullWidth
@@ -216,7 +240,7 @@ const ServiceProviderRegister = () => {
                     />
                 </div>
                 
-                <button onClick={() => {setIsInTimeForm(prevState => { setIsInTimeForm(!prevState); });}}>
+                {/* <button onClick={() => {setIsInTimeForm(prevState => { setIsInTimeForm(!prevState); });}}>
                     { isInTimeForm ? 'Close Time Select' : 'Open Time Select' }
                 </button>
                 {   isInTimeForm &&
@@ -239,7 +263,7 @@ const ServiceProviderRegister = () => {
                             />
                         </div>
                     })
-                }
+                } */}
 
                 <Button 
                     handleOnclick={handleSubmit}

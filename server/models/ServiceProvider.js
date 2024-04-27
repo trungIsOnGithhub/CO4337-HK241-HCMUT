@@ -19,11 +19,6 @@ var ProviderServiceSchema = new mongoose.Schema({
     ward: {
         type: String,
     },
-    category: {
-        type: String,
-        required: true,
-        index: true,
-    },
     homeurl: {
         type: String,
     },

@@ -23,7 +23,7 @@ const initRoutes = (app) => {
     app.use('/api/order', orderRouter)
     app.use('/api/insert', insertRouter)
     app.use('/api/staff', staffRouter)
-    app.use('/api/s_provider', ServiceProviderRouter)
+    app.use('/api/service_provider', ServiceProviderRouter)
     
     app.use(notFound)
     app.use(errorHandler)

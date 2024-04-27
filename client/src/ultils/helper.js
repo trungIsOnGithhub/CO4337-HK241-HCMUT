@@ -19,7 +19,7 @@ export const renderStarfromNumber = (number, size) => {
     return rating
 }
 
-export const validate = (payload, setInvalidField) =>{
+export const validate = (payload, setInvalidField) => {
     let invalids = 0
     const formatPayload = Object.entries(payload)
     for(let array of formatPayload){

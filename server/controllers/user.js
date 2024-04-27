@@ -51,7 +51,7 @@ const register = asyncHandler(async(req, res) => {
 
         if(newUser){
             const html = `<h2>Register code: </h2><br /><blockquote>${token}</blockquote>`
-            await sendMail({email, html, subject: 'Complete Registration'})
+            // await sendMail({email, html, subject: 'Complete Registration'})
         }
         setTimeout(async()=>{
             await User.deleteOne({email: email_edit})
@@ -206,7 +206,7 @@ const forgotPassword = asyncHandler(async(req, res)=>{
             html,
             subject:'Forgot Password'
         }
-        const rs = await sendMail(data)
+        // const rs = await sendMail(data)
         return res.status(200).json({
             success: rs.response?.includes('OK')? true: false,
             mes: rs.response?.includes('OK')? "Please check your email": "Something went wrong"
