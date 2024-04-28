@@ -31,11 +31,20 @@ const History = ({navigate, location}) => {
     }
   }
   
-  const handleSearchStatus = ({value}) => {
-    navigate({
-      pathname: location.pathname,
-      search: createSearchParams({status: value}).toString()
-    })
+  const handleSearchStatus = (a) => {
+    console.log(a)
+    console.log(a?.value)
+    if(a?.value){
+      navigate({
+        pathname: location.pathname,
+        search: createSearchParams({status: a.value}).toString()
+      })
+    }
+    else{
+      navigate({
+        pathname: location.pathname,
+      })
+    }
   }
 
   useEffect(() => {

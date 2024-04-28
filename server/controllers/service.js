@@ -12,8 +12,7 @@ const createService = asyncHandler(async(req, res)=>{
     if(!name || !price || !description || !assigned_staff || !category || !hour || !minute){
         throw new Error("Missing input")
     }
-    let durationn = +hour + +minute/60
-    req.body.duration = Math.ceil(durationn * 10) / 10;
+    req.body.duration = +hour*60 + +minute
     if(thumb) req.body.thumb = thumb
     if(image) req.body.image = image
     const newService = await Service.create(req.body)

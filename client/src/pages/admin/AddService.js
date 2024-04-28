@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect} from 'react'
-import {InputForm, Select, Button, MarkdownEditor, Loading, MultiSelect} from 'components'
+import {InputForm, Select, Button, MarkdownEditor, Loading, MultiSelect, SelectCategory} from 'components'
 import { set, useForm } from 'react-hook-form'
 import {useSelector, useDispatch} from 'react-redux'
 import { validate, getBase64 } from 'ultils/helper'
@@ -44,23 +44,33 @@ const AddService = () => {
     value: staff._id
   }));
 
+  const option_category = categories_service?.map((cate) => ({
+    label: cate?.title,
+    value: cate?._id,
+    color: cate?.color
+  }));
+
   const [selectedStaff, setSelectedStaff] = useState([]);
-  const handleSelectChange = useCallback(selectedOptions => {
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const handleSelectStaffChange = useCallback(selectedOptions => {
     setSelectedStaff(selectedOptions);
+  }, []);
+
+  const handleSelectCateChange = useCallback(selectedOptions => {
+    setSelectedCategory(selectedOptions);
+    console.log(selectedCategory)
   }, []);
 
   const handleAddService = async(data) => {
     const invalid = validate(payload, setInvalidField)
     if(invalid === 0){
-      if(data?.category){
-        data.category = categories_service?.find(el => el._id === data.category)?.title
-      }
       const finalPayload = {...data,...payload,}
-      console.log(selectedStaff)
       if(selectedStaff?.length > 0){
         finalPayload.assigned_staff = selectedStaff
       }
-      console.log(finalPayload.assigned_staff)
+      if(selectedCategory){
+        finalPayload.category = selectedCategory
+      }
       console.log(finalPayload)
       const formData = new FormData()
       for(let i of Object.entries(finalPayload)){
@@ -77,9 +87,10 @@ const AddService = () => {
       for (var pair of formData.entries()) {
         console.log(pair[0]+ ', ' + typeof pair[1]); 
       }
+
       const response = await apiAddService(formData)
       // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
-      // // dispatch(showModal({isShowModal: false, modalChildren: null}))
+      // dispatch(showModal({isShowModal: false, modalChildren: null}))
       if(response.success){
         toast.success(response.mes)
         reset()
@@ -87,6 +98,7 @@ const AddService = () => {
           description: ''
         })
         setSelectedStaff([])
+        setSelectedCategory(null)
         setPreview({
           thumb: null,
           images: []
@@ -151,20 +163,19 @@ const AddService = () => {
               style='flex-1'
               placeholder='Name of service ...'
             />
-            <Select 
+            <SelectCategory 
               label = 'Category'
-              options = {categories_service?.map(el =>(
-                {code: el._id,
-                value: el.title}
-              ))}
+              options = {option_category}
               register={register}
               id = 'category'
               validate = {{
                 required: 'Need fill this field'
               }}
-              style='flex-1'
               errors={errors}
               fullWidth
+              onChangee={handleSelectCateChange}
+              values={selectedCategory}
+              style='flex-1'
             />
           </div>
           <MarkdownEditor 
@@ -221,7 +232,7 @@ const AddService = () => {
           <MultiSelect 
             id='assigned_staff' 
             options={options}
-            onChangee={handleSelectChange}
+            onChangee={handleSelectStaffChange}
             values={selectedStaff}
             />
           <div className='flex flex-col gap-2 mt-8'>

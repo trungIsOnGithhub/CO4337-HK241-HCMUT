@@ -10,6 +10,7 @@ const CustomSelect = ({label, placeholder, onChange, options=[], value, classnam
             {label}
         </h3>}
         <Select 
+            className='w-full h-full p-0 m-0'
             placeholder={placeholder}
             isClearable
             options={options}
@@ -17,11 +18,10 @@ const CustomSelect = ({label, placeholder, onChange, options=[], value, classnam
             isSearchable
             onChange={val => onChange(val)}
             formatOptionLabel={(option) => 
-                <div className='flex text-black items-center gap-2'>
-                    <span>{option.label}</span>
+                <div className='text-black bg-red-400 w-full h-full p-0 m-0'>
+                    {option.label}
                 </div>
             }
-            className={{control: ()=> clsx('border-2 py-2 ', classname)}}
         />
     </div>
   )

@@ -399,7 +399,7 @@ export const minute = [
     },
     {
         code: 5,
-        value: '5 minute'
+        value: '5 minutes'
     },
     {
         code: 10,
