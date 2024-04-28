@@ -3,8 +3,8 @@ const ctrls = require('../controllers/staff')
 const {verifyAccessToken, isAdmin} = require('../middlewares/verify_token')
 const uploader = require('../config/cloudinary.config')
 
-router.post('/', [verifyAccessToken, isAdmin],uploader.single('avatar'), ctrls.addStaff)
-router.get('/', [verifyAccessToken, isAdmin], ctrls.getAllStaffs)
+router.post('/', uploader.single('avatar'), ctrls.addStaff)
+router.get('/', ctrls.getAllStaffs)
 router.put('/:staffId', [verifyAccessToken, isAdmin],uploader.single('avatar'), ctrls.updateStaffByAdmin)
 router.delete('/:staffId', [verifyAccessToken, isAdmin], ctrls.deleteStaffByAdmin)
 module.exports = router

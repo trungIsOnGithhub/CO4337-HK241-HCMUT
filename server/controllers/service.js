@@ -3,11 +3,11 @@ const asyncHandler = require("express-async-handler")
 
 
 const createService = asyncHandler(async(req, res)=>{
-    const {name, price, description, category, assigned_staff, hour, minute} = req.body
+    const {name, price, description, category, assigned_staff, hour, minute, provider_id} = req.body
     const thumb = req.files?.thumb[0]?.path
     const image = req.files?.images?.map(el => el.path)
 
-    if(!name || !price || !description || !assigned_staff || !category || !hour || !minute){
+    if(!name || !price || !description || !assigned_staff || !category || !hour || !minute || !provider_id){
         throw new Error("Missing input")
     }
     req.body.duration = Number(hour + minute/60)
