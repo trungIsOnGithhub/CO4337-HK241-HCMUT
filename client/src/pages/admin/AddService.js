@@ -5,52 +5,84 @@ import {useSelector, useDispatch} from 'react-redux'
 import { validate, getBase64 } from 'ultils/helper'
 import { toast } from 'react-toastify'
 import icons from 'ultils/icon'
-import { apiAddStaff } from 'apis'
+import { apiAddStaff, apiGetAllStaffs } from 'apis'
 import { showModal } from 'store/app/appSlice'
 import { FaUserGear } from "react-icons/fa6";
 import withBaseComponent from 'hocs/withBaseComponent'
 import { hour } from 'ultils/constant'
 import { minute } from 'ultils/constant'
+import { apiAddService } from 'apis/service'
 
 
 const AddService = () => {
-  console.log({hour, minute})
   const {categories_service} = useSelector(state => state.category)
-  console.log(categories_service)
-
   const dispatch = useDispatch()
   const {register, formState:{errors}, reset, handleSubmit, watch} = useForm()
-
-
   const [preview, setPreview] = useState({
     avatar: null
   })
-
   const [payload, setPayload] = useState({
     description: ''
   })
   const [invalidField, setInvalidField] = useState([])
   
-//   const changeValue = useCallback((e)=>{
-//     setPayload(e)
-//   },[payload])
-
-
-
-  const handleAddStaff = async(data) => {
-    console.log(data)
-    const formData = new FormData()
-    for(let i of Object.entries(data)){
-    formData.append(i[0],i[1])
-    }
-    if(data.avatar) formData.append('avatar', data.avatar[0])
-    // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
-    console.log(formData)
-    const response = await apiAddStaff(formData)
-    // dispatch(showModal({isShowModal: false, modalChildren: null}))
+  const [staffs, setStaffs] = useState(null)
+  const fetchStaff = async(params) => {
+    const response = await apiGetAllStaffs()
     if(response.success){
-    toast.success(response.mes)
-    reset()
+      setStaffs(response.staffs)
+    }
+  }
+  useEffect(() => {
+    fetchStaff()
+  }, [])
+
+  const options = staffs?.map((staff) => ({
+    label: `${staff.firstName} ${staff.lastName}`,
+    value: staff._id
+  }));
+
+  const [selectedStaff, setSelectedStaff] = useState([]);
+  const handleSelectChange = useCallback(selectedOptions => {
+    setSelectedStaff(selectedOptions);
+  }, []);
+
+  const handleAddService = async(data) => {
+    const invalid = validate(payload, setInvalidField)
+    if(invalid === 0){
+      if(data?.category){
+        data.category = categories_service?.find(el => el._id === data.category)?.title
+      }
+      console.log(selectedStaff)
+      const finalPayload = {...data,...payload,}
+      if(selectedStaff?.length > 0){
+        finalPayload.assigned_staff = selectedStaff
+      }
+      console.log(finalPayload)
+      const formData = new FormData()
+      for(let i of Object.entries(finalPayload)){
+        formData.append(i[0],i[1])
+      }
+      if(finalPayload.thumb) formData.append('thumb', finalPayload.thumb[0])
+      if(finalPayload.images) {
+        for (let image of finalPayload.images) formData.append('images', image)
+      }
+      for (var pair of formData.entries()) {
+        console.log(pair[0]+ ', ' + pair[1]); 
+      }
+      const response = await apiAddService(formData)
+      // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
+      // // dispatch(showModal({isShowModal: false, modalChildren: null}))
+      // if(response.success){
+      //   toast.success(response.mes)
+      //   reset()
+      //   setPayload({
+      //     description: ''
+      //   })
+      // }
+      // else{
+      //   toast.error(response.mes)
+      // }
     }
   }
 
@@ -58,6 +90,35 @@ const AddService = () => {
     setPayload(e)
   },[payload])
 
+  const handlePreviewThumb = async(file) => {
+    const base64Thumb = await getBase64(file)
+    setPreview(prev => ({...prev, thumb: base64Thumb}))
+  }
+
+  const handlePreviewImages = async(files) => {
+    const imagesPreview = []
+    for(let i of files){
+      if(i.type !== 'image/png' && i.type !== 'image/jpeg'){
+        toast.warning('The file sent is not a JPG or PNG')
+        return
+      }
+      const base64 = await getBase64(i)
+      imagesPreview.push({
+        name: i.name,
+        path: base64
+      })
+    }
+    if(imagesPreview.length > 0){
+      setPreview(prev => ({...prev, images: imagesPreview}))
+    }
+  }
+  useEffect(() => {
+    handlePreviewThumb(watch('thumb')[0])
+  }, [watch('thumb')])
+
+  useEffect(() => {
+    handlePreviewImages(watch('images'))
+  }, [watch('images')])
 
   return (
     <div className='w-full'>
@@ -65,7 +126,7 @@ const AddService = () => {
         <span>Add Service</span>
       </h1>
       <div className='p-4 '>
-        <form onSubmit={handleSubmit(handleAddStaff)}>
+        <form onSubmit={handleSubmit(handleAddService)}>
           <div className='w-full my-6 flex gap-4'>
             <InputForm 
               label = 'Service Name'
@@ -94,6 +155,13 @@ const AddService = () => {
               fullWidth
             />
           </div>
+          <MarkdownEditor 
+            name = 'description'
+            changeValue={changeValue}
+            label = 'Description'
+            invalidField={invalidField}
+            setInvalidField={setInvalidField}
+          />
           <div className='w-full my-6 flex gap-4'>
             <div className='w-full flex flex-1 items-center gap-2'> 
               <Select 
@@ -132,33 +200,25 @@ const AddService = () => {
               />
             </div>
             <div className='w-full flex flex-1 items-center'> 
-            {/* <Select 
-              label = 'Staff'
-              options = {hour?.map(el =>(
-                {code: el,
-                value: `${el} hour(s)`}
-              ))}
+            <InputForm 
+              label = 'Price'
               register={register}
-              id = 'hour'
+              errors={errors}
+              id = 'price'
               validate = {{
                 required: 'Need fill this field'
               }}
-              style='flex-auto italic'
-              errors={errors}
-              fullWidth
-              text='Hour'
-            /> */}
-
-            <MultiSelect />
+              style='flex-auto'
+              placeholder='Price of new service'
+              type='number'
+            />
             </div>
           </div>
-          {/* <MarkdownEditor 
-            name = 'description'
-            changeValue={changeValue}
-            label = 'Description'
-            invalidField={invalidField}
-            setInvalidField={setInvalidField}
-          /> */}
+          <MultiSelect 
+            id='assigned_staff' 
+            options={options}
+            onChangee={handleSelectChange}
+            />
           <div className='flex flex-col gap-2 mt-8'>
             <label className='font-semibold' htmlFor='thumb'>Upload Thumb</label>
             <input 

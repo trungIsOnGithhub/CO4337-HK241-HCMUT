@@ -3,20 +3,23 @@ const asyncHandler = require("express-async-handler")
 
 
 const createService = asyncHandler(async(req, res)=>{
+    console.log('----call api----')
     const {name, price, description, category, assigned_staff, hour, minute} = req.body
+    console.log({name, price, description, category, assigned_staff, hour, minute})
     const thumb = req.files?.thumb[0]?.path
     const image = req.files?.images?.map(el => el.path)
 
     if(!name || !price || !description || !assigned_staff || !category || !hour || !minute){
         throw new Error("Missing input")
     }
-    req.body.duration = Number(hour + minute/60)
+    let durationn = +hour + +minute/60
+    req.body.duration = Math.ceil(durationn * 10) / 10;
     if(thumb) req.body.thumb = thumb
     if(image) req.body.image = image
     const newService = await Service.create(req.body)
     return res.status(200).json({
-        success: newProduct ? true : false,
-        mes: newProduct ? 'Created successfully' : "Cannot create new product"
+        success: newService ? true : false,
+        mes: newService ? 'Created successfully' : "Cannot create new product"
     })
 })
 

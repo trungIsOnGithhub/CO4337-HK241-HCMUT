@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
 
-const options = [
-  { label: 'Option 1', value: 'option_1' },
-  { label: 'Option 2', value: 'option_2' },
-  { label: 'Option 3', value: 'option_3' },
-  { label: 'Option 4', value: 'option_4' },
-];
-
 const colourStyles = {
   control: styles => ({ ...styles, backgroundColor: 'white', cursor: 'pointer'}),
   option: (styles, { data, isDisabled, isFocused, isSelected }) => {
@@ -18,30 +11,47 @@ const colourStyles = {
       cursor: 'pointer',
     };
   },
+  multiValue: (styles, { data }) => {
+    return {
+      ...styles,
+      backgroundColor: '#36A2EB', // Màu xanh
+      color: '#FFF', // Màu văn bản trắng
+    };
+  },
+  multiValueLabel: (styles, { data }) => ({
+    ...styles,
+    color: '#FFF', // Màu văn bản trắng
+  }),
+  multiValueRemove: (styles, { data }) => ({
+    ...styles,
+    color: '#FFF', // Màu văn bản trắng
+    ':hover': {
+      backgroundColor: '#0056B3', // Màu nền khi di chuột
+      color: '#FFF', // Màu văn bản trắng
+    },
+  }),
 };
 
-const MultiSelect = () => {
+const MultiSelect = ({options, id, onChangee}) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
-  const handleChange = aa => {
+  const handleChange = (aa) => {
+    console.log(aa)
     setSelectedOption(aa);
-    console.log(selectedOption)
+    onChangee(aa?.map(el => el?.value));
   };
 
   return (
-    <div>
+    <div className='flex flex-col gap-2 w-full'>
+      <label htmlFor="staffSelect">Staff</label>
       <Select
         value={selectedOption}
-        onChange={handleChange}
+        onChange={(e)=>handleChange(e)}
         options={options}
         isMulti
         styles={colourStyles}
+        id={id}
       />
-      {selectedOption && (
-        <div>
-          Selected value: {selectedOption.map(option => option.value).join(', ')}
-        </div>
-      )}
     </div>
   );
 };
