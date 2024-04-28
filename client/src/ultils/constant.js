@@ -337,9 +337,108 @@ export const statusOrder = [
 ]
 
 export const hour = [
-    0,1,2,3,4,5,6,7,8,9,10,11,12
+    {
+        code: 0,
+        value: '0 hour'
+    },
+    {
+        code: 1,
+        value: '1 hour'
+    },
+    {
+        code: 2,
+        value: '2 hours'
+    },
+    {
+        code: 3,
+        value: '3 hours'
+    },
+    {
+        code: 4,
+        value: '4 hours'
+    },
+    {
+        code: 5,
+        value: '5 hours'
+    },
+    {
+        code: 6,
+        value: '6 hours'
+    },
+    {
+        code: 7,
+        value: '7 hours'
+    },
+    {
+        code: 8,
+        value: '8 hours'
+    },
+    {
+        code: 9,
+        value: '9 hours'
+    },
+    {
+        code: 10,
+        value: '10 hours'
+    },
+    {
+        code: 11,
+        value: '11 hours'
+    },
+    {
+        code: 12,
+        value: '12 hours'
+    },
+
 ]
 
 export const minute = [
-    0,5,10,15,20,25,30,35,40,45,50,55
+    {
+        code: 0,
+        value: '0 minute'
+    },
+    {
+        code: 5,
+        value: '5 minute'
+    },
+    {
+        code: 10,
+        value: '10 minutes'
+    },
+    {
+        code: 15,
+        value: '15 minutes'
+    },
+    {
+        code: 20,
+        value: '20 minutes'
+    },
+    {
+        code: 25,
+        value: '25 minutes'
+    },
+    {
+        code: 30,
+        value: '30 minutes'
+    },
+    {
+        code: 35,
+        value: '35 minutes'
+    },
+    {
+        code: 40,
+        value: '40 minutes'
+    },
+    {
+        code: 45,
+        value: '45 minutes'
+    },
+    {
+        code: 50,
+        value: '50 minutes'
+    },
+    {
+        code: 55,
+        value: '55 minutes'
+    },
 ]

@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect} from 'react'
 import {InputForm, Select, Button, MarkdownEditor, Loading, MultiSelect} from 'components'
-import { useForm } from 'react-hook-form'
+import { set, useForm } from 'react-hook-form'
 import {useSelector, useDispatch} from 'react-redux'
 import { validate, getBase64 } from 'ultils/helper'
 import { toast } from 'react-toastify'
@@ -19,8 +19,10 @@ const AddService = () => {
   const dispatch = useDispatch()
   const {register, formState:{errors}, reset, handleSubmit, watch} = useForm()
   const [preview, setPreview] = useState({
-    avatar: null
+    thumb: null,
+    images: []
   })
+
   const [payload, setPayload] = useState({
     description: ''
   })
@@ -53,11 +55,12 @@ const AddService = () => {
       if(data?.category){
         data.category = categories_service?.find(el => el._id === data.category)?.title
       }
-      console.log(selectedStaff)
       const finalPayload = {...data,...payload,}
+      console.log(selectedStaff)
       if(selectedStaff?.length > 0){
         finalPayload.assigned_staff = selectedStaff
       }
+      console.log(finalPayload.assigned_staff)
       console.log(finalPayload)
       const formData = new FormData()
       for(let i of Object.entries(finalPayload)){
@@ -67,22 +70,31 @@ const AddService = () => {
       if(finalPayload.images) {
         for (let image of finalPayload.images) formData.append('images', image)
       }
+      formData.delete('assigned_staff');
+      if(finalPayload.assigned_staff) {
+        for (let staff of finalPayload.assigned_staff) formData.append('assigned_staff', staff)
+      }
       for (var pair of formData.entries()) {
-        console.log(pair[0]+ ', ' + pair[1]); 
+        console.log(pair[0]+ ', ' + typeof pair[1]); 
       }
       const response = await apiAddService(formData)
       // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
       // // dispatch(showModal({isShowModal: false, modalChildren: null}))
-      // if(response.success){
-      //   toast.success(response.mes)
-      //   reset()
-      //   setPayload({
-      //     description: ''
-      //   })
-      // }
-      // else{
-      //   toast.error(response.mes)
-      // }
+      if(response.success){
+        toast.success(response.mes)
+        reset()
+        setPayload({
+          description: ''
+        })
+        setSelectedStaff([])
+        setPreview({
+          thumb: null,
+          images: []
+        })
+      }
+      else{
+        toast.error(response.mes)
+      }
     }
   }
 
@@ -166,34 +178,26 @@ const AddService = () => {
             <div className='w-full flex flex-1 items-center gap-2'> 
               <Select 
                 label = 'Hour'
-                options = {hour?.map(el =>(
-                  {code: el,
-                  value: `${el} hour(s)`}
-                ))}
+                options = {hour}
                 register={register}
                 id = 'hour'
                 validate = {{
                   required: 'Need fill this field'
                 }}
-                style='flex-auto italic'
+                style='flex-auto'
                 errors={errors}
                 fullWidth
                 text='Hour'
               />
               <Select 
                 label = 'Minute'
-                options = {minute?.map(el =>(
-                  {
-                    code: el,
-                    value: `${el} minute(s)`
-                  }
-                ))}
+                options = {minute}
                 register={register}
                 id = 'minute'
                 validate = {{
                   required: 'Need fill this field'
                 }}
-                style='flex-auto italic'
+                style='flex-auto'
                 errors={errors}
                 fullWidth
                 text='Minute'
@@ -201,7 +205,7 @@ const AddService = () => {
             </div>
             <div className='w-full flex flex-1 items-center'> 
             <InputForm 
-              label = 'Price'
+              label = 'Price (VNĐ)'
               register={register}
               errors={errors}
               id = 'price'
@@ -218,6 +222,7 @@ const AddService = () => {
             id='assigned_staff' 
             options={options}
             onChangee={handleSelectChange}
+            values={selectedStaff}
             />
           <div className='flex flex-col gap-2 mt-8'>
             <label className='font-semibold' htmlFor='thumb'>Upload Thumb</label>
@@ -237,14 +242,14 @@ const AddService = () => {
           }
 
           <div className='flex flex-col gap-2 mt-8'>
-            <label className='font-semibold' htmlFor='product'>Upload Images Of Service</label>
+            <label className='font-semibold' htmlFor='images'>Upload Images Of Service</label>
             <input 
-              {...register('images', {required: 'Need upload image of product'})}
+              {...register('images', {required: 'Need upload image of service'})}
               type='file' 
-              id='product' 
+              id='images' 
               multiple
             />
-            {errors['images'] && <small className='text-xs text-red-500'>{errors['product']?.message}</small>}
+            {errors['images'] && <small className='text-xs text-red-500'>{errors['images']?.message}</small>}
           </div>
 
           {preview.images?.length > 0 
@@ -253,7 +258,7 @@ const AddService = () => {
             {
               preview.images?.map((el,index) => (
                 <div key={index} className='w-fit relative'>
-                  <img src={el.path} alt='image of product' className='w-[200px] object-contain'></img>
+                  <img src={el.path} alt='image of service' className='w-[200px] object-contain'></img>
                 </div>
               ))
             }
