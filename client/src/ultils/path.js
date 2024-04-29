@@ -15,6 +15,8 @@ const path = {
     CHECKOUT: 'checkout',
     PRODUCTS: 'products',
 
+    SERVICE_PROVIDER_REGISTER: 'sp_register',
+
 
     //Admin
     ADMIN: 'admin',
