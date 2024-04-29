@@ -6,6 +6,7 @@ const sendMail = require('../ultils/sendMail')
 const crypto = require('crypto')
 const makeToken = require('uniqid')
 const {users} = require('../ultils//constant')
+const mongoose = require('mongoose');
 
 // const register = asyncHandler(async(req, res)=>{
 //     const {email, password, firstName, lastName} = req.body
@@ -134,7 +135,8 @@ const login = asyncHandler(async(req, res)=>{
 })
 
 const getOneUser = asyncHandler(async(req, res)=>{
-    const {_id} = req.user
+    // const {_id} = req.user
+    const _id = new mongoose.Types.ObjectId("6613f975bc65bac9278a7b51")
     const user = await User.findById({_id}).select('-refresh_token -password').populate({
         path: 'cart',
         populate:{

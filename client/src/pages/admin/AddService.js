@@ -12,14 +12,14 @@ import { getCurrent } from 'store/user/asyncAction'
 
 const AddStaff = () => {
   const {categories} = useSelector(state => state.app)
-  const {current} = useSelector(state => state.user)
 
   const dispatch = useDispatch()
   const {register, formState:{errors}, reset, handleSubmit, watch} = useForm()
 
+  const {current} = useSelector(state => state.user)
   useEffect(() => {
     dispatch(getCurrent());
-  });
+  }, []);
 
 
   const [preview, setPreview] = useState({
@@ -46,12 +46,13 @@ const AddStaff = () => {
 
 
   const handleAddStaff = async(data) => {
-      console.log(data)
+      // console.log(data)
       const formData = new FormData()
       for(let i of Object.entries(data)){
       formData.append(i[0],i[1])
       }
       if (!current.provider_id) {
+        console.log('NO PROVIDER ID FIND TO ADD STAFFS');
         toast.error('No Provider Specifed With Current User!!');
         return;
       }

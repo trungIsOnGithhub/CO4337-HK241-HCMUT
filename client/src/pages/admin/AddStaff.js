@@ -8,6 +8,7 @@ import icons from 'ultils/icon'
 import { apiAddStaff } from 'apis'
 import { showModal } from 'store/app/appSlice'
 import { FaUserGear } from "react-icons/fa6";
+import { getCurrent } from 'store/user/asyncAction'
 
 const AddStaff = () => {
   const {categories} = useSelector(state => state.app)
@@ -20,7 +21,11 @@ const AddStaff = () => {
     avatar: null
   })
 
-  
+  const {current} = useSelector(state => state.user)
+  useEffect(() => {
+    dispatch(getCurrent());
+  }, []);
+
 //   const changeValue = useCallback((e)=>{
 //     setPayload(e)
 //   },[payload])
@@ -45,6 +50,12 @@ const AddStaff = () => {
     for(let i of Object.entries(data)){
     formData.append(i[0],i[1])
     }
+    if (!current?.provider_id) {
+      console.log('NO PROVIDER ID FIND TO ADD STAFFS');
+      toast.error('No Provider Specifed With Current User!!');
+      return;
+    }
+    formData.append('provider_id', current.provider_id)
     if(data.avatar) formData.append('avatar', data.avatar[0])
     // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
     console.log(formData)
