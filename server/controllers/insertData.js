@@ -54,6 +54,7 @@ const fn3 = async(cate) => {
     await serviceCategory.create({
         title: cate?.cate,
         image: cate?.image,
+        color: cate?.color,
     })
 }
 const insertCategoryService = asyncHandler(async(req, res)=>{

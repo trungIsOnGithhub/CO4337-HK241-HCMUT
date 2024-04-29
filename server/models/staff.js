@@ -25,6 +25,10 @@ var staffSchema = new mongoose.Schema({
         required:true,
         unique:true,
     },
+    provider_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Service_Provider',
+    },
 },{
     timestamps: true
 });

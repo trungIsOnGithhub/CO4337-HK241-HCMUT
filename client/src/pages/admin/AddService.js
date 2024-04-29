@@ -1,51 +1,132 @@
 import React, { useCallback, useState, useEffect} from 'react'
-import {InputForm, Select, Button, MarkdownEditor, Loading} from 'components'
-import { useForm } from 'react-hook-form'
+import {InputForm, Select, Button, MarkdownEditor, Loading, MultiSelect, SelectCategory} from 'components'
+import { set, useForm } from 'react-hook-form'
 import {useSelector, useDispatch} from 'react-redux'
 import { validate, getBase64 } from 'ultils/helper'
 import { toast } from 'react-toastify'
 import icons from 'ultils/icon'
-import { apiAddStaff } from 'apis'
+import { apiAddStaff, apiGetAllStaffs } from 'apis'
 import { showModal } from 'store/app/appSlice'
 import { FaUserGear } from "react-icons/fa6";
 import { getCurrent } from 'store/user/asyncAction'
+import withBaseComponent from 'hocs/withBaseComponent'
+import { hour } from 'ultils/constant'
+import { minute } from 'ultils/constant'
+import { apiAddService } from 'apis/service'
 
-const AddStaff = () => {
-  const {categories} = useSelector(state => state.app)
 
+const AddService = () => {
+  const {categories_service} = useSelector(state => state.category)
   const dispatch = useDispatch()
   const {register, formState:{errors}, reset, handleSubmit, watch} = useForm()
-
+ 
   const {current} = useSelector(state => state.user)
   useEffect(() => {
     dispatch(getCurrent());
   }, []);
 
-
   const [preview, setPreview] = useState({
-    avatar: null
+    thumb: null,
+    images: []
   })
 
+  const [payload, setPayload] = useState({
+    description: ''
+  })
+  const [invalidField, setInvalidField] = useState([])
   
-//   const changeValue = useCallback((e)=>{
-//     setPayload(e)
-//   },[payload])
+  const [staffs, setStaffs] = useState(null)
+  const fetchStaff = async(params) => {
+    const response = await apiGetAllStaffs()
+    if(response.success){
+      setStaffs(response.staffs)
+    }
+  }
+  useEffect(() => {
+    fetchStaff()
+  }, [])
 
+  const options = staffs?.map((staff) => ({
+    label: `${staff.firstName} ${staff.lastName}`,
+    value: staff._id
+  }));
 
+  const option_category = categories_service?.map((cate) => ({
+    label: cate?.title,
+    value: cate?._id,
+    color: cate?.color
+  }));
 
-  const handlePreviewAvatar = async(file) => {
-    const base64Avatar = await getBase64(file)
-    setPreview({avatar: base64Avatar})
+  const [selectedStaff, setSelectedStaff] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const handleSelectStaffChange = useCallback(selectedOptions => {
+    setSelectedStaff(selectedOptions);
+  }, []);
+
+  const handleSelectCateChange = useCallback(selectedOptions => {
+    setSelectedCategory(selectedOptions);
+    console.log(selectedCategory)
+  }, []);
+
+  const handleAddService = async(data) => {
+    const invalid = validate(payload, setInvalidField)
+    if(invalid === 0){
+      const finalPayload = {...data,...payload,}
+      if(selectedStaff?.length > 0){
+        finalPayload.assigned_staff = selectedStaff
+      }
+      if(selectedCategory){
+        finalPayload.category = selectedCategory
+      }
+      console.log(finalPayload)
+      const formData = new FormData()
+      for(let i of Object.entries(finalPayload)){
+        formData.append(i[0],i[1])
+      }
+      if(finalPayload.thumb) formData.append('thumb', finalPayload.thumb[0])
+      if(finalPayload.images) {
+        for (let image of finalPayload.images) formData.append('images', image)
+      }
+      formData.delete('assigned_staff');
+      if(finalPayload.assigned_staff) {
+        for (let staff of finalPayload.assigned_staff) formData.append('assigned_staff', staff)
+      }
+      for (var pair of formData.entries()) {
+        console.log(pair[0]+ ', ' + typeof pair[1]); 
+      }
+
+      const response = await apiAddService(formData)
+      // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
+      // dispatch(showModal({isShowModal: false, modalChildren: null}))
+      if(response.success){
+        toast.success(response.mes)
+        reset()
+        setPayload({
+          description: ''
+        })
+        setSelectedStaff([])
+        setSelectedCategory(null)
+        setPreview({
+          thumb: null,
+          images: []
+        })
+      }
+      else{
+        toast.error(response.mes)
+      }
+    }
   }
 
+  const changeValue = useCallback((e)=>{
+    setPayload(e)
+  },[payload])
 
-  useEffect(() => {
-    handlePreviewAvatar(watch('avatar')[0])
-  }, [watch('avatar')])
+  const handlePreviewThumb = async(file) => {
+    const base64Thumb = await getBase64(file)
+    setPreview(prev => ({...prev, thumb: base64Thumb}))
+  }
 
-
-
-  const handleAddStaff = async(data) => {
+  const handleAddService = async(data) => {
       // console.log(data)
       const formData = new FormData()
       for(let i of Object.entries(data)){
@@ -65,9 +146,31 @@ const AddStaff = () => {
       if(response.success){
       toast.success(response.mes)
       reset()
+
+  const handlePreviewImages = async(files) => {
+    const imagesPreview = []
+    for(let i of files){
+      if(i.type !== 'image/png' && i.type !== 'image/jpeg'){
+        toast.warning('The file sent is not a JPG or PNG')
+        return
+      }
+      const base64 = await getBase64(i)
+      imagesPreview.push({
+        name: i.name,
+        path: base64
+      })
+    }
+    if(imagesPreview.length > 0){
+      setPreview(prev => ({...prev, images: imagesPreview}))
     }
   }
+  useEffect(() => {
+    handlePreviewThumb(watch('thumb')[0])
+  }, [watch('thumb')])
 
+  useEffect(() => {
+    handlePreviewImages(watch('images'))
+  }, [watch('images')])
 
   return (
     <div className='w-full'>
@@ -75,7 +178,7 @@ const AddStaff = () => {
         <span>Add Service</span>
       </h1>
       <div className='p-4 '>
-        <form onSubmit={handleSubmit(handleAddStaff)}>
+        <form onSubmit={handleSubmit(handleAddService)}>
           <div className='w-full my-6 flex gap-4'>
             <InputForm 
               label = 'Service Name'
@@ -85,77 +188,125 @@ const AddStaff = () => {
               validate = {{
                 required: 'Need fill this field'
               }}
-              style='flex-auto'
-              placeholder='First Name ...'
+              style='flex-1'
+              placeholder='Name of service ...'
             />
-            <Select 
+            <SelectCategory 
               label = 'Category'
-              options = {categories?.map(el =>(
-                {code: el._id,
-                value: el.title}
-              ))}
+              options = {option_category}
               register={register}
               id = 'category'
               validate = {{
                 required: 'Need fill this field'
               }}
-              style='flex-auto'
               errors={errors}
               fullWidth
+              onChangee={handleSelectCateChange}
+              values={selectedCategory}
+              style='flex-1'
             />
           </div>
+          <MarkdownEditor 
+            name = 'description'
+            changeValue={changeValue}
+            label = 'Description'
+            invalidField={invalidField}
+            setInvalidField={setInvalidField}
+          />
           <div className='w-full my-6 flex gap-4'>
+            <div className='w-full flex flex-1 items-center gap-2'> 
+              <Select 
+                label = 'Hour'
+                options = {hour}
+                register={register}
+                id = 'hour'
+                validate = {{
+                  required: 'Need fill this field'
+                }}
+                style='flex-auto'
+                errors={errors}
+                fullWidth
+                text='Hour'
+              />
+              <Select 
+                label = 'Minute'
+                options = {minute}
+                register={register}
+                id = 'minute'
+                validate = {{
+                  required: 'Need fill this field'
+                }}
+                style='flex-auto'
+                errors={errors}
+                fullWidth
+                text='Minute'
+              />
+            </div>
+            <div className='w-full flex flex-1 items-center'> 
             <InputForm 
-              label = 'Email Address'
+              label = 'Price (VNĐ)'
               register={register}
               errors={errors}
-              id = 'email'
-              validate={{
-                    required: 'Require fill', 
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "invalid email address"
-                    }
-                }} 
+              id = 'price'
+              validate = {{
+                required: 'Need fill this field'
+              }}
               style='flex-auto'
-              placeholder='Email Address ...'
+              placeholder='Price of new service'
+              type='number'
             />
-            <InputForm 
-              label = 'Phone Number'
-              register={register}
-              errors={errors}
-              id = 'mobile'
-              validate={{
-                    required: 'Require fill', 
-                    pattern: {
-                      value: /^((\+)33|0)[1-9](\d{2}){4}$/,
-                      message: "invalid phone number"
-                    }
-                  }} 
-              style='flex-auto'
-              placeholder='Phone Number ...'
-            />
+            </div>
           </div>
-          
+          <MultiSelect 
+            id='assigned_staff' 
+            options={options}
+            onChangee={handleSelectStaffChange}
+            values={selectedStaff}
+            />
           <div className='flex flex-col gap-2 mt-8'>
-            <label className='font-semibold' htmlFor='avatar'>Upload Avatar</label>
+            <label className='font-semibold' htmlFor='thumb'>Upload Thumb</label>
             <input 
-              {...register('avatar', {required: 'Need upload avatar'})}
+              {...register('thumb', {required: 'Need upload thumb'})}
               type='file' 
-              id='avatar'
+              id='thumb'
             />
-            {errors['avatar'] && <small className='text-xs text-red-500'>{errors['avatar']?.message}</small>}
+            {errors['thumb'] && <small className='text-xs text-red-500'>{errors['thumb']?.message}</small>}
           </div>
           
-          {preview.avatar 
+          {preview.thumb 
             && 
           <div className='my-4'>
-            <img src={preview.avatar} alt='avatar' className='w-[200px] object-contain'></img>
+            <img src={preview.thumb} alt='thumbnail' className='w-[200px] object-contain'></img>
           </div>
           }
+
+          <div className='flex flex-col gap-2 mt-8'>
+            <label className='font-semibold' htmlFor='images'>Upload Images Of Service</label>
+            <input 
+              {...register('images', {required: 'Need upload image of service'})}
+              type='file' 
+              id='images' 
+              multiple
+            />
+            {errors['images'] && <small className='text-xs text-red-500'>{errors['images']?.message}</small>}
+          </div>
+
+          {preview.images?.length > 0 
+            && 
+          <div className='my-4 flex w-full gap-2 flex-wrap'>
+            {
+              preview.images?.map((el,index) => (
+                <div key={index} className='w-fit relative'>
+                  <img src={el.path} alt='image of service' className='w-[200px] object-contain'></img>
+                </div>
+              ))
+            }
+          </div>
+          }
+
           <div className='mt-8'>
             <Button type='submit'>
-              Add a new staff
+              Create a new service
             </Button>
           </div>
         </form>
@@ -164,4 +315,4 @@ const AddStaff = () => {
   )
 }
 
-export default AddStaff
+export default AddService

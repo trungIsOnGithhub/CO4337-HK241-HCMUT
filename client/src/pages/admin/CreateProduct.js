@@ -78,19 +78,22 @@ const CreateProduct = () => {
       if(finalPayload.images) {
         for (let image of finalPayload.images) formData.append('images', image)
       }
-      dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
-      const response = await apiCreateProduct(formData)
-      dispatch(showModal({isShowModal: false, modalChildren: null}))
-      if(response.success){
-        toast.success(response.mes)
-        reset()
-        setPayload({
-          description: ''
-        })
+      for (var pair of formData.entries()) {
+        console.log(pair[0]+ ', ' + pair[1]); 
       }
-      else{
-        toast.error(response.mes)
-      }
+      // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
+      // const response = await apiCreateProduct(formData)
+      // dispatch(showModal({isShowModal: false, modalChildren: null}))
+      // if(response.success){
+      //   toast.success(response.mes)
+      //   reset()
+      //   setPayload({
+      //     description: ''
+      //   })
+      // }
+      // else{
+      //   toast.error(response.mes)
+      // }
     }
   }
 
