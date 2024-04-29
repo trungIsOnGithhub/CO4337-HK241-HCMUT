@@ -100,6 +100,32 @@ const getAllServicesByAdmin = asyncHandler(async (req, res) => {
     }
 })
 
+// get all staffs
+const deleteServiceByAdmin = asyncHandler(async (req, res) => {
+    const {sid} = req.params
+    const service = await Service.findByIdAndDelete(sid)
+    return res.status(200).json({
+        success: service ? true : false,
+        mes: service ? 'Deleted successfully' : "Cannot delete service"
+    })
+})
+
+const updateServiceByAdmin = asyncHandler(async(req, res)=>{
+    const {sid} = req.params
+
+    const files = req?.files
+    if(files?.thumb){
+        req.body.thumb = files?.thumb[0]?.path
+    }
+    if(files?.images){
+        req.body.image = files?.images?.map(el => el.path)
+    }
+    const service = await Service.findByIdAndUpdate(pid, req.body, {new: true})
+    return res.status(200).json({
+        success: service ? true : false,
+        mes: service ? 'Updated successfully' : "Cannot update service"
+    })
+})
 //update staff by admin
 // const updateStaffByAdmin = asyncHandler(async (req, res) => {
 //     const {staffId} = req.params
@@ -134,5 +160,7 @@ const getAllServicesByAdmin = asyncHandler(async (req, res) => {
 
 module.exports = {
     createService,
-    getAllServicesByAdmin
+    getAllServicesByAdmin,
+    deleteServiceByAdmin,
+    updateServiceByAdmin
 }

@@ -14,7 +14,16 @@ router.post('/', [verifyAccessToken, isAdmin],uploader.fields([
     }]), ctrls.createService)
 
 router.get('/', [verifyAccessToken, isAdmin], ctrls.getAllServicesByAdmin)
-
+router.delete('/:sid', [verifyAccessToken, isAdmin], ctrls.deleteServiceByAdmin)
+router.put('/:sid', [verifyAccessToken, isAdmin],uploader.fields([
+    {
+        name: 'images',
+        maxCount: 10
+    },
+    {
+        name: 'thumb',
+        maxCount: 1
+    }]), ctrls.updateServiceByAdmin)
 module.exports = router
 
 

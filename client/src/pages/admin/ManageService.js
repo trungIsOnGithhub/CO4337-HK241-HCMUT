@@ -9,8 +9,10 @@ import UpdateProduct from './UpdateProduct'
 import icons from 'ultils/icon'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
-import { apiGetServiceByAdmin } from 'apis/service'
+import { apiDeleteServiceByAdmin, apiGetServiceByAdmin } from 'apis/service'
 import clsx from 'clsx'
+import { formatPricee } from 'ultils/helper'
+import UpdateService from './UpdateService'
 
 
 const ManageService = () => {
@@ -21,19 +23,19 @@ const ManageService = () => {
   const {register,formState:{errors}, handleSubmit, watch} = useForm()
   const [products, setProducts] = useState(null)
   const [counts, setCounts] = useState(0)
-  const [editProduct, setEditProduct] = useState(null)
+  const [editService, setEditService] = useState(null)
   const [update, setUpdate] = useState(false)
   const [variant, setVariant] = useState(null)
-
-  const handleDeleteProduct = async(pid) => {
+  const [isShowStaff, setIsShowStaff] = useState(false)
+  const handleDeleteService = async(sid) => {
     Swal.fire({
       title: 'Are you sure',
-      text: 'Are you sure you want to delete this product?',
+      text: 'Are you sure you want to delete this service?',
       icon: 'warning',
       showCancelButton: true
     }).then(async(rs)=>{
       if(rs.isConfirmed){
-        const response = await apiDeleteProduct(pid)
+        const response = await apiDeleteServiceByAdmin(sid)
         if(response.success){
           console.log('sure')
          toast.success(response.mes)
@@ -58,7 +60,7 @@ const ManageService = () => {
 
   const fetchProduct = async(params) => {
     const response = await apiGetServiceByAdmin({...params, limit: process.env.REACT_APP_LIMIT})
-    if(response.success){
+    if(response?.success){
       console.log(response)
       setProducts(response.services)
       setCounts(response.counts)
@@ -90,9 +92,9 @@ const ManageService = () => {
   console.log(params.get('page'))
   return (
     <div className='w-full flex flex-col gap-4 relative'>
-      {editProduct &&  
-      <div className='absolute inset-0 bg-zinc-900 h-[200%] z-50 flex-auto'>
-        <UpdateProduct editProduct={editProduct} render={render} setEditProduct={setEditProduct}/>
+      {editService &&  
+      <div className='absolute inset-0 bg-zinc-900 h-fit z-50 flex-auto'>
+        <UpdateService editService={editService} render={render} setEditService={setEditService}/>
       </div>}
 
       {variant &&  
@@ -123,42 +125,67 @@ const ManageService = () => {
         <thead className='font-bold bg-blue-500 text-[13px] text-white'>
           <tr className='border border-gray-500'>
             <th className='text-center py-2'>#</th>
-            <th className='text-center py-2'>Thumb</th>
             <th className='text-center py-2'>Name</th>
             <th className='text-center py-2'>Duration</th>
             <th className='text-center py-2'>Price</th>
             <th className='text-center py-2'>Staffs</th>
-            {/* <th className='text-center py-2'>Action</th> */}
+            <th className='text-center py-2'>Actions</th>
           </tr>
         </thead>
         <tbody>
           {products?.map((el,idx)=>(
-            <tr key={el._id} className='border border-gray-500'>
-              <td className='text-center py-2'>{((+params.get('page')||1)-1)*+process.env.REACT_APP_LIMIT + idx + 1}</td>
-              <td className='text-center py-2'><img src={el.thumb} alt='thumb' className='w-12 h-12 object-cover'></img></td>
-              <td className='text-center py-2'>{el.name}</td>
-              <td className='text-center py-2'>{`${el.duration} minutes`}</td>
-              <td className='text-center py-2'>{`${el.price}`}</td>
-              <td className='text-center py-2'><div className='flex justify-center'>{el.assigned_staff.map((item, index) => (<img src={item?.avatar} className={clsx('w-12 h-12 rounded-full ml-[-10px]')}></img>))}</div></td>
-              {/* <td className='text-center py-2'>{el.brand}</td>
-              <td className='text-center py-2'>{el.category}</td>
-              <td className='text-center py-2'>{el.price}</td>
-              <td className='text-center py-2'>{el.quantity}</td>
-              <td className='text-center py-2'>{el.soldQuantity}</td>
-              <td className='text-center py-2'>{el.color}</td>
-              <td className='text-center py-2'>{el.totalRatings}</td>
-              <td className='text-center py-2'>{el.variants?.length || 0}</td>
-              <td className='text-center py-2'>{moment(el.updatedAt).format('DD/MM/YYYY')}</td>
+            <tr key={el._id}>
               <td className='text-center py-2'>
-                <span onClick={() => setEditProduct(el)} 
+                {((+params.get('page')||1)-1)*+process.env.REACT_APP_LIMIT + idx + 1}
+              </td>
+              <td className='text-center py-2'>
+                <div className='flex gap-2 justify-center items-center font-semibold'>
+                  <img src={el.thumb} alt='thumb' className='w-14 h-14 rounded-full object-cover'></img>
+                  {el.name}
+                </div>
+              </td>
+              <td className='text-center py-2'>
+                {`${el.duration} minutes`}
+              </td>
+              <td className='text-center py-2'>
+              {/* {el.price} */}
+              </td>
+              <td className='text-center py-2'>
+                <div className='relative cursor-pointer' 
+                     onMouseEnter = {e => {
+                      e.stopPropagation();
+                      setIsShowStaff(el._id)
+                     }}
+                     onMouseLeave = {e => {
+                      e.stopPropagation();
+                      setIsShowStaff(null)
+                     }}
+                >
+                  <div
+                 className='flex justify-center'>
+                  {el.assigned_staff.map((item, index) => (<img key={index} src={item?.avatar}  className={clsx('w-10 h-10 rounded-full ml-[-10px]')}></img>))}
+                </div>
+                { isShowStaff === el._id &&
+                  <div className='flex flex-col gap-1 bg-white text-black rounded-md w-fit absolute top-11 left-6 z-10'>
+                  {el.assigned_staff.map((item, index) => (
+                  <div key={index} className='flex justify-center gap-2 w-fit p-2 items-center'>
+                    <img key={index} src={item?.avatar}  className={clsx('w-8 h-8 rounded-full')}></img>
+                    <span className='px-0 font-medium'>{`${item.firstName} ${item.lastName}`}</span>
+                  </div>))}
+                  </div>
+                }
+                </div>
+              </td>
+              <td className='text-center py-2'>
+                <span onClick={() => setEditService(el)} 
                 className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdModeEdit
                 size={24}/></span>
-                <span onClick={() => handleDeleteProduct(el._id)} 
+                <span onClick={() => handleDeleteService(el._id)} 
                 className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>
                 <span onClick={() => setVariant(el)} 
                 className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><FaCopy 
                 size={22}/></span>
-              </td>   */}
+              </td>  
             </tr>
           ))}
         </tbody>
