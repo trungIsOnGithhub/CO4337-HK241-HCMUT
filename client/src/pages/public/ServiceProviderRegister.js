@@ -14,10 +14,10 @@ import { toast} from 'react-toastify'
 import { validate } from "ultils/helper";
 
 const ServiceProviderRegister = () => {
-    const navigate = useNavigate()
+    // const navigate = useNavigate()
     const dispatch = useDispatch()
 
-    const hehe = ['asd', 'dada'];
+    const daysInWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
     const [payload, setPayload] = useState({
         firstName: '',
@@ -32,15 +32,15 @@ const ServiceProviderRegister = () => {
         category: '',
         homeurl: '',
         phone: '',
-        time: {
-            monday: '',
-            tuesday: '',
-            wednesday: '',
-            thursday: '',
-            friday: '',
-            saturday: '',
-            sunday: '',
-        }
+    })
+    const [timeOpenPayload, setTimeOpenPayload] = useState({
+        'starttime-monday': '','endtime-monday': '',
+        'starttime-tuesday': '','endtime-tuesday': '',
+        'starttime-wednesday': '','endtime-wednesday': '',
+        'starttime-thursday': '','endtime-thursday': '',
+        'starttime-friday': '','endtime-friday': '',
+        'starttime-saturday': '','endtime-saturday': '',
+        'starttime-sunday': '','endtime-sunday': '',
     })
     const [isVerify, setIsVerify] = useState(false)
     const [invalidField, setInvalidField] = useState([])
@@ -62,6 +62,9 @@ const ServiceProviderRegister = () => {
     useEffect(() => {
         resetPayload()
     }, [isRegister])
+    useEffect(() => {
+        console.log('joijiji : ' + JSON.stringify(timeOpenPayload))
+    }, [timeOpenPayload])
     
 
     const resetPayload = () =>{
@@ -78,28 +81,39 @@ const ServiceProviderRegister = () => {
             category: '',
             homeurl: '',
             phone: '',
-            time: {
-                monday: { start: '', time: '' },
-                tuesday: { start: '', time: '' },
-                wednesday: { start: '', time: '' },
-                thursday: { start: '', time: '' },
-                friday: { start: '', time: '' },
-                saturday: { start: '', time: '' },
-                sunday: { start: '', time: '' },
-            }
+        })
+        setTimeOpenPayload({
+            'starttime-monday': '','endtime-monday': '',
+            'starttime-tuesday': '','endtime-tuesday': '',
+            'starttime-wednesday': '','endtime-wednesday': '',
+            'starttime-thursday': '','endtime-thursday': '',
+            'starttime-friday': '','endtime-friday': '',
+            'starttime-saturday': '','endtime-saturday': '',
+            'starttime-sunday': '','endtime-sunday': '',
         })
     }
-    console.log('ddads ' + '');
+    // console.log('ddads ' + '');
     //SUBMIT
     const handleSubmit = useCallback(async() =>{
         const {firstName, lastName, mobile, ...data} = payload
+        // payload.time = {}
+        // for (const day of daysInWeek) {
+        //     const startKey = `starttime-${day}`
+        //     const endKey = `endtime-${day}`
+        //     if ((''+timeOpenPayload[startKey]) && (''+timeOpenPayload[endKey])) {
+        //         console.log('---->' + timeOpenPayload[startKey])
+        //         // payload.time.startKey = timeOpenPayload[startKey]
+        //         // payload.time.endKey = timeOpenPayload[endKey]
+        //     }
+        // }
+        // console.log()
         // const invalid = isRegister? validate(payload, setInvalidField) : validate(data,setInvalidField)
         const invalid = 0;
         if(invalid===0)
         {
 
             dispatch(showModal({isShowModal: true, modalChildren:<Loading />}))
-            const response = await apiRegister(payload)
+            let response = await apiRegister(payload)
             dispatch(showModal({isShowModal: false, modalChildren:null}))
             if(response.success){
                 setIsVerify(true)
@@ -253,30 +267,32 @@ const ServiceProviderRegister = () => {
                     />
                 </div>
                 
-                {/* <button onClick={() => {setIsInTimeForm(prevState => { setIsInTimeForm(!prevState); });}}>
+                <button onClick={() => {setIsInTimeForm(prevState => { setIsInTimeForm(!prevState); });}}>
                     { isInTimeForm ? 'Close Time Select' : 'Open Time Select' }
                 </button>
                 {   isInTimeForm &&
-                    Object.keys(payload.time).map(day => {
+                    daysInWeek.map(day => {
                         return <div className="flex items-center gap-3">
                             <div>{ day }</div>
                             <InputField 
-                                value={payload.time[day]}
-                                setValue={setPayload}
-                                nameKey={'starttime'}
+                                value={timeOpenPayload[`starttime-${day}`]}
+                                setValue={setTimeOpenPayload}
+                                nameKey={`starttime-${day}`}
                                 invalidField={invalidField}
                                 setInvalidField={setInvalidField}
+                                type="time"
                             />
                             <InputField 
-                                value={payload.time[day]}
-                                setValue={setPayload}
-                                nameKey={'endtime'}
+                                value={timeOpenPayload[`endtime-${day}`]}
+                                setValue={setTimeOpenPayload}
+                                nameKey={`endtime-${day}`}
                                 invalidField={invalidField}
                                 setInvalidField={setInvalidField}
+                                type="time"
                             />
                         </div>
                     })
-                } */}
+                }
 
                 <Button 
                     handleOnclick={handleSubmit}

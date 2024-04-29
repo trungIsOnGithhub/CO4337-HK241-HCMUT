@@ -39,6 +39,8 @@ const createServiceProvider = asyncHandler(async(req, res)=>{
         })
     }
 
+    console.log('nhfg: ' + JSON.stringify(req.body));
+
     const bname = await ServiceProvider.findOne({bussinessName})
     if(bname){
         return res.status(400).json({

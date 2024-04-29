@@ -33,4 +33,4 @@ var ProviderServiceSchema = new mongoose.Schema({
 });
 
 //Export the model
-module.exports = mongoose.model('ProviderService', ProviderServiceSchema);
+module.exports = mongoose.model('Service_Provider', ProviderServiceSchema);
