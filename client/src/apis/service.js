@@ -4,3 +4,9 @@ export const apiAddService = (data) => axios({
     method: 'post',
     data,
 })
+
+export const apiGetServiceByAdmin = (params) => axios({
+    url: '/service/',
+    method: 'get',
+    params,
+})

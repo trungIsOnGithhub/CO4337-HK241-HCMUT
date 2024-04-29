@@ -12,10 +12,13 @@ router.post('/', [verifyAccessToken, isAdmin],uploader.fields([
         name: 'thumb',
         maxCount: 1
     }]), ctrls.createService)
-// router.get('/', [verifyAccessToken, isAdmin], ctrls.getAllStaffs)
-// router.put('/:staffId', [verifyAccessToken, isAdmin],uploader.single('avatar'), ctrls.updateStaffByAdmin)
-// router.delete('/:staffId', [verifyAccessToken, isAdmin], ctrls.deleteStaffByAdmin)
+
+router.get('/', [verifyAccessToken, isAdmin], ctrls.getAllServicesByAdmin)
+
 module.exports = router
+
+
+
 
 //CREATE : POST       (body) -- khong bi lo
 //UPDATE : PUT        (body)
