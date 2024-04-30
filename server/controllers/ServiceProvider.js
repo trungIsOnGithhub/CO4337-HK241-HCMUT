@@ -1,5 +1,6 @@
 const ServiceProvider = require('../models/ServiceProvider')
 const asyncHandler = require('express-async-handler')
+const User = require('../models/user')
 
 const createServiceProvider = asyncHandler(async(req, res)=>{
     // const { email, password, firstName, lastName, mobile } = req.body
@@ -52,6 +53,23 @@ const createServiceProvider = asyncHandler(async(req, res)=>{
         ...req.body,
         success: true,
     });
+    if (!response) {
+        res.status(400).json({
+            success: false,
+            mes: "Cannot Create Provider Register"
+        })
+        return
+    }
+
+    const user = await User.findOne({mobile: req?.body?.mobile})
+    if(!user){
+        res.status(400).json({
+            success: false,
+            mes: "Invalid Request For Provider Register"
+        })
+        return
+    }
+    const userUpdated = await User.updateOne({mobile: req?.body?.mobile}, { provider_id: response.id })
 
     // const html = `<h2>Register code: </h2><br /><blockquote>${token}</blockquote>`
     // await sendMail({email, html, subject: 'Complete Registration'})

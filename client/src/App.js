@@ -3,7 +3,7 @@ import {Route, Routes} from 'react-router-dom'
 import { AdminLayout, ManageOrder, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService} from 'pages/admin'
 import {Login,Home,Public,Service,DetailProduct,FAQ,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister } from 'pages/public'
 
-import { UserLayout, History, Personal, WishList, Checkout} from 'pages/user'
+import { UserLayout, History, Personal, WishList, Checkout,MyServiceProvider} from 'pages/user'
 import path from './ultils/path'
 import {getCategories} from 'store/app/asyncAction'
 import {getCategorieService} from 'store/category/asyncAction'
@@ -59,6 +59,7 @@ function App() {
         <Route path={path.MYCART} element={<DetailCart />}/>
         <Route path={path.HISTORY} element={<History/>}/>
         <Route path={path.WISHLIST} element={<WishList/>}/>
+        <Route path={path.MY_SERVICE_PROVIDER} element={<MyServiceProvider/>}/>
       </Route>
       <Route path={path.FINAL_REGISTER} element={<Final_Register />} />
       <Route path={path.SERVICE_PROVIDER_REGISTER} element={<ServiceProviderRegister />} />

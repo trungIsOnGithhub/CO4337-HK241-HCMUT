@@ -34,13 +34,13 @@ const ServiceProviderRegister = () => {
         phone: '',
     })
     const [timeOpenPayload, setTimeOpenPayload] = useState({
-        'starttime-monday': '','endtime-monday': '',
-        'starttime-tuesday': '','endtime-tuesday': '',
-        'starttime-wednesday': '','endtime-wednesday': '',
-        'starttime-thursday': '','endtime-thursday': '',
-        'starttime-friday': '','endtime-friday': '',
-        'starttime-saturday': '','endtime-saturday': '',
-        'starttime-sunday': '','endtime-sunday': '',
+        startmonday: '',endmonday: '',
+        starttuesday: '',endtuesday: '',
+        startwednesday: '',endwednesday: '',
+        startthursday: '',endthursday: '',
+        startfriday: '',endfriday: '',
+        startsaturday: '',endsaturday: '',
+        startsunday: '',endsunday: '',
     })
     const [isVerify, setIsVerify] = useState(false)
     const [invalidField, setInvalidField] = useState([])
@@ -62,9 +62,9 @@ const ServiceProviderRegister = () => {
     useEffect(() => {
         resetPayload()
     }, [isRegister])
-    useEffect(() => {
-        console.log('joijiji : ' + JSON.stringify(timeOpenPayload))
-    }, [timeOpenPayload])
+    // useEffect(() => {
+    //     console.log('joijiji : ' + JSON.stringify(timeOpenPayload))
+    // }, [timeOpenPayload])
     
 
     const resetPayload = () =>{
@@ -83,29 +83,33 @@ const ServiceProviderRegister = () => {
             phone: '',
         })
         setTimeOpenPayload({
-            'starttime-monday': '','endtime-monday': '',
-            'starttime-tuesday': '','endtime-tuesday': '',
-            'starttime-wednesday': '','endtime-wednesday': '',
-            'starttime-thursday': '','endtime-thursday': '',
-            'starttime-friday': '','endtime-friday': '',
-            'starttime-saturday': '','endtime-saturday': '',
-            'starttime-sunday': '','endtime-sunday': '',
+            startmonday: '',endmonday: '',
+            starttuesday: '',endtuesday: '',
+            startwednesday: '',endwednesday: '',
+            startthursday: '',endthursday: '',
+            startfriday: '',endfriday: '',
+            startsaturday: '',endsaturday: '',
+            startsunday: '',endsunday: '',
         })
     }
     // console.log('ddads ' + '');
     //SUBMIT
     const handleSubmit = useCallback(async() =>{
         const {firstName, lastName, mobile, ...data} = payload
-        // payload.time = {}
-        // for (const day of daysInWeek) {
-        //     const startKey = `starttime-${day}`
-        //     const endKey = `endtime-${day}`
-        //     if ((''+timeOpenPayload[startKey]) && (''+timeOpenPayload[endKey])) {
-        //         console.log('---->' + timeOpenPayload[startKey])
-        //         // payload.time.startKey = timeOpenPayload[startKey]
-        //         // payload.time.endKey = timeOpenPayload[endKey]
-        //     }
-        // }
+        console.log('===> ' + JSON.stringify(timeOpenPayload));
+        payload.time = {}
+        for (const day of daysInWeek) {
+            const startKey = `start${day}`
+            const endKey = `end${day}`
+            payload.time[startKey] = timeOpenPayload[startKey]
+            payload.time[endKey] = timeOpenPayload[endKey]
+            // if ((''+timeOpenPayload[startKey]) && (''+timeOpenPayload[endKey])) {
+                // console.log('---->' + timeOpenPayload[startKey])
+                // console.log('}||}}| ' + typeof(timeOpenPayload[startKey]))
+                // payload.time.startKey = timeOpenPayload[startKey]
+                // payload.time.endKey = timeOpenPayload[endKey]
+            // }
+        }
         // console.log()
         // const invalid = isRegister? validate(payload, setInvalidField) : validate(data,setInvalidField)
         const invalid = 0;
@@ -270,28 +274,37 @@ const ServiceProviderRegister = () => {
                 <button onClick={() => {setIsInTimeForm(prevState => { setIsInTimeForm(!prevState); });}}>
                     { isInTimeForm ? 'Close Time Select' : 'Open Time Select' }
                 </button>
-                {   isInTimeForm &&
-                    daysInWeek.map(day => {
-                        return <div className="flex items-center gap-3">
-                            <div>{ day }</div>
-                            <InputField 
-                                value={timeOpenPayload[`starttime-${day}`]}
-                                setValue={setTimeOpenPayload}
-                                nameKey={`starttime-${day}`}
-                                invalidField={invalidField}
-                                setInvalidField={setInvalidField}
-                                type="time"
-                            />
-                            <InputField 
-                                value={timeOpenPayload[`endtime-${day}`]}
-                                setValue={setTimeOpenPayload}
-                                nameKey={`endtime-${day}`}
-                                invalidField={invalidField}
-                                setInvalidField={setInvalidField}
-                                type="time"
-                            />
-                        </div>
-                    })
+
+                { isInTimeForm &&
+                <div className="absolute left-50 bottom-50 bg-white w-1/2 p-10 flex flex-col items-center justify-center ">
+                    <h6 className="text-center">Select Time Schedule</h6>
+                    {   isInTimeForm &&
+                        daysInWeek.map(day => {
+                            return <div className="flex items-center gap-3">
+                                <div>{ day }</div>
+                                <InputField 
+                                    value={timeOpenPayload[`start${day}`]}
+                                    setValue={setTimeOpenPayload}
+                                    nameKey={`start${day}`}
+                                    invalidField={invalidField}
+                                    setInvalidField={setInvalidField}
+                                    type="time"
+                                />
+                                <InputField 
+                                    value={timeOpenPayload[`end${day}`]}
+                                    setValue={setTimeOpenPayload}
+                                    nameKey={`end${day}`}
+                                    invalidField={invalidField}
+                                    setInvalidField={setInvalidField}
+                                    type="time"
+                                />
+                            </div>
+                        })
+                    }
+                    <button onClick={() => {setIsInTimeForm(prevState => { setIsInTimeForm(!prevState); });}}>
+                        Close Time Select
+                    </button>
+                </div>
                 }
 
                 <Button 

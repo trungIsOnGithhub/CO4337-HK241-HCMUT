@@ -299,30 +299,41 @@ export const userSidebar = [
         type: 'single',
         text: 'Personal',
         path: `/${path.USER}/${path.PERSONAL}`,
-        icon: <RiDashboard3Line size={20}/>
+        icon: <RiDashboard3Line size={20}/>,
+        visibleForRole: [202, 1411],
     },
     {
         id: 2,
         type: 'single',
         text: 'My cart',
         path: `/${path.USER}/${path.MYCART}`,
-        icon: <MdGroups size={20}/>
+        icon: <MdGroups size={20}/>,
+        visibleForRole: [202],
     },
     {
         id: 3,
         type: 'single',
         text: 'History',
         path: `/${path.USER}/${path.HISTORY}`,
-        icon: <MdGroups size={20}/>
+        icon: <MdGroups size={20}/>,
+        visibleForRole: [202],
     },
     {
         id: 4,
         type: 'single',
         text: 'Wish List',
         path: `/${path.USER}/${path.WISHLIST}`,
-        icon: <RiBillLine size={20}/>
+        icon: <RiBillLine size={20}/>,
+        visibleForRole: [202],
     },
-
+    {
+        id: 5,
+        type: 'single',
+        text: 'My Bussiness',
+        path: `/${path.USER}/${path.MY_SERVICE_PROVIDER}`,
+        icon: <RiBillLine size={20}/>,
+        visibleForRole: [202, 1411],
+    },
 ]
 
 export const statusOrder = [

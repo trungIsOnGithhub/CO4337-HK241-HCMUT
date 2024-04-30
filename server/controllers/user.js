@@ -136,7 +136,7 @@ const login = asyncHandler(async(req, res)=>{
 
 const getOneUser = asyncHandler(async(req, res)=>{
     // const {_id} = req.user
-    const _id = new mongoose.Types.ObjectId("6613f975bc65bac9278a7b51")
+    const _id = new mongoose.Types.ObjectId("6630a109a7e022636a2d2f38")
     const user = await User.findById({_id}).select('-refresh_token -password').populate({
         path: 'cart',
         populate:{
