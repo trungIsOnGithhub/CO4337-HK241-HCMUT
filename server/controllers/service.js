@@ -120,7 +120,7 @@ const updateServiceByAdmin = asyncHandler(async(req, res)=>{
     if(files?.images){
         req.body.image = files?.images?.map(el => el.path)
     }
-    const service = await Service.findByIdAndUpdate(pid, req.body, {new: true})
+    const service = await Service.findByIdAndUpdate(sid, req.body, {new: true})
     return res.status(200).json({
         success: service ? true : false,
         mes: service ? 'Updated successfully' : "Cannot update service"

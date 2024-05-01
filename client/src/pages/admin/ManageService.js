@@ -104,8 +104,8 @@ const ManageService = () => {
 
       <div className='h-[69px] w-full'>
       </div>
-      <div className='p-4 border-b w-full flex justify-between items-center fixed top-0 bg-black'>
-        <h1 className='text-3xl font-bold tracking-tight'>ManageProduct</h1>
+      <div className='p-4 border-b w-full flex justify-between items-center fixed top-0 bg-black z-30'>
+        <h1 className='text-3xl font-bold tracking-tight'>Manage Service</h1>
       </div>
 
       <div className='flex w-full justify-end items-center px-4 '>
@@ -115,7 +115,7 @@ const ManageService = () => {
             register={register}
             errors={errors}
             fullWidth
-            placeholder= 'Search product by title, description ...'
+            placeholder= 'Search service by name, category ...'
           >
             
           </InputForm>
@@ -126,6 +126,7 @@ const ManageService = () => {
           <tr className='border border-gray-500'>
             <th className='text-center py-2'>#</th>
             <th className='text-center py-2'>Name</th>
+            <th className='text-center py-2'>Category</th>
             <th className='text-center py-2'>Duration</th>
             <th className='text-center py-2'>Price</th>
             <th className='text-center py-2'>Staffs</th>
@@ -139,16 +140,19 @@ const ManageService = () => {
                 {((+params.get('page')||1)-1)*+process.env.REACT_APP_LIMIT + idx + 1}
               </td>
               <td className='text-center py-2'>
-                <div className='flex gap-2 justify-center items-center font-semibold'>
-                  <img src={el.thumb} alt='thumb' className='w-14 h-14 rounded-full object-cover'></img>
+                <div className='flex gap-2 justify-start items-center font-semibold ml-5'>
+                  <img src={el.thumb} alt='thumb' className='w-14 h-14 rounded-md object-cover border-2 border-gray-600 shadow-inner'></img>
                   {el.name}
                 </div>
+              </td>
+              <td className='text-center py-2'>
+                {el.category}
               </td>
               <td className='text-center py-2'>
                 {`${el.duration} minutes`}
               </td>
               <td className='text-center py-2'>
-              {/* {el.price} */}
+              {el.price}
               </td>
               <td className='text-center py-2'>
                 <div className='relative cursor-pointer' 
@@ -166,9 +170,9 @@ const ManageService = () => {
                   {el.assigned_staff.map((item, index) => (<img key={index} src={item?.avatar}  className={clsx('w-10 h-10 rounded-full ml-[-10px]')}></img>))}
                 </div>
                 { isShowStaff === el._id &&
-                  <div className='flex flex-col gap-1 bg-white text-black rounded-md w-fit absolute top-11 left-6 z-10'>
+                  <div className='flex flex-col gap-1 bg-white text-black rounded-md w-fit px-8 absolute top-11 left-6 z-10'>
                   {el.assigned_staff.map((item, index) => (
-                  <div key={index} className='flex justify-center gap-2 w-fit p-2 items-center'>
+                  <div key={index} className='flex justify-center gap-2 w-fit items-center'>
                     <img key={index} src={item?.avatar}  className={clsx('w-8 h-8 rounded-full')}></img>
                     <span className='px-0 font-medium'>{`${item.firstName} ${item.lastName}`}</span>
                   </div>))}
@@ -182,9 +186,9 @@ const ManageService = () => {
                 size={24}/></span>
                 <span onClick={() => handleDeleteService(el._id)} 
                 className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>
-                <span onClick={() => setVariant(el)} 
+                {/* <span onClick={() => setVariant(el)} 
                 className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><FaCopy 
-                size={22}/></span>
+                size={22}/></span> */}
               </td>  
             </tr>
           ))}

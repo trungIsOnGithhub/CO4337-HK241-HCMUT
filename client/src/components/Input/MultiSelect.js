@@ -33,11 +33,12 @@ const colourStyles = {
 };
 
 const MultiSelect = ({options, id, onChangee, values}) => {
-  const [selectedOption, setSelectedOption] = useState(null);
+  console.log(values);
+  // const [selectedOption, setSelectedOption] = useState(null);
 
   const handleChange = (aa) => {
     console.log(aa)
-    setSelectedOption(aa);
+    // setSelectedOption(aa);
     onChangee(aa?.map(el => el?.value));
   };
   console.log(values)
@@ -45,7 +46,7 @@ const MultiSelect = ({options, id, onChangee, values}) => {
     <div className='flex flex-col gap-2 w-full'>
       <label htmlFor="staffSelect">Staff</label>
       <Select
-        value={values?.length > 0 ? selectedOption : null}
+        value={values?.length > 0 ? options?.filter(option => values.some(staff => (staff._id||staff) === option.value)) : null}
         onChange={(e)=>handleChange(e)}
         options={options}
         isMulti

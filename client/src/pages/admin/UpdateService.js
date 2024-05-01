@@ -8,6 +8,7 @@ import {apiUpdateProduct} from 'apis/product'
 import { showModal } from 'store/app/appSlice'
 import { hour, minute } from 'ultils/constant'
 import { apiGetAllStaffs } from 'apis'
+import { apiUpdateServiceByAdmin } from 'apis/service'
 
 const UpdateService = ({editService, render, setEditService}) => {
   console.log(editService)
@@ -53,13 +54,17 @@ const UpdateService = ({editService, render, setEditService}) => {
       price: editService?.price || '',
       category: editService?.category || '',
       hour: Math.floor((+(editService?.duration) / 60)),
-      minute: +(editService?.duration) % 60
+      minute: +(editService?.duration) % 60,
+      assigned_staff: editService?.assigned_staff?.map(staff => staff._id)
     })
     setPayload({description: typeof editService?.description === 'object' ? editService?.description?.join(', ') : editService?.description})
     setPreview({
       thumb: editService?.thumb || '',
       images: editService?.image || []
     })
+    setSelectedCategory(editService?.category)
+    setSelectedStaff(editService?.assigned_staff?.map(staff => staff._id))
+    console.log(selectedStaff)
   }, [editService])
   
   const [invalidField, setInvalidField] = useState([])
@@ -108,11 +113,17 @@ const UpdateService = ({editService, render, setEditService}) => {
     console.log(selectedCategory)
   }, []);
 
-  const handleUpdateProduct = async(data) => {
+  const handleUpdateService = async(data) => {
     // const invalid = validate(payload, setInvalidField)
     // if(invalid === 0){
 
       let finalPayload = {...data,...payload}
+      if(selectedStaff?.length > 0){
+        finalPayload.assigned_staff = selectedStaff
+      }
+      if(selectedCategory){
+        finalPayload.category = selectedCategory
+      }
       if(data.thumb?.length === 0){
         console.log('check_1')
         finalPayload.thumb = preview.thumb
@@ -121,7 +132,6 @@ const UpdateService = ({editService, render, setEditService}) => {
         console.log('check_2')
         finalPayload.thumb = data.thumb[0]
       }
-      console.log(finalPayload)
       if(data.images?.length === 0){
         console.log('check_3')
         finalPayload.images = preview.images
@@ -138,15 +148,20 @@ const UpdateService = ({editService, render, setEditService}) => {
       formData.delete('images');
       for (let image of finalPayload.images) formData.append('images', image)
 
+      formData.delete('assigned_staff');
+      if(finalPayload.assigned_staff) {
+        for (let staff of finalPayload.assigned_staff) formData.append('assigned_staff', staff)
+      }
+
       for (var pair of formData.entries())
       {
       console.log(pair[0]+ ', '+ pair[1]); 
       }
     
-      // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
-      const response = await apiUpdateProduct(formData, editService._id)
-      // dispatch(showModal({isShowModal: false, modalChildren: null}))
-      console.log(response)
+      // // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
+      const response = await apiUpdateServiceByAdmin(formData, editService._id)
+      // // dispatch(showModal({isShowModal: false, modalChildren: null}))
+      // console.log(response)
       if(response.success){
         toast.success(response.mes)
         render()
@@ -165,7 +180,7 @@ const UpdateService = ({editService, render, setEditService}) => {
           <span className='text-main text-lg hover:underline cursor-pointer' onClick={()=>setEditService(null)}>Cancel</span>
         </h1>
         <div className='p-4 '>
-        <form onSubmit={handleSubmit(handleUpdateProduct)}>
+        <form onSubmit={handleSubmit(handleUpdateService)}>
             <div className='w-full my-6 flex gap-4'>
             <InputForm
               label = 'Service Name'
@@ -255,7 +270,7 @@ const UpdateService = ({editService, render, setEditService}) => {
           <div className='flex flex-col gap-2 mt-8'>
             <label className='font-semibold' htmlFor='thumb'>Upload Thumb</label>
             <input 
-              {...register('thumb', {required: 'Need upload thumb'})}
+              {...register('thumb')}
               type='file' 
               id='thumb'
             />
@@ -272,7 +287,7 @@ const UpdateService = ({editService, render, setEditService}) => {
           <div className='flex flex-col gap-2 mt-8'>
             <label className='font-semibold' htmlFor='images'>Upload Images Of Service</label>
             <input 
-              {...register('images', {required: 'Need upload image of service'})}
+              {...register('images')}
               type='file' 
               id='images' 
               multiple
