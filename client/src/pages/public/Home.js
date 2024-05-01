@@ -19,8 +19,8 @@ const Home = ({navigate}) => {
                 <DealDaily></DealDaily>
             </div>
             <div className="flex flex-col gap-5 pl-5 w-[75%] flex-auto ">
-                <HomeSearchBar />
                 <Banner />
+                <HomeSearchBar />
                 <BestSeller />
             </div>
         </div>

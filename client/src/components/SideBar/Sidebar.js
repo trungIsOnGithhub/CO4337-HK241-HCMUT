@@ -8,6 +8,14 @@ const Sidebar = () => {
     // console.log(category)
     return (
         <div className="flex flex-col border">
+            <h3
+            style={{
+                backgroundColor:'red',
+                color: 'white',
+                padding: '10`<px 0',
+                textAlign: 'center'
+            }}
+            >Danh Mục</h3>
             {categories?.map(el =>(
                 <NavLink
                     key={createSlug(el.title)}
