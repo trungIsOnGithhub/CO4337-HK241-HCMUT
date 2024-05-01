@@ -1,5 +1,5 @@
 import React ,{useState,useCallback,useEffect} from "react";
-import {InputField, Button, Loading} from '../../components'
+import {InputField, Button, Loading, Select} from '../../components'
 import { apiRegister, apiLogin, apiForgotPassword, apiFinalRegister} from "../../apis/user";
 import { createServiceProvider } from "../../apis/ServiceProvider";
 import Swal from 'sweetalert2'
@@ -18,6 +18,9 @@ const ServiceProviderRegister = () => {
     const dispatch = useDispatch()
 
     const daysInWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    const provinces = ['Tinh A', 'Tinh B', 'Tinh C']
+    const districts = ['Quan A', 'Quan B', 'Quan C']
+    const wards = ['Phuong A', 'Phuong B', 'Phuong C']
 
     const [payload, setPayload] = useState({
         firstName: '',
@@ -147,6 +150,24 @@ const ServiceProviderRegister = () => {
         setIsVerify(false)
         setToken('')
     }
+    const locationFormOnChange = (event) => {
+        const newPayLoad = {
+            ...payload,
+        }
+        if (event.target.id === 'province') {
+            newPayLoad[event.target.id] = provinces[parseInt(event.target.value)]
+        }
+        else if (event.target.id === 'ward') {
+            newPayLoad[event.target.id] = wards[parseInt(event.target.value)]
+        }
+        else if  (event.target.id === 'district') {
+            newPayLoad[event.target.id] = districts[parseInt(event.target.value)]
+        }
+        
+        setPayload(newPayLoad)
+        console.log('------', newPayLoad)
+        // console.log(event.target.id)
+    }
     return (
         <div className="w-screen h-screen relative">
             {isVerify &&
@@ -230,29 +251,57 @@ const ServiceProviderRegister = () => {
                     fullWidth
                 />
 
-                <div className="flex items-center gap-2">
-                    <InputField 
-                        value= {payload.province}
-                        setValue={setPayload}
-                        nameKey='province'
-                        // invalidField={invalidField}
-                        // setInvalidField={setInvalidField}
-                    />
-                    <InputField 
-                        value= {payload.district}
-                        setValue={setPayload}
-                        nameKey='district'
-                        // invalidField={invalidField}
-                        // setInvalidField={setInvalidField}
-                    />
-                    <InputField 
-                        value= {payload.ward}
-                        setValue={setPayload}
-                        nameKey='ward'
-                        invalidField={invalidField}
-                        setInvalidField={setInvalidField}
-                    />
-                </div>
+                {/* <div > */}
+                    <form onChange={locationFormOnChange} className="flex items-center gap-2">
+                        <Select 
+                        label = 'Province'
+                        options = {provinces?.map((el, index) =>(
+                            {code: index,
+                            value: el}
+                        ))}
+                        register={(a,b) => {}}
+                        id = 'province'
+                        validate = {{
+                            required: 'Need fill this field'
+                        }}
+                        style='flex-auto'
+                        errors={{}}
+                        fullWidth
+                        />
+
+                        <Select 
+                        label = 'District'
+                        options = {districts?.map((el, index) =>(
+                            {code: index,
+                            value: el}
+                        ))}
+                        register={(a,b) => {}}
+                        id = 'district'
+                        validate = {{
+                            required: 'Need fill this field'
+                        }}
+                        style='flex-auto'
+                        errors={{}}
+                        fullWidth
+                        />
+
+                        <Select 
+                        label = 'Ward'
+                        options = {wards?.map((el, index) =>(
+                            {code: index,
+                            value: el}
+                        ))}
+                        register={(a,b) => {}}
+                        id = 'ward'
+                        validate = {{
+                            required: 'Need fill this field'
+                        }}
+                        style='flex-auto'
+                        errors={{}}
+                        fullWidth
+                        />
+                    </form>
+                {/* </div> */}
 
                 <div className="flex items-center gap-6">
                     <InputField 
