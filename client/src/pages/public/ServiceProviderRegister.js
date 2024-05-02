@@ -36,7 +36,6 @@ const ServiceProviderRegister = () => {
         province: '',
         district: '',
         ward: '',
-        category: '',
         homeurl: '',
         phone: '',
     })
@@ -88,7 +87,6 @@ const ServiceProviderRegister = () => {
             province: '',
             district: '',
             ward: '',
-            category: '',
             homeurl: '',
             phone: '',
         })
@@ -106,7 +104,7 @@ const ServiceProviderRegister = () => {
     //SUBMIT
     const handleSubmit = useCallback(async() =>{
         const {firstName, lastName, mobile, ...data} = payload
-        console.log('===> ' + JSON.stringify(timeOpenPayload));
+        console.log('===> ', timeOpenPayload);
         payload.time = {}
         for (const day of daysInWeek) {
             const startKey = `start${day}`
@@ -120,8 +118,8 @@ const ServiceProviderRegister = () => {
                 // payload.time.endKey = timeOpenPayload[endKey]
             // }
         }
-        // console.log()
-        const invalid = isRegister? validate(payload, setInvalidField) : validate(data,setInvalidField)
+
+        const invalid = validate(payload, setInvalidField)
         // const invalid = 0;
         if(invalid===0)
         {
@@ -140,6 +138,9 @@ const ServiceProviderRegister = () => {
             if(!response.success){
                 Swal.fire('Opps!', response.mes,'error')
             }
+        }
+        else {
+            Swal.fire('Opps!', 'Invalid Input Form','Please Check Yout Input')
         }
     },[payload, isRegister])
 
@@ -168,15 +169,15 @@ const ServiceProviderRegister = () => {
         }
         else if (event.target.id === 'district') {
             const district_index = parseInt(event.target.value)
-            newPayLoad[event.target.id] = districts[district_index]
-            setWards(Object.values(quan_huyen).filter(ward => ward.parent_code === districts[district_index].code))
+            newPayLoad[event.target.id] = districts[district_index].name
+            setWards(Object.values(xa_phuong).filter(ward => ward.parent_code === districts[district_index].code))
         }
         else if (event.target.id === 'ward') {
-            newPayLoad[event.target.id] = wards[parseInt(event.target.value)]
+            newPayLoad[event.target.id] = wards[parseInt(event.target.value)].name
         }
         
         setPayload(newPayLoad)
-        // console.log('------', newPayLoad)
+        console.log('------', newPayLoad)
         // console.log(event.target.id)
     }
     return (
@@ -334,7 +335,7 @@ const ServiceProviderRegister = () => {
                 </button>
 
                 { isInTimeForm &&
-                <div className="absolute left-50 bottom-50 bg-white w-1/2 p-10 flex flex-col items-center justify-center m-10">
+                <div className="absolute left-50 bottom-50 bg-white w-2/3 p-10 flex flex-col items-center justify-center m-10">
                     <h5 className="text-center text-gray-600">Select Time Schedule</h5>
                     {   isInTimeForm &&
                         daysInWeek.map(day => {

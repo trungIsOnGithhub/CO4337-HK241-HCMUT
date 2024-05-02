@@ -144,6 +144,7 @@ const getOneUser = asyncHandler(async(req, res)=>{
             select: 'title thumb price'
         }
     }).populate('wishlist', 'title thumb price color')
+    console.log(_id);
     return res.status(200).json({
         success: user? true : false,
         res: user? user : "User not found"

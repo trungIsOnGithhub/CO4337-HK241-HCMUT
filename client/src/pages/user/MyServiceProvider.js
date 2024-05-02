@@ -56,6 +56,7 @@ const MyServiceProvider = ({navigate, dispatch}) => {
     // })
     // setPreviewImage(current?.avatar)
 
+    console.log('hlkjkljlk', current);
   }, [current])
 
   const handlePreviewAvatar = async(file) => {
