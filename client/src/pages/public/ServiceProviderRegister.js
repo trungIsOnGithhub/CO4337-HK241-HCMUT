@@ -251,58 +251,6 @@ const ServiceProviderRegister = () => {
                     fullWidth
                 />
 
-                {/* <div > */}
-                    <form onChange={locationFormOnChange} className="flex items-center gap-2">
-                        <Select 
-                        label = 'Province'
-                        options = {provinces?.map((el, index) =>(
-                            {code: index,
-                            value: el}
-                        ))}
-                        register={(a,b) => {}}
-                        id = 'province'
-                        validate = {{
-                            required: 'Need fill this field'
-                        }}
-                        style='flex-auto'
-                        errors={{}}
-                        fullWidth
-                        />
-
-                        <Select 
-                        label = 'District'
-                        options = {districts?.map((el, index) =>(
-                            {code: index,
-                            value: el}
-                        ))}
-                        register={(a,b) => {}}
-                        id = 'district'
-                        validate = {{
-                            required: 'Need fill this field'
-                        }}
-                        style='flex-auto'
-                        errors={{}}
-                        fullWidth
-                        />
-
-                        <Select 
-                        label = 'Ward'
-                        options = {wards?.map((el, index) =>(
-                            {code: index,
-                            value: el}
-                        ))}
-                        register={(a,b) => {}}
-                        id = 'ward'
-                        validate = {{
-                            required: 'Need fill this field'
-                        }}
-                        style='flex-auto'
-                        errors={{}}
-                        fullWidth
-                        />
-                    </form>
-                {/* </div> */}
-
                 <div className="flex items-center gap-6">
                     <InputField 
                         value= {payload.homeurl}
@@ -319,14 +267,64 @@ const ServiceProviderRegister = () => {
                         setInvalidField={setInvalidField}
                     />
                 </div>
+
+                <form onChange={locationFormOnChange} className="flex items-center gap-2">
+                    <Select
+                    label = 'Province'
+                    options = {provinces?.map((el, index) =>(
+                        {code: index,
+                        value: el}
+                    ))}
+                    register={(a,b) => {}}
+                    id = 'province'
+                    validate = {{
+                        required: 'Need fill this field'
+                    }}
+                    style='flex-auto'
+                    errors={{}}
+                    fullWidth
+                    />
+
+                    <Select 
+                    label = 'District'
+                    options = {districts?.map((el, index) =>(
+                        {code: index,
+                        value: el}
+                    ))}
+                    register={(a,b) => {}}
+                    id = 'district'
+                    validate = {{
+                        required: 'Need fill this field'
+                    }}
+                    style='flex-auto'
+                    errors={{}}
+                    fullWidth
+                    />
+
+                    <Select 
+                    label = 'Ward'
+                    options = {wards?.map((el, index) =>(
+                        {code: index,
+                        value: el}
+                    ))}
+                    register={(a,b) => {}}
+                    id = 'ward'
+                    validate = {{
+                        required: 'Need fill this field'
+                    }}
+                    style='flex-auto'
+                    errors={{}}
+                    fullWidth
+                    />
+                </form>
                 
-                <button onClick={() => {setIsInTimeForm(prevState => { setIsInTimeForm(!prevState); });}}>
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 p-4 rounded mt-5" onClick={() => {setIsInTimeForm(prevState => { setIsInTimeForm(!prevState); });}}>
                     { isInTimeForm ? 'Close Time Select' : 'Open Time Select' }
                 </button>
 
                 { isInTimeForm &&
-                <div className="absolute left-50 bottom-50 bg-white w-1/2 p-10 flex flex-col items-center justify-center ">
-                    <h6 className="text-center">Select Time Schedule</h6>
+                <div className="absolute left-50 bottom-50 bg-white w-1/2 p-10 flex flex-col items-center justify-center m-10">
+                    <h5 className="text-center text-gray-600">Select Time Schedule</h5>
                     {   isInTimeForm &&
                         daysInWeek.map(day => {
                             return <div className="flex items-center gap-3">
@@ -350,9 +348,13 @@ const ServiceProviderRegister = () => {
                             </div>
                         })
                     }
-                    <button onClick={() => {setIsInTimeForm(prevState => { setIsInTimeForm(!prevState); });}}>
+
+                    <Button 
+                        handleOnclick={() => {setIsInTimeForm(prevState => { setIsInTimeForm(!prevState); });}}
+                        fullWidth
+                    >
                         Close Time Select
-                    </button>
+                    </Button>
                 </div>
                 }
 
