@@ -6,21 +6,25 @@ import Swal from 'sweetalert2'
 import {useNavigate, Link, useSearchParams} from 'react-router-dom'
 import path from "../../ultils/path";
 import { login } from "../../store/user/userSlice";
+import { tinh_thanhpho } from "tinh_thanhpho";
 
 import { showModal } from 'store/app/appSlice'
 
 import { useDispatch } from 'react-redux';
 import { toast} from 'react-toastify'
 import { validate } from "ultils/helper";
+import axios from "axios";
+import { quan_huyen } from "quan_huyen";
+import { xa_phuong } from "xa_phuong";
 
 const ServiceProviderRegister = () => {
     // const navigate = useNavigate()
     const dispatch = useDispatch()
 
     const daysInWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-    const provinces = ['Tinh A', 'Tinh B', 'Tinh C']
-    const districts = ['Quan A', 'Quan B', 'Quan C']
-    const wards = ['Phuong A', 'Phuong B', 'Phuong C']
+    const provinces = Object.values(tinh_thanhpho);
+    const [districts, setDistricts] = useState([])
+    const [wards, setWards] = useState([])
 
     const [payload, setPayload] = useState({
         firstName: '',
@@ -62,6 +66,9 @@ const ServiceProviderRegister = () => {
             toast.info(response.mes, {theme: "colored"})
         }
     }
+    // useEffect(() => {
+    //     axios.get()
+    // }, [])
     useEffect(() => {
         resetPayload()
     }, [isRegister])
@@ -114,8 +121,8 @@ const ServiceProviderRegister = () => {
             // }
         }
         // console.log()
-        // const invalid = isRegister? validate(payload, setInvalidField) : validate(data,setInvalidField)
-        const invalid = 0;
+        const invalid = isRegister? validate(payload, setInvalidField) : validate(data,setInvalidField)
+        // const invalid = 0;
         if(invalid===0)
         {
 
@@ -155,17 +162,21 @@ const ServiceProviderRegister = () => {
             ...payload,
         }
         if (event.target.id === 'province') {
-            newPayLoad[event.target.id] = provinces[parseInt(event.target.value)]
+            const province_index = parseInt(event.target.value)
+            newPayLoad[event.target.id] = provinces[province_index].name
+            setDistricts(Object.values(quan_huyen).filter(district => district.parent_code === provinces[province_index].code))
+        }
+        else if (event.target.id === 'district') {
+            const district_index = parseInt(event.target.value)
+            newPayLoad[event.target.id] = districts[district_index]
+            setWards(Object.values(quan_huyen).filter(ward => ward.parent_code === districts[district_index].code))
         }
         else if (event.target.id === 'ward') {
             newPayLoad[event.target.id] = wards[parseInt(event.target.value)]
         }
-        else if  (event.target.id === 'district') {
-            newPayLoad[event.target.id] = districts[parseInt(event.target.value)]
-        }
         
         setPayload(newPayLoad)
-        console.log('------', newPayLoad)
+        // console.log('------', newPayLoad)
         // console.log(event.target.id)
     }
     return (
@@ -273,7 +284,7 @@ const ServiceProviderRegister = () => {
                     label = 'Province'
                     options = {provinces?.map((el, index) =>(
                         {code: index,
-                        value: el}
+                        value: el.name}
                     ))}
                     register={(a,b) => {}}
                     id = 'province'
@@ -289,7 +300,7 @@ const ServiceProviderRegister = () => {
                     label = 'District'
                     options = {districts?.map((el, index) =>(
                         {code: index,
-                        value: el}
+                        value: el.name}
                     ))}
                     register={(a,b) => {}}
                     id = 'district'
@@ -305,7 +316,7 @@ const ServiceProviderRegister = () => {
                     label = 'Ward'
                     options = {wards?.map((el, index) =>(
                         {code: index,
-                        value: el}
+                        value: el.name}
                     ))}
                     register={(a,b) => {}}
                     id = 'ward'
