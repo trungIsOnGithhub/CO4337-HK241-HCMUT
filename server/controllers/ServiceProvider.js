@@ -89,20 +89,33 @@ const getAllServiceProvider = asyncHandler(async(req, res)=>{
 })
 
 const updateServiceProvider = asyncHandler(async(req, res)=>{
-    const {cid} = req.params
+    const spid = req.params.spid
+    // console.log('****', req.body)
+    // console.log('=====', spid)
     if(Object.keys(req.body).length === 0){
         throw new Error('Missing input')
     }
     if(req.body.expiry){
         req.body.expiry = Date.now() + +req.body.expiry * 24 * 60 * 60 * 1000
     }
-    const response = await ServiceProvider.findByIdAndUpdate(cid, req.body, {new: true})
+    const response = await ServiceProvider.findByIdAndUpdate(spid, req.body, {new: true})
+    console.log('++++' + JSON.stringify(response))
     return res.status(200).json({
         success: response ? true : false,
-        updatedServiceProvider: response ? response : "Cannot update a coupon"
+        updatedServiceProvider: response ? response : "Cannot update a Service Provider",
+        mes: response ? 'Success Updated' : 'Failed to Update'
     })
 })
 
+const getServiceProvider = asyncHandler(async(req, res)=>{
+    const spid = req.params.spid;
+    const sp = await ServiceProvider.findById(spid)
+    console.log('++++++' + JSON.stringify(sp))
+    return res.status(200).json({
+        success: sp ? true : false,
+        payload: sp ? sp : "Cannot find Service Provider"
+    })
+})
 
 const deleteServiceProvider = asyncHandler(async(req, res)=>{
     const {cid} = req.params
@@ -117,5 +130,6 @@ module.exports = {
     createServiceProvider,
     getAllServiceProvider,
     updateServiceProvider,
-    deleteServiceProvider
+    deleteServiceProvider,
+    getServiceProvider,
 }

@@ -19,6 +19,9 @@ var ProviderServiceSchema = new mongoose.Schema({
     ward: {
         type: String,
     },
+    address: {
+        type: String,
+    },
     homeurl: {
         type: String,
     },
@@ -27,6 +30,9 @@ var ProviderServiceSchema = new mongoose.Schema({
     },
     time: {
         type: Object,
+    },
+    images: {
+        type: [],
     }
 },{
     timestamps: true

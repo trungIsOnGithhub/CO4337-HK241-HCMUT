@@ -1,7 +1,7 @@
 import React ,{useState,useCallback,useEffect} from "react";
 import {InputField, Button, Loading, Select} from '../../components'
 import { apiRegister, apiLogin, apiForgotPassword, apiFinalRegister} from "../../apis/user";
-import { createServiceProvider } from "../../apis/ServiceProvider";
+import { apiCreateServiceProvider } from "../../apis/ServiceProvider";
 import Swal from 'sweetalert2'
 import {useNavigate, Link, useSearchParams} from 'react-router-dom'
 import path from "../../ultils/path";
@@ -33,6 +33,7 @@ const ServiceProviderRegister = () => {
         mobile: '',
         password: '',
         bussinessName: '',
+        address: '',
         province: '',
         district: '',
         ward: '',
@@ -84,6 +85,7 @@ const ServiceProviderRegister = () => {
             mobile: '',
             password: '',
             bussinessName: '',
+            address: '',
             province: '',
             district: '',
             ward: '',
@@ -134,7 +136,7 @@ const ServiceProviderRegister = () => {
                 Swal.fire('Opps!', response.mes,'error')
                 return;
             }
-            response = await createServiceProvider(payload);
+            response = await apiCreateServiceProvider(payload);
             if(!response.success){
                 Swal.fire('Opps!', response.mes,'error')
             }
@@ -280,6 +282,16 @@ const ServiceProviderRegister = () => {
                     />
                 </div>
 
+                <InputField 
+                    value= {payload.adress}
+                    setValue={setPayload}
+                    nameKey='address'
+                    type='address'
+                    invalidField={invalidField}
+                    setInvalidField={setInvalidField}
+                    fullWidth
+                />
+
                 <form onChange={locationFormOnChange} className="flex items-center gap-2">
                     <Select
                     label = 'Province'
@@ -329,7 +341,7 @@ const ServiceProviderRegister = () => {
                     fullWidth
                     />
                 </form>
-                
+
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 p-4 rounded mt-5" onClick={() => {setIsInTimeForm(prevState => { setIsInTimeForm(!prevState); });}}>
                     { isInTimeForm ? 'Close Time Select' : 'Open Time Select' }
                 </button>

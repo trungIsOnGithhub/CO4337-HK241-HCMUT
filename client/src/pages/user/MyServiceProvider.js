@@ -5,13 +5,14 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import avatar from '../../assets/avatarDefault.png'
-import { apiUpdateCurrent } from 'apis'
+import { apiUpdateCurrentServiceProvider, apiGetServiceProviderById } from 'apis'
 import { getCurrent } from 'store/user/asyncAction'
 import { toast } from 'react-toastify'
 import { getBase64 } from 'ultils/helper'
 import { useSearchParams } from 'react-router-dom'
 import withBaseComponent from 'hocs/withBaseComponent'
 import {InputField, Loading} from '../../components'
+import Swal from "sweetalert2";
 
 const MyServiceProvider = ({navigate, dispatch}) => {
   const [previewImage, setPreviewImage] = useState('')
@@ -19,44 +20,66 @@ const MyServiceProvider = ({navigate, dispatch}) => {
   const {register, formState:{errors, isDirty}, handleSubmit, reset, watch} = useForm()
   const {current} = useSelector(state => state.user)
   const [params] = useSearchParams()
+  const [currentProvider, setCurrentProvider] = useState({})
 
   const daysInWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-  
-  const handleUpdateInfo = async(data)=>{
-    // const formData = new FormData()
-    // if(data.avatar.length > 0){
-    //   formData.append('avatar', data.avatar[0])
-    // }
-    // delete data.avatar
 
-    // for(let i of Object.entries(data)){
-    //   formData.append(i[0],i[1])
-    // }
-
-    // const response = await apiUpdateCurrent(formData)
-    // if(response.success){
-    //   dispatch(getCurrent())
-    //   toast.success(response.mes)
-    //   if(params?.get('redirect')){
-    //     navigate(params.get('redirect'))
-    //   }
-    // }
-    // else{
-    //   toast.error(response.mes)
-    // }
-  }
-  useEffect(() => {
-    // reset({
-    //   firstName: current?.firstName,
-    //   lastName: current?.lastName,
-    //   email: current?.email,
-    //   mobile: current?.mobile,
-    //   avatar: current?.avatar,
-    //   address: current?.address
-    // })
+  const currentProviderEffectHanlder = async () => {
+    console.log(current);
+    if (!current?.provider_id) {
+      Swal.fire('Oops!', 'Cannot Specify Current User Provider', 'error');
+      return;
+    }
+    const response = await apiGetServiceProviderById(current.provider_id)
+    if (!response?.success) {
+      Swal.fire('Oops!', response.mes, 'error');
+      return;
+    }
+    // console.log('+++++', response.payload);
+    setCurrentProvider(response.payload);
+    reset({
+      bussinessName: response.payload?.bussinessName,
+      province: response.payload?.province,
+      district: response.payload?.district,
+      ward: response.payload?.district,
+      phone: response.payload?.phone,
+      address: response.payload?.address,
+    })
     // setPreviewImage(current?.avatar)
 
-    console.log('hlkjkljlk', current);
+    // console.log('hlkjkljlk', current);
+  }
+
+  const handleUpdateInfo = async(data)=>{
+    if (!current?.provider_id) {
+      Swal.fire('Oops!', 'Cannot Specify Current User Provider', 'error');
+      return;
+    }
+    const formData = new FormData()
+    if(data && data.avatar && data.avatar.length > 0){
+      formData.append('avatar', data.avatar[0])
+    }
+    delete data.avatar
+
+    console.log('----------', data)
+
+    for(let i of Object.entries(data)){
+      formData.append(i[0],i[1])
+    }
+
+    console.log('##########', formData)
+
+    const response = await apiUpdateCurrentServiceProvider(current.provider_id, data)
+    if(response.success){
+      dispatch(getCurrent())
+      toast.success(response.mes)
+    }
+    else{
+      toast.error(response.mes)
+    }
+  }
+  useEffect(() => {
+    currentProviderEffectHanlder();
   }, [current])
 
   const handlePreviewAvatar = async(file) => {
@@ -64,7 +87,6 @@ const MyServiceProvider = ({navigate, dispatch}) => {
     setPreviewImage(prev => (base64Thumb))
     console.log(previewImage)
   }
-
 
   useEffect(() => {
     if(watch('avatar') instanceof FileList && watch('avatar').length > 0) handlePreviewAvatar(watch('avatar')[0])
@@ -75,12 +97,14 @@ const MyServiceProvider = ({navigate, dispatch}) => {
     <div className='w-full relative px-4'>
       <header className='text-3xl font-semibold py-4 border-b border-b-gray-200'>My Service Provider</header>
       <form onSubmit={handleSubmit(handleUpdateInfo)} className='w-3/5 mx-auto py-8 flex flex-col gap-4'>
-        <div className='flex flex-col gap-2'>
-          <span className='font-medium'>Uploaded Images:</span>
-          {/* <label htmlFor='avatar'>
-          <img src={previewImage||avatar} alt='avatar' className='cursor-pointer w-[300px] h-[300px] ml-8 object-cover border-gray-500 border-4'></img>
-          </label>
-          <input type='file' id='avatar' {...register('avatar')} hidden></input> */}
+        <span className='font-medium'>Uploaded Images: {currentProvider.images.length}</span>
+        <div className='flex gap-2'>
+          {currentProvider.images.length > 0 &&
+          currentProvider.images.map(image => {
+            return <img src={image} alt='avatar' className='cursor-pointer w-[200px] h-[200px] ml-8 object-cover border-gray-500 border-4'></img>
+          })}
+          
+          {/* <input type='file' id='avatar' {...register('avatar')} hidden></input> */}
         </div>
         <InputForm 
           label = 'Bussiness Name'
@@ -99,18 +123,21 @@ const MyServiceProvider = ({navigate, dispatch}) => {
           validate = {{
             required: 'Need fill this field'
           }}
+          disabled={true}
         />
         <InputForm 
           label = 'District'
           register={register}
           errors={errors}
           id = 'district'
+          disabled={true}
         />
         <InputForm 
           label = 'Ward'
           register={register}
           errors={errors}
           id = 'ward'
+          disabled={true}
         />
         <InputForm 
           label = 'Phone'
@@ -167,7 +194,7 @@ const MyServiceProvider = ({navigate, dispatch}) => {
             Created At
           </span>
           <span className='font-medium'>
-            {moment(current?.createdAt).fromNow()}                   
+            {moment(currentProvider?.createdAt).fromNow()}                   
           </span>
         </div>
 

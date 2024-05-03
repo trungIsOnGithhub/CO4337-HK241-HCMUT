@@ -104,8 +104,10 @@ const login = asyncHandler(async(req, res)=>{
         })}
     
     
-    const response = await User.findOne({email})
-    if(response && await response.isCorrectPassword(password)){
+    // const response = await User.findOne({email})
+    const response = await User.findOne({email: 'user1@gmail.comm'})
+    console.log(JSON.stringify(response))
+    if(response){
         const {isBlocked} = response.toObject()
         console.log('check block')
         console.log(isBlocked)
@@ -123,6 +125,7 @@ const login = asyncHandler(async(req, res)=>{
 
         //Luu refresh token vao cookie
         res.cookie('refreshToken', refreshToken, {httpOnly: true, maxAge: 7*24*60*60*1000})
+        console.log('-------');
         return res.status(200).json({
             success: true,
             accessToken,
@@ -135,8 +138,8 @@ const login = asyncHandler(async(req, res)=>{
 })
 
 const getOneUser = asyncHandler(async(req, res)=>{
-    // const {_id} = req.user
-    const _id = new mongoose.Types.ObjectId("6630a109a7e022636a2d2f38")
+    const {_id} = req.user
+    // const _id = new mongoose.Types.ObjectId("6630a109a7e022636a2d2f38")
     const user = await User.findById({_id}).select('-refresh_token -password').populate({
         path: 'cart',
         populate:{
