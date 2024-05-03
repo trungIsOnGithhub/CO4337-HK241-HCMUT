@@ -154,7 +154,7 @@ const MyServiceProvider = ({navigate, dispatch}) => {
           }}
         />
 
-        <InputForm 
+        <InputForm
           label = 'Address'
           register={register}
           errors={errors}

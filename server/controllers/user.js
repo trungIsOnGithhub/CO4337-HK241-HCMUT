@@ -30,8 +30,15 @@ const mongoose = require('mongoose');
 // })
 
 const register = asyncHandler(async(req, res) => {
-
     const {email, password, firstName, lastName, mobile} = req.body
+
+    if(req.body?.role && req.body.role !== 202 && req.body.role !== 1411) {
+        return res.status(400).json({
+            success: false,
+            mes: "Bad Request User Role"
+        })
+    }
+
     if(!email || !password || !firstName || !lastName || !mobile){
         return res.status(400).json({
             success: false,

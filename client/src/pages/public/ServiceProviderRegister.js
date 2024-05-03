@@ -72,9 +72,6 @@ const ServiceProviderRegister = () => {
     useEffect(() => {
         resetPayload()
     }, [isRegister])
-    // useEffect(() => {
-    //     console.log('joijiji : ' + JSON.stringify(timeOpenPayload))
-    // }, [timeOpenPayload])
     
 
     const resetPayload = () =>{
@@ -106,26 +103,21 @@ const ServiceProviderRegister = () => {
     //SUBMIT
     const handleSubmit = useCallback(async() =>{
         const {firstName, lastName, mobile, ...data} = payload
-        console.log('===> ', timeOpenPayload);
+        // console.log('===> ', timeOpenPayload);
+
         payload.time = {}
         for (const day of daysInWeek) {
             const startKey = `start${day}`
             const endKey = `end${day}`
             payload.time[startKey] = timeOpenPayload[startKey]
             payload.time[endKey] = timeOpenPayload[endKey]
-            // if ((''+timeOpenPayload[startKey]) && (''+timeOpenPayload[endKey])) {
-                // console.log('---->' + timeOpenPayload[startKey])
-                // console.log('}||}}| ' + typeof(timeOpenPayload[startKey]))
-                // payload.time.startKey = timeOpenPayload[startKey]
-                // payload.time.endKey = timeOpenPayload[endKey]
-            // }
         }
 
         const invalid = validate(payload, setInvalidField)
         // const invalid = 0;
         if(invalid===0)
         {
-
+            payload.role = 1411;
             dispatch(showModal({isShowModal: true, modalChildren:<Loading />}))
             let response = await apiRegister(payload)
             dispatch(showModal({isShowModal: false, modalChildren:null}))
@@ -144,7 +136,7 @@ const ServiceProviderRegister = () => {
         else {
             Swal.fire('Opps!', 'Invalid Input Form','Please Check Yout Input')
         }
-    },[payload, isRegister])
+    },[payload, timeOpenPayload, isRegister])
 
     const finalRegister = async() => {
         const res = await apiFinalRegister(token)
@@ -265,7 +257,7 @@ const ServiceProviderRegister = () => {
                     fullWidth
                 />
 
-                <div className="flex items-center gap-6">
+                {/* <div className="flex items-center gap-6">
                     <InputField 
                         value= {payload.homeurl}
                         setValue={setPayload}
@@ -280,7 +272,7 @@ const ServiceProviderRegister = () => {
                         invalidField={invalidField}
                         setInvalidField={setInvalidField}
                     />
-                </div>
+                </div> */}
 
                 <InputField 
                     value= {payload.adress}
