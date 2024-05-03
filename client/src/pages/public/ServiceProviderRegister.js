@@ -37,8 +37,6 @@ const ServiceProviderRegister = () => {
         province: '',
         district: '',
         ward: '',
-        homeurl: '',
-        phone: '',
     })
     const [timeOpenPayload, setTimeOpenPayload] = useState({
         startmonday: '',endmonday: '',
@@ -86,8 +84,6 @@ const ServiceProviderRegister = () => {
             province: '',
             district: '',
             ward: '',
-            homeurl: '',
-            phone: '',
         })
         setTimeOpenPayload({
             startmonday: '',endmonday: '',
@@ -134,7 +130,7 @@ const ServiceProviderRegister = () => {
             }
         }
         else {
-            Swal.fire('Opps!', 'Invalid Input Form','Please Check Yout Input')
+            Swal.fire('Opps!', 'Invalid Input Form','error')
         }
     },[payload, timeOpenPayload, isRegister])
 

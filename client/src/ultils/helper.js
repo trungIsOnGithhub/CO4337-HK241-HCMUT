@@ -23,8 +23,8 @@ export const validate = (payload, setInvalidField) => {
     let invalids = 0
     const formatPayload = Object.entries(payload)
     for(let array of formatPayload){
-        // console.log('=====',array[0])
-        // console.log(';;;;;;',typeof array[1])
+        console.log('=====',array[0])
+        console.log(';;;;;;',typeof array[1])
         if(typeof(array[1]) === 'string' && array[1].trim() === ""){
             console.log('plus',array[0])
             invalids ++

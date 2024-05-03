@@ -30,13 +30,17 @@ const mongoose = require('mongoose');
 // })
 
 const register = asyncHandler(async(req, res) => {
-    const {email, password, firstName, lastName, mobile} = req.body
+    const {email, password, firstName, lastName, mobile, role} = req.body
 
     if(req.body?.role && req.body.role !== 202 && req.body.role !== 1411) {
         return res.status(400).json({
             success: false,
             mes: "Bad Request User Role"
         })
+    }
+
+    if (!role) {
+        role = 202;
     }
 
     if(!email || !password || !firstName || !lastName || !mobile){
@@ -53,7 +57,7 @@ const register = asyncHandler(async(req, res) => {
         const token = makeToken()
         const email_edit = btoa(email) + '@' + token
         const newUser = await User.create({
-            email:email_edit,password,firstName,lastName,mobile
+            email:email_edit,password,firstName,lastName,mobile,role
         })
         // res.cookie('dataregister', {...req.body, token}, {httpOnly: true, maxAge: 15*60*1000})
 
