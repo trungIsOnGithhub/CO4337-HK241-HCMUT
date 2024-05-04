@@ -22,6 +22,7 @@ const AddService = () => {
     thumb: null,
     images: []
   })
+  const {current} = useSelector(state => state.user)
 
   const [payload, setPayload] = useState({
     description: ''
@@ -71,6 +72,7 @@ const AddService = () => {
       if(selectedCategory){
         finalPayload.category = selectedCategory
       }
+      finalPayload.provider_id = current.provider_id;
       console.log(finalPayload)
       const formData = new FormData()
       for(let i of Object.entries(finalPayload)){
@@ -85,7 +87,7 @@ const AddService = () => {
         for (let staff of finalPayload.assigned_staff) formData.append('assigned_staff', staff)
       }
       for (var pair of formData.entries()) {
-        console.log(pair[0]+ ', ' + typeof pair[1]); 
+        console.log(pair[0]+ ', ' + pair[1]); 
       }
 
       const response = await apiAddService(formData)

@@ -50,6 +50,9 @@ var userSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    provider_id: {
+        type: mongoose.Types.ObjectId
+    },
     refresh_token:{
         type: String,
     },

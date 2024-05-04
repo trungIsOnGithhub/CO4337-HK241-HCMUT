@@ -14,7 +14,7 @@ const AddStaff = () => {
 
   const dispatch = useDispatch()
   const {register, formState:{errors}, reset, handleSubmit, watch} = useForm()
-
+  const {current} = useSelector(state => state.user)
 
   const [preview, setPreview] = useState({
     avatar: null
@@ -40,6 +40,7 @@ const AddStaff = () => {
 
 
   const handleAddStaff = async(data) => {
+    data.provider_id = current.provider_id;
     console.log(data)
     const formData = new FormData()
     for(let i of Object.entries(data)){
