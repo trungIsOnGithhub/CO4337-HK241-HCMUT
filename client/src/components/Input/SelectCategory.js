@@ -5,11 +5,10 @@ import Select from 'react-select'
 const SelectCategory = ({label, options, register, errors, id, validate, style, fullWidth, text, values, onChangee}) => {
   // Tạo một hàm handleChange để xử lý thay đổi giá trị của select
   console.log(values)
-  const [selectedOption, setSelectedOption] = useState(null);
+  console.log(options?.find(el => el.label === values))
 
   const handleChange = (aa) => {
     console.log(aa)
-    setSelectedOption(aa);
     onChangee(aa?.label);
   };
 
@@ -38,7 +37,7 @@ const SelectCategory = ({label, options, register, errors, id, validate, style, 
     <div className={clsx('flex flex-col gap-3 z-50', style)}>
       {label && <label htmlFor={id}>{label}</label>}
       <Select 
-        value={values ? selectedOption : null}
+        value={values ? options.find(el => el.label === values) : null}
         onChange={(e)=>handleChange(e)}
         options={options}
         styles={colourStyles}
