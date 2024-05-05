@@ -13,7 +13,7 @@ const asyncHandler = require('express-async-handler')
 const getAllCategory = asyncHandler(async(req, res)=>{
     console.log('call api ---')
     const response = await ServiceCategory.find()
-    console.log(response)
+    // console.log(response)
     return res.status(200).json({
         success: response ? true : false,
         serviceCategories: response ? response : "Cannot get all categories"

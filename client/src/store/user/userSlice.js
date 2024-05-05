@@ -48,24 +48,24 @@ export const userSlice = createSlice({
         });
     
         // // Khi thực hiện action login thành công (Promise fulfilled)
-        // builder.addCase(actions.getCurrent.fulfilled, (state, action) => {
-        //   // console.log('call get current')
-        //   // Tắt trạng thái loading, lưu thông tin user vào store
-        //   state.isLoading = false;
-        //   state.current = action.payload;
-        //   state.currentCart = action.payload?.cart;
-        //   state.isLogin = true;
-        // });
+        builder.addCase(actions.getCurrent.fulfilled, (state, action) => {
+          // console.log('call get current')
+          // Tắt trạng thái loading, lưu thông tin user vào store
+          state.isLoading = false;
+          state.current = action.payload;
+          state.currentCart = action.payload?.cart;
+          state.isLogin = true;
+        });
     
         // // Khi thực hiện action login thất bại (Promise rejected)
-        // builder.addCase(actions.getCurrent.rejected, (state, action) => {
-        //   // Tắt trạng thái loading, lưu thông báo lỗi vào store
-        //   state.isLoading = false;
-        //   state.current = null;
-        //   state.isLogin = false;
-        //   state.token = null;
-        //   state.mes = 'Your session has expired, please log in again!'
-        // });
+        builder.addCase(actions.getCurrent.rejected, (state, action) => {
+          // Tắt trạng thái loading, lưu thông báo lỗi vào store
+          state.isLoading = false;
+          state.current = null;
+          state.isLogin = false;
+          state.token = null;
+          state.mes = 'Your session has expired, please log in again!'
+        });
       },
 })
 

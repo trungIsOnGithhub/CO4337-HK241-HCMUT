@@ -94,18 +94,18 @@ const Product = ({productData, isNew, normal, navigate, dispatch, location, isNo
           {/* {isShowOption && <div className='absolute bottom-[-10px] left-0 right-0 flex justify-center gap-2 animate-slide-top'>
             {
               current?.wishlist?.some(el => el._id === productData._id) ? 
-              <span title='Wishlist' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Heart')}}><SelectOption icon={<FaHeart color='#ff1493'/>}/></span>
+              // <span title='Wishlist' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Heart')}}><SelectOption icon={<FaHeart color='#ff1493'/>}/></span>
               : */}
-              <span title='Add to WishList' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Heart')}}><SelectOption icon={<FaHeart />}/></span>
+              {/* <span title='Add to WishList' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Heart')}}><SelectOption icon={<FaHeart />}/></span> */}
             {/* } */}
             {/* {
               current?.cart?.some(el => el?.product?._id === productData._id) ? 
               <span title='Added'><SelectOption icon={<BsCartCheckFill color='green' />}/></span>
               : */}
-              <span title='Add to Cart' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Cart')}}><SelectOption icon={<FaCartPlus />}/></span>
+              {/* <span title='Add to Cart' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Cart')}}><SelectOption icon={<FaCartPlus />}/></span> */}
             {/* } */}
-            <span title='Quick View' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Eye')}}><SelectOption icon={<FaEye />}/></span>
-          </div>}
+            {/* <span title='Quick View' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Eye')}}><SelectOption icon={<FaEye />}/></span> */}
+          {/* </div> */}
           <img src={productData?.thumb||'https://nayemdevs.com/wp-content/uploads/2020/03/default-product-image.png'} 
           className='w-[243px] h-[243px] object-cover'/>
           {!normal && <img src={isNew? label : label_trend} className={`absolute top-[-12px] left-[-25px] ${isNew ? 'w-[70px]' : 'w-[100px]'} h-[25px] object-cover`}></img>&&
@@ -115,7 +115,8 @@ const Product = ({productData, isNew, normal, navigate, dispatch, location, isNo
           <span className='flex h-4'>{renderStarfromNumber(4)?.map((el,index)=>(
             <span key={index}>{el}</span>
           ))}</span>
-          <span className='line-clamp-1'>{productData?.title}</span>
+          <span className='line-clamp-1 text-base font-semibold'>{productData?.name}</span>
+          <span className='font-bold text-sm'>{productData?.duration} minutes</span>
           <span>{`${formatPrice(productData?.price)} VND`}</span>
           <span
             style={{

@@ -13,3 +13,7 @@ export const apiGetServiceProviderById = (provider_id) => axios({
     url: `/service_provider/${provider_id}`,
     method: 'get'
 })
+export const apiGetServiceProviders = (provider_id) => axios({
+    url: `/service_provider/`,
+    method: 'get'
+})

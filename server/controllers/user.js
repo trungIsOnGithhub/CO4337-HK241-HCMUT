@@ -57,7 +57,7 @@ const register = asyncHandler(async(req, res) => {
         const token = makeToken()
         // const email_edit = btoa(email) + '@' + token
         const newUser = await User.create({
-            email:email_edit,password,firstName,lastName,mobile,role
+            email,password,firstName,lastName,mobile,role
         })
         // res.cookie('dataregister', {...req.body, token}, {httpOnly: true, maxAge: 15*60*1000})
 
@@ -66,7 +66,7 @@ const register = asyncHandler(async(req, res) => {
             // await sendMail({email, html, subject: 'Complete Registration'})
         }
         setTimeout(async()=>{
-            await User.deleteOne({email: email_edit})
+            await User.deleteOne({email})
         },[15*60*1000])
         return res.json({
             success: newUser ? true : false,
@@ -113,10 +113,10 @@ const login = asyncHandler(async(req, res)=>{
             success: false,
             mes: "Missing input"
         })}
-    
+    console.log('-----')
     
     // const response = await User.findOne({email})
-    const response = await User.findOne({email: 'user1@gmail.comm'})
+    const response = await User.findOne({email})
     console.log(JSON.stringify(response))
     if(response){
         const {isBlocked} = response.toObject()

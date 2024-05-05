@@ -13,13 +13,11 @@ const addStaff = asyncHandler(async(req, res)=>{
     if(req.file){
         data.avatar = req.file.path
     }
-    else{
-        const response = await Staff.create(data)
-        return res.status(200).json({
-            success: response ? true : false,
-            mes: response ? 'Created successfully' : "Cannot create new staff"
-        })
-    }
+    const response = await Staff.create(data)
+    return res.status(200).json({
+        success: response ? true : false,
+        mes: response ? 'Created successfully' : "Cannot create new staff"
+    })
 })
 
 // get all staffs

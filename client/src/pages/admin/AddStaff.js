@@ -56,7 +56,6 @@ const AddStaff = () => {
       toast.error('No Provider Specifed With Current User!!');
       return;
     }
-    formData.append('provider_id', current.provider_id)
     if(data.avatar) formData.append('avatar', data.avatar[0])
     // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
     console.log(formData)

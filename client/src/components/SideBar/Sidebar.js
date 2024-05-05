@@ -5,10 +5,11 @@ import {createSlug} from "../../ultils/helper"
 import {useSelector} from 'react-redux'
 const Sidebar = () => {
     const {categories} = useSelector (state => state.app)
+    console.log('-dasdads--', categories)
     // console.log(category)
     return (
         <div className="flex flex-col border">
-            <span className="p-2 text-center text-red-600 text-semibold">Service Category</span>
+            <span className="p-2 text-center text-white bg-red-600 text-semibold">Service Category</span>
             {categories?.map(el =>(
                 <NavLink
                     key={createSlug(el.title)}
