@@ -1,5 +1,5 @@
 import React, {useState, useEffect, memo} from 'react' 
-import {ProductCard} from '../index'
+import {Product, ProductCard} from '../index'
 import {apiGetProduct} from 'apis'
 import { apiGetServicePublic } from 'apis/service'
 const FeaturedProduct = () => {
@@ -22,6 +22,7 @@ const FeaturedProduct = () => {
                 <ProductCard 
                     provider={el}
                 />
+
             ))}
         </div>
         <div className='grid grid-cols-4 grid-rows-2 gap-4'>

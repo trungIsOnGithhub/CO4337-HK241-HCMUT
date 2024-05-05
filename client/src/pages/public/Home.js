@@ -1,5 +1,5 @@
 import React from "react";
-import {BestSeller, Sidebar, Banner, DealDaily, FeaturedProduct, Product, CustomSlider} from '../../components' 
+import {BestSeller, Sidebar, Banner, DealDaily, FeaturedProduct, Product, CustomSlider, HomeSearchBar} from '../../components' 
 import { useSelector } from "react-redux";
 import icons from '../../ultils/icon'
 import withBaseComponent from "hocs/withBaseComponent";
@@ -18,8 +18,9 @@ const Home = ({navigate}) => {
                 <Sidebar />
                 <DealDaily></DealDaily>
             </div>
-            <div className="flex flex-col gap-5 pl-5 w-[75%] flex-auto ">   
+            <div className="flex flex-col gap-5 pl-5 w-[75%] flex-auto ">
                 <Banner />
+                <HomeSearchBar />
                 <BestSeller />
             </div>
         </div>

@@ -18,7 +18,7 @@ import { createSearchParams } from 'react-router-dom'
 import clsx from 'clsx'
 const {FaEye, FaHeart, FaCartPlus, BsCartCheckFill} = icons
 
-const Product = ({productData, isNew, normal, navigate, dispatch, location, isNotBorder}) => {
+const Product = ({productData, isNew, normal, navigate, dispatch, location, isNotBorder, fullWidth = false}) => {
   const [isShowOption, setIsShowOption] = useState(false)
   const {current} = useSelector(state => state.user)
 
@@ -77,7 +77,7 @@ const Product = ({productData, isNew, normal, navigate, dispatch, location, isNo
   } // handleClickOptions
 
   return (
-    <div className='w-full text-base px-[10px]'>
+    <div className={'text-base px-[10px]' + (fullWidth ? 'w-full' : '')}>
       <div 
         onClick={()=> navigate(`/${productData?.category?.toLowerCase()}/${productData?._id}/${productData.title}`)}
         className={isNotBorder ? 'w-full p-[15px] flex flex-col items-center cursor-pointer' : 'w-full border p-[15px] flex flex-col items-center cursor-pointer'} 
