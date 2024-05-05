@@ -1,0 +1,109 @@
+[{
+  "_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "bussinessName": "Van Long Gym & Fitness",
+  "province": "Hồ Chí Minh",
+  "district": "Tân Bình",
+  "ward": "Tân Bình",
+  "address": "3rd Floor, Peak Building 128 Le Van Loc",
+  "time": {
+    "startmonday": "18:48",
+    "endmonday": "18:50",
+    "starttuesday": "18:48",
+    "endtuesday": "18:50",
+    "startwednesday": "",
+    "endwednesday": "",
+    "startthursday": "",
+    "endthursday": "",
+    "startfriday": "",
+    "endfriday": "",
+    "startsaturday": "21:50",
+    "endsaturday": "21:53",
+    "startsunday": "09:52",
+    "endsunday": "18:53"
+  },
+  "images": [
+    "https://cuonggym.com/wp-content/uploads/2017/11/Mo-hinh-phong-tap-gym-cao-cap-678x381.jpg"
+  ],
+  "createdAt": {
+    "$date": "2024-05-05T11:47:39.831Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-05T12:18:45.497Z"
+  },
+  "__v": 0,
+  "phone": "0984658722"
+},
+{
+  "_id": {
+    "$oid": "6637808fe479e46dab03831a"
+  },
+  "bussinessName": "Le Lan Beauty Salon",
+  "province": "Vĩnh Phúc",
+  "district": "Tam Đảo",
+  "ward": "Tam Quan",
+  "address": "123/4 Nguyen Thai Hoc",
+  "time": {
+    "startmonday": "07:50",
+    "endmonday": "19:50",
+    "starttuesday": "07:50",
+    "endtuesday": "19:50",
+    "startwednesday": "07:50",
+    "endwednesday": "19:50",
+    "startthursday": "07:50",
+    "endthursday": "07:50",
+    "startfriday": "07:50",
+    "endfriday": "19:50",
+    "startsaturday": "07:50",
+    "endsaturday": "19:50",
+    "startsunday": "",
+    "endsunday": ""
+  },
+  "images": [
+    "https://easysalon.vn/wp-content/uploads/2020/09/hinh-anh-trang-tri-spa-2.jpg"
+  ],
+  "createdAt": {
+    "$date": "2024-05-05T12:50:23.724Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-05T12:50:23.724Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66378581e479e46dab0383bb"
+  },
+  "bussinessName": "Kim Barber Shop",
+  "province": "Hà Nội",
+  "district": "Tây Hồ",
+  "ward": "Thụy Khuê",
+  "address": "129 Hoang Hoa Tham",
+  "time": {
+    "startmonday": "08:10",
+    "endmonday": "20:10",
+    "starttuesday": "08:10",
+    "endtuesday": "20:10",
+    "startwednesday": "08:10",
+    "endwednesday": "20:10",
+    "startthursday": "08:10",
+    "endthursday": "20:10",
+    "startfriday": "08:10",
+    "endfriday": "20:10",
+    "startsaturday": "08:10",
+    "endsaturday": "20:10",
+    "startsunday": "21:10",
+    "endsunday": "17:10"
+  },
+  "images": [
+    "https://cdn.tgdd.vn/Files/2023/01/12/1502893/top-10-tiem-cat-toc-nam-cuc-hot-dep-nhat-o-ha-noi-202301122354278031.jpg"
+  ],
+  "createdAt": {
+    "$date": "2024-05-05T13:11:29.345Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-05T13:11:29.345Z"
+  },
+  "__v": 0
+}]

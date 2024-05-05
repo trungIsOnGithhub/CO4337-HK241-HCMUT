@@ -1,0 +1,163 @@
+[{
+  "_id": {
+    "$oid": "66377b05e479e46dab038112"
+  },
+  "name": "Cardio Class For Advanced Member",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714912006/ecommerce/yhgxp0susa4ubhcpsudn.jpg",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714912005/ecommerce/jcgozcltvl7mubiizgqm.jpg"
+  ],
+  "description": [
+    "<p>High Intensity Workout to boost your energy after long day work.</p>\r\n<p>Suitable for Advanced</p>"
+  ],
+  "price": 1050000,
+  "category": "Gym",
+  "duration": 60,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "66377a64e479e46dab038104"
+    },
+    {
+      "$oid": "66377a8ce479e46dab038106"
+    }
+  ],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-05-05T12:26:45.135Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-05T12:26:45.135Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66377e7ee479e46dab0382fa"
+  },
+  "name": "Yoga Class For Beginner",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714912894/ecommerce/o770lsinlsnvjazpyedb.jpg",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714912894/ecommerce/uwz4dsugfbquub80mrvo.jpg"
+  ],
+  "description": [
+    "<p>Relax and Soothe your muscle with our Yoga Professionals.</p>\r\n<p>Suitable for All Members</p>"
+  ],
+  "price": 880000,
+  "category": "Yoga",
+  "duration": 50,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "66377a8ce479e46dab038106"
+    }
+  ],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-05-05T12:41:34.013Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-05T12:41:34.013Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "663781cce479e46dab038339"
+  },
+  "name": "Herbal Massage and Relax",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714913741/ecommerce/teqiwdtavtb6q1gust0m.jpg",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714913741/ecommerce/nyfw77oxcf8txwddropi.jpg"
+  ],
+  "description": [
+    "<p>Fresh Herb and skillful practioner will bring you best experience</p>"
+  ],
+  "price": 690000,
+  "category": "Massage",
+  "duration": 45,
+  "provider_id": {
+    "$oid": "6637808fe479e46dab03831a"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "663780fde479e46dab03832c"
+    }
+  ],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-05-05T12:55:40.824Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-05T12:55:40.824Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66378250e479e46dab03833b"
+  },
+  "name": "Sauna & Steam Bath",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714913873/ecommerce/we2ah10ddd7d2vjbohxs.jpg",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714913872/ecommerce/irj2zvjtuiso73y38h0s.jpg"
+  ],
+  "description": [
+    "<p>Sauna and Steam help you refresh after long day of work.</p>"
+  ],
+  "price": 500000,
+  "category": "Massage",
+  "duration": 30,
+  "provider_id": {
+    "$oid": "6637808fe479e46dab03831a"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "66378139e479e46dab03832e"
+    }
+  ],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-05-05T12:57:52.102Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-05T12:57:52.102Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6637863ce479e46dab0383d2"
+  },
+  "name": "Haircut - washing and styling",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714914877/ecommerce/ogxplhbnygulw31p0uzr.jpg",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714914877/ecommerce/n0pjaqys21a325srzfwr.jpg"
+  ],
+  "description": [
+    "<p>Get a fresh cut and nice look only after 30 minutes</p>"
+  ],
+  "price": 1000000,
+  "category": "Barber",
+  "duration": 30,
+  "provider_id": {
+    "$oid": "66378581e479e46dab0383bb"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "663785bde479e46dab0383cd"
+    }
+  ],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-05-05T13:14:36.312Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-05T13:14:36.312Z"
+  },
+  "__v": 0
+}]

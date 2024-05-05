@@ -1,0 +1,182 @@
+[{
+  "_id": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "firstName": "Long",
+  "lastName": "Nguyen Van",
+  "email": "nvlong@outlook.com",
+  "mobile": "0980234568",
+  "password": "$2b$10$7C..IuefFhV2SAo1yvvcQeK/xAD1UZgzQVtHTlCCK1fDs.XW4qsEq",
+  "role": "1411",
+  "wishlist": [],
+  "isBlocked": false,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "cart": [],
+  "createdAt": {
+    "$date": "2024-05-05T11:47:39.759Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-05T12:17:18.810Z"
+  },
+  "__v": 0,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjM3NzFkYjI0NjNhMzNjNmYzYTM5Y2YiLCJpYXQiOjE3MTQ5MTE0MzgsImV4cCI6MTcxNTUxNjIzOH0.G6n8P-LilaR3lVbaffrvF5t2DuDpMyz0wgeRvNoKsUw"
+},
+{
+  "_id": {
+    "$oid": "6613f975bc65bac9278a7b50"
+  },
+  "firstName": "viễnn",
+  "lastName": "tríii",
+  "email": "user1@gmail.comm",
+  "mobile": "0373015428",
+  "password": "$2b$10$07z2wWGz2NbD9ar7Zqg3NOOmQLLDjCMTDzt2.4qiNxCnaXhm3rSXa",
+  "role": "1411",
+  "isBlocked": false,
+  "cart": [
+    {
+      "product": {
+        "$oid": "65ff51da8bf186d3bd4e365f"
+      },
+      "quantity": 1,
+      "color": "QUITE BLACK",
+      "price": 20559237,
+      "thumb": "https://digital-world-2.myshopify.com/cdn/shop/products/u3_1024x1024.jpg?v=1491404903",
+      "title": "GOOGLE PIXEL",
+      "_id": {
+        "$oid": "6628052468edb86430db668d"
+      }
+    },
+    {
+      "product": {
+        "$oid": "65ff51da8bf186d3bd4e3662"
+      },
+      "quantity": 1,
+      "color": "DAZZLING WHITE",
+      "price": 13774664,
+      "thumb": "https://digital-world-2.myshopify.com/cdn/shop/products/ss8_1024x1024.jpg?v=1491404867",
+      "title": "SAMSUNG GALAXY TAB S 8.4 LTE",
+      "_id": {
+        "$oid": "66280aad50e56ce1af99d502"
+      }
+    },
+    {
+      "product": {
+        "$oid": "65ff51da8bf186d3bd4e3659"
+      },
+      "quantity": 1,
+      "color": "MINERAL BLACK",
+      "price": 17446889,
+      "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1713332024/ecommerce/mwj95qrf4pc4q5fkvgbd.png",
+      "title": "SONY XPERIA XA 1xxx",
+      "_id": {
+        "$oid": "66280ab550e56ce1af99d517"
+      }
+    },
+    {
+      "product": {
+        "$oid": "65ff51da8bf186d3bd4e365d"
+      },
+      "quantity": 1,
+      "color": "BLACK",
+      "price": 22153607,
+      "thumb": "https://digital-world-2.myshopify.com/cdn/shop/products/iphone_1024x1024.jpg?v=1491404827",
+      "title": "IPHONE 7",
+      "_id": {
+        "$oid": "66281cc69bf8f6c8dd867292"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2024-04-08T14:04:37.530Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-05T12:14:36.977Z"
+  },
+  "__v": 0,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjEzZjk3NWJjNjViYWM5Mjc4YTdiNTAiLCJpYXQiOjE3MTQ5MTEyNzYsImV4cCI6MTcxNTUxNjA3Nn0.w1p-G81YrFi8Ow24GvaC5BUgAt0lcVrU44iF5rWd-Ww",
+  "avatar": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1713874263/ecommerce/zvch91rx4fjsvxxkm4ry.jpg",
+  "address": "aaaaaaaaaaaaa",
+  "wishlist": [
+    {
+      "$oid": "65ff51da8bf186d3bd4e365f"
+    },
+    {
+      "$oid": "65ff51da8bf186d3bd4e3662"
+    },
+    {
+      "$oid": "65ff51da8bf186d3bd4e365d"
+    },
+    {
+      "$oid": "65ff51da8bf186d3bd4e3659"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6613f975bc65bac9278a7b52"
+  },
+  "firstName": "cc",
+  "lastName": "cc",
+  "email": "user3@gmail.com",
+  "mobile": "0123456787",
+  "password": "$2b$10$ZM6CtcwMw8KrqYbLx4FGz.Oyv8MO.9ujBXt4hcTOYi7yF7FDK5cKa",
+  "role": "202",
+  "wishlist": [],
+  "isBlocked": false,
+  "cart": [],
+  "createdAt": {
+    "$date": "2024-04-08T14:04:37.530Z"
+  },
+  "updatedAt": {
+    "$date": "2024-04-08T14:04:37.530Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6613f975bc65bac9278a7b51"
+  },
+  "firstName": "bb",
+  "lastName": "bb",
+  "email": "user2@gmail.com",
+  "mobile": "0123456788",
+  "password": "$2b$10$3vMxMcZZ.NfAbOfneJsSFO31MEAKOgeTdE9dhX95mPUYMxXmhBUHC",
+  "role": "202",
+  "wishlist": [],
+  "isBlocked": false,
+  "cart": [],
+  "createdAt": {
+    "$date": "2024-04-08T14:04:37.530Z"
+  },
+  "updatedAt": {
+    "$date": "2024-04-08T14:04:37.530Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66378581e479e46dab0383b8"
+  },
+  "firstName": "Kim",
+  "lastName": "Nguyen Minh",
+  "email": "kimminh@hcmut.edu.vn",
+  "mobile": "09080304568",
+  "password": "$2b$10$AvT/fIMBRW0R2UwvpYPXx.8Yacgr14LBjA44ep37C5kkIR.yaz5v6",
+  "role": "1411",
+  "wishlist": [],
+  "isBlocked": false,
+  "provider_id": {
+    "$oid": "66378581e479e46dab0383bb"
+  },
+  "cart": [],
+  "createdAt": {
+    "$date": "2024-05-05T13:11:29.283Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-05T13:11:45.806Z"
+  },
+  "__v": 0,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjM3ODU4MWU0NzllNDZkYWIwMzgzYjgiLCJpYXQiOjE3MTQ5MTQ3MDUsImV4cCI6MTcxNTUxOTUwNX0.Ty7xkB-iPJlA_jI4wMGKew55s1vXVL5wbXshXewtuY0"
+}]
