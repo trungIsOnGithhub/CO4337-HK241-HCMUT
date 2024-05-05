@@ -21,3 +21,9 @@ export const apiUpdateServiceByAdmin = (data, sid) => axios({
     method: 'put',
     data
 })
+
+export const apiGetServicePublic = (params) => axios({
+    url: '/service/public',
+    method: 'get',
+    params,
+})

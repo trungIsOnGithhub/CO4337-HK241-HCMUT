@@ -4,6 +4,7 @@ import {Product, CustomSlider} from '../'
 import {getNewProducts} from 'store/product/asyncAction'
 import { useDispatch, useSelector} from 'react-redux'
 import clsx from 'clsx'
+import { apiGetServicePublic } from 'apis/service'
 const tabs = [
     {
         id: 1,
@@ -23,7 +24,8 @@ const BestSeller = () => {
     const {newProducts} = useSelector(state => state.product)
     const {isShowModal} = useSelector(state => state.app)
     const fetchProduct =  async() =>{
-        const response = await apiGetProduct({sort:'-sold'})
+        const response = await apiGetServicePublic()
+        // {sort:'-sold'}
         if(response?.success){
             setBestSeller(response.products)
             setProduct(response.products)}

@@ -91,32 +91,39 @@ const Product = ({productData, isNew, normal, navigate, dispatch, location, isNo
         }}
       >
         <div className='w-full relative'>
-          {isShowOption && <div className='absolute bottom-[-10px] left-0 right-0 flex justify-center gap-2 animate-slide-top'>
+          {/* {isShowOption && <div className='absolute bottom-[-10px] left-0 right-0 flex justify-center gap-2 animate-slide-top'>
             {
               current?.wishlist?.some(el => el._id === productData._id) ? 
               <span title='Wishlist' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Heart')}}><SelectOption icon={<FaHeart color='#ff1493'/>}/></span>
-              :
+              : */}
               <span title='Add to WishList' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Heart')}}><SelectOption icon={<FaHeart />}/></span>
-            }
-            {
+            {/* } */}
+            {/* {
               current?.cart?.some(el => el?.product?._id === productData._id) ? 
               <span title='Added'><SelectOption icon={<BsCartCheckFill color='green' />}/></span>
-              :
+              : */}
               <span title='Add to Cart' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Cart')}}><SelectOption icon={<FaCartPlus />}/></span>
-            }
+            {/* } */}
             <span title='Quick View' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Eye')}}><SelectOption icon={<FaEye />}/></span>
           </div>}
           <img src={productData?.thumb||'https://nayemdevs.com/wp-content/uploads/2020/03/default-product-image.png'} 
           className='w-[243px] h-[243px] object-cover'/>
           {!normal && <img src={isNew? label : label_trend} className={`absolute top-[-12px] left-[-25px] ${isNew ? 'w-[70px]' : 'w-[100px]'} h-[25px] object-cover`}></img>&&
-          <span className='font-bold absolute top-[-12px] left-[-16px] text-white'>{isNew?'New':'Trending'}</span>}
+          <span className='font-bold absolute top-[-12px] left-[-16px] text-red-600'>{isNew?'New':'Trending'}</span>}
         </div>
         <div className='flex flex-col mt-[15px] items-start gap-1 w-full'>
-          <span className='flex h-4'>{renderStarfromNumber(productData?.totalRatings)?.map((el,index)=>(
+          <span className='flex h-4'>{renderStarfromNumber(4)?.map((el,index)=>(
             <span key={index}>{el}</span>
           ))}</span>
           <span className='line-clamp-1'>{productData?.title}</span>
           <span>{`${formatPrice(productData?.price)} VND`}</span>
+          <span
+            style={{
+              textAlign: 'right',
+              color: 'blue',
+              width: '100%'
+            }}
+          >{`${productData?.category}`}</span>
         </div>
       </div>
     </div>

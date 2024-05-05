@@ -24,6 +24,7 @@ router.put('/:sid', [verifyAccessToken, isAdmin],uploader.fields([
         name: 'thumb',
         maxCount: 1
     }]), ctrls.updateServiceByAdmin)
+router.get('/', ctrls.getAllServicesPublic)
 module.exports = router
 
 

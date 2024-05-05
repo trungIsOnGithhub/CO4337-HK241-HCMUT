@@ -97,9 +97,9 @@ const MyServiceProvider = ({navigate, dispatch}) => {
     <div className='w-full relative px-4'>
       <header className='text-3xl font-semibold py-4 border-b border-b-gray-200'>My Service Provider</header>
       <form onSubmit={handleSubmit(handleUpdateInfo)} className='w-3/5 mx-auto py-8 flex flex-col gap-4'>
-        <span className='font-medium'>Uploaded Images: {currentProvider.images.length}</span>
+        <span className='font-medium'>Uploaded Images: {currentProvider.images?.length}</span>
         <div className='flex gap-2'>
-          {currentProvider.images.length > 0 &&
+          {currentProvider.images?.length > 0 &&
           currentProvider.images.map(image => {
             return <img src={image} alt='avatar' className='cursor-pointer w-[200px] h-[200px] ml-8 object-cover border-gray-500 border-4'></img>
           })}
