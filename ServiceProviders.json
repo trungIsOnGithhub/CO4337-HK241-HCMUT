@@ -1,0 +1,18 @@
+{
+    "bussinessName": "ABC Baber Shop",
+    "province": "Hà Nội",
+    "district": "Tây Hồ",
+    "ward": "Thụy Khê",
+    "address": "194 Hoàng Hoa Thám",
+    "phone": "0251895772",
+    "time": {
+        "startmonday":"09:00", "endmonday":"19:30",
+        "starttuesday":"09:00", "endtuesday":"19:30",
+        "startwednesday":"09:00", "endwednesday":"19:30",
+        "startthursday":"09:00", "endthursday":"19:30",
+        "startfriday":"09:00", "endfriday":"19:30",
+        "startsaturday":"09:00", "endsaturday":"19:30",
+        "startsunday":"09:00", "endsunday":"19:30"
+    },
+    "images": ["https://cdn.tgdd.vn/Files/2023/01/12/1502893/top-10-tiem-cat-toc-nam-cuc-hot-dep-nhat-o-ha-noi-202301122354278031.jpg"]
+}
