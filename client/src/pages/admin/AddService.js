@@ -72,6 +72,7 @@ const AddService = () => {
     const invalid = validate(payload, setInvalidField)
     if(invalid === 0){
       const finalPayload = {...data,...payload,}
+      finalPayload.provider_id = current.provider_id
       if(selectedStaff?.length > 0){
         finalPayload.assigned_staff = selectedStaff
       }

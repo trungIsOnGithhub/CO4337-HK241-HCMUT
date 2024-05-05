@@ -7,6 +7,7 @@ import moment, { min } from 'moment/moment'
 import { useSelector } from 'react-redux'
 import withBaseComponent from 'hocs/withBaseComponent'
 import { getDealDaily } from 'store/product/productSlice'
+import { apiGetServicePublic } from 'apis/service'
 const {FaStar, MdMenu} = icons
 let idInterval 
 const DealDaily = ({dispatch}) => {
@@ -14,12 +15,14 @@ const DealDaily = ({dispatch}) => {
     const [minute, setMinute] = useState(0)
     const [second, setSecond] = useState(0)
     const [expire, setExpire] = useState(false)
+    const [service, setService] = useState({})
     const {dealDaily} = useSelector(s => s.product)
 
     const fetchDealDaily = async () => {
-        const response = await apiGetProduct({sort: '-totalRatings', limit:10})
+        const response = await apiGetServicePublic()
+        // {sort: '-totalRatings', limit:10}
         if(response.success){
-            const pr = response.products[Math.round(Math.random()*10)]
+            const pr = response.services[Math.round(Math.random()*3)]
             dispatch(getDealDaily({data:pr, time: Date.now() + 24*60*60*1000}))
             const h = 23 - new Date().getHours()
             const m = 60 - new Date().getMinutes()
@@ -27,6 +30,7 @@ const DealDaily = ({dispatch}) => {
             setHour(h)
             setMinute(m)
             setSecond(s)
+            setService(pr);
         }
         else{
             const h = 23 - new Date().getHours()
@@ -94,7 +98,7 @@ const DealDaily = ({dispatch}) => {
         <img src={dealDaily?.data?.thumb||'https://nayemdevs.com/wp-content/uploads/2020/03/default-product-image.png'} 
           className='w-full object-contain' alt=''/>
           <span className='line-clamp-1 text-center'>{dealDaily?.data?.title}</span>
-          <span className='flex h-4'>{renderStarfromNumber(dealDaily?.data?.totalRatings, 20)?.map((el, index)=>(
+          <span className='flex h-4'>{renderStarfromNumber(4, 20)?.map((el, index)=>(
             <span key={index}> {el} </span>
           ))}</span>
           <span>{`${formatPrice(dealDaily?.data?.price)} VND`}</span>

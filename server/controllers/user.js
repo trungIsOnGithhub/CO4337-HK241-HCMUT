@@ -55,7 +55,7 @@ const register = asyncHandler(async(req, res) => {
     }
     else{
         const token = makeToken()
-        const email_edit = btoa(email) + '@' + token
+        // const email_edit = btoa(email) + '@' + token
         const newUser = await User.create({
             email:email_edit,password,firstName,lastName,mobile,role
         })

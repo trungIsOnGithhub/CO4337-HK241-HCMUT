@@ -8,6 +8,7 @@ const Sidebar = () => {
     // console.log(category)
     return (
         <div className="flex flex-col border">
+            <span className="p-2 text-center text-red-600 text-semibold">Service Category</span>
             {categories?.map(el =>(
                 <NavLink
                     key={createSlug(el.title)}

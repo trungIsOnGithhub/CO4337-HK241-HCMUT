@@ -127,7 +127,9 @@ const ServiceProviderRegister = () => {
             response = await apiCreateServiceProvider(payload);
             if(!response.success){
                 Swal.fire('Opps!', response.mes,'error')
+                return;
             }
+            resetPayload()
         }
         else {
             Swal.fire('Opps!', 'Invalid Input Form','error')

@@ -45,6 +45,7 @@ const AddStaff = () => {
 
 
   const handleAddStaff = async(data) => {
+    data.provider_id = current.provider_id
     console.log(data)
     const formData = new FormData()
     for(let i of Object.entries(data)){
