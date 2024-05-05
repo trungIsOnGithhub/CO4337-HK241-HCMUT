@@ -41,8 +41,8 @@ const BestSeller = () => {
         else if(activeTab===2) setProduct(newProducts)
     },[activeTab])
   return (
-    <div className={clsx(isShowModal ? 'hidden' : '' )}>
-        <div className='flex text-[20px] ml-[-32px]'>
+    <div className={clsx(isShowModal ? 'hidden' : '' )} style={{marginBottom:'20px'}}>
+        <div className='flex text-[15px] ml-[-32px]'>
             {tabs.map(el => (
                 <span 
                     key={el.id} 

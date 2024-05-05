@@ -42,7 +42,7 @@ const DealDaily = ({dispatch}) => {
         }
     }
     useEffect(()=>{
-        // fetchDealDaily()
+        fetchDealDaily()
     },[])
     useEffect(() => {
         idInterval && clearInterval(idInterval)
@@ -97,11 +97,11 @@ const DealDaily = ({dispatch}) => {
         <div className='w-full flex flex-col items-center pt-8 px-4 gap-2'>
         <img src={dealDaily?.data?.thumb||'https://nayemdevs.com/wp-content/uploads/2020/03/default-product-image.png'} 
           className='w-full object-contain' alt=''/>
-          <span className='line-clamp-1 text-center'>{dealDaily?.data?.title}</span>
+          <span className='line-clamp-1 text-center'>{service?.title}</span>
           <span className='flex h-4'>{renderStarfromNumber(4, 20)?.map((el, index)=>(
             <span key={index}> {el} </span>
           ))}</span>
-          <span>{`${formatPrice(dealDaily?.data?.price)} VND`}</span>
+          <span>{`${formatPrice(service?.price)} VND`}</span>
         </div>
         <div className='px-4 mt-8'>
             <div className='flex justify-center gap-2 mb-4'>
