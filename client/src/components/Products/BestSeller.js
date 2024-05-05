@@ -27,8 +27,8 @@ const BestSeller = () => {
         const response = await apiGetServicePublic()
         // {sort:'-sold'}
         if(response?.success){
-            setBestSeller(response.products)
-            setProduct(response.products)}
+            setBestSeller(response.services)
+            setProduct(response.services)}
         
     }
     useEffect(()=>{

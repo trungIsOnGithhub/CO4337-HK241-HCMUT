@@ -1,12 +1,14 @@
 import React, {useState, useEffect, memo} from 'react' 
 import {ProductCard} from '../index'
 import {apiGetProduct} from 'apis'
+import { apiGetServicePublic } from 'apis/service'
 const FeaturedProduct = () => {
     const [product, setProduct] = useState(null)
     const fetchProduct = async ()=>{
-        const response = await apiGetProduct({limit:9, sort: '-totalRatings'})
+        const response = await apiGetServicePublic()
+        // {limit:9, sort: '-totalRatings'}
         if(response?.success){
-            setProduct(response.products)
+            setProduct(response.services)
         }
     }
     useEffect(()=>{
@@ -18,13 +20,7 @@ const FeaturedProduct = () => {
         <div className='flex flex-wrap mt-[15px] mx-[-10px]'>
             {product?.map(el => (
                 <ProductCard 
-                    key={el._id}
-                    pid={el._id}
-                    image = {el.thumb}
-                    title = {el.title}
-                    totalRating = {el.totalRatings}
-                    price = {el.price}
-                    category = {el.category}
+                    provider={el}
                 />
             ))}
         </div>
