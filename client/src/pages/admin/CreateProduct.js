@@ -105,7 +105,7 @@ const CreateProduct = () => {
       </h1>
       <div className='p-4 '>
         <form onSubmit={handleSubmit(handleCreateProduct)}>
-          <InputForm 
+          <InputForm
             label = 'Name product'
             register={register}
             errors={errors}

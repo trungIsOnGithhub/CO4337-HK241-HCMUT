@@ -1,31 +1,31 @@
 import React, {useState, useEffect, memo} from 'react' 
-import {ProductCard} from '../index'
-import {apiGetProduct} from 'apis'
+import {Product, ProductCard} from '../index'
+import {apiGetProduct, apiGetServiceProviders} from 'apis'
+import { apiGetServicePublic } from 'apis/service'
 const FeaturedProduct = () => {
     const [product, setProduct] = useState(null)
     const fetchProduct = async ()=>{
-        const response = await apiGetProduct({limit:9, sort: '-totalRatings'})
+        const response = await apiGetServiceProviders()
+        // {limit:9, sort: '-totalRatings'}
+
+        console.log('20-392039-10293-21', response)
+
         if(response?.success){
-            setProduct(response.products)
+            setProduct(response.AllServiceProviders)
         }
     }
     useEffect(()=>{
         fetchProduct();
     }, [])
   return (
-    <div className='w-main'>
-        <h3 className='text-[20px] font-semibold py-[15px] border-b-2 border-main'>FEATURED PRODUCT</h3>
-        <div className='flex flex-wrap mt-[15px] mx-[-10px]'>
+    <div className='w-main mb-8'>
+        <h3 className='text-[15px] font-semibold py-[15px] border-b-2 border-main'>FEATURED SERVICE PROVIDERS</h3>
+        <div className='flex flex-wrap mt-[15px] mx-[-10px] mb-20'>
             {product?.map(el => (
                 <ProductCard 
-                    key={el._id}
-                    pid={el._id}
-                    image = {el.thumb}
-                    title = {el.title}
-                    totalRating = {el.totalRatings}
-                    price = {el.price}
-                    category = {el.category}
+                    provider={el}
                 />
+
             ))}
         </div>
         <div className='grid grid-cols-4 grid-rows-2 gap-4'>

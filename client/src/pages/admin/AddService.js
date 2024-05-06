@@ -8,6 +8,7 @@ import icons from 'ultils/icon'
 import { apiAddStaff, apiGetAllStaffs } from 'apis'
 import { showModal } from 'store/app/appSlice'
 import { FaUserGear } from "react-icons/fa6";
+import { getCurrent } from 'store/user/asyncAction'
 import withBaseComponent from 'hocs/withBaseComponent'
 import { hour } from 'ultils/constant'
 import { minute } from 'ultils/constant'
@@ -18,6 +19,12 @@ const AddService = () => {
   const {categories_service} = useSelector(state => state.category)
   const dispatch = useDispatch()
   const {register, formState:{errors}, reset, handleSubmit, watch} = useForm()
+ 
+  const {current} = useSelector(state => state.user)
+  useEffect(() => {
+    dispatch(getCurrent());
+  }, []);
+
   const [preview, setPreview] = useState({
     thumb: null,
     images: []
@@ -65,6 +72,7 @@ const AddService = () => {
     const invalid = validate(payload, setInvalidField)
     if(invalid === 0){
       const finalPayload = {...data,...payload,}
+      finalPayload.provider_id = current.provider_id
       if(selectedStaff?.length > 0){
         finalPayload.assigned_staff = selectedStaff
       }

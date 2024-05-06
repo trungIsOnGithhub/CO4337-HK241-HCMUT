@@ -65,6 +65,11 @@ var userSchema = new mongoose.Schema({
     registerToken:{
         type: String,
     },
+    provider_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Service_Provider',
+        default: null
+    }
 },{
     timestamps: true
 });

@@ -4,22 +4,20 @@ const asyncHandler = require("express-async-handler")
 
 const addStaff = asyncHandler(async(req, res)=>{
     console.log(req.body)
-    const {firstName, lastName, email, mobile} = req.body
-    const data = {firstName, lastName, mobile, email}
-    console.log(data)
+    const {firstName, lastName, email, mobile, provider_id} = req.body
+    if(!firstName || !lastName || !mobile || !email || !provider_id){
+        throw new Error("Missing input")
+    }
+    const data = {firstName, lastName, mobile, email, provider_id}
+    // console.log(data)
     if(req.file){
         data.avatar = req.file.path
     }
-    if(!firstName || !lastName || !mobile || !email){
-        throw new Error("Missing input")
-    }
-    else{
-        const response = await Staff.create(data)
-        return res.status(200).json({
-            success: response ? true : false,
-            mes: response ? 'Created successfully' : "Cannot create new staff"
-        })
-    }
+    const response = await Staff.create(data)
+    return res.status(200).json({
+        success: response ? true : false,
+        mes: response ? 'Created successfully' : "Cannot create new staff"
+    })
 })
 
 // get all staffs

@@ -13,7 +13,7 @@ router.get('/logout', ctrls.logout)
 router.post('/forgotpassword', ctrls.forgotPassword)
 router.put('/reset_password', ctrls.resetPassword)
 
-router.get('/', [verifyAccessToken, isAdmin], ctrls.getAllUsers)
+router.get('/', ctrls.getAllUsers)
 router.put('/current', [verifyAccessToken],uploader.single('avatar'), ctrls.updateUser)
 router.put('/address/', [verifyAccessToken], ctrls.updateUserAddress)
 router.put('/cart/', [verifyAccessToken], ctrls.updateCart)

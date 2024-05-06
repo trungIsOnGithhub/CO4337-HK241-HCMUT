@@ -15,6 +15,8 @@ const path = {
     CHECKOUT: 'checkout',
     PRODUCTS: 'products',
 
+    SERVICE_PROVIDER_REGISTER: 'sp_register',
+
 
     //Admin
     ADMIN: 'admin',
@@ -34,7 +36,7 @@ const path = {
     MYCART: 'mycart',
     HISTORY: 'history',
     WISHLIST: 'wishlist',
-
+    MY_SERVICE_PROVIDER: 'my_sp'
 }
 
 export default path

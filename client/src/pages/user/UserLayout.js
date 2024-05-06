@@ -6,10 +6,10 @@ import { UserSideBar } from 'components'
 
 
 const UserLayout = () => {
-  const {isLogin,current} = useSelector(state => state.user)
-  if(!isLogin || !current){
-    return <Navigate to={`/${path.LOGIN}`} replace={true}/>
-  }
+  // const {isLogin,current} = useSelector(state => state.user)
+  // if(!isLogin || !current){
+  //   return <Navigate to={`/${path.LOGIN}`} replace={true}/>
+  // }
 
   return (
     <div className='flex w-screen'>

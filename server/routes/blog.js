@@ -3,7 +3,7 @@ const ctrls = require('../controllers/blog')
 const uploader = require('../config/cloudinary.config')
 const {verifyAccessToken, isAdmin} = require('../middlewares/verify_token')
 
-router.post('/', [verifyAccessToken, isAdmin], ctrls.createNewBlog)
+// router.post('/', [verifyAccessToken, isAdmin], ctrls.createNewBlog)
 router.get('/', ctrls.getAllBlogs)
 router.get('/one/:bid', ctrls.getBlog)
 router.delete('/delete/:bid',[verifyAccessToken, isAdmin], ctrls.deleteBlog)

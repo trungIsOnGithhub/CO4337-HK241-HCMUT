@@ -23,7 +23,7 @@ const UserSideBar = () => {
       setActive(prev => [...prev, tabId])
     }
   }
-  console.log(current)
+  console.log('++++ ', current)
   return (
     <div className='bg-white h-full py-4 w-[250px] flex-none'>
         <div className='w-full flex flex-col items-center justify-center py-4'>
@@ -32,10 +32,11 @@ const UserSideBar = () => {
         </div>
 
         <div>
-          {userSidebar.map(el =>(
+          {current?.role && userSidebar.map(el => (
             <Fragment key={el?.id}>
-              {el?.type === 'single' && 
-              <NavLink 
+              {el?.type === 'single' &&
+              el?.visibleForRole?.indexOf(parseInt(current.role)) >= 0 &&
+              <NavLink
                 to={el?.path}
                 className={({isActive})=> clsx(isActive && activeStyle, !isActive&& notActiveStyle)}>
                 <span>{el?.icon}</span>
