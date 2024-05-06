@@ -18,10 +18,10 @@
     "$date": "2024-05-05T11:47:39.759Z"
   },
   "updatedAt": {
-    "$date": "2024-05-05T12:17:18.810Z"
+    "$date": "2024-05-06T04:35:11.423Z"
   },
   "__v": 0,
-  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjM3NzFkYjI0NjNhMzNjNmYzYTM5Y2YiLCJpYXQiOjE3MTQ5MTE0MzgsImV4cCI6MTcxNTUxNjIzOH0.G6n8P-LilaR3lVbaffrvF5t2DuDpMyz0wgeRvNoKsUw"
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjM3NzFkYjI0NjNhMzNjNmYzYTM5Y2YiLCJpYXQiOjE3MTQ5NzAxMTEsImV4cCI6MTcxNTU3NDkxMX0.FnNPodjqPgr71suuUwUR6COCKE0ILZaif1rPIe6_Zyo"
 },
 {
   "_id": {
@@ -179,4 +179,29 @@
   },
   "__v": 0,
   "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjM3ODU4MWU0NzllNDZkYWIwMzgzYjgiLCJpYXQiOjE3MTQ5MTQ3MDUsImV4cCI6MTcxNTUxOTUwNX0.Ty7xkB-iPJlA_jI4wMGKew55s1vXVL5wbXshXewtuY0"
+},
+{
+  "_id": {
+    "$oid": "66386d3276daa06bc350ea88"
+  },
+  "firstName": "Van",
+  "lastName": "Nguyen",
+  "email": "nhung@hotmail.com",
+  "mobile": "0930138768",
+  "password": "$2b$10$xSvmtTxgAritaxrqSXEXG.7zY2mOvJDSDkS6u3ag82mg34hzlr5MS",
+  "role": "1411",
+  "wishlist": [],
+  "isBlocked": false,
+  "provider_id": {
+    "$oid": "66386d3276daa06bc350ea8b"
+  },
+  "cart": [],
+  "createdAt": {
+    "$date": "2024-05-06T05:40:02.517Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-06T05:40:55.835Z"
+  },
+  "__v": 0,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjM4NmQzMjc2ZGFhMDZiYzM1MGVhODgiLCJpYXQiOjE3MTQ5NzQwNTUsImV4cCI6MTcxNTU3ODg1NX0.BrsrZHCYSFR8SGFoN8j64UQa2jatxdpoczsra7SvxXQ"
 }]

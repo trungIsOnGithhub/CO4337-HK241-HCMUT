@@ -160,4 +160,68 @@
     "$date": "2024-05-05T13:14:36.312Z"
   },
   "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6638689776daa06bc350ea46"
+  },
+  "name": "Nail and Face Makeup Combo",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714972824/ecommerce/l7vntd0upkl2cmiad1gg.jpg",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714972824/ecommerce/hpnum8xkoygjsl3zajsq.jpg"
+  ],
+  "description": [
+    "<p>Prepare you for the most excellent looking for any party - combined service with discounted price!!!</p>"
+  ],
+  "price": 686500,
+  "category": "Nail",
+  "duration": 50,
+  "provider_id": {
+    "$oid": "663866ca76daa06bc350ea29"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "663867f876daa06bc350ea3f"
+    }
+  ],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-05-06T05:20:23.270Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-06T05:20:23.270Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66386db576daa06bc350eaa3"
+  },
+  "name": "Traditional Herbal Hair Wash",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714974135/ecommerce/hecxm9s8sq9jh8fchyzv.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714974134/ecommerce/eosburpl2blgxru6xcic.jpg"
+  ],
+  "description": [
+    "<p>This special service lasts for 40 minutes, including scalp and hair cleansing combined with a head massage.</p>\r\n<p>This treatment helps to care for the scalp and hair from the inside, stimulates hair growth, brings a sense of relaxation as well as helps reduce headache pain</p>"
+  ],
+  "price": 188000,
+  "category": "Massage",
+  "duration": 40,
+  "provider_id": {
+    "$oid": "66386d3276daa06bc350ea8b"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "66386d9376daa06bc350ea9e"
+    }
+  ],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-05-06T05:42:13.866Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-06T05:42:13.866Z"
+  },
+  "__v": 0
 }]
