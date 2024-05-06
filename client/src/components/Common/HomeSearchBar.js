@@ -19,7 +19,7 @@ const HomeSearchBar = () => {
                         style={{width:'90%'}}
                         type="text"
                         id="search"
-                        placeholder="Tìm dịch vụ, nhà cung cấp......" />
+                        placeholder="Find a service, provider......" />
                     </div>
 
 
@@ -35,7 +35,7 @@ const HomeSearchBar = () => {
                         style={{width:'90%'}}
                         type="text"
                         id="search"
-                        placeholder="Ở đâu..." />
+                        placeholder="Where..." />
                     </div>
                 </div>
             </div>

@@ -13,7 +13,7 @@ import { showModal } from 'store/app/appSlice'
 import { useDispatch } from 'react-redux';
 import { toast} from 'react-toastify'
 import { validate } from "ultils/helper";
-import axios from "axios";
+import { useRef } from "react";
 import { quan_huyen } from "quan_huyen";
 import { xa_phuong } from "xa_phuong";
 
@@ -25,6 +25,9 @@ const ServiceProviderRegister = () => {
     const provinces = Object.values(tinh_thanhpho);
     const [districts, setDistricts] = useState([])
     const [wards, setWards] = useState([])
+    const provinceInputRef = useRef(null)
+    const districtInputRef = useRef(null)
+    const wardInputRef = useRef(null)
 
     const [payload, setPayload] = useState({
         firstName: '',
@@ -94,6 +97,8 @@ const ServiceProviderRegister = () => {
             startsaturday: '',endsaturday: '',
             startsunday: '',endsunday: '',
         })
+        setWards([])
+        setDistricts([])
     }
     // console.log('ddads ' + '');
     //SUBMIT
@@ -169,13 +174,13 @@ const ServiceProviderRegister = () => {
         }
         
         setPayload(newPayLoad)
-        console.log('------', newPayLoad)
+        // console.log('------', newPayLoad)
         // console.log(event.target.id)
     }
     return (
-        <div className="w-screen h-screen relative">
+        <div className="w-screen h-screen relative flex justify-center items-center flex-row">
             {isVerify &&
-                <div className="absolute top-0 bottom-0 left-0 right-0 bg-overlay z-50 flex flex-col items-center justify-center"> 
+                <div className="absolute top-0 bottom-0 left-0 right-0 bg-overlay z-50 flex flex-row items-center justify-center"> 
                     <div className="bg-white w-[500px] rounded-md p-8">
                         <h4 className="">We have sent a registration code to your email. Please check your mail and enter the code:</h4>
                         <input 
@@ -197,6 +202,7 @@ const ServiceProviderRegister = () => {
             <img src="https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsX29mZmljZV8zM18zZF9pbGx1c3RyYXRpb25fb2ZfYV9uZW9uX2ljb25zX3Nob3BwaW5nX2lzb19hYTQwZTZhNi0xOTk1LTRlMTUtOTJjYy03ZjJlODdlNjkyODNfMS5qcGc.jpg" alt=""
                 className='w-full h-full object-cover'></img>
             <div className="absolute top-0 bottom-0 left-1/4 flex items-center justify-center">
+                <div className="p-8 bg-white rounded-md min-w-[500px] flex flex-row items-center">
                 <div className="p-8 bg-white rounded-md min-w-[500px] flex flex-col items-center">
                 <h1 className="text-[28px] font-semibold text-main mb-8">Đăng ký Dịch vụ Kinh Doanh của Bạn</h1>
 
@@ -297,6 +303,7 @@ const ServiceProviderRegister = () => {
                     style='flex-auto'
                     errors={{}}
                     fullWidth
+                    ref={provinceInputRef}
                     />
 
                     <Select 
@@ -335,9 +342,20 @@ const ServiceProviderRegister = () => {
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 p-4 rounded mt-5" onClick={() => {setIsInTimeForm(prevState => { setIsInTimeForm(!prevState); });}}>
                     { isInTimeForm ? 'Close Time Select' : 'Open Time Select' }
                 </button>
+                <Button 
+                    handleOnclick={handleSubmit}
+                    fullWidth
+                >
+                    Register As Provider
+                </Button>
+
+                <Link className="text-blue-500 text-sm hover:underline cursor-pointer" to={`/${path.LOGIN}`}>
+                    Go to Login Page
+                </Link>
+                </div>
 
                 { isInTimeForm &&
-                <div className="absolute left-50 bottom-50 bg-white w-2/3 p-10 flex flex-col items-center justify-center m-10">
+                <div className="bg-white w-2/3 p-10 flex flex-col items-center justify-center m-10">
                     <h5 className="text-center text-gray-600">Select Time Schedule</h5>
                     {   isInTimeForm &&
                         daysInWeek.map(day => {
@@ -371,17 +389,6 @@ const ServiceProviderRegister = () => {
                     </Button>
                 </div>
                 }
-
-                <Button 
-                    handleOnclick={handleSubmit}
-                    fullWidth
-                >
-                    Register As Provider
-                </Button>
-
-                <Link className="text-blue-500 text-sm hover:underline cursor-pointer" to={`/${path.LOGIN}`}>
-                    Go to Login Page
-                </Link>
                 </div>
             </div>
         </div>
