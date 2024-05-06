@@ -15,16 +15,20 @@ const path = {
     CHECKOUT: 'checkout',
     PRODUCTS: 'products',
 
+    SERVICE_PROVIDER_REGISTER: 'sp_register',
+
 
     //Admin
     ADMIN: 'admin',
     DASHBOARD: 'dashboard',
     MANAGE_USER: 'manage_user',
     MANAGE_STAFF: 'manage_staff',
+    MANAGE_SERVICE: 'manage_service',
     MANAGE_PRODUCT: 'manage_product',
     MANAGE_ORDER: 'manage_order',
     CREATE_PRODUCT: 'create_product',
     ADD_STAFF: 'add_staff',
+    ADD_SERVICE: 'add_service',
 
     //User
     USER: 'user',
@@ -32,7 +36,7 @@ const path = {
     MYCART: 'mycart',
     HISTORY: 'history',
     WISHLIST: 'wishlist',
-
+    MY_SERVICE_PROVIDER: 'my_sp'
 }
 
 export default path

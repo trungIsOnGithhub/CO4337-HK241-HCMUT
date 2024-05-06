@@ -3,7 +3,9 @@ const asyncHandler = require('express-async-handler')
 const data= require('../../data/data2.json')
 const slugify = require('slugify')
 const categoryData = require('../../data/cate_brand.js')
+const categoryServiceData = require('../../data/category_service.js')
 const productCategory = require('../models/productCategory')
+const serviceCategory = require('../models/serviceCategory.js')
 const fn = async(product) =>{
     await Product.create({
         title: product?.name,
@@ -47,7 +49,25 @@ const insertCategory = asyncHandler(async(req, res)=>{
     return res.json('Done')
 })
 
+
+const fn3 = async(cate) => {
+    await serviceCategory.create({
+        title: cate?.cate,
+        image: cate?.image,
+        color: cate?.color,
+    })
+}
+const insertCategoryService = asyncHandler(async(req, res)=>{
+    const promises = []
+    console.log(categoryServiceData)
+    for(let cate of categoryServiceData){
+        promises.push(fn3(cate))
+    }
+    await Promise.all(promises)
+    return res.json('Done')
+})
 module.exports ={
     insertProduct,
-    insertCategory
+    insertCategory,
+    insertCategoryService
 }

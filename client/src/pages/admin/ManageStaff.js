@@ -1,248 +1,151 @@
-import React, { useEffect, useState, useCallback} from 'react'
-import { apiUsers, apiModifyUser, apiDeleteUser} from 'apis/user'
-import { roles, blockStatus } from 'ultils/constant'
-import moment from 'moment'
-import { InputField, Pagination, InputForm, Select, Button } from 'components'
-import useDebounce from 'hook/useDebounce'
-import { useSearchParams} from 'react-router-dom'
+import React, {useCallback, useEffect, useState} from 'react'
+import { InputForm, Pagination, Variant} from 'components'
 import { useForm } from 'react-hook-form'
-import { toast } from 'react-toastify'
+import {apiGetAllStaffs, apiDeleteStaff} from 'apis/staff'
+import moment from 'moment'
+import { useSearchParams, createSearchParams, useNavigate, useLocation} from 'react-router-dom'
+import useDebounce from 'hook/useDebounce'
+import UpdateStaff from './UpdateStaff'
+import icons from 'ultils/icon'
 import Swal from 'sweetalert2'
-import clsx from 'clsx'
+import { toast } from 'react-toastify'
 
-const ManageUser = () => {
-  const {handleSubmit, register, formState:{errors}, reset } = useForm({
-    email: '',
-    firstName: '',
-    lastName: '',
-    role: '',
-    phone: '',
-    isBlocked: ''
-  })
 
-  const [user, setUser] = useState(null)
-  const [query, setQuery] = useState({
-    q: ''
-  })
-
-  const [update, setUpdate] = useState(false)
-  const [editEl, setEditEl] = useState(null)
+const ManageProduct = () => {
+  const {MdModeEdit, MdDelete, FaCopy} = icons
+  const navigate = useNavigate()
+  const location = useLocation()
   const [params] = useSearchParams()
-  const fetchUsers = async(params) => {
-    const response = await apiUsers({...params, limit:process.env.REACT_APP_LIMIT})
-    if(response.success){
-      setUser(response)
-    }
-  }
-  
-  const render = useCallback(() => {
-    setUpdate(!update)}
-  ,[update])
+  const {register,formState:{errors}, handleSubmit, watch} = useForm()
+  const [staffs, setStaffs] = useState(null)
+  const [counts, setCounts] = useState(0)
+  const [editStaff, setEditStaff] = useState(null)
+  const [update, setUpdate] = useState(false)
 
-  const queriesDebounce = useDebounce(query.q,800)
-
-  useEffect(() => {
-    const queries = Object.fromEntries([...params]) 
-    if(queriesDebounce) queries.q = queriesDebounce
-    fetchUsers(queries)
-  }, [queriesDebounce, params, update])
-
-  const handleUpdate = async (data) => { 
-    const response = await apiModifyUser(data, editEl._id)
-    if(response.success) {
-      setEditEl(null)
-      render()
-      toast.success(response.mes)
-    }
-    else{
-      toast.error(response.mes)
-    }
-   }
-
-  const handleDelete = (uid) => {
+  const handleDeleteStaff = async(pid) => {
     Swal.fire({
-      title: 'Delete this user',
-      text: 'Are you ready to delete this user?',
+      title: 'Are you sure',
+      text: 'Are you sure you want to delete this staff?',
+      icon: 'warning',
       showCancelButton: true
     }).then(async(rs)=>{
       if(rs.isConfirmed){
-        const response = await apiDeleteUser(uid)
-        if(response.success) {
-          render()
+        const response = await apiDeleteStaff(pid)
+        if(response.success){
+          console.log('sure')
           toast.success(response.mes)
         }
         else{
-          toast.error(response.mes)
+          console.log('not sure')
+         toast.error(response.mes)
         }
+        render()
       }
-    })
+    }) 
   }
-  
-  // useEffect(() => {
-  //   if(editEl){
-  //    reset({
-  //     role: editEl.role,
-  //     status: editEl.isBlocked,
 
-  //    }) 
-  //   }
-  // }, [editEl])
+  const render = useCallback(() => { 
+    setUpdate(!update)
+   })
+
+  const handleSearchProduct = (data) => {
+    console.log(data)
+  }
+
+  const fetchStaff = async(params) => {
+    const response = await apiGetAllStaffs({...params, limit: process.env.REACT_APP_LIMIT})
+    if(response.success){
+      setStaffs(response.staffs)
+      setCounts(response.counts)
+    }
+  }
+
+  const queryDebounce = useDebounce(watch('q'),800)
   
+  useEffect(() => {
+    const searchParams = Object.fromEntries([...params]) 
+    fetchStaff(searchParams)
+  }, [params, update])
+
+  useEffect(() => {
+    if(queryDebounce) {
+      navigate({
+        pathname: location.pathname,
+        search: createSearchParams({q:queryDebounce}).toString()
+      })
+    }
+    else{
+      navigate({
+        pathname: location.pathname,
+      })
+    }
+  }, [queryDebounce])
+  
+  
+  console.log(params.get('page'))
   return (
-    <div className={clsx('w-full', editEl&&'pl-[8rem]')}>
-      <h1 className='h-[75px] flex justify-between items-center text-3xl font-bold px-4 border-b'>
-        <span>Manage Staffs</span>
-      </h1>
-      <div className='w-full p-4'>
-        <div className='flex justify-end py-4'>
-          <InputField 
-            nameKey={'q'}
-            value={query?.q}
-            setValue = {setQuery}
-            style = {'w400'}
-            placeholder= 'Search staff name or phone number'
-            isHideLabel={true}
-          />
-        </div>
+    <div className='w-full flex flex-col gap-4 relative'>
+      {editStaff &&  
+      <div className='absolute inset-0 bg-zinc-900 h-[200%] z-50 flex-auto'>
+        <UpdateStaff editStaff={editStaff} render={render} setEditStaff={setEditStaff}/>
+      </div>}
+      <div className='h-[69px] w-full'>
+      </div>
+      <div className='p-4 border-b w-full flex justify-between items-center fixed top-0 bg-black'>
+        <h1 className='text-3xl font-bold tracking-tight'>Manage Staffs</h1>
+      </div>
 
-        {/* <form onSubmit={handleSubmit(handleUpdate)}>
-        {editEl&&
-          <Button type='submit'>
-          Update
-          </Button>
-        }
-        <table className='table-auto mb-6 text-left w-full'>
-          <thead className='font-bold bg-blue-500 text-[13px] text-white'>
-           <tr className='border border-gray-500'>
-            <th className='px-2 py-2'>#</th>
-            <th className='px-2 py-2'>Email Address</th>
-            <th className='px-2 py-2'>First Name</th>
-            <th className='px-2 py-2'>Last Name</th>
-            <th className='px-2 py-2'>Role</th>
-            <th className='px-2 py-2'>Phone</th>
-            <th className='px-2 py-2'>Status</th>
-            <th className='px-2 py-2'>Created At</th>
-            <th className='px-2 py-2'>Actions</th>
-           </tr>
-          </thead>
-          <tbody>
-            {user?.users?.map((el,idx)=>(
-              <tr key={el._id} className='border border-gray-500'>
-                <td className='py-2 px-4'>{idx+1}</td>
-                <td className='py-2 px-4'>{
-                editEl?._id === el._id ? 
-                <InputForm 
-                  register={register} 
-                  fullWidth
-                  errors={errors} 
-                  defaultValue={editEl?.email}
-                  id={'email'} 
-                  validate={{
-                    required: 'Require fill', 
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "invalid email address"
-                    }
-                  }} 
-                /> 
-                :
-                el.email}</td>
-                <td className='py-2 px-4'>
-                {
-                editEl?._id === el._id ? 
-                <InputForm 
-                  register={register} 
-                  fullWidth
-                  errors={errors} 
-                  defaultValue={editEl?.firstName}
-                  id={'firstName'} 
-                  validate={{required: 'Require fill'}} 
-                /> 
-                :
-                el.firstName}
-                </td>
-                <td>
-                  {
-                  editEl?._id === el._id ? 
-                  <InputForm 
-                    register={register} 
-                    fullWidth
-                    errors={errors} 
-                    defaultValue={editEl?.lastName}
-                    id={'lastName'} 
-                    validate={{required: 'Require fill'}} 
-                  /> 
-                  :
-                  el.lastName}
-                </td>
-                <td className='py-2 px-4'>
-                {
-                editEl?._id === el._id ? 
-                <Select 
-                  register={register} 
-                  fullWidth
-                  errors={errors} 
-                  defaultValue={el.role}      
-                  id={'role'} 
-                  validate={{required: 'Require fill'}} 
-                  options={roles}
-                /> 
-                : 
-                roles.find(role => +role.code === +el.role)?.value}
-                </td>
-                <td className='py-2 px-4'>
-                {
-                editEl?._id === el._id ? 
-                <InputForm 
-                  register={register} 
-                  fullWidth
-                  errors={errors} 
-                  defaultValue={editEl?.mobile}
-                  id={'mobile'} 
-                  validate={{
-                    required: 'Require fill', 
-                    pattern: {
-                      value: /^[62|0]+\d{9}/gi,
-                      message: "invalid phone number"
-                    }
-                  }} 
-                /> 
-                : 
-                el.mobile}</td>
-                <td className='py-2 px-4'>{
-                editEl?._id === el._id ? 
-                <Select 
-                  register={register} 
-                  fullWidth
-                  errors={errors} 
-                  defaultValue={el.isBlocked}      
-                  id={'isBlocked'} 
-                  validate={{required: 'Require fill'}} 
-                  options={blockStatus}
-                /> 
-                : 
-                el.isBlocked? 'Block': 'Active'}</td>
-                <td className='py-2 px-4'>{moment(el.createdAt).format('DD/MM/YYYY')}</td>
-                <td className='py-2 px-4 '>
-                  {editEl?._id === el._id ? <span onClick={()=>{setEditEl(null)}} className='px-2 text-orange-400 hover:underline cursor-pointer'>Back</span>
-                          :
-                          <span onClick={()=>{setEditEl(el)}} className='px-2 text-orange-400 hover:underline cursor-pointer'>Edit</span>}
-                  <span onClick={()=>handleDelete(el._id)} className='px-2 text-orange-400 hover:underline cursor-pointer'>Delete</span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        </form>   */}
-        
-        {/* <div className='w-full text-right'>
-          <Pagination
-            totalCount={user?.counts}
-          />
-        </div> */}
+      <div className='flex w-full justify-end items-center px-4 '>
+        <form className='w-[45%]' onSubmit={handleSubmit(handleSearchProduct)}>
+          <InputForm
+            id='q'
+            register={register}
+            errors={errors}
+            fullWidth
+            placeholder= 'Search staffs by name or email address ...'
+          >
+            
+          </InputForm>
+        </form>
+      </div>
+      <table className='table-auto p-0'>
+        <thead className='font-bold bg-blue-500 text-[13px] text-white'>
+          <tr className='border border-gray-500'>
+            <th className='text-center py-2'>#</th>
+            <th className='text-center py-2'>Avatar</th>            
+            <th className='text-center py-2'>Email Address</th>
+            <th className='text-center py-2'>First Name</th>
+            <th className='text-center py-2'>Last Name</th>
+            <th className='text-center py-2'>Phone</th>
+            <th className='text-center py-2'>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {staffs?.map((el,idx)=>(
+            <tr key={el._id} className='border border-gray-500'>
+              <td className='text-center py-2'>{((+params.get('page')||1)-1)*+process.env.REACT_APP_LIMIT + idx + 1}</td>
+              <td className='text-center py-2'><img src={el.avatar} alt='thumb' className='w-12 h-12 object-cover'></img></td>
+              <td className='text-center py-2'>{el.email}</td>
+              <td className='text-center py-2'>{el.firstName}</td>
+              <td className='text-center py-2'>{el.lastName}</td>
+              <td className='text-center py-2'>{el.mobile}</td>
+              <td className='text-center py-2'>
+                <span onClick={() => setEditStaff(el)} 
+                className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdModeEdit
+                size={24}/></span>
+                <span onClick={() => handleDeleteStaff(el._id)} 
+                className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>
+
+              </td>  
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div className='w-full flex justify-end'>
+        <Pagination totalCount={counts} />
       </div>
     </div>
   )
 }
 
-export default ManageUser
+export default ManageProduct

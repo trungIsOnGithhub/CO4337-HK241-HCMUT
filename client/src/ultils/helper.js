@@ -19,11 +19,14 @@ export const renderStarfromNumber = (number, size) => {
     return rating
 }
 
-export const validate = (payload, setInvalidField) =>{
+export const validate = (payload, setInvalidField) => {
     let invalids = 0
     const formatPayload = Object.entries(payload)
     for(let array of formatPayload){
-        if(array[1].trim() === ""){
+        console.log('=====',array[0])
+        console.log(';;;;;;',typeof array[1])
+        if(typeof(array[1]) === 'string' && array[1].trim() === ""){
+            console.log('plus',array[0])
             invalids ++
             setInvalidField(prev => [...prev, {name: array[0], mes: "Require this field"}])
         }

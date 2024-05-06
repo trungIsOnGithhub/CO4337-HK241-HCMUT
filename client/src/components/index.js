@@ -7,6 +7,7 @@ export {default as Sidebar} from './SideBar/Sidebar'
 export {default as AdminSideBar} from './SideBar/AdminSideBar'
 export {default as UserSideBar} from './SideBar/UserSideBar'
 
+export {default as HomeSearchBar} from './Common/HomeSearchBar'
 export {default as Banner} from './Common/Banner'
 export {default as Countdown} from './Common/Countdown'
 export {default as CustomSlider} from './Common/CustomSlider'
@@ -43,6 +44,8 @@ export {default as InputForm} from './Input/InputForm'
 export {default as Select} from './Input/Select'
 export {default as MarkdownEditor} from './Input/MarkdownEditor'
 export {default as CustomSelect} from './Input/CustomSelect'
+export {default as MultiSelect} from './Input/MultiSelect'
+export {default as SelectCategory} from './Input/SelectCategory'
 
 export {default as Button} from './Buttons/Button'
 

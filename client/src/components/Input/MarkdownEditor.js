@@ -3,7 +3,7 @@ import { Editor } from '@tinymce/tinymce-react';
 
 const MarkdownEditor = ({label, value, changeValue, name, invalidField, setInvalidField})=>{
   return (
-    <div className='flex flex-col '>
+    <div className='flex flex-col'>
         <span >{label}</span>
       <Editor
         apiKey='v8w2lo9p3vbfhbpqv0xfd0vl6yd3csklokisefrswfv7zpz6'

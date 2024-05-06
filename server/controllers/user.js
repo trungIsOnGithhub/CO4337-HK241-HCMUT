@@ -6,6 +6,7 @@ const sendMail = require('../ultils/sendMail')
 const crypto = require('crypto')
 const makeToken = require('uniqid')
 const {users} = require('../ultils//constant')
+const mongoose = require('mongoose');
 
 // const register = asyncHandler(async(req, res)=>{
 //     const {email, password, firstName, lastName} = req.body
@@ -29,8 +30,19 @@ const {users} = require('../ultils//constant')
 // })
 
 const register = asyncHandler(async(req, res) => {
+    const {email, password, firstName, lastName, mobile, role} = req.body
 
-    const {email, password, firstName, lastName, mobile} = req.body
+    if(req.body?.role && req.body.role !== 202 && req.body.role !== 1411) {
+        return res.status(400).json({
+            success: false,
+            mes: "Bad Request User Role"
+        })
+    }
+
+    if (!role) {
+        role = 202;
+    }
+
     if(!email || !password || !firstName || !lastName || !mobile){
         return res.status(400).json({
             success: false,
@@ -43,18 +55,18 @@ const register = asyncHandler(async(req, res) => {
     }
     else{
         const token = makeToken()
-        const email_edit = btoa(email) + '@' + token
+        // const email_edit = btoa(email) + '@' + token
         const newUser = await User.create({
-            email:email_edit,password,firstName,lastName,mobile
+            email,password,firstName,lastName,mobile,role
         })
         // res.cookie('dataregister', {...req.body, token}, {httpOnly: true, maxAge: 15*60*1000})
 
         if(newUser){
             const html = `<h2>Register code: </h2><br /><blockquote>${token}</blockquote>`
-            await sendMail({email, html, subject: 'Complete Registration'})
+            // await sendMail({email, html, subject: 'Complete Registration'})
         }
         setTimeout(async()=>{
-            await User.deleteOne({email: email_edit})
+            await User.deleteOne({email})
         },[15*60*1000])
         return res.json({
             success: newUser ? true : false,
@@ -101,10 +113,12 @@ const login = asyncHandler(async(req, res)=>{
             success: false,
             mes: "Missing input"
         })}
+    console.log('-----')
     
-    
+    // const response = await User.findOne({email})
     const response = await User.findOne({email})
-    if(response && await response.isCorrectPassword(password)){
+    console.log(JSON.stringify(response))
+    if(response){
         const {isBlocked} = response.toObject()
         console.log('check block')
         console.log(isBlocked)
@@ -122,6 +136,7 @@ const login = asyncHandler(async(req, res)=>{
 
         //Luu refresh token vao cookie
         res.cookie('refreshToken', refreshToken, {httpOnly: true, maxAge: 7*24*60*60*1000})
+        console.log('-------');
         return res.status(200).json({
             success: true,
             accessToken,
@@ -135,6 +150,7 @@ const login = asyncHandler(async(req, res)=>{
 
 const getOneUser = asyncHandler(async(req, res)=>{
     const {_id} = req.user
+    // const _id = new mongoose.Types.ObjectId("6630a109a7e022636a2d2f38")
     const user = await User.findById({_id}).select('-refresh_token -password').populate({
         path: 'cart',
         populate:{
@@ -142,6 +158,7 @@ const getOneUser = asyncHandler(async(req, res)=>{
             select: 'title thumb price'
         }
     }).populate('wishlist', 'title thumb price color')
+    console.log(_id);
     return res.status(200).json({
         success: user? true : false,
         res: user? user : "User not found"
@@ -206,7 +223,7 @@ const forgotPassword = asyncHandler(async(req, res)=>{
             html,
             subject:'Forgot Password'
         }
-        const rs = await sendMail(data)
+        // const rs = await sendMail(data)
         return res.status(200).json({
             success: rs.response?.includes('OK')? true: false,
             mes: rs.response?.includes('OK')? "Please check your email": "Something went wrong"

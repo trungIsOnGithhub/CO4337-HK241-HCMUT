@@ -4,6 +4,7 @@ import {Product, CustomSlider} from '../'
 import {getNewProducts} from 'store/product/asyncAction'
 import { useDispatch, useSelector} from 'react-redux'
 import clsx from 'clsx'
+import { apiGetServicePublic } from 'apis/service'
 const tabs = [
     {
         id: 1,
@@ -23,10 +24,11 @@ const BestSeller = () => {
     const {newProducts} = useSelector(state => state.product)
     const {isShowModal} = useSelector(state => state.app)
     const fetchProduct =  async() =>{
-        const response = await apiGetProduct({sort:'-sold'})
+        const response = await apiGetServicePublic()
+        // {sort:'-sold'}
         if(response?.success){
-            setBestSeller(response.products)
-            setProduct(response.products)}
+            setBestSeller(response.services)
+            setProduct(response.services)}
         
     }
     useEffect(()=>{
@@ -39,8 +41,8 @@ const BestSeller = () => {
         else if(activeTab===2) setProduct(newProducts)
     },[activeTab])
   return (
-    <div className={clsx(isShowModal ? 'hidden' : '' )}>
-        <div className='flex text-[20px] ml-[-32px]'>
+    <div className={clsx(isShowModal ? 'hidden' : '' )} style={{marginBottom:'20px'}}>
+        <div className='flex text-[15px] ml-[-32px]'>
             {tabs.map(el => (
                 <span 
                     key={el.id} 
@@ -54,11 +56,11 @@ const BestSeller = () => {
             <CustomSlider products={product} activeTab={activeTab}/>
         </div>
         <div className='w-full flex gap-4 mt-4'>
-            <img src="https://digital-world-2.myshopify.com/cdn/shop/files/banner2-home2_2000x_crop_center.png?v=1613166657"
-                className='flex-1 object-contain'
+            <img src="https://www.benchcraftcompany.com/images/CG5_size.jpg"
+                className='flex-1 h-[220px] w-[160px] object-cover'
             />
-            <img src="https://digital-world-2.myshopify.com/cdn/shop/files/banner1-home2_2000x_crop_center.png?v=1613166657"
-                className='flex-1 object-contain'
+            <img src="https://www.benchcraftcompany.com/images/CG1_size.jpg"
+                className='flex-1 h-[220px] w-[160px] object-cover'
             />
         </div>
     </div>

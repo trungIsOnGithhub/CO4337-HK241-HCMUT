@@ -25,6 +25,8 @@ const Header = ({dispatch}) => {
             document.removeEventListener('click', handleClickOut)
         }
     }, [])
+
+    console.log('HEADDDDDER', current)
     
 
     return (

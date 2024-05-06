@@ -47,7 +47,7 @@ export const userSlice = createSlice({
           state.isLoading = true;
         });
     
-        // Khi thực hiện action login thành công (Promise fulfilled)
+        // // Khi thực hiện action login thành công (Promise fulfilled)
         builder.addCase(actions.getCurrent.fulfilled, (state, action) => {
           // console.log('call get current')
           // Tắt trạng thái loading, lưu thông tin user vào store
@@ -57,7 +57,7 @@ export const userSlice = createSlice({
           state.isLogin = true;
         });
     
-        // Khi thực hiện action login thất bại (Promise rejected)
+        // // Khi thực hiện action login thất bại (Promise rejected)
         builder.addCase(actions.getCurrent.rejected, (state, action) => {
           // Tắt trạng thái loading, lưu thông báo lỗi vào store
           state.isLoading = false;

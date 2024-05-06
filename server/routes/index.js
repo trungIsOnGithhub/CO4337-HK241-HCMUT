@@ -9,7 +9,12 @@ const orderRouter = require('./order')
 const insertRouter = require('./insert')
 const staffRouter = require('./staff')
 
+const serviceRouter = require('./service')
+const serviceCategoryRouter = require('./serviceCategory')
+const ServiceProviderRouter = require('./ServiceProvider');
+
 const {notFound,errorHandler} = require('../middlewares/errorHandler')
+const ServiceProvider = require('../models/ServiceProvider')
 
 const initRoutes = (app) => {
     app.use('/api/user', userRouter)
@@ -22,6 +27,10 @@ const initRoutes = (app) => {
     app.use('/api/order', orderRouter)
     app.use('/api/insert', insertRouter)
     app.use('/api/staff', staffRouter)
+
+    app.use('/api/service', serviceRouter)
+    app.use('/api/service_category', serviceCategoryRouter)
+    app.use('/api/service_provider', ServiceProviderRouter)
     
     app.use(notFound)
     app.use(errorHandler)

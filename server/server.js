@@ -7,7 +7,7 @@ const cors =  require('cors')
 
 const app = express();
 app.use(cors({
-    origin: process.env.CLIENT_URL,
+    origin: '*',
     methods: ['POST', 'PUT', 'DELETE', 'GET'],
     credentials: true
 }))
@@ -19,7 +19,7 @@ app.use(express.urlencoded({extended: true}));
 dbConnect()
 initRoutes(app)
 
-app.use('/', (req,res) => {res.send('SERVER ONNNN')})
+app.use('/', (req,res) => {res.send('SERVER ON')})
 
 app.listen(port,()=>{
     console.log("Server running on the port: " + port)

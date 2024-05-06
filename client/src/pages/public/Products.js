@@ -37,7 +37,6 @@ const Products = ({dispatch}) => {
   }
 
   useEffect(() => {
-    console.log('chay qua ham nay ko')
     window.scrollTo(0,0)
     const queries = Object.fromEntries([...params])
     let priceQuery =  {}

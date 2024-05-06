@@ -195,19 +195,22 @@ const Login = () => {
                 >
                     {isRegister? 'Register' : 'Login'}
                 </Button>
-                <div className='flex items-center justify-between w-full text-sm'>
+                <div className='flex items-center justify-center gap-8 w-full text-sm'>
                     {!isRegister && <span className="text-blue-500 hover:underline cursor-pointer" onClick={()=>{setIsForgotPassword(true)}}>Forget your account?</span>}
                     {!isRegister? <span 
                     className="text-blue-500 hover:underline cursor-pointer"
                     onClick={()=>{setIsRegister(true)}}
                     >Create a new account</span>:
-                    <span 
+                    <span
                     className="text-blue-500 hover:underline cursor-pointer w-full text-center"
                     onClick={()=>{setIsRegister(false)}}
                     >Go login</span>}
-                </div>
                 <Link className="text-blue-500 text-sm hover:underline cursor-pointer" to={`/${path.HOME}`}>
                     Go home ?
+                </Link>
+                </div>
+                <Link className="text-blue-500 text-sm hover:underline cursor-pointer pt-5" to={`/${path.SERVICE_PROVIDER_REGISTER}`}>
+                    Register For Bussiness Account
                 </Link>
                 </div>
             </div>

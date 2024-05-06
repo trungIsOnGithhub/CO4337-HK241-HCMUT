@@ -1,10 +1,12 @@
 import React, {useEffect} from 'react';
 import {Route, Routes} from 'react-router-dom'
-import {Login,Home,Public,Service,DetailProduct,FAQ,Products,Blogs,Final_Register,ResetPassword,DetailCart} from 'pages/public'
-import { AdminLayout, ManageOrder, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff} from 'pages/admin'
-import { UserLayout, History, Personal, WishList, Checkout} from 'pages/user'
+import { AdminLayout, ManageOrder, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService} from 'pages/admin'
+import {Login,Home,Public,Service,DetailProduct,FAQ,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister } from 'pages/public'
+
+import { UserLayout, History, Personal, WishList, Checkout,MyServiceProvider} from 'pages/user'
 import path from './ultils/path'
 import {getCategories} from 'store/app/asyncAction'
+import {getCategorieService} from 'store/category/asyncAction'
 import {useDispatch, useSelector} from 'react-redux'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -16,10 +18,12 @@ function App() {
   const {isShowModal, modalChildren, isShowCart} = useSelector(state => state.app)
 
   useEffect(() =>{
+    console.log('call here')
     dispatch(getCategories())
+    dispatch(getCategorieService())
   },[])
   return (
-    <div className="font-main h-screen">
+    <div className="w-screen h-screen relative">
       {isShowCart && 
         <div onClick={()=>dispatch(showCart())} className='absolute inset-0 bg-overlay z-50 flex justify-end'>
         <Cart />
@@ -45,16 +49,20 @@ function App() {
         <Route path={path.MANAGE_PRODUCT} element={<ManageProduct/>}/>
         <Route path={path.MANAGE_USER} element={<ManageUser/>}/>
         <Route path={path.MANAGE_STAFF} element={<ManageStaff/>}/>
+        <Route path={path.MANAGE_SERVICE} element={<ManageService/>}/>
         <Route path={path.CREATE_PRODUCT} element={<CreateProduct/>}/>
         <Route path={path.ADD_STAFF} element={<AddStaff/>}/>
+        <Route path={path.ADD_SERVICE} element={<AddService/>}/>
       </Route>
       <Route path={path.USER} element={<UserLayout />}>
         <Route path={path.PERSONAL} element={<Personal />}/>
         <Route path={path.MYCART} element={<DetailCart />}/>
         <Route path={path.HISTORY} element={<History/>}/>
         <Route path={path.WISHLIST} element={<WishList/>}/>
+        <Route path={path.MY_SERVICE_PROVIDER} element={<MyServiceProvider/>}/>
       </Route>
       <Route path={path.FINAL_REGISTER} element={<Final_Register />} />
+      <Route path={path.SERVICE_PROVIDER_REGISTER} element={<ServiceProviderRegister />} />
       <Route path={path.LOGIN} element={<Login />} />
      </Routes>
       <ToastContainer

@@ -1,6 +1,7 @@
 import path from './path'
 import icons from './icon'
 import { FaUserGear } from "react-icons/fa6";
+import { BsFillTagsFill } from "react-icons/bs";
 export const navigation = [
     {
         id: 1,
@@ -208,14 +209,14 @@ export const adminSidebar = [
     {
         id: 2,
         type: 'single',
-        text: 'Manage user',
+        text: 'Manage User',
         path: `/${path.ADMIN}/${path.MANAGE_USER}`,
         icon: <MdGroups size={20}/>
     },
     {
         id: 3,
         type: 'parent',
-        text: 'Manage product',
+        text: 'Manage Product',
         submenu:[
             {
                 text: 'Create Product',
@@ -231,25 +232,41 @@ export const adminSidebar = [
     {
         id: 4,
         type: 'single',
-        text: 'Manage order',
+        text: 'Manage Order',
         path: `/${path.ADMIN}/${path.MANAGE_ORDER}`,
         icon: <RiBillLine size={20}/>
     },
     {
         id: 5,
         type: 'parent',
-        text: 'Manage staff',
+        text: 'Manage Staff',
         submenu:[
             {
                 text: 'Add Staff',
                 path: `/${path.ADMIN}/${path.ADD_STAFF}`
             },
             {
-                text: 'Manage Staffff',
+                text: 'Manage Staff',
                 path: `/${path.ADMIN}/${path.MANAGE_STAFF}`
             }
         ],
         icon: <FaUserGear size={20}/>
+    },
+    {
+        id: 6,
+        type: 'parent',
+        text: 'Manage Service',
+        submenu:[
+            {
+                text: 'Add Service',
+                path: `/${path.ADMIN}/${path.ADD_SERVICE}`
+            },
+            {
+                text: 'Manage Service',
+                path: `/${path.ADMIN}/${path.MANAGE_SERVICE}`
+            }
+        ],
+        icon: <BsFillTagsFill size={20}/>
     },
 ]
 
@@ -282,30 +299,41 @@ export const userSidebar = [
         type: 'single',
         text: 'Personal',
         path: `/${path.USER}/${path.PERSONAL}`,
-        icon: <RiDashboard3Line size={20}/>
+        icon: <RiDashboard3Line size={20}/>,
+        visibleForRole: [202, 1411],
     },
     {
         id: 2,
         type: 'single',
         text: 'My cart',
         path: `/${path.USER}/${path.MYCART}`,
-        icon: <MdGroups size={20}/>
+        icon: <MdGroups size={20}/>,
+        visibleForRole: [202],
     },
     {
         id: 3,
         type: 'single',
         text: 'History',
         path: `/${path.USER}/${path.HISTORY}`,
-        icon: <MdGroups size={20}/>
+        icon: <MdGroups size={20}/>,
+        visibleForRole: [202],
     },
     {
         id: 4,
         type: 'single',
         text: 'Wish List',
         path: `/${path.USER}/${path.WISHLIST}`,
-        icon: <RiBillLine size={20}/>
+        icon: <RiBillLine size={20}/>,
+        visibleForRole: [202],
     },
-
+    {
+        id: 5,
+        type: 'single',
+        text: 'My Bussiness',
+        path: `/${path.USER}/${path.MY_SERVICE_PROVIDER}`,
+        icon: <RiBillLine size={20}/>,
+        visibleForRole: [202, 1411],
+    },
 ]
 
 export const statusOrder = [
@@ -317,4 +345,111 @@ export const statusOrder = [
         label: 'Successful',
         value: 'Successful',
     }
+]
+
+export const hour = [
+    {
+        code: 0,
+        value: '0 hour'
+    },
+    {
+        code: 1,
+        value: '1 hour'
+    },
+    {
+        code: 2,
+        value: '2 hours'
+    },
+    {
+        code: 3,
+        value: '3 hours'
+    },
+    {
+        code: 4,
+        value: '4 hours'
+    },
+    {
+        code: 5,
+        value: '5 hours'
+    },
+    {
+        code: 6,
+        value: '6 hours'
+    },
+    {
+        code: 7,
+        value: '7 hours'
+    },
+    {
+        code: 8,
+        value: '8 hours'
+    },
+    {
+        code: 9,
+        value: '9 hours'
+    },
+    {
+        code: 10,
+        value: '10 hours'
+    },
+    {
+        code: 11,
+        value: '11 hours'
+    },
+    {
+        code: 12,
+        value: '12 hours'
+    },
+
+]
+
+export const minute = [
+    {
+        code: 0,
+        value: '0 minute'
+    },
+    {
+        code: 5,
+        value: '5 minutes'
+    },
+    {
+        code: 10,
+        value: '10 minutes'
+    },
+    {
+        code: 15,
+        value: '15 minutes'
+    },
+    {
+        code: 20,
+        value: '20 minutes'
+    },
+    {
+        code: 25,
+        value: '25 minutes'
+    },
+    {
+        code: 30,
+        value: '30 minutes'
+    },
+    {
+        code: 35,
+        value: '35 minutes'
+    },
+    {
+        code: 40,
+        value: '40 minutes'
+    },
+    {
+        code: 45,
+        value: '45 minutes'
+    },
+    {
+        code: 50,
+        value: '50 minutes'
+    },
+    {
+        code: 55,
+        value: '55 minutes'
+    },
 ]
