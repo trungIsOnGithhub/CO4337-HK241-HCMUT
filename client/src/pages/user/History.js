@@ -23,17 +23,14 @@ const History = ({navigate, location}) => {
   const [params] = useSearchParams()
   const fetchOrders = async(params) => {
     const response = await apiGetOrdersByUser({...params, limit: process.env.REACT_APP_LIMIT})
-    console.log(response) 
+
     if(response.success){
       setOrders(response.order)
-      console.log(response.order)
       setCounts(response.counts)
     }
   }
   
   const handleSearchStatus = (a) => {
-    console.log(a)
-    console.log(a?.value)
     if(a?.value){
       navigate({
         pathname: location.pathname,
@@ -51,7 +48,7 @@ const History = ({navigate, location}) => {
     const pr = Object.fromEntries([...params])
     fetchOrders(pr)
   }, [params])
-  console.log(status)
+
   
   return (
     <div className='w-full relative px-4'>

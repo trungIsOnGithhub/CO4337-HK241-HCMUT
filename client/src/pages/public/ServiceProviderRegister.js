@@ -100,11 +100,11 @@ const ServiceProviderRegister = () => {
         setWards([])
         setDistricts([])
     }
-    // console.log('ddads ' + '');
+
     //SUBMIT
     const handleSubmit = useCallback(async() =>{
         const {firstName, lastName, mobile, ...data} = payload
-        // console.log('===> ', timeOpenPayload);
+
 
         payload.time = {}
         for (const day of daysInWeek) {
@@ -174,8 +174,7 @@ const ServiceProviderRegister = () => {
         }
         
         setPayload(newPayLoad)
-        // console.log('------', newPayLoad)
-        // console.log(event.target.id)
+
     }
     return (
         <div className="w-screen h-screen relative flex justify-center items-center flex-row">
@@ -207,13 +206,15 @@ const ServiceProviderRegister = () => {
                 <h1 className="text-[28px] font-semibold text-main mb-8">Đăng ký Dịch vụ Kinh Doanh của Bạn</h1>
 
 
-                <div className="flex items-center gap-2">
+                <div className="flex gap-2 w-full">
                     <InputField 
                         value= {payload.firstName}
                         setValue={setPayload}
                         nameKey='firstName'
                         invalidField={invalidField}
                         setInvalidField={setInvalidField}
+                        style='flex-auto'
+                        fullWidth
                     />
                     <InputField 
                         value= {payload.lastName}
@@ -221,6 +222,8 @@ const ServiceProviderRegister = () => {
                         nameKey='lastName'
                         invalidField={invalidField}
                         setInvalidField={setInvalidField}
+                        style='flex-auto'
+                        fullWidth
                     />
                 </div>
 
@@ -339,7 +342,7 @@ const ServiceProviderRegister = () => {
                     />
                 </form>
 
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 p-4 rounded mt-5" onClick={() => {setIsInTimeForm(prevState => { setIsInTimeForm(!prevState); });}}>
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 p-4 rounded mt-5 w-full" onClick={() => {setIsInTimeForm(prevState => { setIsInTimeForm(!prevState); });}}>
                     { isInTimeForm ? 'Close Time Select' : 'Open Time Select' }
                 </button>
                 <Button 

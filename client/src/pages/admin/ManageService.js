@@ -37,11 +37,9 @@ const ManageService = () => {
       if(rs.isConfirmed){
         const response = await apiDeleteServiceByAdmin(sid)
         if(response.success){
-          console.log('sure')
          toast.success(response.mes)
         }
         else{
-          console.log('not sure')
          toast.error(response.mes)
         }
         render()
@@ -55,13 +53,11 @@ const ManageService = () => {
    })
 
   const handleSearchProduct = (data) => {
-    console.log(data)
   }
 
   const fetchProduct = async(params) => {
     const response = await apiGetServiceByAdmin({...params, limit: process.env.REACT_APP_LIMIT})
     if(response?.success){
-      console.log(response)
       setProducts(response.services)
       setCounts(response.counts)
     }
@@ -89,7 +85,6 @@ const ManageService = () => {
   }, [queryDebounce])
   
   
-  console.log(params.get('page'))
   return (
     <div className='w-full flex flex-col gap-4 relative'>
       {editService &&  

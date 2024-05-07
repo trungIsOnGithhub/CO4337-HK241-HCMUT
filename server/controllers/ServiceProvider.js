@@ -40,7 +40,7 @@ const createServiceProvider = asyncHandler(async(req, res)=>{
         })
     }
 
-    console.log('nhfg: ' + JSON.stringify(req.body));
+
 
     const bname = await ServiceProvider.findOne({bussinessName})
     if(bname){
@@ -71,8 +71,8 @@ const createServiceProvider = asyncHandler(async(req, res)=>{
     }
     const userUpdated = await User.updateOne({mobile: req?.body?.mobile}, { provider_id: response.id })
 
-    // const html = `<h2>Register code: </h2><br /><blockquote>${token}</blockquote>`
-    // await sendMail({email, html, subject: 'Complete Registration'})
+    const html = `<h2>Register code: </h2><br /><blockquote>${token}</blockquote>`
+    await sendMail({email, html, subject: 'Complete Registration'})
 
     return res.status(201).json({
         success: response ? true : false,
@@ -90,8 +90,7 @@ const getAllServiceProvider = asyncHandler(async(req, res)=>{
 
 const updateServiceProvider = asyncHandler(async(req, res)=>{
     const spid = req.params.spid
-    // console.log('****', req.body)
-    // console.log('=====', spid)
+
     if(Object.keys(req.body).length === 0){
         throw new Error('Missing input')
     }
@@ -99,7 +98,7 @@ const updateServiceProvider = asyncHandler(async(req, res)=>{
         req.body.expiry = Date.now() + +req.body.expiry * 24 * 60 * 60 * 1000
     }
     const response = await ServiceProvider.findByIdAndUpdate(spid, req.body, {new: true})
-    console.log('++++' + JSON.stringify(response))
+
     return res.status(200).json({
         success: response ? true : false,
         updatedServiceProvider: response ? response : "Cannot update a Service Provider",
@@ -110,7 +109,7 @@ const updateServiceProvider = asyncHandler(async(req, res)=>{
 const getServiceProvider = asyncHandler(async(req, res)=>{
     const spid = req.params.spid;
     const sp = await ServiceProvider.findById(spid)
-    console.log('++++++' + JSON.stringify(sp))
+
     return res.status(200).json({
         success: sp ? true : false,
         payload: sp ? sp : "Cannot find Service Provider"

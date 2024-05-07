@@ -14,10 +14,9 @@ const Checkout = ({dispatch, navigate}) => {
   const [isSuccess, setIsSuccess] = useState(false)
 
 
-  console.log(isSuccess)
+
   useEffect(() => {
     if(isSuccess){
-      console.log('goi ham nay k')
       dispatch(getCurrent())
     }
   }, [isSuccess])

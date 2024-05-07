@@ -1,12 +1,14 @@
 import React, { memo, useEffect, useState} from 'react'
 import icons from '../../ultils/icon'
-import { colors } from '../../ultils/constant'
 import { createSearchParams, useNavigate, useParams, useSearchParams} from 'react-router-dom'
 import path from '../../ultils/path'
 import { apiGetProduct } from '../../apis'
 import useDebounce from '../../hook/useDebounce'
+import { useSelector } from 'react-redux'
 const {FaCaretDown} = icons
 const SearchItem = ({name, activeClick, changeActiveFilter, type='checkbox'}) => {
+
+  const {categories_service} = useSelector(state => state.category)
   const navigate = useNavigate()
   const {category} = useParams()
   const [selected, setSelected] = useState([])
@@ -48,15 +50,16 @@ const SearchItem = ({name, activeClick, changeActiveFilter, type='checkbox'}) =>
   useEffect(() => {
     let param = []
     for (let i of params.entries()) param.push(i)
+    
     const queries = {}
     for (let i of param){
       queries[i[0]] = i[1]
     }
     if(selected.length > 0){
-      if(selected) queries.color = selected.join(',')
+      if(selected) queries.category = selected.join(',')
       queries.page = 1
     }
-    else delete queries.color
+    else delete queries.category
     navigate({
       pathname: `/${category}`,
       search: createSearchParams(queries).toString()
@@ -107,16 +110,18 @@ const SearchItem = ({name, activeClick, changeActiveFilter, type='checkbox'}) =>
                 </div>
                 <div onClick={e=> e.stopPropagation()} className='flex flex-col gap-3 mt-4'>
                 {
-                  colors.map((el,index)=>(
+                  categories_service?.map((el,index)=>(
                     <div key={index} className='flex items-center gap-4'>
-                      <input type='checkbox' onChange={handleSelected} id={el} value={el} checked={selected.some(selectedItem => selectedItem===el)}/>
-                      <label className='capitalize text-gray-700' htmlFor={el}>{el}</label>
+                      <input type='checkbox' onChange={handleSelected} id={el.title} value={el.title} checked={selected.some(selectedItem => selectedItem===el.title)}/>
+                      <label className='capitalize text-gray-700' htmlFor={el.title}>{el.title}</label>
                     </div>
                   ))
                 }
                 </div>
               </div>
             }
+
+
             {type === 'input' &&
               <div onClick={e=>e.stopPropagation()}>
                 <div className='p-4 items-center flex justify-between gap-8 border-b'>

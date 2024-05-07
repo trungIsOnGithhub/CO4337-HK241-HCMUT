@@ -49,7 +49,6 @@ export const userSlice = createSlice({
     
         // // Khi thực hiện action login thành công (Promise fulfilled)
         builder.addCase(actions.getCurrent.fulfilled, (state, action) => {
-          // console.log('call get current')
           // Tắt trạng thái loading, lưu thông tin user vào store
           state.isLoading = false;
           state.current = action.payload;

@@ -28,7 +28,6 @@ const Variant = ({variant, setVariant, render}) => {
 
 
   const handleAddVariant = async(data) => {
-    console.log(data)
     if(data?.color === variant?.color){
       Swal.fire('Oops!', 'Color not changed', 'info')
     }
@@ -45,7 +44,6 @@ const Variant = ({variant, setVariant, render}) => {
       const response = await apiAddVariant(formData, variant._id)
       // dispatch(showModal({isShowModal: false, modalChildren: null}))
       if(response.success){
-        console.log('successfully')
         toast.success(response.mes)
         // reset()
         // setPreview({
@@ -54,7 +52,6 @@ const Variant = ({variant, setVariant, render}) => {
         // })
       }
       else{
-        console.log("failed")
         // toast.error(response.mes)
       }
     }

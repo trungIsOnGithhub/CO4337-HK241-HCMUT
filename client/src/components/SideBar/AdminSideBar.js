@@ -19,7 +19,6 @@ const AdminSideBar = () => {
       setActive(prev => [...prev, tabId])
     }
   }
-  console.log(active)
   return (
     <div className='bg-zinc-800 h-full py-4'>
         <Link to={'/'} className='flex flex-col items-center p-4 gap-2'>

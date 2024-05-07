@@ -3,7 +3,7 @@ const asyncHandler = require('express-async-handler')
 
 // const createCategory = asyncHandler(async(req, res)=>{
 //     const response = await ServiceCategory.create(req.body)
-//     console.log(response)
+
 //     return res.status(200).json({
 //         success: response ? true : false,
 //         createCategory: response ? response : "Cannot create new category"
@@ -11,9 +11,9 @@ const asyncHandler = require('express-async-handler')
 // })
 
 const getAllCategory = asyncHandler(async(req, res)=>{
-    console.log('call api ---')
+
     const response = await ServiceCategory.find()
-    // console.log(response)
+
     return res.status(200).json({
         success: response ? true : false,
         serviceCategories: response ? response : "Cannot get all categories"

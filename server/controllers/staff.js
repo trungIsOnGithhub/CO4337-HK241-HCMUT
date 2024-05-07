@@ -3,13 +3,13 @@ const asyncHandler = require("express-async-handler")
 
 
 const addStaff = asyncHandler(async(req, res)=>{
-    console.log(req.body)
+
     const {firstName, lastName, email, mobile, provider_id} = req.body
     if(!firstName || !lastName || !mobile || !email || !provider_id){
         throw new Error("Missing input")
     }
     const data = {firstName, lastName, mobile, email, provider_id}
-    // console.log(data)
+
     if(req.file){
         data.avatar = req.file.path
     }
@@ -90,7 +90,7 @@ const getAllStaffs = asyncHandler(async (req, res) => {
 //update staff by admin
 const updateStaffByAdmin = asyncHandler(async (req, res) => {
     const {staffId} = req.params
-    console.log(req.body)
+
     if(!staffId || Object.keys(req.body).length === 0){
         throw new Error("Missing input")
     }

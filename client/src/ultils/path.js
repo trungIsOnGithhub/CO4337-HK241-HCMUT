@@ -6,14 +6,14 @@ const path = {
     LOGIN: 'login',
     PRODUCTS__CATEGORY: ':category',
     BLOGS: 'blogs',
-    OUR_SERVICES: 'services',
+    OUR_SERVICES: 'our_services',
     FAQS: 'faqs',
-    DETAIL_PRODUCT__CATEGORY__PID__TITLE: ':category/:pid/:title',
+    DETAIL_PRODUCT__CATEGORY__PID__TITLE: ':category/:sid/:name',
     FINAL_REGISTER: 'final_register/:status',
     RESET_PASSWORD: 'reset_password/:token',
     DETAIL_CART: 'detail_cart',
     CHECKOUT: 'checkout',
-    PRODUCTS: 'products',
+    PRODUCTS: 'services',
 
     SERVICE_PROVIDER_REGISTER: 'sp_register',
 

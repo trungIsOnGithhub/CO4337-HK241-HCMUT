@@ -53,7 +53,7 @@ const BestSeller = () => {
             ))}
         </div>
         <div className='mt-4 mx-[-10px] border-t-2 border-main pt-4'>
-            <CustomSlider products={product} activeTab={activeTab}/>
+            <CustomSlider products={product} activeTab={activeTab} normal={false}/>
         </div>
         <div className='w-full flex gap-4 mt-4'>
             <img src="https://www.benchcraftcompany.com/images/CG5_size.jpg"

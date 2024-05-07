@@ -8,8 +8,6 @@ const FeaturedProduct = () => {
         const response = await apiGetServiceProviders()
         // {limit:9, sort: '-totalRatings'}
 
-        console.log('20-392039-10293-21', response)
-
         if(response?.success){
             setProduct(response.AllServiceProviders)
         }

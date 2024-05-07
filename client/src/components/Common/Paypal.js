@@ -55,8 +55,6 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload, setIsSuccess}) 
                     
                 onApprove={(data, actions)=>actions.order.capture().then(async(response)=>{
                     if(response.status === 'COMPLETED'){
-                        console.log(response)
-                        console.log(payload)
                         handleCreateOrder()
                     }
                 })}

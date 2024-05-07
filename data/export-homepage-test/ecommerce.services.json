@@ -31,6 +31,8 @@
   "updatedAt": {
     "$date": "2024-05-05T12:26:45.135Z"
   },
+  "totalRatings": 0,
+  "bookingQuantity": 0,
   "__v": 0
 },
 {
@@ -63,6 +65,8 @@
   "updatedAt": {
     "$date": "2024-05-05T12:41:34.013Z"
   },
+  "totalRatings": 0,
+  "bookingQuantity": 0,
   "__v": 0
 },
 {
@@ -95,6 +99,8 @@
   "updatedAt": {
     "$date": "2024-05-05T12:55:40.824Z"
   },
+  "totalRatings": 0,
+  "bookingQuantity": 0,
   "__v": 0
 },
 {
@@ -127,6 +133,8 @@
   "updatedAt": {
     "$date": "2024-05-05T12:57:52.102Z"
   },
+  "totalRatings": 0,
+  "bookingQuantity": 0,
   "__v": 0
 },
 {
@@ -159,6 +167,8 @@
   "updatedAt": {
     "$date": "2024-05-05T13:14:36.312Z"
   },
+  "totalRatings": 0,
+  "bookingQuantity": 0,
   "__v": 0
 },
 {
@@ -191,6 +201,8 @@
   "updatedAt": {
     "$date": "2024-05-06T05:20:23.270Z"
   },
+  "totalRatings": 0,
+  "bookingQuantity": 0,
   "__v": 0
 },
 {
@@ -223,5 +235,7 @@
   "updatedAt": {
     "$date": "2024-05-06T05:42:13.866Z"
   },
+  "totalRatings": 0,
+  "bookingQuantity": 0,
   "__v": 0
 }]

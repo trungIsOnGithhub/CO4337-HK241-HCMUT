@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useCallback} from 'react'
 import { useParams, useSearchParams, createSearchParams, useNavigate} from 'react-router-dom'
 import { Breadcrumb, Product, SearchItem, InputSelect, Pagination} from '../../components'
-import { apiGetProduct } from '../../apis'
+import { apiGetServicePublic } from '../../apis'
 import Masonry from 'react-masonry-css'
 import { sorts } from '../../ultils/constant'
 import clsx from 'clsx'
@@ -18,21 +18,20 @@ const breakpointColumnsObj = {
 
 const Products = ({dispatch}) => {
   const navigate = useNavigate()
-  const [products, setProducts] = useState(null)
+  const [services, setServices] = useState(null)
   const [active, setActive] = useState(null)
   const [params] = useSearchParams()
   const [sort, setSort] = useState('')
   const {category} = useParams()
-  console.log(category)
   const {isShowModal} = useSelector(state => state.app)
 
 
-  const fetchProductCategories = async (queries) =>{
-    if(category && category !== 'products'){
+  const fetchServiceCategories = async (queries) =>{
+    if(category && category !== 'services'){
       queries.category = category
     }
-    const response = await apiGetProduct(queries)
-    if(response.success) setProducts(response)
+    const response = await apiGetServicePublic(queries)
+    if(response.success) setServices(response)
     dispatch(getCurrent())
   }
 
@@ -54,7 +53,7 @@ const Products = ({dispatch}) => {
     delete queries.from
     delete queries.to
     const q = {...priceQuery, ...queries}
-    fetchProductCategories(q)
+    fetchServiceCategories(q)
   }, [params])
   
   const changeActive = useCallback((name)=>{
@@ -92,7 +91,7 @@ const Products = ({dispatch}) => {
           <span className='font-semibold text-sm'>Filter by:</span>
           <div className='flex items-center gap-4'>
           <SearchItem name='price' activeClick={active} changeActiveFilter={changeActive} type='input'/>
-          <SearchItem name='color' activeClick={active} changeActiveFilter={changeActive}/>
+          <SearchItem name='category' activeClick={active} changeActiveFilter={changeActive}/>
           </div>
         </div>
         <div className='w-1/5 flex flex-col gap-3'>
@@ -107,10 +106,10 @@ const Products = ({dispatch}) => {
           breakpointCols={breakpointColumnsObj}
           className="my-masonry-grid flex mx-[-10px]"
           columnClassName="my-masonry-grid_column">
-          {products?.products?.map(el => (
+          {services?.services?.map(el => (
             <Product 
               key={el._id} 
-              productData={el}
+              serviceData={el}
               pid= {el._id}
               normal={true}
             />
@@ -118,9 +117,9 @@ const Products = ({dispatch}) => {
         </Masonry>
       </div>
       <div className='w-main m-auto my-4 flex justify-end'>
-       {products&&
+       {services&&
        <Pagination 
-       totalCount={products?.counts}/>}
+       totalCount={services?.counts}/>}
       </div>
       <div className='w-full h-[500px]'>
       </div>

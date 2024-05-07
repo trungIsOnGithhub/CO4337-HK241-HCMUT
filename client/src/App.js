@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {Route, Routes} from 'react-router-dom'
 import { AdminLayout, ManageOrder, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService} from 'pages/admin'
-import {Login,Home,Public,Service,DetailProduct,FAQ,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister } from 'pages/public'
+import {Login,Home,Public,Service,DetailService,FAQ,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister } from 'pages/public'
 
 import { UserLayout, History, Personal, WishList, Checkout,MyServiceProvider} from 'pages/user'
 import path from './ultils/path'
@@ -18,7 +18,6 @@ function App() {
   const {isShowModal, modalChildren, isShowCart} = useSelector(state => state.app)
 
   useEffect(() =>{
-    console.log('call here')
     dispatch(getCategories())
     dispatch(getCategorieService())
   },[])
@@ -35,7 +34,7 @@ function App() {
       <Route path={path.PUBLIC} element={<Public />}>
         <Route path={path.HOME} element={<Home />} />
         <Route path={path.BLOGS} element={<Blogs />} />
-        <Route path={path.DETAIL_PRODUCT__CATEGORY__PID__TITLE} element={<DetailProduct />} />
+        <Route path={path.DETAIL_PRODUCT__CATEGORY__PID__TITLE} element={<DetailService />} />
         <Route path={path.FAQS} element={<FAQ />} />
         <Route path={path.OUR_SERVICES} element={<Service />} />
         <Route path={path.PRODUCTS__CATEGORY} element={<Products />} />

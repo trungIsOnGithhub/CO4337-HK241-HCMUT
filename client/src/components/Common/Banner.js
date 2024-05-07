@@ -1,10 +1,11 @@
 import React, { memo } from "react";
+import banner from 'assets/data-stats-around-person-doing-physical-activity.jpg';
 const Banner = () => {
     return (
         <div className="w-full">
-            <img src="https://fruchtman.com/wp-content/uploads/2018/06/406Main-t.jpg" 
+            <img src={banner}
             alt="banner"
-            className="w-full h-[250px] object-cover"></img>
+            className="w-full h-[400px] object-cover"></img>
         </div>
     )
 }

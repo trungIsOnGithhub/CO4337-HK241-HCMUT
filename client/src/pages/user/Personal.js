@@ -57,7 +57,7 @@ const Personal = ({navigate, dispatch}) => {
   const handlePreviewAvatar = async(file) => {
     const base64Thumb = await getBase64(file)
     setPreviewImage(prev => (base64Thumb))
-    console.log(previewImage)
+
   }
 
 
@@ -65,7 +65,7 @@ const Personal = ({navigate, dispatch}) => {
     if(watch('avatar') instanceof FileList && watch('avatar').length > 0) handlePreviewAvatar(watch('avatar')[0])
   }, [watch('avatar')])
   
-  console.log(isDirty)
+
   return (
     <div className='w-full relative px-4'>
       <header className='text-3xl font-semibold py-4 border-b border-b-gray-200'>Personal</header>

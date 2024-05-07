@@ -6,7 +6,7 @@ const asyncHandler = require('express-async-handler')
 const createNewOrder = asyncHandler(async(req, res)=>{
     const {_id} = req.user
     const {products, total, address} = req.body
-    console.log(address)
+
     if(address){
         await User.findByIdAndUpdate(_id, {address, cart:[]})
     }

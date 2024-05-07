@@ -30,7 +30,9 @@ const mongoose = require('mongoose');
 // })
 
 const register = asyncHandler(async(req, res) => {
+
     const {email, password, firstName, lastName, mobile, role} = req.body
+
 
     if(req.body?.role && req.body.role !== 202 && req.body.role !== 1411) {
         return res.status(400).json({
@@ -40,7 +42,7 @@ const register = asyncHandler(async(req, res) => {
     }
 
     if (!role) {
-        role = 202;
+        req.body.role = 202;
     }
 
     if(!email || !password || !firstName || !lastName || !mobile){
@@ -55,18 +57,18 @@ const register = asyncHandler(async(req, res) => {
     }
     else{
         const token = makeToken()
-        // const email_edit = btoa(email) + '@' + token
+        const email_edit = btoa(email) + '@' + token
         const newUser = await User.create({
-            email,password,firstName,lastName,mobile,role
+            email:email_edit,password,firstName,lastName,mobile
         })
         // res.cookie('dataregister', {...req.body, token}, {httpOnly: true, maxAge: 15*60*1000})
 
         if(newUser){
             const html = `<h2>Register code: </h2><br /><blockquote>${token}</blockquote>`
-            // await sendMail({email, html, subject: 'Complete Registration'})
+            await sendMail({email, html, subject: 'Complete Registration'})
         }
         setTimeout(async()=>{
-            await User.deleteOne({email})
+            await User.deleteOne({email: email_edit})
         },[15*60*1000])
         return res.json({
             success: newUser ? true : false,
@@ -74,9 +76,8 @@ const register = asyncHandler(async(req, res) => {
         })
     }
 })
-const finalRegister = asyncHandler(async(req, res)=>{
-    //const cookie = req.cookies
 
+const finalRegister = asyncHandler(async(req, res)=>{
     const {token} = req.params
     const notActiveEmail = await User.findOne({email:new RegExp(`${token}$`)})
     if(notActiveEmail){
@@ -87,23 +88,9 @@ const finalRegister = asyncHandler(async(req, res)=>{
         success: notActiveEmail ? true : false,
         mes: notActiveEmail? "Successfully" : "Something went wrong"
     })
-    // const newUser = await User.create({
-    //     email: cookie?.dataregister?.email,
-    //     password: cookie?.dataregister?.password,
-    //     mobile: cookie?.dataregister?.mobile,
-    //     firstName: cookie?.dataregister?.firstName,
-    //     lastName: cookie?.dataregister?.lastName,
-    // })
-
-    // res.clearCookie('dataregister')
-    // if(newUser){
-    //     return res.redirect(`${process.env.CLIENT_URL}/final_register/success`)
-    // }
-    // else{
-    //     return res.redirect(`${process.env.CLIENT_URL}/final_register/fail`)
-    // }
-    
 })
+
+
 //Refresh_token => de cap moi access token
 //Access_token => de xac thuc + phan quyen nguoi dung
 const login = asyncHandler(async(req, res)=>{
@@ -113,15 +100,11 @@ const login = asyncHandler(async(req, res)=>{
             success: false,
             mes: "Missing input"
         })}
-    console.log('-----')
     
-    // const response = await User.findOne({email})
+    
     const response = await User.findOne({email})
-    console.log(JSON.stringify(response))
-    if(response){
+    if(response && await response.isCorrectPassword(password)){
         const {isBlocked} = response.toObject()
-        console.log('check block')
-        console.log(isBlocked)
         if(isBlocked){
             return res.status(400).json({
                 success: false,
@@ -136,7 +119,6 @@ const login = asyncHandler(async(req, res)=>{
 
         //Luu refresh token vao cookie
         res.cookie('refreshToken', refreshToken, {httpOnly: true, maxAge: 7*24*60*60*1000})
-        console.log('-------');
         return res.status(200).json({
             success: true,
             accessToken,
@@ -158,7 +140,7 @@ const getOneUser = asyncHandler(async(req, res)=>{
             select: 'title thumb price'
         }
     }).populate('wishlist', 'title thumb price color')
-    console.log(_id);
+
     return res.status(200).json({
         success: user? true : false,
         res: user? user : "User not found"
@@ -223,7 +205,7 @@ const forgotPassword = asyncHandler(async(req, res)=>{
             html,
             subject:'Forgot Password'
         }
-        // const rs = await sendMail(data)
+        const rs = await sendMail(data)
         return res.status(200).json({
             success: rs.response?.includes('OK')? true: false,
             mes: rs.response?.includes('OK')? "Please check your email": "Something went wrong"
@@ -401,7 +383,6 @@ const updateCart = asyncHandler(async (req, res) => {
         const alreadyProduct = user?.cart.find(e1 => e1.product.toString() === pid && e1.color === color)
 
         if(alreadyProduct){
-            console.log('Already')
             const response = await User.updateOne({cart:{$elemMatch: alreadyProduct}}, {$set: {"cart.$.quantity": quantity, "cart.$.price": price, "cart.$.thumb": thumb, "cart.$.title": title}},{new:true})
             return res.status(200).json({
                 success: response ? true : false,
@@ -422,7 +403,7 @@ const updateCart = asyncHandler(async (req, res) => {
 
 //remove product from cart
 const removeProductFromCart = asyncHandler(async (req, res) => {
-    console.log('removeProductFromCart')
+
     const {_id} = req.user
     const {pid, color} = req.params
     const user = await User.findById(_id).select('cart')
@@ -453,35 +434,30 @@ const createUsers = asyncHandler(async(req, res)=>{
 })
 
 const updateWishlist = asyncHandler(async(req, res)=>{
-    const {pid} = req.params
-    console.log(pid)
+    const {sid} = req.params
+
     const {_id} = req.user
-    if(!pid) {
+    if(!sid) {
         throw new Error("Missing input")
     }
     const user = await User.findById(_id)
-    const alreadyWishList = user?.wishlist?.find(el => el.toString() === pid)
+    const alreadyWishList = user?.wishlist?.find(el => el.toString() === sid)
     if(alreadyWishList){
-        const response = await User.findByIdAndUpdate(_id, {$pull: {wishlist: pid}},{new: true})
+        const response = await User.findByIdAndUpdate(_id, {$pull: {wishlist: sid}},{new: true})
         return res.status(200).json({
             success: response ? true : false,
             mes: response ? 'Updated your wishlist successfully' : 'Something went wrong'
         })
     }
     else{
-        const response = await User.findByIdAndUpdate(_id, {$push: {wishlist: pid}},{new: true})
+        const response = await User.findByIdAndUpdate(_id, {$push: {wishlist: sid}},{new: true})
         return res.status(200).json({
             success: response ? true : false,
             mes: response ? 'Updated your wishlist successfully' : 'Something went wrong'
         })
     }
-
-    const response = await User.create(users)
-    return res.status(200).json({
-        success: response ? true : false,
-        user: response ? response : 'Something went wrong!'
-    })
 })
+
 module.exports = {
     register,
     login,

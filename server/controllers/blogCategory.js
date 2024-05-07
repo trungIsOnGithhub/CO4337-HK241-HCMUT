@@ -3,7 +3,7 @@ const asyncHandler = require('express-async-handler')
 
 const createCategory = asyncHandler(async(req, res)=>{
     const response = await BlogCategory.create(req.body)
-    console.log(response)
+
     return res.status(200).json({
         success: response ? true : false,
         createCategory: response ? response : "Cannot create new category"
