@@ -46,7 +46,8 @@ var serviceSchema = new mongoose.Schema({
             thumb: String,
             image: Array,
             name: String,
-            sku: String
+            sku: String,
+            description:Array,
         }
     ],
     rating:[

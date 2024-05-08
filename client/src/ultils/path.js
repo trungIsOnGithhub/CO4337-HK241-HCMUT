@@ -14,6 +14,7 @@ const path = {
     DETAIL_CART: 'detail_cart',
     CHECKOUT: 'checkout',
     PRODUCTS: 'services',
+    BOOKING: 'booking',
 
     SERVICE_PROVIDER_REGISTER: 'sp_register',
 

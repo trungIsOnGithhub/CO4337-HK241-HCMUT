@@ -1,9 +1,10 @@
-import { apiAddVariant } from 'apis'
+import { apiAddVariantService } from 'apis'
 import Button from 'components/Buttons/Button'
 import Loading from 'components/Common/Loading'
 import InputForm from 'components/Input/InputForm'
+import MarkdownEditor from 'components/Input/MarkdownEditor'
 import Select from 'components/Input/Select'
-import React, { memo, useEffect, useState } from 'react'
+import React, { memo, useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
@@ -13,13 +14,23 @@ import { hour, minute } from 'ultils/constant'
 import { getBase64 } from 'ultils/helper'
 
 const Variant = ({variant, setVariant, render}) => {
-  console.log(variant)
   const dispatch = useDispatch()
   const {register,formState:{errors}, reset, handleSubmit, watch} = useForm()
   const [preview, setPreview] = useState({
     thumb: '',
     images: []
   })
+
+  const [payload, setPayload] = useState({
+    description: ''
+  })
+
+  const [invalidField, setInvalidField] = useState([])
+  
+  const changeValue = useCallback((e)=>{
+    setPayload(e)
+  },[payload])
+
 
   useEffect(() => {
     reset({
@@ -28,35 +39,37 @@ const Variant = ({variant, setVariant, render}) => {
       hour: Math.floor((+(variant?.duration) / 60)),
       minute: +(variant?.duration) % 60,
     })
+    setPayload({description: typeof variant?.description === 'object' ? variant?.description?.join(', ') : variant?.description})
   }, [variant])
 
 
   const handleAddVariant = async(data) => {
-    if(data?.color === variant?.color){
-      Swal.fire('Oops!', 'Color not changed', 'info')
+    if(data?.name === variant?.name){
+      Swal.fire('Oops!', 'Name not changed', 'info')
     }
     else{
+      let finalPayload = {...data,...payload}
       const formData = new FormData()
-      for(let i of Object.entries(data)){
+      for(let i of Object.entries(finalPayload)){
         formData.append(i[0],i[1])
       }
-      if(data.thumb) formData.append('thumb', data.thumb[0])
-      if(data.images) {
+      if(finalPayload.thumb) formData.append('thumb', data.thumb[0])
+      if(finalPayload.images) {
         for (let image of data.images) formData.append('images', image)
       }
       // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
-      const response = await apiAddVariant(formData, variant._id)
+      const response = await apiAddVariantService(formData, variant._id)
       // dispatch(showModal({isShowModal: false, modalChildren: null}))
       if(response.success){
         toast.success(response.mes)
-        // reset()
-        // setPreview({
-        //   thumb: '',
-        //   images: []
-        // })
+        reset()
+        setPreview({
+          thumb: '',
+          images: []
+        })
       }
       else{
-        // toast.error(response.mes)
+        toast.error(response.mes)
       }
     }
   }
@@ -124,7 +137,7 @@ const Variant = ({variant, setVariant, render}) => {
             />
           </div>
           <div className='flex items-center w-full gap-4'>
-          <Select
+              <Select
                 label = 'Hour'
                 options = {hour}
                 register={register}
@@ -151,6 +164,14 @@ const Variant = ({variant, setVariant, render}) => {
                 text='Minute'
               />
           </div>
+          <MarkdownEditor
+              name = 'description'
+              changeValue={changeValue}
+              label = 'Description'
+              invalidField={invalidField}
+              setInvalidField={setInvalidField}
+              value={payload.description}
+            />
           <div className='flex flex-col gap-2 mt-8'>
             <label className='font-semibold' htmlFor='thumb'>Upload Thumb</label>
             <input 

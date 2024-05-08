@@ -52,7 +52,8 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
     thumb:'',
     images: [],
     price:'',
-    color: ''
+    color: '',
+    description: []
   })
   useEffect(() => {
     if(sid){
@@ -61,13 +62,6 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
     }
     window.scrollTo(0,0)
     nameRef.current?.scrollIntoView({block: 'center'})
-    setCurrentProduct({
-      name:'',
-      thumb:'',
-      images: [],
-      price:'',
-      color: ''
-    })
   }, [sid])
   
   useEffect(() => {
@@ -90,6 +84,7 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
         thumb: product?.variants?.find(el => el.sku === variant)?.thumb,
         images: product?.variants?.find(el => el.sku === variant)?.image,
         price: product?.variants?.find(el => el.sku === variant)?.price,
+        description: product?.variants?.find(el => el.sku === variant)?.description,
       })
     }
     else{
@@ -98,13 +93,13 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
         thumb: product?.thumb,
         images: product?.image,
         price: product?.price,
+        description: product?.description
       })
     }
   }, [variant])
   
   const fetchServiceData = async ()=>{
     const response = await apiGetOneService(sid)
-    console.log(response)
     if(response?.success){
       setProduct(response?.service)
       setCurrentImage(response?.service?.thumb)
@@ -113,6 +108,7 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
         thumb: response?.service?.thumb,
         images: response?.service?.image,
         price: response?.service?.price,
+        description: response?.service?.description,
       })
     }
   }
@@ -156,7 +152,7 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
     }
   },[quantity])
 
-  const handleAddtoCart = async() => { 
+  const handleBookService = async() => { 
     if(!current){
       return Swal.fire({
         name: "You haven't logged in",
@@ -176,22 +172,38 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
         }
       })
     }
-    const response = await apiUpdateCart({
-        sid, 
-        color: currentProduct?.color || product?.color, 
-        quantity, 
-        price: currentProduct?.price || product?.price, 
-        thumb: currentProduct?.thumb || product?.thumb,
-        name: currentProduct?.name || product?.name,
-      })
-    if(response.success){
-      toast.success(response.mes)
-      dispatch(getCurrent())
-    }
     else{
-      toast.error(response.mes)
+      navigate({
+        pathname:  `/${path.BOOKING}`,
+        search: createSearchParams({sid: sid}).toString()
+    })
     }
    }
+
+  const handleAddtoWishlist = async() => { 
+  if(!current){
+    return Swal.fire({
+      name: "You haven't logged in",
+      text: 'Please login and try again',
+      icon: 'warning',
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Go to Login',
+      cancelButtonText: 'Not now',                
+    }).then((rs)=>{
+      if(rs.isConfirmed){
+        navigate({
+          pathname: `/${path.LOGIN}`,
+          search: createSearchParams({
+            redirect: location.pathname}).toString(),
+        })
+      }
+    })
+  }
+  else{
+    
+  }
+  }
 
   return (
     <div className={clsx('w-full')}> 
@@ -245,28 +257,28 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
             ))}
           </div>
           <ul className='text-sm text-gray-500 list-square pl-4'>
-            {product?.description?.length > 1 
+            {currentProduct?.description?.length > 1 
               &&
-            product?.description?.map(el=>(
+            currentProduct?.description?.map(el=>(
               <li className=' leading-6' key={el}>{el}</li>
             )) }
-            {product?.description?.length === 1 
+            {currentProduct?.description?.length === 1 
               &&
-            <div className='text-sm line-clamp-[10] mb-8' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(product?.description[0])}}></div>}
+            <div className='text-sm line-clamp-[10] mb-8' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(currentProduct?.description[0])}}></div>}
           </ul>
 
           <div className='my-4 flex flex-col gap-4'>
             <span className='font-bold'>
               Other options
             </span>
-            <div className='flex flex-wrap items-center w-full'>
+            <div className='flex flex-wrap items-center w-full gap-2'>
               <div 
               onClick={() =>  setVariant(null)} 
-              className= {clsx('flex items-center gap-2 p-2 border cursor-pointer', variant === null && 'border-gray-500 shadow-md rounded-md')}>
+              className= {clsx('flex items-center gap-2 p-2 border cursor-pointer rounded-md', variant === null && 'border-gray-500 shadow-md rounded-md')}>
                 <img src={product?.thumb} alt='thumb' className='w-16 h-16 border rounded-md object-cover'></img>
                 <span className='flex flex-col'>
                   <span>{product?.name}</span>
-                  <span className='text-sm '>{`${formatPrice(formatPricee(currentProduct?.price || product?.price))} VNĐ`}</span>
+                  <span className='text-sm '>{`${formatPrice(formatPricee(product?.price))} VNĐ`}</span>
                 </span>
               </div>
               {
@@ -274,11 +286,11 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
                   <div 
                   key={el?.sku}
                   onClick={() =>  setVariant(el?.sku)} 
-                  className= {clsx('flex items-center gap-2 p-2 border cursor-pointer', variant === el?.sku && 'border-red-500')}>
+                  className= {clsx('flex items-center gap-2 p-2 border cursor-pointer rounded-md', variant === el?.sku && 'border-gray-500 shadow-md rounded-md')}>
                     <img src={el?.thumb} alt='thumb' className='w-16 h-16 border rounded-md object-cover'></img>
                     <span className='flex flex-col'>
-                      <span>{el?.color}</span>
-                      <span className='text-sm '>{el?.price}</span>
+                      <span>{el?.name}</span>
+                      <span className='text-sm '>{`${formatPrice(formatPricee(el?.price))} VNĐ`}</span>
                     </span>
                   </div>
                 ))
@@ -293,10 +305,10 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
               <SelectQuantity quantity={quantity} editQuantity={editQuantity} handleChange={handleChange} />
             </div>
             <div className='flex gap-4'>
-            <Button handleOnclick={handleAddtoCart} style={`px-4 py-2 rounded-md text-white font-semibold my-2 bg-blue-500 w-fit`}>
+            <Button handleOnclick={handleBookService} style={`px-4 py-2 rounded-md text-white font-semibold my-2 bg-blue-500 w-fit`}>
               Book now
             </Button>
-            <Button handleOnclick={handleAddtoCart}>
+            <Button handleOnclick={handleAddtoWishlist}>
               Add to wishlist
             </Button>
             </div>

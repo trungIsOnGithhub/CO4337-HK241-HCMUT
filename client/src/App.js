@@ -10,7 +10,7 @@ import {getCategorieService} from 'store/category/asyncAction'
 import {useDispatch, useSelector} from 'react-redux'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Cart, Modal } from './components';
+import { Booking, Cart, Modal } from './components';
 import { showCart } from 'store/app/appSlice';
 
 function App() {
@@ -39,6 +39,7 @@ function App() {
         <Route path={path.OUR_SERVICES} element={<Service />} />
         <Route path={path.PRODUCTS__CATEGORY} element={<Products />} />
         <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
+        <Route path={path.BOOKING} element={<Booking />} />
         {/* <Route path={path.DETAIL_CART} element={<DetailCart />} /> */}
         <Route path={path.ALL} element={<Home />} />
       </Route>

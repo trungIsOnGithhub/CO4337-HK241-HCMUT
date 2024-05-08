@@ -1,6 +1,8 @@
 const Service = require('../models/service')
 const User = require('../models/user')
 const asyncHandler = require("express-async-handler")
+const slugify = require('slugify')
+const makeSku = require('uniqid')
 
 
 const createService = asyncHandler(async(req, res)=>{
@@ -28,7 +30,6 @@ const createService = asyncHandler(async(req, res)=>{
 const getAllServicesByAdmin = asyncHandler(async (req, res) => {
     const {_id} = req.user
     const {provider_id} = await User.findById({_id}).select('provider_id')
-    console.log(provider_id)
     const queries = { ...req.query };
 
     // Loại bỏ các trường đặc biệt ra khỏi query
@@ -259,7 +260,10 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
 const getOneService = asyncHandler(async(req, res)=>{
     const {sid} = req.params
 
-    const service = await Service.findById(sid)
+    const service = await Service.findById(sid).populate({
+        path: 'assigned_staff',
+        select: 'firstName lastName avatar mobile email',
+    })
 
 
     
@@ -271,18 +275,19 @@ const getOneService = asyncHandler(async(req, res)=>{
 
 const addVariantService = asyncHandler(async(req, res)=>{
     const {sid} = req.params
-    const {name, price} = req.body
+    const {name, price, hour, minute, description} = req.body
     const thumb = req.files?.thumb[0]?.path
     const image = req.files?.images?.map(el => el.path)
+    const duration = +hour*60 + +minute
 
-    if(!name || !price){
+    if(!name || !price || !hour || !minute || !description){
         throw new Error("Missing input")
     }
-    // const response = await Service.findByIdAndUpdate(pid, {$push: {variants: {color, price, title, thumb, image, sku: makeSku().toUpperCase()}}},{new: true})
-    // return res.status(200).json({
-    //     success: response? true : false,
-    //     mes: response? 'Add variant successfully' : "Cannot upload image"
-    // })
+    const response = await Service.findByIdAndUpdate(sid, {$push: {variants: {name, price, thumb, image, duration, description, sku: makeSku().toUpperCase()}}},{new: true})
+    return res.status(200).json({
+        success: response? true : false,
+        mes: response? 'Add variant successfully' : "Cannot add variant"
+    })
     
 })
 module.exports = {

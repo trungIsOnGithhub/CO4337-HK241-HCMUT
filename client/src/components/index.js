@@ -55,3 +55,6 @@ export {default as Comment} from './Vote/Comment'
 
 export {default as Pagination} from './Pagination/Pagination'
 export {default as PageItem} from './Pagination/PageItem'
+
+
+export {default as Booking} from './Booking/Booking'

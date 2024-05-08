@@ -93,7 +93,7 @@ const ManageService = () => {
       </div>}
 
       {variant &&  
-      <div className='absolute inset-0 bg-zinc-900 h-[200%] z-50 flex-auto'>
+      <div className='absolute inset-0 bg-zinc-900 h-fit z-50 flex-auto'>
         <Variant variant={variant} render={render} setVariant={setVariant}/>
       </div>}
 

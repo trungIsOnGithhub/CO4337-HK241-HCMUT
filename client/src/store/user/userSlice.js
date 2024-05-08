@@ -36,7 +36,6 @@ export const userSlice = createSlice({
             else return el
           })
           state.currentCart = updatedCart
-          
         }
 
     },
