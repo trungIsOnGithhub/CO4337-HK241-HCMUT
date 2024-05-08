@@ -2,15 +2,18 @@ import { apiAddVariant } from 'apis'
 import Button from 'components/Buttons/Button'
 import Loading from 'components/Common/Loading'
 import InputForm from 'components/Input/InputForm'
+import Select from 'components/Input/Select'
 import React, { memo, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import { showModal } from 'store/app/appSlice'
 import Swal from 'sweetalert2'
+import { hour, minute } from 'ultils/constant'
 import { getBase64 } from 'ultils/helper'
 
 const Variant = ({variant, setVariant, render}) => {
+  console.log(variant)
   const dispatch = useDispatch()
   const {register,formState:{errors}, reset, handleSubmit, watch} = useForm()
   const [preview, setPreview] = useState({
@@ -20,9 +23,10 @@ const Variant = ({variant, setVariant, render}) => {
 
   useEffect(() => {
     reset({
-      title: variant?.title,
+      name: variant?.name,
       price: variant?.price,
-      color: variant?.color,
+      hour: Math.floor((+(variant?.duration) / 60)),
+      minute: +(variant?.duration) % 60,
     })
   }, [variant])
 
@@ -97,16 +101,14 @@ const Variant = ({variant, setVariant, render}) => {
               label = 'Original Name'
               register={register}
               errors={errors}
-              id = 'title'
+              id = 'name'
               fullWidth
               style='flex-auto'
               validate = {{
                 required: 'Need fill this field'
               }}
-              placeholder='Title of variant'
+              placeholder='Name of the option'
             />
-          </div>
-          <div className='flex items-center w-full gap-4'>
             <InputForm
               label = 'Price'
               register={register}
@@ -120,18 +122,34 @@ const Variant = ({variant, setVariant, render}) => {
               type='number'
               style='flex-auto'
             />
-            <InputForm
-            label = 'Color'
-            register={register}
-            errors={errors}
-            id = 'color'
-            validate = {{
-              required: 'Need fill this field'
-            }}
-            fullWidth
-            placeholder='Color of variant'
-            style='flex-auto'
-            />
+          </div>
+          <div className='flex items-center w-full gap-4'>
+          <Select
+                label = 'Hour'
+                options = {hour}
+                register={register}
+                id = 'hour'
+                validate = {{
+                  required: 'Need fill this field'
+                }}
+                style='flex-auto'
+                errors={errors}
+                fullWidth
+                text='Hour'
+              />
+              <Select 
+                label = 'Minute'
+                options = {minute}
+                register={register}
+                id = 'minute'
+                validate = {{
+                  required: 'Need fill this field'
+                }}
+                style='flex-auto'
+                errors={errors}
+                fullWidth
+                text='Minute'
+              />
           </div>
           <div className='flex flex-col gap-2 mt-8'>
             <label className='font-semibold' htmlFor='thumb'>Upload Thumb</label>

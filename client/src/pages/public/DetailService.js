@@ -1,7 +1,7 @@
 import React ,{useState, useEffect, useCallback, memo, useRef}from 'react'
 import {createSearchParams, useParams} from 'react-router-dom'
 import { apiGetOneProduct, apiGetProduct } from '../../apis/product'
-import { apiGetOneService } from '../../apis/service'
+import { apiGetOneService, apiGetServicePublic } from '../../apis/service'
 import {Breadcrumb, Button, SelectQuantity, ProductExtra, ProductInformation, CustomSlider} from '../../components'
 import Slider from "react-slick";
 import ReactImageMagnify from 'react-image-magnify';
@@ -56,8 +56,8 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
   })
   useEffect(() => {
     if(sid){
-      fetchProductData()
-      fetchProductCate()
+      fetchServiceData()
+      fetchServiceCate()
     }
     window.scrollTo(0,0)
     nameRef.current?.scrollIntoView({block: 'center'})
@@ -87,7 +87,6 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
     if(variant){
       setCurrentProduct({
         name: product?.variants?.find(el => el.sku === variant)?.name,
-        color: product?.variants?.find(el => el.sku === variant)?.color,
         thumb: product?.variants?.find(el => el.sku === variant)?.thumb,
         images: product?.variants?.find(el => el.sku === variant)?.image,
         price: product?.variants?.find(el => el.sku === variant)?.price,
@@ -96,7 +95,6 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
     else{
       setCurrentProduct({
         name: product?.name,
-        color: product?.color,
         thumb: product?.thumb,
         images: product?.image,
         price: product?.price,
@@ -104,23 +102,31 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
     }
   }, [variant])
   
-  const fetchProductData = async ()=>{
+  const fetchServiceData = async ()=>{
     const response = await apiGetOneService(sid)
-    if(response.success){
+    console.log(response)
+    if(response?.success){
       setProduct(response?.service)
       setCurrentImage(response?.service?.thumb)
+      setCurrentProduct({
+        name: response?.service?.name,
+        thumb: response?.service?.thumb,
+        images: response?.service?.image,
+        price: response?.service?.price,
+      })
     }
   }
-  const fetchProductCate = async ()=>{
-    const response = await apiGetProduct({category})
-    if(response.success){
-      setProductCate(response.products)
+
+  const fetchServiceCate = async ()=>{
+    const response = await apiGetServicePublic({category})
+    if(response?.success){
+      setProductCate(response?.services)
     }
   }
 
   useEffect(() => {
     if(sid){
-      fetchProductData()
+      fetchServiceData()
     }
   }, [update])
   
@@ -187,7 +193,6 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
     }
    }
 
-  
   return (
     <div className={clsx('w-full')}> 
       {!isQuickView && <div className='h-[81px] flex items-center justify-center bg-gray-100'>
@@ -215,11 +220,7 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
           {/* <img src={product?.image} alt='product' className='border h-[458px] w-[458px] object-cover' /> */}
           <div className='w-[458px]'>
             <Slider className='image_slider flex gap-2'{...settings}>
-              {!currentProduct?.images && product?.image?.map(el => (
-                <div key={el}>
-                  <img onClick={e=> handleClickImage(e,el)} src={el} alt="sup_product" className='cursor-pointer border h-[141px] w-[141px] object-cover'/>
-                </div>
-              ))}
+
 
               {currentProduct?.images?.length > 0 && currentProduct?.images?.map(el => (
                 <div key={el}>
@@ -261,10 +262,10 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
             <div className='flex flex-wrap items-center w-full'>
               <div 
               onClick={() =>  setVariant(null)} 
-              className= {clsx('flex items-center gap-2 p-2 border cursor-pointer', variant === null && 'border-red-500')}>
+              className= {clsx('flex items-center gap-2 p-2 border cursor-pointer', variant === null && 'border-gray-500 shadow-md rounded-md')}>
                 <img src={product?.thumb} alt='thumb' className='w-16 h-16 border rounded-md object-cover'></img>
                 <span className='flex flex-col'>
-                  <span>{product?.color}</span>
+                  <span>{product?.name}</span>
                   <span className='text-sm '>{`${formatPrice(formatPricee(currentProduct?.price || product?.price))} VNĐ`}</span>
                 </span>
               </div>
@@ -317,7 +318,7 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
       {!isQuickView && 
       <>
         <div className='w-main m-auto mt-[8px]'>
-          <h3 className='text-[20px] font-semibold py-[15px] border-b-2 border-main'>OTHER CUSTOMERS ALSO BUY:</h3>
+          <h3 className='text-[20px] font-semibold py-[15px] border-b-2 border-gray-500 shadow-sm'>OTHER CUSTOMERS ALSO BUY:</h3>
           <CustomSlider products={productCate} normal={true}/>
         </div>
         <div className='h-[100px] w-full'></div>

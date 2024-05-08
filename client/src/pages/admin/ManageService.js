@@ -181,9 +181,9 @@ const ManageService = () => {
                 size={24}/></span>
                 <span onClick={() => handleDeleteService(el._id)} 
                 className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>
-                {/* <span onClick={() => setVariant(el)} 
+                <span onClick={() => setVariant(el)} 
                 className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><FaCopy 
-                size={22}/></span> */}
+                size={22}/></span>
               </td>  
             </tr>
           ))}
