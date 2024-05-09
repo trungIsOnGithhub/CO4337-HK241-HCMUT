@@ -118,10 +118,22 @@ const deleteStaffByAdmin = asyncHandler(async (req, res) => {
     }
 })
 
+const getOneStaff = asyncHandler(async(req, res)=>{
+    const {stid} = req.params
+    console.log(stid)
+    const staff = await Staff.findById(stid)
+    console.log(staff)
+
+    return res.status(200).json({
+        success: staff? true : false,
+        staff: staff? staff : "Staff not found"
+    })
+})
 
 module.exports = {
     addStaff,
     getAllStaffs,
     updateStaffByAdmin,
-    deleteStaffByAdmin
+    deleteStaffByAdmin,
+    getOneStaff
 }

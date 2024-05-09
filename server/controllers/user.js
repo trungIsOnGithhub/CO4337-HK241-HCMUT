@@ -136,10 +136,22 @@ const getOneUser = asyncHandler(async(req, res)=>{
     const user = await User.findById({_id}).select('-refresh_token -password').populate({
         path: 'cart',
         populate:{
-            path: 'product',
-            select: 'title thumb price'
-        }
-    }).populate('wishlist', 'title thumb price color')
+            path: 'service',
+            select: 'name price duration'
+        },
+    }).populate({
+        path: 'cart',
+        populate:{
+            path: 'provider',
+            select: 'bussinessName address'
+        },
+    }).populate({
+        path: 'cart',
+        populate:{
+            path: 'staff',
+            select: 'firstName lastName'
+        },
+    })
 
     return res.status(200).json({
         success: user? true : false,
@@ -371,58 +383,49 @@ const updateUserAddress = asyncHandler(async (req, res) => {
 })
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // update cart
 const updateCart = asyncHandler(async (req, res) => {
-    const {_id} = req.user
-    const {pid, quantity = 1, color, price, thumb, title} = req.body
-    if(!pid || !color || !price || !thumb|| !title) {
-        throw new Error("Missing input")
-    }
-    else{
-        const user = await User.findById(_id).select('cart')
-        const alreadyProduct = user?.cart.find(e1 => e1.product.toString() === pid && e1.color === color)
+    const {_id} = req.user;
+    const {service, provider, staff, time, date} = req.body;
+    
+    if (!service || !provider || !staff || !time || !date) {
+        throw new Error("Missing input");
+    } else {
+        const user = await User.findById(_id).select('cart');
+        let response;
 
-        if(alreadyProduct){
-            const response = await User.updateOne({cart:{$elemMatch: alreadyProduct}}, {$set: {"cart.$.quantity": quantity, "cart.$.price": price, "cart.$.thumb": thumb, "cart.$.title": title}},{new:true})
-            return res.status(200).json({
-                success: response ? true : false,
-                mes: response ? 'Updated your cart' : "Something went wrong"
-            })     
+        // Xóa hết tất cả các phần tử trong mảng 'cart'
+        await User.findByIdAndUpdate(_id, {$set: {cart: []}}, {new: true});
+
+        try {
+            // Thêm một phần tử mới vào mảng 'cart'
+            response = await User.findByIdAndUpdate(_id, {$push: {cart: {service, provider, staff, time, date}}}, {new: true});
+        } catch (error) {
+            // Xử lý lỗi nếu có
+            return res.status(500).json({ success: false, mes: "Something went wrong" });
         }
 
-        // neu sp chua them vao gio hang || sp da them nhung khac color
-        else {
-            const response = await User.findByIdAndUpdate(_id,{$push:{cart:{product:pid, quantity, color, price, thumb, title}}},{new: true})
-            return res.status(200).json({
-                success: response ? true : false,
-                mes: response ? 'Updated your cart' : "Something went wrong"
-            })
-        }
-    }
-})
-
-//remove product from cart
-const removeProductFromCart = asyncHandler(async (req, res) => {
-
-    const {_id} = req.user
-    const {pid, color} = req.params
-    const user = await User.findById(_id).select('cart')
-    const alreadyProduct = user?.cart.find(e1 => e1.product.toString() === pid && e1.color === color)
-    if(!alreadyProduct){
-        return res.status(200).json({
-            success: true,
-            mes: 'Not Found'
-        })
-    }
-    else{
-        const response = await User.findByIdAndUpdate(_id,{$pull:{cart:{product:pid, color}}},{new: true})
         return res.status(200).json({
             success: response ? true : false,
-            mes: response ? 'Deleted successfully' : "Something went wrong"
-        })
+            mes: response ? 'Updated your cart' : "Something went wrong"
+        });
     }
-    
-})
+});
+
 
 
 const createUsers = asyncHandler(async(req, res)=>{
@@ -474,6 +477,5 @@ module.exports = {
     updateCart,
     finalRegister,
     createUsers,
-    removeProductFromCart,
     updateWishlist
 }

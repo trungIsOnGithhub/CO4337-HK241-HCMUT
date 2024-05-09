@@ -5,17 +5,25 @@ const asyncHandler = require('express-async-handler')
 
 const createNewOrder = asyncHandler(async(req, res)=>{
     const {_id} = req.user
-    const {products, total, address} = req.body
+    const {info, total} = req.body
 
-    if(address){
-        await User.findByIdAndUpdate(_id, {address, cart:[]})
+    if(!info || !total){
+        throw new Error("Missing input");
     }
-
-    const response = await Order.create({products, total, orderBy: _id, status: 'Successful'})
-    return res.status(200).json({
-        success: response ? true : false,
-        rs: response ? response : "Something went wrong",
-    })
+    else{
+        await User.findByIdAndUpdate(_id, {$set: {cart: []}}, {new: true});
+        let response;
+        try {
+            response = await Order.create({info, total, orderBy: _id, status: 'Successful'})
+        } catch (error) {
+            // Xử lý lỗi nếu có
+            return res.status(500).json({ success: false, mes: "Something went wrong" });
+        }
+        return res.status(200).json({
+            success: response ? true : false,
+            rs: response ? response : "Something went wrong",
+        })
+    }
 })
 
 const updateStatus = asyncHandler(async(req, res)=>{

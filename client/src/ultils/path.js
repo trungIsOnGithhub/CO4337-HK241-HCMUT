@@ -15,6 +15,7 @@ const path = {
     CHECKOUT: 'checkout',
     PRODUCTS: 'services',
     BOOKING: 'booking',
+    BOOKING_DATE_TIME: 'booking_date_time',
 
     SERVICE_PROVIDER_REGISTER: 'sp_register',
 

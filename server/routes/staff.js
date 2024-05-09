@@ -7,6 +7,7 @@ router.post('/', uploader.single('avatar'), ctrls.addStaff)
 router.get('/', ctrls.getAllStaffs)
 router.put('/:staffId', [verifyAccessToken, isAdmin],uploader.single('avatar'), ctrls.updateStaffByAdmin)
 router.delete('/:staffId', [verifyAccessToken, isAdmin], ctrls.deleteStaffByAdmin)
+router.get('/:stid', ctrls.getOneStaff)
 module.exports = router
 
 //CREATE : POST       (body) -- khong bi lo

@@ -18,3 +18,7 @@ export const apiDeleteStaff = (sid) => axios({
     url: '/staff/'+sid,
     method: 'delete',
 })
+export const apiGetOneStaff = (stid) => axios({
+    url: '/staff/'+stid,
+    method: 'get',
+})

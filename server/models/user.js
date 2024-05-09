@@ -35,12 +35,11 @@ var userSchema = new mongoose.Schema({
         default: 202,
     },
     cart:[{
-        product: {type:mongoose.Types.ObjectId, ref: 'Product'},
-        quantity: {type: Number},
-        color: {type: String},
-        price: {type: Number},
-        thumb: {type: String},
-        title: {type: String},  
+        service: {type:mongoose.Types.ObjectId, ref: 'Service'},
+        provider: {type:mongoose.Types.ObjectId, ref: 'Service_Provider'},
+        staff:  {type:mongoose.Types.ObjectId, ref: 'Staff'},
+        date: String,
+        time: String
     }],
     address:{
         type: String,

@@ -58,3 +58,4 @@ export {default as PageItem} from './Pagination/PageItem'
 
 
 export {default as Booking} from './Booking/Booking'
+export {default as BookingDateTIme} from './Booking/BookingDateTIme'

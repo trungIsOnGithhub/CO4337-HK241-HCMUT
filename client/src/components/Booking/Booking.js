@@ -1,12 +1,15 @@
 import { apiGetOneService, apiGetServiceProviderById } from 'apis';
 import clsx from 'clsx';
 import Button from 'components/Buttons/Button';
-import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import React, { memo, useEffect, useState } from 'react';
+import { createSearchParams, useSearchParams } from 'react-router-dom';
 import { formatPrice, formatPricee } from 'ultils/helper';
 import path from 'ultils/path';
+import { apiUpdateCart } from 'apis'
+import withBaseComponent from 'hocs/withBaseComponent';
+import { getCurrent } from 'store/user/asyncAction';
 
-const Booking = () => {
+const Booking = ({dispatch, navigate}) => {
   const [params] = useSearchParams();
   const [staffs, setStaffs] = useState(null);
   const [service, setService] = useState(null);
@@ -47,7 +50,6 @@ const Booking = () => {
 
   useEffect(() => {
     const fetchData = () => {
-      console.log('checkkk')
       if (provider) {
         const getCurrentTime = () => {
           const now = new Date();
@@ -116,16 +118,32 @@ const Booking = () => {
     return () => clearInterval(interval);
   }, [provider, duration]);
 
+  const handleBookDateTime = (el) => { 
+    navigate({
+      pathname:  `/${path.BOOKING_DATE_TIME}`,
+      search: createSearchParams({sid: service?._id, st: el?._id}).toString()
+    })
+   }
+
   const parseTimee = (time) => {
     const [hour, minute] = time.split(':').map(Number);
     return hour * 60 + minute;
   };
   
-  const handleSubmit = () => {
-    window.open(`/${path.CHECKOUT}`, '_blank')
+  const handleOnClick = async(time, el) => {
+    setSelectedStaff({time, staff:el, date:new Date().toLocaleDateString()});
+    await apiUpdateCart({
+      service: service?._id, 
+      provider: provider?._id, 
+      staff: el?._id, 
+      time: time,
+      date: new Date().toLocaleDateString()
+    })
   }
 
-
+  const handleCheckout = () => {
+    window.open(`/${path.CHECKOUT}`, '_blank')
+  }
   return (
     <div className='w-main'>
       <div className='w-main flex gap-2 h-fit my-5'>
@@ -138,7 +156,7 @@ const Booking = () => {
                   <img src={el?.avatar} className='w-16 h-16 rounded-full' alt={el?.firstName} />
                   <span>{`${el.lastName} ${el.firstName}`}</span>
                 </div>
-                <Button style='px-6 rounded-md text-white bg-blue-500 font-semibold h-fit py-2 w-fit'>Choose</Button>
+                <Button style='px-6 rounded-md text-white bg-blue-500 font-semibold h-fit py-2 w-fit' handleOnclick={()=>handleBookDateTime(el)}>Choose</Button>
               </div>
               <div className='flex gap-1 items-center'>
                 <span>Available</span>
@@ -146,7 +164,7 @@ const Booking = () => {
               </div>
               <div className='flex flex-wrap gap-2 my-3'>
                 {timeOptions.map((time, idx) => (
-                  <div className={clsx('px-3 py-1 border border-gray-400 rounded-md hover:bg-blue-400 cursor-pointer', (selectedStaff.time===time && selectedStaff.staff===el) && 'bg-blue-400')} key={idx} onClick={() =>{setSelectedStaff({time, staff:el, date:new Date().toLocaleDateString()});}}>
+                  <div className={clsx('px-3 py-1 border border-gray-400 rounded-md hover:bg-blue-400 cursor-pointer', (selectedStaff.time===time && selectedStaff.staff===el) && 'bg-blue-400')} key={idx} onClick={() =>{handleOnClick(time,el)}}>
                     {parseInt(time.split(':')[0]) >= 12 ? `${time} pm` : `${time} am`}
                   </div>
                 ))}
@@ -176,7 +194,7 @@ const Booking = () => {
               </div>
               <div className='flex gap-2'>
                 <span className='text-gray-700 font-bold'>Staff:</span>
-                <span className='font-semibold text-yellow-600'>{selectedStaff?.staff ? `${selectedStaff?.staff?.lastName} ${selectedStaff?.staff?.firstName}` : ''}</span>
+                <span className='font-semibold text-yellow-600'>{(selectedStaff?.staff && parseTimee(selectedStaff?.time) >= currentTime) ? `${selectedStaff?.staff?.lastName} ${selectedStaff?.staff?.firstName}` : ''}</span>
               </div>
               <div className='flex gap-2'>
                 <span className='text-gray-700 font-bold'>Date & Time:</span>
@@ -189,7 +207,7 @@ const Booking = () => {
             </div>
           </div>
           <div className='text-right'>
-            {(selectedStaff?.staff && parseTimee(selectedStaff?.time) >= currentTime) && <Button style='px-6 py-1 rounded-md text-white bg-green-600 font-semibold w-fit h-fit mt-2' handleOnclick={handleSubmit}>Checkout</Button>}
+            {(selectedStaff?.staff && parseTimee(selectedStaff?.time) >= currentTime) && <Button style='px-6 py-1 rounded-md text-white bg-green-600 font-semibold w-fit h-fit mt-2' handleOnclick={handleCheckout}>Checkout</Button>}
           </div>
         </div>
       </div>
@@ -197,4 +215,4 @@ const Booking = () => {
   );
 };
 
-export default Booking;
+export default withBaseComponent(memo(Booking));
