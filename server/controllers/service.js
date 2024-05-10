@@ -262,7 +262,7 @@ const getOneService = asyncHandler(async(req, res)=>{
 
     const service = await Service.findById(sid).populate({
         path: 'assigned_staff',
-        select: 'firstName lastName avatar mobile email',
+        select: 'firstName lastName avatar mobile email work',
     })
 
 

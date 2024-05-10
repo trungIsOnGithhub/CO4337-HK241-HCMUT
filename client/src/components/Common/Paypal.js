@@ -35,7 +35,7 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload, setIsSuccess}) 
                 Swal.fire('Congratulation !!!', 'Your order has been successfully completed', 'success').then(()=>{
                     navigate('/')
                 })
-            }, 500)
+            }, 1500)
         }
     }
     

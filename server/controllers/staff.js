@@ -120,9 +120,7 @@ const deleteStaffByAdmin = asyncHandler(async (req, res) => {
 
 const getOneStaff = asyncHandler(async(req, res)=>{
     const {stid} = req.params
-    console.log(stid)
     const staff = await Staff.findById(stid)
-    console.log(staff)
 
     return res.status(200).json({
         success: staff? true : false,
@@ -130,10 +128,24 @@ const getOneStaff = asyncHandler(async(req, res)=>{
     })
 })
 
+const updateStaffWork = asyncHandler(async(req, res)=>{
+    const {service, provider, staff, duration, time, date} = req.body?.info[0];
+    if (!service || !provider || !staff || !time || !date || !duration) {
+        throw new Error("Missing input");
+    } else {
+        const response = await Staff.findByIdAndUpdate(staff, {$push: {work: {service, provider, time, date, duration}}}, {new: true});
+        return res.status(200).json({
+            success: response ? true : false,
+            mes: response ? 'Updated staff' : "Something went wrong"
+        });
+    }
+})
+
 module.exports = {
     addStaff,
     getAllStaffs,
     updateStaffByAdmin,
     deleteStaffByAdmin,
-    getOneStaff
+    getOneStaff,
+    updateStaffWork
 }

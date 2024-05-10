@@ -33,11 +33,8 @@ const BookingDateTIme = () => {
   };
 
   const fetchStaffData = async () => {
-    console.log('checkkk')
-    console.log(params?.get('st'))
     const response = await apiGetOneStaff(params?.get('st'));
     setStaff(response?.staff)
-    console.log(staff)
   };
 
   const fetchProviderData = async () => {
@@ -227,12 +224,12 @@ const BookingDateTIme = () => {
   };
 
   const handleOnClick = async(time) => {
-    console.log(time);
     setSelectedTime(time);
     await apiUpdateCart({
       service: service?._id, 
       provider: provider?._id, 
       staff: staff?._id, 
+      duration: service?.duration,
       time: time,
       date: new Date(datetime).toLocaleDateString()
     })
@@ -268,6 +265,38 @@ const BookingDateTIme = () => {
     }
     else return true
   }
+
+  const isWorkingTime = (time, workSchedule) => {
+    const selectedDate = new Date(datetime); // Chuyển đổi datetime thành đối tượng Date
+  
+    for (const schedule of workSchedule) {
+      // Chuyển đổi chuỗi ngày trong lịch làm việc thành đối tượng Date
+      const scheduleDateParts = schedule.date.split('/');
+      const scheduleDate = new Date(
+        parseInt(scheduleDateParts[2]),
+        parseInt(scheduleDateParts[1]) - 1,
+        parseInt(scheduleDateParts[0])
+      );
+  
+      // Kiểm tra xem ngày trong lịch làm việc có trùng với ngày được chọn không
+      if (
+        scheduleDate.getDate() === selectedDate.getDate() &&
+        scheduleDate.getMonth() === selectedDate.getMonth() &&
+        scheduleDate.getFullYear() === selectedDate.getFullYear()
+      ) {
+        const startTime = parseTimee(schedule.time);
+        const endTime = startTime + schedule.duration;
+        const selectedTime = parseTimee(time);
+  
+        if (selectedTime >= startTime && selectedTime < endTime) {
+          return true; // Thời gian đã có lịch làm việc
+        }
+      }
+    }
+  
+    return false; // Thời gian không có lịch làm việc hoặc không trùng ngày được chọn
+  };
+
   return (
     <div className='w-main'>
       <div className='w-main flex gap-2 h-fit my-5'>
@@ -299,7 +328,14 @@ const BookingDateTIme = () => {
                 currentMonth?.map(({ date, dayOfMonth }) => (
                   <div key={date} className='flex flex-col items-center'>
                     <div className='font-semibold'>{dayOfMonth.slice(0, 3)}</div>
-                    <div className={clsx('px-6 py-4 flex items-center justify-center border border-gray-400 rounded-md cursor-pointer', date === datetime && 'bg-blue-400',new Date(date) < new Date() && 'opacity-50')} onClick={()=>{setDatetime(date); setSelectedTime()}}>{format(new Date(date), 'dd')}</div>
+                    <div className={clsx('px-6 py-4 flex items-center justify-center border border-gray-400 rounded-md', date === datetime && 'bg-blue-400',new Date(date).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer')} 
+                                    onClick={() => {
+                                      if (new Date(date).setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0)) {
+                                        setDatetime(date);
+                                        setSelectedTime();
+                                      }
+                                    }}
+                    >{format(new Date(date), 'dd')}</div>
                   </div>
                 ))
               )}
@@ -309,9 +345,11 @@ const BookingDateTIme = () => {
             <div className='font-semibold'>Choose time</div>
             <div className='flex flex-wrap gap-2 my-3 justify-center'>
                {datetime && timeOptions?.map((time, idx) => (
+                (!staff.work || !isWorkingTime(time, staff.work)) && (
                   <div className={clsx('px-3 py-1 border border-gray-400 rounded-md hover:bg-blue-400 cursor-pointer', selectedTime===time && 'bg-blue-400')} key={idx} onClick={() =>{handleOnClick(time)}}>
                     {parseInt(time.split(':')[0]) >= 12 ? `${time} pm` : `${time} am`}
                   </div>
+                )    
                 ))}
             </div>
           </div>

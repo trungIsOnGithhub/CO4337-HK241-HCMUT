@@ -2,17 +2,18 @@ const Order = require('../models/order')
 const User = require('../models/user')
 const Coupon = require('../models/coupon')
 const asyncHandler = require('express-async-handler')
+const Staff = require('../models/staff')
 
 const createNewOrder = asyncHandler(async(req, res)=>{
     const {_id} = req.user
     const {info, total} = req.body
-
     if(!info || !total){
         throw new Error("Missing input");
     }
     else{
         await User.findByIdAndUpdate(_id, {$set: {cart: []}}, {new: true});
         let response;
+        await Staff.findByIdAndUpdate(info[0]?.staff, {$push: {work: {service : info[0]?.service, provider: info[0]?.provider, time: info[0]?.time, date: info[0]?.date, duration: info[0]?.duration}}}, {new: true});
         try {
             response = await Order.create({info, total, orderBy: _id, status: 'Successful'})
         } catch (error) {

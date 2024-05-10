@@ -400,9 +400,9 @@ const updateUserAddress = asyncHandler(async (req, res) => {
 // update cart
 const updateCart = asyncHandler(async (req, res) => {
     const {_id} = req.user;
-    const {service, provider, staff, time, date} = req.body;
+    const {service, provider, staff, time, date, duration} = req.body;
     
-    if (!service || !provider || !staff || !time || !date) {
+    if (!service || !provider || !staff || !time || !date || !duration) {
         throw new Error("Missing input");
     } else {
         const user = await User.findById(_id).select('cart');
@@ -413,7 +413,7 @@ const updateCart = asyncHandler(async (req, res) => {
 
         try {
             // Thêm một phần tử mới vào mảng 'cart'
-            response = await User.findByIdAndUpdate(_id, {$push: {cart: {service, provider, staff, time, date}}}, {new: true});
+            response = await User.findByIdAndUpdate(_id, {$push: {cart: {service, provider, staff, time, date, duration}}}, {new: true});
         } catch (error) {
             // Xử lý lỗi nếu có
             return res.status(500).json({ success: false, mes: "Something went wrong" });

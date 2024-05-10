@@ -38,6 +38,7 @@ var userSchema = new mongoose.Schema({
         service: {type:mongoose.Types.ObjectId, ref: 'Service'},
         provider: {type:mongoose.Types.ObjectId, ref: 'Service_Provider'},
         staff:  {type:mongoose.Types.ObjectId, ref: 'Staff'},
+        duration: Number,
         date: String,
         time: String
     }],

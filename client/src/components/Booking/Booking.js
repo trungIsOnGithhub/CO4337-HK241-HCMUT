@@ -44,6 +44,7 @@ const Booking = ({dispatch, navigate}) => {
   }, [params]);
 
   useEffect(() => {
+    console.log(service?.assigned_staff)
     setStaffs(service?.assigned_staff);
     fetchProviderData();
   }, [service]);
@@ -137,6 +138,7 @@ const Booking = ({dispatch, navigate}) => {
       provider: provider?._id, 
       staff: el?._id, 
       time: time,
+      duration: service?.duration,
       date: new Date().toLocaleDateString()
     })
   }
@@ -144,6 +146,29 @@ const Booking = ({dispatch, navigate}) => {
   const handleCheckout = () => {
     window.open(`/${path.CHECKOUT}`, '_blank')
   }
+
+  const isWorkingTime = (time, workSchedule) => {
+    const currentDate = new Date(); 
+    for (const schedule of workSchedule) {
+      // Chuyển đổi chuỗi ngày thành đối tượng Date
+      const scheduleDateParts = schedule.date.split('/');
+      const scheduleDate = new Date(parseInt(scheduleDateParts[2]), parseInt(scheduleDateParts[1]) - 1, parseInt(scheduleDateParts[0]));
+  
+      // Kiểm tra xem ngày trong lịch làm việc có trùng với ngày hiện tại không
+      if (scheduleDate.getDate() === currentDate.getDate() &&
+          scheduleDate.getMonth() === currentDate.getMonth() &&
+          scheduleDate.getFullYear() === currentDate.getFullYear()) {
+        const startTime = parseTimee(schedule.time);
+        const endTime = startTime + schedule.duration;
+        const selectedTime = parseTimee(time);
+        if (selectedTime >= startTime && selectedTime < endTime) {
+          return true; // Thời gian đã có lịch làm việc
+        }
+      }
+    }
+    return false; // Thời gian không có lịch làm việc hoặc không trùng ngày hiện tại
+  };
+
   return (
     <div className='w-main'>
       <div className='w-main flex gap-2 h-fit my-5'>
@@ -163,11 +188,13 @@ const Booking = ({dispatch, navigate}) => {
                 <div className='w-fit h-fit bg-green-500 px-1 rounded-md text-white'>Today</div>
               </div>
               <div className='flex flex-wrap gap-2 my-3'>
-                {timeOptions.map((time, idx) => (
+              {timeOptions.map((time, idx) => (
+                (!el.work || !isWorkingTime(time, el.work)) && (
                   <div className={clsx('px-3 py-1 border border-gray-400 rounded-md hover:bg-blue-400 cursor-pointer', (selectedStaff.time===time && selectedStaff.staff===el) && 'bg-blue-400')} key={idx} onClick={() =>{handleOnClick(time,el)}}>
                     {parseInt(time.split(':')[0]) >= 12 ? `${time} pm` : `${time} am`}
                   </div>
-                ))}
+                )
+              ))}
               </div>
             </div>
           ))}

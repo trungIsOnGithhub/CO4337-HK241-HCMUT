@@ -5,6 +5,7 @@ const uploader = require('../config/cloudinary.config')
 
 router.post('/', uploader.single('avatar'), ctrls.addStaff)
 router.get('/', ctrls.getAllStaffs)
+router.put('/update_work', ctrls.updateStaffWork)
 router.put('/:staffId', [verifyAccessToken, isAdmin],uploader.single('avatar'), ctrls.updateStaffByAdmin)
 router.delete('/:staffId', [verifyAccessToken, isAdmin], ctrls.deleteStaffByAdmin)
 router.get('/:stid', ctrls.getOneStaff)
