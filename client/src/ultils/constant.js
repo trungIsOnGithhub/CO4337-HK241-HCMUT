@@ -268,6 +268,18 @@ export const adminSidebar = [
         ],
         icon: <BsFillTagsFill size={20}/>
     },
+    {
+        id: 7,
+        type: 'parent',
+        text: 'Manage Calendar',
+        submenu:[
+            {
+                text: 'Staff Calendar',
+                path: `/${path.ADMIN}/${path.STAFF_CALENDAR}`
+            }
+        ],
+        icon: <BsFillTagsFill size={20}/>
+    },
 ]
 
 export const roles = [
