@@ -25,15 +25,17 @@ var ProviderServiceSchema = new mongoose.Schema({
     homeurl: {
         type: String,
     },
-    phone: {
-        type: String,
-    },
     time: {
         type: Object,
     },
     images: {
         type: [],
-    }
+    },
+    mobile:{
+        type:String,
+        unique:true,
+        required:true,  
+    },
 },{
     timestamps: true
 });

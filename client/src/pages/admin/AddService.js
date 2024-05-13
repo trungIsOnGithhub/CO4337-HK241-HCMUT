@@ -37,8 +37,8 @@ const AddService = () => {
   
   const [staffs, setStaffs] = useState(null)
   const fetchStaff = async(params) => {
-    const response = await apiGetAllStaffs()
-    if(response.success){
+    const response = await apiGetAllStaffs({limit:999})
+    if(response?.success){
       setStaffs(response.staffs)
     }
   }

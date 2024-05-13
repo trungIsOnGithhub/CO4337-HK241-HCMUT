@@ -120,7 +120,7 @@ const ManageProduct = () => {
           {staffs?.map((el,idx)=>(
             <tr key={el._id} className='border border-gray-500'>
               <td className='text-center py-2'>{((+params.get('page')||1)-1)*+process.env.REACT_APP_LIMIT + idx + 1}</td>
-              <td className='text-center py-2'><img src={el.avatar} alt='thumb' className='w-12 h-12 object-cover'></img></td>
+              <td className='text-center py-2 flex justify-center'><img src={el.avatar} alt='thumb' className='w-12 h-12 object-cover'></img></td>
               <td className='text-center py-2'>{el.email}</td>
               <td className='text-center py-2'>{el.firstName}</td>
               <td className='text-center py-2'>{el.lastName}</td>

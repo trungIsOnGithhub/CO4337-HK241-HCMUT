@@ -1,6 +1,6 @@
-const Staff = require('../models/staff')
 const asyncHandler = require("express-async-handler")
-
+const User = require('../models/user')
+const Staff = require('../models/staff')
 
 const addStaff = asyncHandler(async(req, res)=>{
 
@@ -21,8 +21,11 @@ const addStaff = asyncHandler(async(req, res)=>{
 })
 
 // get all staffs
-const getAllStaffs = asyncHandler(async (req, res) => {
+const getAllStaffsByAdmin = asyncHandler(async (req, res) => {
+    const {_id} = req.user
+    const {provider_id} = await User.findById({_id}).select('provider_id')
     const queries = { ...req.query };
+    console.log(req.query)
     // Loại bỏ các trường đặc biệt ra khỏi query
     const excludeFields = ['limit', 'sort', 'page', 'fields'];
     excludeFields.forEach((el) => delete queries[el]);
@@ -38,15 +41,20 @@ const getAllStaffs = asyncHandler(async (req, res) => {
     const formatedQueries = JSON.parse(queryString);
     // Filtering
     if (queries?.name) formatedQueries.name = { $regex: queries.name, $options: 'i' };  
-    if (req.query.q){
+
+    let queryFinish = {}
+    if (queries?.q){
         delete formatedQueries.q
-        formatedQueries['$or'] = [
-            {firstName : { $regex: req.query.q, $options: 'i' }},
-            {lastName : { $regex: req.query.q, $options: 'i' }},
-            {email : { $regex: req.query.q, $options: 'i' }},
-        ]
+        queryFinish = {
+            $or: [
+                {firstName : { $regex: req.query.q, $options: 'i' }},
+                {lastName : { $regex: req.query.q, $options: 'i' }},
+                {email : { $regex: req.query.q, $options: 'i' }},
+            ]
+        }
     }
-    let queryCommand =  Staff.find(formatedQueries)
+    const qr = {...formatedQueries, ...queryFinish,  provider_id}
+    let queryCommand =  Staff.find(qr)
     try {
         // sorting
         if(req.query.sort){
@@ -65,13 +73,13 @@ const getAllStaffs = asyncHandler(async (req, res) => {
         //+2 -> 2
         //+dgfbcxx -> NaN
         const page = +req.query.page || 1
-        const limit = +req.query.limit || process.env.LIMIT_PRODUCT
+        const limit = +req.query.limit || process.env.LIMIT_PRODeUCT
         const skip = (page-1)*limit
         queryCommand.skip(skip).limit(limit)
 
 
         const staffs = await queryCommand
-        const counts = await Staff.countDocuments(formatedQueries);
+        const counts = await Staff.countDocuments(qr);
         return res.status(200).json({
             success: true,
             counts: counts,
@@ -143,7 +151,7 @@ const updateStaffWork = asyncHandler(async(req, res)=>{
 
 module.exports = {
     addStaff,
-    getAllStaffs,
+    getAllStaffsByAdmin,
     updateStaffByAdmin,
     deleteStaffByAdmin,
     getOneStaff,

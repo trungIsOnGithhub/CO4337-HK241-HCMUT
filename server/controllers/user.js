@@ -1,4 +1,5 @@
 const User = require('../models/user')
+const Order = require('../models/order')
 const asyncHandler = require("express-async-handler")
 const {generateAccessToken, generateRefreshToken} = require('../middlewares/jwt')
 const jwt = require('jsonwebtoken')
@@ -317,6 +318,78 @@ const getAllUsers = asyncHandler(async (req, res) => {
     }
 })
 
+
+//get all customer from admin
+const getAllCustomers = asyncHandler(async (req, res) => {
+    const {_id} = req.user;
+    const user = await User.findById(_id).select('provider_id');
+    const providerId = user.provider_id;
+
+    // Prepare queries for filtering, sorting, and pagination
+    const queries = { ...req.query };
+    const excludeFields = ['limit', 'sort', 'page', 'fields'];
+    excludeFields.forEach(el => delete queries[el]);
+
+    let queryString = JSON.stringify(queries);
+    queryString = queryString.replace(
+        /\b(gte|gt|lt|lte)\b/g,
+        matchedEl => `$${matchedEl}`
+    );
+    const formatedQueries = JSON.parse(queryString);
+
+    if (queries?.name) formatedQueries.name = { $regex: queries.name, $options: 'i' };
+    if (req.query.q) {
+        delete formatedQueries.q;
+        formatedQueries['$or'] = [
+            { firstName: { $regex: req.query.q, $options: 'i' } },
+            { lastName: { $regex: req.query.q, $options: 'i' } },
+            { email: { $regex: req.query.q, $options: 'i' } }
+        ];
+    }
+
+    try {
+        // Find all orders where the first element in the info array matches the provider_id
+        const orders = await Order.find({ 'info.0.provider': providerId }).populate('orderBy').exec();
+
+        // Extract unique user IDs from the orders
+        const userIds = [...new Set(orders.map(order => order.orderBy._id.toString()))];
+
+        // Apply additional queries, filtering, sorting, and pagination to the user list
+        formatedQueries._id = { $in: userIds };
+
+        let queryCommand = User.find(formatedQueries);
+
+        if (req.query.sort) {
+            const sortBy = req.query.sort.split(',').join(' ');
+            queryCommand.sort(sortBy);
+        }
+
+        if (req.query.fields) {
+            const fields = req.query.fields.split(',').join(' ');
+            queryCommand.select(fields);
+        }
+
+        const page = +req.query.page || 1;
+        const limit = +req.query.limit || process.env.LIMIT_PRODUCT;
+        const skip = (page - 1) * limit;
+        queryCommand.skip(skip).limit(limit);
+
+        const users = await queryCommand;
+        const counts = await User.countDocuments(formatedQueries);
+
+        return res.status(200).json({
+            success: true,
+            counts: counts,
+            users: users,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            error: 'Cannot get users',
+        });
+    }
+});
+
 // delete user
 const deleteUser = asyncHandler(async (req, res) => {
     const {userId} = req.params
@@ -477,5 +550,6 @@ module.exports = {
     updateCart,
     finalRegister,
     createUsers,
-    updateWishlist
+    updateWishlist,
+    getAllCustomers
 }

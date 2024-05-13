@@ -29,11 +29,6 @@ var userSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
-    role:{
-        type: String,
-        enum : [1411,202],
-        default: 202,
-    },
     cart:[{
         service: {type:mongoose.Types.ObjectId, ref: 'Service'},
         provider: {type:mongoose.Types.ObjectId, ref: 'Service_Provider'},
@@ -69,7 +64,12 @@ var userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Service_Provider',
         default: null
-    }
+    },
+    role:{
+        type: String,
+        enum : [1411,202],
+        default: 202,
+    },
 },{
     timestamps: true
 });

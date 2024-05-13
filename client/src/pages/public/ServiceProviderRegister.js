@@ -120,17 +120,12 @@ const ServiceProviderRegister = () => {
         {
             payload.role = 1411;
             dispatch(showModal({isShowModal: true, modalChildren:<Loading />}))
-            let response = await apiRegister(payload)
+            let response = await apiCreateServiceProvider(payload);
             dispatch(showModal({isShowModal: false, modalChildren:null}))
             if(response.success){
                 setIsVerify(true)
             }
             else{
-                Swal.fire('Opps!', response.mes,'error')
-                return;
-            }
-            response = await apiCreateServiceProvider(payload);
-            if(!response.success){
                 Swal.fire('Opps!', response.mes,'error')
                 return;
             }

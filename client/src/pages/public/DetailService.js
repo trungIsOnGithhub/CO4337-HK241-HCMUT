@@ -216,18 +216,7 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
       <div onClick={e => e.stopPropagation()} className={clsx('bg-white m-auto mt-4 flex', isQuickView ? 'max-w-[900px] gap-16 p-8 max-h-[90vh] overflow-y-auto': 'w-main')}>
         <div className={clsx('flex flex-col gap-4', isQuickView ? 'w-1/2' : 'w-2/5')}>
           <div className='h-[458px] w-[458px] border overflow-hidden flex items-center justify-center'>
-            <ReactImageMagnify {...{
-              smallImage: {
-                  alt: 'Wristwatch by Ted Baker London',
-                  isFluidWidth: true,
-                  src: currentProduct?.thumb || currentImage,
-              },
-              largeImage: {
-                  src: currentProduct?.thumb || currentImage,
-                  width: 1200,
-                  height: 1200
-              },
-            }} />
+            <img src={currentProduct?.thumb || currentImage} className='w-full h-full object-contain'></img>
           </div>
           {/* <img src={product?.image} alt='product' className='border h-[458px] w-[458px] object-cover' /> */}
           <div className='w-[458px]'>
