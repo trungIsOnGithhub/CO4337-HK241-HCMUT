@@ -25,7 +25,6 @@ const MyServiceProvider = ({navigate, dispatch}) => {
   const daysInWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
   const currentProviderEffectHanlder = async () => {
-    console.log(current);
     if (!current?.provider_id) {
       Swal.fire('Oops!', 'Cannot Specify Current User Provider', 'error');
       return;
@@ -35,7 +34,7 @@ const MyServiceProvider = ({navigate, dispatch}) => {
       Swal.fire('Oops!', response.mes, 'error');
       return;
     }
-    // console.log('+++++', response.payload);
+
     setCurrentProvider(response.payload);
     reset({
       bussinessName: response.payload?.bussinessName,
@@ -47,7 +46,6 @@ const MyServiceProvider = ({navigate, dispatch}) => {
     })
     // setPreviewImage(current?.avatar)
 
-    // console.log('hlkjkljlk', current);
   }
 
   const handleUpdateInfo = async(data)=>{
@@ -61,13 +59,11 @@ const MyServiceProvider = ({navigate, dispatch}) => {
     }
     delete data.avatar
 
-    console.log('----------', data)
 
     for(let i of Object.entries(data)){
       formData.append(i[0],i[1])
     }
 
-    console.log('##########', formData)
 
     const response = await apiUpdateCurrentServiceProvider(current.provider_id, data)
     if(response.success){
@@ -85,14 +81,12 @@ const MyServiceProvider = ({navigate, dispatch}) => {
   const handlePreviewAvatar = async(file) => {
     const base64Thumb = await getBase64(file)
     setPreviewImage(prev => (base64Thumb))
-    console.log(previewImage)
   }
 
   useEffect(() => {
     if(watch('avatar') instanceof FileList && watch('avatar').length > 0) handlePreviewAvatar(watch('avatar')[0])
   }, [watch('avatar')])
   
-  console.log(isDirty)
   return (
     <div className='w-full relative px-4'>
       <header className='text-3xl font-semibold py-4 border-b border-b-gray-200'>My Service Provider</header>

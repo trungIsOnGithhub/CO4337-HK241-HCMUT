@@ -29,23 +29,18 @@ var userSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
-    role:{
-        type: String,
-        enum : [1411,202],
-        default: 202,
-    },
     cart:[{
-        product: {type:mongoose.Types.ObjectId, ref: 'Product'},
-        quantity: {type: Number},
-        color: {type: String},
-        price: {type: Number},
-        thumb: {type: String},
-        title: {type: String},  
+        service: {type:mongoose.Types.ObjectId, ref: 'Service'},
+        provider: {type:mongoose.Types.ObjectId, ref: 'Service_Provider'},
+        staff:  {type:mongoose.Types.ObjectId, ref: 'Staff'},
+        duration: Number,
+        date: String,
+        time: String
     }],
     address:{
         type: String,
     },
-    wishlist: [{type: mongoose.Types.ObjectId, ref: 'Product'}],
+    wishlist: [{type: mongoose.Types.ObjectId, ref: 'Service'}],
     isBlocked: {
         type: Boolean,
         default: false,
@@ -69,7 +64,12 @@ var userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Service_Provider',
         default: null
-    }
+    },
+    role:{
+        type: String,
+        enum : [1411,202],
+        default: 202,
+    },
 },{
     timestamps: true
 });

@@ -33,11 +33,9 @@ const ManageProduct = () => {
       if(rs.isConfirmed){
         const response = await apiDeleteProduct(pid)
         if(response.success){
-          console.log('sure')
          toast.success(response.mes)
         }
         else{
-          console.log('not sure')
          toast.error(response.mes)
         }
         render()
@@ -51,7 +49,6 @@ const ManageProduct = () => {
    })
 
   const handleSearchProduct = (data) => {
-    console.log(data)
   }
 
   const fetchProduct = async(params) => {
@@ -83,8 +80,6 @@ const ManageProduct = () => {
     }
   }, [queryDebounce])
   
-  
-  console.log(params.get('page'))
   return (
     <div className='w-full flex flex-col gap-4 relative'>
       {editProduct &&  

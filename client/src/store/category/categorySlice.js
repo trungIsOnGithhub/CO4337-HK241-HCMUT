@@ -20,7 +20,6 @@ export const categorySlice = createSlice({
           // Tắt trạng thái loading, lưu thông tin user vào store
           state.isLoading = false;
           state.categories_service = action?.payload;
-          console.log(state.categories_service)
         });
     
         // Khi thực hiện action login thất bại (Promise rejected)

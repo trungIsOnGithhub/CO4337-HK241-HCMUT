@@ -7,7 +7,7 @@ const createNewBlog = asyncHandler(async(req, res)=>{
         throw new Error ("Missing input")
     }
     const response = await Blog.create(req.body)
-    console.log(response)
+
     return res.status(200).json({
         success: response ? true : false,
         createBlog: response ? response : "Cannot create new blog"
@@ -20,7 +20,7 @@ const updateBlog = asyncHandler(async(req, res)=>{
         throw new Error("Missing input")
     }
     const response = await Blog.findByIdAndUpdate(bid, req.body, {new: true})
-    console.log(response)
+
     return res.status(200).json({
         success: response ? true : false,
         updatedBlog: response ? response : "Cannot update blog"

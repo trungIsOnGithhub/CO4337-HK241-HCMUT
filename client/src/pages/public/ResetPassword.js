@@ -6,7 +6,6 @@ import { toast } from 'react-toastify'
 const ResetPassword = () => {
   const [password, setPassword] = useState('')
   const {token} = useParams()
-  console.log(token)
   const handleResetPassword = async() => {
     const response = await apiResetPassword({password, token})
     if(response.success){

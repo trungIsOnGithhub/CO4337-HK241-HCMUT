@@ -79,7 +79,6 @@ const CreateProduct = () => {
         for (let image of finalPayload.images) formData.append('images', image)
       }
       for (var pair of formData.entries()) {
-        console.log(pair[0]+ ', ' + pair[1]); 
       }
       // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
       // const response = await apiCreateProduct(formData)

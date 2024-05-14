@@ -57,13 +57,9 @@ export const apiUpdateCart = (data) => axios({
     data
 })
 
-export const apiRemoveCart = (pid, color) => axios({
-    url: `/user/remove-cart/${pid}/${color}`,
-    method: 'delete',
-})
 
-export const apiUpdateWishlist = ({pid}) => axios({
-    url: `/user/wishlist/${pid}`,
+export const apiUpdateWishlist = ({sid}) => axios({
+    url: `/user/wishlist/${sid}`,
     method: 'put',
 })
 

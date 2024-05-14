@@ -23,7 +23,6 @@ const UserSideBar = () => {
       setActive(prev => [...prev, tabId])
     }
   }
-  console.log('++++ ', current)
   return (
     <div className='bg-white h-full py-4 w-[250px] flex-none'>
         <div className='w-full flex flex-col items-center justify-center py-4'>

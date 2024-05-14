@@ -13,13 +13,12 @@ router.get('/logout', ctrls.logout)
 router.post('/forgotpassword', ctrls.forgotPassword)
 router.put('/reset_password', ctrls.resetPassword)
 
-router.get('/', ctrls.getAllUsers)
+router.get('/',[verifyAccessToken, isAdmin], ctrls.getAllCustomers)
 router.put('/current', [verifyAccessToken],uploader.single('avatar'), ctrls.updateUser)
 router.put('/address/', [verifyAccessToken], ctrls.updateUserAddress)
 router.put('/cart/', [verifyAccessToken], ctrls.updateCart)
-router.delete('/remove-cart/:pid/:color', [verifyAccessToken], ctrls.removeProductFromCart)
 router.delete('/:userId', [verifyAccessToken, isAdmin], ctrls.deleteUser)
-router.put('/wishlist/:pid', [verifyAccessToken], ctrls.updateWishlist)
+router.put('/wishlist/:sid', [verifyAccessToken], ctrls.updateWishlist)
 router.put('/:userId', [verifyAccessToken, isAdmin], ctrls.updateUserByAdmin)
 
 module.exports = router

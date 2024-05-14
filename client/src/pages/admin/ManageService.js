@@ -37,11 +37,9 @@ const ManageService = () => {
       if(rs.isConfirmed){
         const response = await apiDeleteServiceByAdmin(sid)
         if(response.success){
-          console.log('sure')
          toast.success(response.mes)
         }
         else{
-          console.log('not sure')
          toast.error(response.mes)
         }
         render()
@@ -55,13 +53,11 @@ const ManageService = () => {
    })
 
   const handleSearchProduct = (data) => {
-    console.log(data)
   }
 
   const fetchProduct = async(params) => {
     const response = await apiGetServiceByAdmin({...params, limit: process.env.REACT_APP_LIMIT})
     if(response?.success){
-      console.log(response)
       setProducts(response.services)
       setCounts(response.counts)
     }
@@ -89,7 +85,6 @@ const ManageService = () => {
   }, [queryDebounce])
   
   
-  console.log(params.get('page'))
   return (
     <div className='w-full flex flex-col gap-4 relative'>
       {editService &&  
@@ -98,7 +93,7 @@ const ManageService = () => {
       </div>}
 
       {variant &&  
-      <div className='absolute inset-0 bg-zinc-900 h-[200%] z-50 flex-auto'>
+      <div className='absolute inset-0 bg-zinc-900 h-fit z-50 flex-auto'>
         <Variant variant={variant} render={render} setVariant={setVariant}/>
       </div>}
 
@@ -186,9 +181,9 @@ const ManageService = () => {
                 size={24}/></span>
                 <span onClick={() => handleDeleteService(el._id)} 
                 className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>
-                {/* <span onClick={() => setVariant(el)} 
+                <span onClick={() => setVariant(el)} 
                 className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><FaCopy 
-                size={22}/></span> */}
+                size={22}/></span>
               </td>  
             </tr>
           ))}

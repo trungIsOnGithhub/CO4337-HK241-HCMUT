@@ -4,11 +4,8 @@ import Select from 'react-select'
 
 const SelectCategory = ({label, options, register, errors, id, validate, style, fullWidth, text, values, onChangee}) => {
   // Tạo một hàm handleChange để xử lý thay đổi giá trị của select
-  console.log(values)
-  console.log(options?.find(el => el.label === values))
 
   const handleChange = (aa) => {
-    console.log(aa)
     onChangee(aa?.label);
   };
 

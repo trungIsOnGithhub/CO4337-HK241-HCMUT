@@ -143,7 +143,7 @@ const Login = () => {
             </div>}
             <img src="https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsX29mZmljZV8zM18zZF9pbGx1c3RyYXRpb25fb2ZfYV9uZW9uX2ljb25zX3Nob3BwaW5nX2lzb19hYTQwZTZhNi0xOTk1LTRlMTUtOTJjYy03ZjJlODdlNjkyODNfMS5qcGc.jpg" alt=""
                 className='w-full h-full object-cover'></img>
-            <div className="absolute top-0 bottom-0 left-0 right-1/2 flex items-center justify-center">
+            <div className="absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center">
                 <div className="p-8 bg-white rounded-md min-w-[500px] flex flex-col items-center">
                 <h1 className="text-[28px] font-semibold text-main mb-8">{isRegister? 'Register':'Login'}</h1>
                 {isRegister && 
@@ -195,14 +195,14 @@ const Login = () => {
                 >
                     {isRegister? 'Register' : 'Login'}
                 </Button>
-                <div className='flex items-center justify-center gap-8 w-full text-sm'>
+                <div className='flex items-center justify-between w-full text-sm'>
                     {!isRegister && <span className="text-blue-500 hover:underline cursor-pointer" onClick={()=>{setIsForgotPassword(true)}}>Forget your account?</span>}
                     {!isRegister? <span 
                     className="text-blue-500 hover:underline cursor-pointer"
                     onClick={()=>{setIsRegister(true)}}
                     >Create a new account</span>:
                     <span
-                    className="text-blue-500 hover:underline cursor-pointer w-full text-center"
+                    className="text-blue-500 hover:underline cursor-pointer text-center"
                     onClick={()=>{setIsRegister(false)}}
                     >Go login</span>}
                 <Link className="text-blue-500 text-sm hover:underline cursor-pointer" to={`/${path.HOME}`}>

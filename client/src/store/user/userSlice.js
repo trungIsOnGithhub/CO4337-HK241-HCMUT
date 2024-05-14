@@ -26,19 +26,6 @@ export const userSlice = createSlice({
         clearMessage: (state) => {
           state.mes = ''
         },
-        updateCart: (state, action) => {
-          const {pid, color, quantity} = action.payload
-          const updatingCart = JSON.parse(JSON.stringify(state.currentCart))
-          const updatedCart = updatingCart.map(el=>{
-            if(el.color === color && el.product?._id === pid){
-              return {...el, quantity}
-            }
-            else return el
-          })
-          state.currentCart = updatedCart
-          
-        }
-
     },
     extraReducers: (builder) => {
         // Bắt đầu thực hiện action login (Promise pending)
@@ -49,7 +36,6 @@ export const userSlice = createSlice({
     
         // // Khi thực hiện action login thành công (Promise fulfilled)
         builder.addCase(actions.getCurrent.fulfilled, (state, action) => {
-          // console.log('call get current')
           // Tắt trạng thái loading, lưu thông tin user vào store
           state.isLoading = false;
           state.current = action.payload;
@@ -69,5 +55,5 @@ export const userSlice = createSlice({
       },
 })
 
-export const {login, logout, clearMessage, updateCart} = userSlice.actions
+export const {login, logout, clearMessage} = userSlice.actions
 export default userSlice.reducer

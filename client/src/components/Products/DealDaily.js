@@ -61,32 +61,31 @@ const DealDaily = ({dispatch}) => {
     }, [dealDaily])
     
     
-    // useEffect(()=>{
-    //     console.log('checkkkk')
-    //     idInterval = setInterval(() => {
-    //         if(second > 0){setSecond(prev => prev -1)}
-    //         else{
-    //             if(minute > 0){
-    //                 setMinute(prev => prev - 1)
-    //                 setSecond(59)
-    //             }
-    //             else{
-    //                 if(hour > 0){
-    //                     setHour(prev => prev - 1)
-    //                     setMinute(59)
-    //                     setSecond(59)
-    //                 }
-    //                 else{
-    //                     setExpire(!expire)
-    //                 }
-    //             }
+    useEffect(()=>{
+        idInterval = setInterval(() => {
+            if(second > 0){setSecond(prev => prev -1)}
+            else{
+                if(minute > 0){
+                    setMinute(prev => prev - 1)
+                    setSecond(59)
+                }
+                else{
+                    if(hour > 0){
+                        setHour(prev => prev - 1)
+                        setMinute(59)
+                        setSecond(59)
+                    }
+                    else{
+                        setExpire(!expire)
+                    }
+                }
 
-    //         }
-    //     },1000)
-    //     return () => {
-    //         clearInterval(idInterval)
-    //     }
-    // },[second, minute, hour, expire])
+            }
+        },1000)
+        return () => {
+            clearInterval(idInterval)
+        }
+    },[second, minute, hour, expire])
   return (
     <div className='w-full border flex-auto'>
         <div className='flex items-center justify-between p-4 w-full'>
@@ -105,8 +104,8 @@ const DealDaily = ({dispatch}) => {
         </div>
         <div className='px-4 mt-8'>
             <div className='flex justify-center gap-2 mb-4'>
-                {/* <Countdown unit={'Hours'} number = {hour}/> */}
-                {/* <Countdown unit={'Minutes'} number = {minute}/> */}
+                <Countdown unit={'Hours'} number = {hour}/>
+                <Countdown unit={'Minutes'} number = {minute}/>
                 <Countdown unit={'Seconds'} number = {second}/>
             </div>
             <button type='button' className='flex gap-2 items-center justify-center w-full bg-main hover:bg-gray-800 text-white font-semibold py-2'>

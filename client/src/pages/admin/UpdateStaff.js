@@ -8,7 +8,6 @@ import {apiModifyStaff} from 'apis/staff'
 import { showModal } from 'store/app/appSlice'
 
 const UpdateStaff = ({editStaff, render, setEditStaff}) => {
-  console.log(editStaff._id)
   const dispatch = useDispatch()
 
   const {register, formState:{errors}, reset, handleSubmit, watch} = useForm()
@@ -45,17 +44,13 @@ const UpdateStaff = ({editStaff, render, setEditStaff}) => {
   const handleUpdateStaff = async(data) => {
     // const invalid = validate(payload, setInvalidField)
     // if(invalid === 0){
-      console.log(data)
       let finalPayload = {...data}
       if(data.avatar?.length === 0){
-        console.log('check_1')
         finalPayload.avatar = preview.avatar
       }
       else{
-        console.log('check_2')
         finalPayload.avatar = data.avatar[0]
       }
-      console.log(finalPayload)
       const formData = new FormData()
 
       for(let i of Object.entries(finalPayload)){
@@ -64,13 +59,11 @@ const UpdateStaff = ({editStaff, render, setEditStaff}) => {
 
       for (var pair of formData.entries())
       {
-      console.log(pair[0]+ ', '+ pair[1]); 
       }
     
       // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
       const response = await apiModifyStaff(formData, editStaff._id)
       // dispatch(showModal({isShowModal: false, modalChildren: null}))
-      console.log(response)
       if(response.success){
         toast.success(response.mes)
         render()

@@ -35,7 +35,7 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload, setIsSuccess}) 
                 Swal.fire('Congratulation !!!', 'Your order has been successfully completed', 'success').then(()=>{
                     navigate('/')
                 })
-            }, 500)
+            }, 1500)
         }
     }
     
@@ -55,8 +55,6 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload, setIsSuccess}) 
                     
                 onApprove={(data, actions)=>actions.order.capture().then(async(response)=>{
                     if(response.status === 'COMPLETED'){
-                        console.log(response)
-                        console.log(payload)
                         handleCreateOrder()
                     }
                 })}

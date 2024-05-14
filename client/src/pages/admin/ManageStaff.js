@@ -32,11 +32,9 @@ const ManageProduct = () => {
       if(rs.isConfirmed){
         const response = await apiDeleteStaff(pid)
         if(response.success){
-          console.log('sure')
           toast.success(response.mes)
         }
         else{
-          console.log('not sure')
          toast.error(response.mes)
         }
         render()
@@ -49,7 +47,6 @@ const ManageProduct = () => {
    })
 
   const handleSearchProduct = (data) => {
-    console.log(data)
   }
 
   const fetchStaff = async(params) => {
@@ -82,7 +79,6 @@ const ManageProduct = () => {
   }, [queryDebounce])
   
   
-  console.log(params.get('page'))
   return (
     <div className='w-full flex flex-col gap-4 relative'>
       {editStaff &&  
@@ -124,7 +120,7 @@ const ManageProduct = () => {
           {staffs?.map((el,idx)=>(
             <tr key={el._id} className='border border-gray-500'>
               <td className='text-center py-2'>{((+params.get('page')||1)-1)*+process.env.REACT_APP_LIMIT + idx + 1}</td>
-              <td className='text-center py-2'><img src={el.avatar} alt='thumb' className='w-12 h-12 object-cover'></img></td>
+              <td className='text-center py-2 flex justify-center'><img src={el.avatar} alt='thumb' className='w-12 h-12 object-cover'></img></td>
               <td className='text-center py-2'>{el.email}</td>
               <td className='text-center py-2'>{el.firstName}</td>
               <td className='text-center py-2'>{el.lastName}</td>

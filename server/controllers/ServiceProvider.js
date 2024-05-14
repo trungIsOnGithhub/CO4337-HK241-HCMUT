@@ -1,35 +1,38 @@
 const ServiceProvider = require('../models/ServiceProvider')
 const asyncHandler = require('express-async-handler')
 const User = require('../models/user')
+const makeToken = require('uniqid')
+const mongoose = require('mongoose');
+const sendMail = require('../ultils/sendMail')
+const crypto = require('crypto')
 
 const createServiceProvider = asyncHandler(async(req, res)=>{
-    // const { email, password, firstName, lastName, mobile } = req.body
-    // if(!email || !password || !firstName || !lastName || !mobile){
-    //     return res.status(400).json({
-    //         success: false,
-    //         mes: "Missing input"
-    //     })}
+    const { email, password, firstName, lastName, mobile } = req.body
+    if(!email || !password || !firstName || !lastName || !mobile){
+        return res.status(400).json({
+            success: false,
+            mes: "Missing input"
+        })}
     
-    // const user = await User.findOne({email})
-    // if(user){
-    //     return res.status(400).json({
-    //         success: false,
-    //         mes: "User has existed already"
-    //     })}
+    let user = await User.findOne({email})
+    if(user){
+        return res.status(400).json({
+            success: false,
+            mes: "User has existed already"
+        })}
 
-    // const token = makeToken()
-    // const email_edit = btoa(email) + '@' + token
-    // const newUser = await User.create({
-    //     email:email_edit,password,firstName,lastName,mobile
-    // })
-    // // res.cookie('dataregister', {...req.body, token}, {httpOnly: true, maxAge: 15*60*1000})
+    const token = makeToken()
+    const email_edit = btoa(email) + '@' + token
+    const newUser = await User.create({
+        email:email_edit,password,firstName,lastName,mobile
+    })
 
-    // if(!newUser){
-    //     return res.status(400).json({
-    //         success: false,
-    //         mes: "Error creating user"
-    //     })
-    // }
+    if(!newUser){
+        return res.status(400).json({
+            success: false,
+            mes: "Error creating user"
+        })
+    }
 
 
     const { bussinessName, province } = req.body
@@ -40,7 +43,7 @@ const createServiceProvider = asyncHandler(async(req, res)=>{
         })
     }
 
-    console.log('nhfg: ' + JSON.stringify(req.body));
+
 
     const bname = await ServiceProvider.findOne({bussinessName})
     if(bname){
@@ -61,7 +64,7 @@ const createServiceProvider = asyncHandler(async(req, res)=>{
         return
     }
 
-    const user = await User.findOne({mobile: req?.body?.mobile})
+    user = await User.findOne({mobile: req?.body?.mobile})
     if(!user){
         res.status(400).json({
             success: false,
@@ -69,10 +72,10 @@ const createServiceProvider = asyncHandler(async(req, res)=>{
         })
         return
     }
-    const userUpdated = await User.updateOne({mobile: req?.body?.mobile}, { provider_id: response.id })
+    const userUpdated = await User.updateOne({mobile: req?.body?.mobile}, { provider_id: response.id, role: 1411 })
 
-    // const html = `<h2>Register code: </h2><br /><blockquote>${token}</blockquote>`
-    // await sendMail({email, html, subject: 'Complete Registration'})
+    const html = `<h2>Register code: </h2><br /><blockquote>${token}</blockquote>`
+    await sendMail({email, html, subject: 'Complete Registration'})
 
     return res.status(201).json({
         success: response ? true : false,
@@ -90,8 +93,7 @@ const getAllServiceProvider = asyncHandler(async(req, res)=>{
 
 const updateServiceProvider = asyncHandler(async(req, res)=>{
     const spid = req.params.spid
-    // console.log('****', req.body)
-    // console.log('=====', spid)
+
     if(Object.keys(req.body).length === 0){
         throw new Error('Missing input')
     }
@@ -99,7 +101,7 @@ const updateServiceProvider = asyncHandler(async(req, res)=>{
         req.body.expiry = Date.now() + +req.body.expiry * 24 * 60 * 60 * 1000
     }
     const response = await ServiceProvider.findByIdAndUpdate(spid, req.body, {new: true})
-    console.log('++++' + JSON.stringify(response))
+
     return res.status(200).json({
         success: response ? true : false,
         updatedServiceProvider: response ? response : "Cannot update a Service Provider",
@@ -110,7 +112,7 @@ const updateServiceProvider = asyncHandler(async(req, res)=>{
 const getServiceProvider = asyncHandler(async(req, res)=>{
     const spid = req.params.spid;
     const sp = await ServiceProvider.findById(spid)
-    console.log('++++++' + JSON.stringify(sp))
+
     return res.status(200).json({
         success: sp ? true : false,
         payload: sp ? sp : "Cannot find Service Provider"

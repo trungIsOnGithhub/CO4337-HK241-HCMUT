@@ -1,13 +1,16 @@
-import { apiAddVariant } from 'apis'
+import { apiAddVariantService } from 'apis'
 import Button from 'components/Buttons/Button'
 import Loading from 'components/Common/Loading'
 import InputForm from 'components/Input/InputForm'
-import React, { memo, useEffect, useState } from 'react'
+import MarkdownEditor from 'components/Input/MarkdownEditor'
+import Select from 'components/Input/Select'
+import React, { memo, useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import { showModal } from 'store/app/appSlice'
 import Swal from 'sweetalert2'
+import { hour, minute } from 'ultils/constant'
 import { getBase64 } from 'ultils/helper'
 
 const Variant = ({variant, setVariant, render}) => {
@@ -18,44 +21,55 @@ const Variant = ({variant, setVariant, render}) => {
     images: []
   })
 
+  const [payload, setPayload] = useState({
+    description: ''
+  })
+
+  const [invalidField, setInvalidField] = useState([])
+  
+  const changeValue = useCallback((e)=>{
+    setPayload(e)
+  },[payload])
+
+
   useEffect(() => {
     reset({
-      title: variant?.title,
+      name: variant?.name,
       price: variant?.price,
-      color: variant?.color,
+      hour: Math.floor((+(variant?.duration) / 60)),
+      minute: +(variant?.duration) % 60,
     })
+    setPayload({description: typeof variant?.description === 'object' ? variant?.description?.join(', ') : variant?.description})
   }, [variant])
 
 
   const handleAddVariant = async(data) => {
-    console.log(data)
-    if(data?.color === variant?.color){
-      Swal.fire('Oops!', 'Color not changed', 'info')
+    if(data?.name === variant?.name){
+      Swal.fire('Oops!', 'Name not changed', 'info')
     }
     else{
+      let finalPayload = {...data,...payload}
       const formData = new FormData()
-      for(let i of Object.entries(data)){
+      for(let i of Object.entries(finalPayload)){
         formData.append(i[0],i[1])
       }
-      if(data.thumb) formData.append('thumb', data.thumb[0])
-      if(data.images) {
+      if(finalPayload.thumb) formData.append('thumb', data.thumb[0])
+      if(finalPayload.images) {
         for (let image of data.images) formData.append('images', image)
       }
       // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
-      const response = await apiAddVariant(formData, variant._id)
+      const response = await apiAddVariantService(formData, variant._id)
       // dispatch(showModal({isShowModal: false, modalChildren: null}))
       if(response.success){
-        console.log('successfully')
         toast.success(response.mes)
-        // reset()
-        // setPreview({
-        //   thumb: '',
-        //   images: []
-        // })
+        reset()
+        setPreview({
+          thumb: '',
+          images: []
+        })
       }
       else{
-        console.log("failed")
-        // toast.error(response.mes)
+        toast.error(response.mes)
       }
     }
   }
@@ -100,16 +114,14 @@ const Variant = ({variant, setVariant, render}) => {
               label = 'Original Name'
               register={register}
               errors={errors}
-              id = 'title'
+              id = 'name'
               fullWidth
               style='flex-auto'
               validate = {{
                 required: 'Need fill this field'
               }}
-              placeholder='Title of variant'
+              placeholder='Name of the option'
             />
-          </div>
-          <div className='flex items-center w-full gap-4'>
             <InputForm
               label = 'Price'
               register={register}
@@ -123,19 +135,43 @@ const Variant = ({variant, setVariant, render}) => {
               type='number'
               style='flex-auto'
             />
-            <InputForm
-            label = 'Color'
-            register={register}
-            errors={errors}
-            id = 'color'
-            validate = {{
-              required: 'Need fill this field'
-            }}
-            fullWidth
-            placeholder='Color of variant'
-            style='flex-auto'
-            />
           </div>
+          <div className='flex items-center w-full gap-4'>
+              <Select
+                label = 'Hour'
+                options = {hour}
+                register={register}
+                id = 'hour'
+                validate = {{
+                  required: 'Need fill this field'
+                }}
+                style='flex-auto'
+                errors={errors}
+                fullWidth
+                text='Hour'
+              />
+              <Select 
+                label = 'Minute'
+                options = {minute}
+                register={register}
+                id = 'minute'
+                validate = {{
+                  required: 'Need fill this field'
+                }}
+                style='flex-auto'
+                errors={errors}
+                fullWidth
+                text='Minute'
+              />
+          </div>
+          <MarkdownEditor
+              name = 'description'
+              changeValue={changeValue}
+              label = 'Description'
+              invalidField={invalidField}
+              setInvalidField={setInvalidField}
+              value={payload.description}
+            />
           <div className='flex flex-col gap-2 mt-8'>
             <label className='font-semibold' htmlFor='thumb'>Upload Thumb</label>
             <input 
