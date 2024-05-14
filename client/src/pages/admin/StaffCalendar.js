@@ -9,6 +9,7 @@ import icons from 'ultils/icon'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
 import { apiDeleteServiceByAdmin, apiGetServiceByAdmin } from 'apis/service'
+import { apiAddStaff, apiGetAllStaffs, apiGetOrdersByAdmin } from 'apis'
 import clsx from 'clsx'
 import { formatPricee } from 'ultils/helper'
 import UpdateService from './UpdateService'
@@ -29,18 +30,7 @@ const StaffCalendar = () => {
   const [editService, setEditService] = useState(null)
   const [update, setUpdate] = useState(false)
   const [variant, setVariant] = useState(null)
-  const [staffs, setStaffs] = useState([
-    {
-        firstName: 'Nguyen',
-        lastName: 'Trung',
-        _id: 1
-    },
-    {
-        firstName: 'Tri',
-        lastName: 'Vien',
-        _id: 2
-    }
-  ])
+  const [staffs, setStaffs] = useState([])
   const [services, setServices] = useState([
     {
         name: 'Herbal Massage',
@@ -51,15 +41,17 @@ const StaffCalendar = () => {
         _id: 2
     }
   ])
-//   const fetchStaff = async(params) => {
-//     const response = await apiGetAllStaffs()
-//     if(response.success){
-//       setStaffs(response.staffs)
-//     }
-//   }
-//   useEffect(() => {
-//     fetchStaff()
-//   }, [])
+
+  const fetchStaff = async(params) => {
+    const response = await apiGetAllStaffs()
+    if(response.success){
+      console.log(response.staffs)
+      setStaffs(response.staffs)
+    }
+  }
+  useEffect(() => {
+    fetchStaff()
+  }, [])
 
   const options = staffs?.map((staff) => ({
     label: `${staff.firstName} ${staff.lastName}`,
@@ -117,14 +109,23 @@ const StaffCalendar = () => {
     console.log(data)
   }
 
-  const fetchProduct = async(params) => {
-    const response = await apiGetServiceByAdmin({...params, limit: process.env.REACT_APP_LIMIT})
-    if(response?.success){
-      console.log(response)
-      setProducts(response.services)
-      setCounts(response.counts)
-    }
+  const fetchOrder = async(params) => {
+    const response = await apiGetOrdersByAdmin()
+    console.log(response.order)
+    // setCalendarEvents()
   }
+  useEffect(() => {
+    fetchOrder()
+  }, [selectedStaff])
+
+  // const fetchProduct = async(params) => {
+  //   const response = await apiGetServiceByAdmin({...params, limit: process.env.REACT_APP_LIMIT})
+  //   if(response?.success){
+  //     console.log(response)
+  //     setProducts(response.services)
+  //     setCounts(response.counts)
+  //   }
+  // }
 
 //   const queryDebounce = useDebounce(watch('q'),800)
 
@@ -193,7 +194,7 @@ const StaffCalendar = () => {
           <MultiSelect 
             id='assigned_staffs' 
             options={options}
-            onChange={handleSelectStaffChange}
+            onChangee={handleSelectStaffChange}
             values={selectedStaff}
           />
           {/* <MultiSelect 
