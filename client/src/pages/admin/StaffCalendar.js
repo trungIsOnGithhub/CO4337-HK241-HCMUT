@@ -70,10 +70,10 @@ const StaffCalendar = () => {
     setSelectedStaff(selectedOptions);
   }, []);
 
-  // const [selectedServices, setSelectedServices] = useState([]);
-  // const handleSelectServicesChange = useCallback(selectedOptions => {
-  //   setSelectedServices(selectedOptions);
-  // }, []);
+  const [selectedServices, setSelectedServices] = useState([]);
+  const handleSelectServicesChange = useCallback(selectedOptions => {
+    setSelectedServices(selectedOptions);
+  }, []);
 
   const getEventDatePair = useCallback((dateStr, timeStr, duration) => {
     const ddmmyyArr = dateStr.split('/').map(Number)
@@ -228,8 +228,8 @@ const StaffCalendar = () => {
         <h1 className='text-3xl font-bold tracking-tight'>Staff Calendar</h1>
       </div>
 
-      <div className='flex w-full justify-end items-center px-4 '>
-        <form className='w-[45%]' onSubmit={handleSubmit(handleSearchProduct)}>
+      <div className='flex w-full justify-start items-center px-4 gap-5'>
+        {/* <form className='w-[45%]' onSubmit={handleSubmit(handleSearchProduct)}> */}
           {/* <InputForm
             id='q'
             register={register}
@@ -239,19 +239,22 @@ const StaffCalendar = () => {
           >
             
           </InputForm> */}
-          <MultiSelect 
-            id='assigned_staffs' 
-            options={options}
-            onChangee={handleSelectStaffChange}
-            values={selectedStaff}
-          />
-          {/* <MultiSelect 
-            id='chosen_services' 
-            options={optionsService}
-            onChange={handleSelectServicesChange}
-            values={selectedServices}
-          /> */}
-        </form>
+          {/* <div> */}
+            <MultiSelect 
+              id='assigned_staffs' 
+              options={options}
+              onChangee={handleSelectStaffChange}
+              values={selectedStaff}
+            />
+            <MultiSelect 
+              id='chosen_services' 
+              options={options}
+              onChange={handleSelectServicesChange}
+              values={selectedServices}
+              title="Services"
+            />
+          {/* </div> */}
+        {/* </form> */}
       </div>
 
       <div style={{ height: '600px'}}>
