@@ -9,13 +9,14 @@ import icons from 'ultils/icon'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
 import { apiDeleteServiceByAdmin, apiGetServiceByAdmin } from 'apis/service'
-import { apiAddStaff, apiGetAllStaffs, apiGetOrdersByAdmin } from 'apis'
+import { apiAddStaff, apiGetAllStaffs, apiGetOrdersForStaffCalendar } from 'apis'
 import clsx from 'clsx'
 import { formatPricee } from 'ultils/helper'
 import UpdateService from './UpdateService'
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from "moment";
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { Provider, useSelector } from 'react-redux';
 
 const localizer = momentLocalizer(moment);
 
@@ -25,8 +26,8 @@ const StaffCalendar = () => {
   const location = useLocation()
   const [params] = useSearchParams()
   const {register,formState:{errors}, handleSubmit, watch} = useForm()
-  const [products, setProducts] = useState(null)
-  const [counts, setCounts] = useState(0)
+  // const [products, setProducts] = useState(null)
+  // const [counts, setCounts] = useState(0)
   const [editService, setEditService] = useState(null)
   const [update, setUpdate] = useState(false)
   const [variant, setVariant] = useState(null)
@@ -41,11 +42,12 @@ const StaffCalendar = () => {
         _id: 2
     }
   ])
+  const { current } = useSelector((state) => state.user);
 
   const fetchStaff = async(params) => {
     const response = await apiGetAllStaffs()
     if(response.success){
-      console.log(response.staffs)
+      // console.log(response.staffs)
       setStaffs(response.staffs)
     }
   }
@@ -68,9 +70,21 @@ const StaffCalendar = () => {
     setSelectedStaff(selectedOptions);
   }, []);
 
-  const [selectedServices, setSelectedServices] = useState([]);
-  const handleSelectServicesChange = useCallback(selectedOptions => {
-    setSelectedStaff(selectedOptions);
+  // const [selectedServices, setSelectedServices] = useState([]);
+  // const handleSelectServicesChange = useCallback(selectedOptions => {
+  //   setSelectedServices(selectedOptions);
+  // }, []);
+
+  const getEventDatePair = useCallback((dateStr, timeStr, duration) => {
+    const ddmmyyArr = dateStr.split('/').map(Number)
+    const hhmmArr = timeStr.split(':').map(Number)
+
+    console.log(ddmmyyArr,'dasdsad', hhmmArr)
+
+    const startDate = new Date(ddmmyyArr[2], ddmmyyArr[1]-1, ddmmyyArr[0], hhmmArr[0], hhmmArr[1], 0)
+    const endDate = moment(startDate).add(duration, 'm')
+
+    return [startDate, endDate]
   }, []);
 
 
@@ -109,10 +123,44 @@ const StaffCalendar = () => {
     console.log(data)
   }
 
+  const mapOrderToCalendarEvents = useCallback((orderRaw) => {
+    return orderRaw.map((order, index) => {
+      if (!order.info.length || !order?.service?.duration) {
+        throw new Error('Cannot Parse Payload');
+      }
+      const datepair = getEventDatePair(order.info[0].date, order.info[0].time, order.service.duration);
+
+      return {
+        id: index,
+        title: order.service.name,
+        start: datepair[0],
+        end: datepair[1],
+        desc: order.staffs.join(' '),
+        color: 'lightgreen',
+      };
+    })
+  }, [])
+
   const fetchOrder = async(params) => {
-    const response = await apiGetOrdersByAdmin()
-    console.log(response.order)
-    // setCalendarEvents()
+    const payload = {
+      provider_id: current.provider_id,
+      assigned_staff_ids: selectedStaff,
+      service_ids: []
+    }
+    console.log(payload)
+    console.log('+++++++++++++++++++++')
+    const response = await apiGetOrdersForStaffCalendar(payload)
+    // console.log(response)
+    console.log('((((((((((((((((((((((')
+    // for (const order of response.order) {
+    //   if (order.info && order.info.length > 0) {
+    //     console.log(dateParse(order.info[0].date, order.info[0].time))
+    //   }
+    // }
+    if (response?.order) {
+      const newEventsList = mapOrderToCalendarEvents(response.order)
+      setCalendarEvents(newEventsList)
+    }
   }
   useEffect(() => {
     fetchOrder()

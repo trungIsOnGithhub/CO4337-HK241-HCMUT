@@ -1,8 +1,11 @@
+const mongoose = require('mongoose');
+
 const Order = require('../models/order')
 const User = require('../models/user')
 const Coupon = require('../models/coupon')
 const asyncHandler = require('express-async-handler')
-const Staff = require('../models/staff')
+const Staff = require('../models/staff');
+const staff = require('../models/staff');
 
 const createNewOrder = asyncHandler(async(req, res)=>{
     const {_id} = req.user
@@ -185,9 +188,86 @@ const getOrdersByAdmin = asyncHandler(async(req, res)=>{
         });
     }
 })
+
+const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
+    const { provider_id, assigned_staff_ids, service_ids } = req.body;
+
+    console.log('0000000000000000000')
+    console.log(assigned_staff_ids)
+
+    if (!provider_id) {
+        return res.status(400).json({
+            success: false,
+            error: 'Missing Input'
+        });
+    }
+
+    // const assigned_staff_objids = assigned_staff_ids.map(objIdStr => new mongoose.Types.ObjectId(objIdStr))
+
+    // console.log(assigned_staff_objids)
+
+    const providerObjectId = new mongoose.Types.ObjectId(provider_id)
+
+    let orders = await Order.aggregate([
+        {
+            $match: {
+                'info.provider': providerObjectId
+            }
+        },
+        // {
+        //     $match: {
+        //         'info.staff': { $in: assigned_staff_ids }
+        //     }
+        // },
+        {
+            $lookup: {
+                from: 'services',
+                localField: 'info.service',
+                foreignField: '_id',
+                as: 'service'
+            }
+        },
+        {
+            $unwind:"$service"
+        },
+        {
+            $lookup: {
+                from: 'staffs',
+                localField: 'info.staff',
+                foreignField: '_id',
+                as: 'staffs'
+            }
+        }
+    ])
+
+    if (!orders || typeof(orders.length) !== 'number') {
+        return res.status(500).json({
+            success: false,
+            error: 'Cannot Get Order'
+        });
+    }
+
+    // temp
+    orders = orders.filter(order => {
+        const thisOrderStaffs = order?.staffs || [];
+        // console.log('======',thisOrderStaffs)
+        for (const staff of thisOrderStaffs) {
+            if (assigned_staff_ids.includes(staff._id.toString()))
+                return true;
+        }
+        return false;
+    })
+
+    res.status(200).json({
+        success: true,
+        order: orders,
+    })
+})
+
 module.exports = {
     createNewOrder,
     updateStatus,
     getUserOrder,
-    getOrdersByAdmin
+    getOrdersByAdmin,
+    getOrdersForStaffCalendar
 }
