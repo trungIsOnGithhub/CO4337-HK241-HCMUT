@@ -289,10 +289,10 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
           </div>
 
           <div className='flex flex-col gap-8'>
-            <div className='flex items-center gap-4'>
+            {/* <div className='flex items-center gap-4'>
               <span className='font-semibold'>Quantity: </span>
               <SelectQuantity quantity={quantity} editQuantity={editQuantity} handleChange={handleChange} />
-            </div>
+            </div> */}
             <div className='flex gap-4'>
             <Button handleOnclick={handleBookService} style={`px-4 py-2 rounded-md text-white font-semibold my-2 bg-blue-500 w-fit`}>
               Book now
