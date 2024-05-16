@@ -217,8 +217,8 @@ export const adminSidebar = [
     {
         id: 2,
         type: 'single',
-        text: 'Calender',
-        path: `/2222`,
+        text: 'Working Calendar',
+        path: `/${path.ADMIN}/${path.STAFF_CALENDAR}`,
         icon: <SlCalender size={20}/>
     },
     {
@@ -286,18 +286,6 @@ export const adminSidebar = [
             {
                 text: 'Manage Service',
                 path: `/${path.ADMIN}/${path.MANAGE_SERVICE}`
-            }
-        ],
-        icon: <BsFillTagsFill size={20}/>
-    },
-    {
-        id: 7,
-        type: 'parent',
-        text: 'Manage Calendar',
-        submenu:[
-            {
-                text: 'Staff Calendar',
-                path: `/${path.ADMIN}/${path.STAFF_CALENDAR}`
             }
         ],
         icon: <BsFillTagsFill size={20}/>

@@ -8,10 +8,9 @@ import UpdateProduct from './UpdateProduct'
 import icons from 'ultils/icon'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
-import { apiDeleteServiceByAdmin, apiGetServiceByAdmin } from 'apis/service'
-import { apiAddStaff, apiGetAllStaffs, apiGetOrdersForStaffCalendar } from 'apis'
+import { apiGetServiceByAdmin } from 'apis/service'
+import { apiGetAllStaffs, apiGetOrdersForStaffCalendar } from 'apis'
 import clsx from 'clsx'
-import { formatPricee } from 'ultils/helper'
 import UpdateService from './UpdateService'
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from "moment";
@@ -21,27 +20,15 @@ import { Provider, useSelector } from 'react-redux';
 const localizer = momentLocalizer(moment);
 
 const StaffCalendar = () => {
-  const {MdModeEdit, MdDelete, FaCopy} = icons
   const navigate = useNavigate()
   const location = useLocation()
   const [params] = useSearchParams()
   const {register,formState:{errors}, handleSubmit, watch} = useForm()
-  // const [products, setProducts] = useState(null)
-  // const [counts, setCounts] = useState(0)
   const [editService, setEditService] = useState(null)
   const [update, setUpdate] = useState(false)
   const [variant, setVariant] = useState(null)
   const [staffs, setStaffs] = useState([])
-  const [services, setServices] = useState([
-    {
-        name: 'Herbal Massage',
-        _id: 1
-    },
-    {
-        name: 'Sauna Massage',
-        _id: 2
-    }
-  ])
+  const [services, setServices] = useState([])
   const { current } = useSelector((state) => state.user);
 
   const fetchStaff = async(params) => {
@@ -55,14 +42,25 @@ const StaffCalendar = () => {
     fetchStaff()
   }, [])
 
-  const options = staffs?.map((staff) => ({
+  const fetchService = async(params) => {
+    const response = await apiGetServiceByAdmin()
+    if(response.success){
+      // console.log(response.staffs)
+      setServices(response.services)
+    }
+  }
+  useEffect(() => {
+    fetchService()
+  }, [])
+
+  const staffOptions = staffs?.map(staff => ({
     label: `${staff.firstName} ${staff.lastName}`,
     value: staff._id
   }));
 
-  const optionsService = services?.map((staff) => ({
-    label: `${staff.firstName} ${staff.lastName}`,
-    value: staff._id
+  const serviceOptions = services?.map(service => ({
+    label: service.name,
+    value: service._id
   }));
 
   const [selectedStaff, setSelectedStaff] = useState([]);
@@ -88,32 +86,7 @@ const StaffCalendar = () => {
   }, []);
 
 
-  const [calendarEvents, setCalendarEvents] = useState([
-    {
-        id: 1,
-        title: 'Herbal Massage',
-        start: new Date(2024, 4, 16, 9, 15, 6),
-        end: new Date(2024, 4, 16, 9, 55, 6),
-        desc: 'Regular Customer',
-        color: 'lightgreen',
-    },
-    {
-        id: 2,
-        title: 'Sauna Massage',
-        start: new Date(2024, 4, 10, 14, 15, 6),
-        end: new Date(2024, 4, 10, 14, 55, 6),
-        desc: 'New Customer',
-        color: 'lightred',
-    },
-    {
-        id: 3,
-        title: 'Herbal Massage',
-        start: new Date(2024, 4, 14, 14, 15, 6),
-        end: new Date(2024, 4, 14, 14, 55, 6),
-        desc: 'New Customer',
-        color: 'lightgreen',
-    }
-])
+  const [calendarEvents, setCalendarEvents] = useState([])
 
   const render = useCallback(() => {
     setUpdate(!update)
@@ -135,7 +108,7 @@ const StaffCalendar = () => {
         title: order.service.name,
         start: datepair[0],
         end: datepair[1],
-        desc: order.staffs.join(' '),
+        desc: order.staffs.map(staff => `${staff.firstName} ${staff.lastName}`).join(' '),
         color: 'lightgreen',
       };
     })
@@ -145,12 +118,12 @@ const StaffCalendar = () => {
     const payload = {
       provider_id: current.provider_id,
       assigned_staff_ids: selectedStaff,
-      service_ids: []
+      service_ids: selectedServices
     }
     console.log(payload)
     console.log('+++++++++++++++++++++')
     const response = await apiGetOrdersForStaffCalendar(payload)
-    // console.log(response)
+    console.log(response)
     console.log('((((((((((((((((((((((')
     // for (const order of response.order) {
     //   if (order.info && order.info.length > 0) {
@@ -164,7 +137,7 @@ const StaffCalendar = () => {
   }
   useEffect(() => {
     fetchOrder()
-  }, [selectedStaff])
+  }, [selectedStaff, selectedServices])
 
   // const fetchProduct = async(params) => {
   //   const response = await apiGetServiceByAdmin({...params, limit: process.env.REACT_APP_LIMIT})
@@ -225,7 +198,7 @@ const StaffCalendar = () => {
       <div className='h-[69px] w-full'>
       </div>
       <div className='p-4 border-b w-full flex justify-between items-center fixed top-0 bg-black z-30'>
-        <h1 className='text-3xl font-bold tracking-tight'>Staff Calendar</h1>
+        <h1 className='text-3xl font-bold tracking-tight'>Working Calendar</h1>
       </div>
 
       <div className='flex w-full justify-start items-center px-4 gap-5'>
@@ -242,14 +215,14 @@ const StaffCalendar = () => {
           {/* <div> */}
             <MultiSelect 
               id='assigned_staffs' 
-              options={options}
+              options={staffOptions}
               onChangee={handleSelectStaffChange}
               values={selectedStaff}
             />
             <MultiSelect 
               id='chosen_services' 
-              options={options}
-              onChange={handleSelectServicesChange}
+              options={serviceOptions}
+              onChangee={handleSelectServicesChange}
               values={selectedServices}
               title="Services"
             />
@@ -265,6 +238,7 @@ const StaffCalendar = () => {
             defaultDate={moment().toDate()}
             localizer={localizer}
             eventPropGetter={eventStyleGetter}
+            onSelectEvent={event => alert(event.desc)}
         />
       </div>
     </div>

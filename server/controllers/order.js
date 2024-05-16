@@ -193,16 +193,16 @@ const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
     const { provider_id, assigned_staff_ids, service_ids } = req.body;
 
     console.log('0000000000000000000')
-    console.log(assigned_staff_ids)
+    console.log(service_ids)
 
-    if (!provider_id) {
+    if (!provider_id || typeof(service_ids.length) !== 'number' || typeof(assigned_staff_ids.length) !== 'number') {
         return res.status(400).json({
             success: false,
             error: 'Missing Input'
         });
     }
 
-    // const assigned_staff_objids = assigned_staff_ids.map(objIdStr => new mongoose.Types.ObjectId(objIdStr))
+    const service_obj_ids = service_ids.map(objIdStr => new mongoose.Types.ObjectId(objIdStr))
 
     // console.log(assigned_staff_objids)
 
@@ -214,11 +214,6 @@ const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
                 'info.provider': providerObjectId
             }
         },
-        // {
-        //     $match: {
-        //         'info.staff': { $in: assigned_staff_ids }
-        //     }
-        // },
         {
             $lookup: {
                 from: 'services',
@@ -228,8 +223,13 @@ const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
             }
         },
         {
-            $unwind:"$service"
+            $unwind: "$service"
         },
+        // {
+        //     $match: {
+        //         "$$this.service._id": { $in: service_obj_ids }
+        //     }
+        // },
         {
             $lookup: {
                 from: 'staffs',
@@ -248,6 +248,10 @@ const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
     }
 
     // temp
+    orders = orders.filter(order => {
+        // console.log('======',order.service._id.toString())
+        return service_ids.includes(order.service._id.toString())
+    })
     orders = orders.filter(order => {
         const thisOrderStaffs = order?.staffs || [];
         // console.log('======',thisOrderStaffs)
