@@ -113,3 +113,7 @@
     /* border: 1px solid #ccc !important; */
     color: #ccc !important;
   }
+  .apexcharts-tooltip {
+    background: grey;
+    color: lightseagreen  ;
+  }
