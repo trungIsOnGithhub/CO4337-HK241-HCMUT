@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import ApexCharts from 'apexcharts';
 import ReactApexChart from 'react-apexcharts';
 import { apiGetDailyRevenueByDateRange } from 'apis'
+import { useSelector } from 'react-redux';
 // // import './style.css';
 
 const button_string_style = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 roundedtext-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 text-sm'
@@ -18,13 +19,15 @@ const DashBoard = () => {
     }
     let response = await apiGetDailyRevenueByDateRange(requestBody)
 
+    console.log('_______', response, '____________')
+
     if (response.success) {
       setDailyRevenue(response.revenue)
     }
   }, [])
   useEffect(() => {
     fetchDailyRevenue()
-  }, [current])
+  }, [])
 
   return (
     // <div style={{width:'60%'}}>
