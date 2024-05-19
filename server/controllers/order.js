@@ -4,8 +4,7 @@ const Order = require('../models/order')
 const User = require('../models/user')
 const Coupon = require('../models/coupon')
 const asyncHandler = require('express-async-handler')
-const Staff = require('../models/staff');
-const staff = require('../models/staff');
+const Staff = require('../models/staff')
 
 const createNewOrder = asyncHandler(async(req, res)=>{
     const {_id} = req.user
