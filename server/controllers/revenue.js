@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const asyncHandler = require("express-async-handler")
 const Order = require('../models/order')
 const Service = require('../models/service')
+const Interaction = require('../models/interaction')
 
 const getRevenueByDateRange = asyncHandler(async(req, res) => {
     const { provider_id, start_date, end_date } = req.body;
@@ -33,12 +34,14 @@ const getRevenueByDateRange = asyncHandler(async(req, res) => {
         revByDate.set(order.info[0].date, currRev + order.total)
     })
 
-    console.log(revByDate,'===============')
+    // console.log(revByDate,'===============')
 
     const dailyRevenue = []
     for(const dateKey of revByDate.keys()) {
         const ddmmyyArr = dateKey.split('/').map(Number)
+        console.log('------------' ,ddmmyyArr[2], ddmmyyArr[1]-1, ddmmyyArr[0], '--------')
         const revDate = new Date(ddmmyyArr[2], ddmmyyArr[1]-1, ddmmyyArr[0], 0, 0, 0)
+        console.log('-ihkhlkjj-----', revDate)
 
         dailyRevenue.push([revDate, revByDate.get(dateKey)])
     }

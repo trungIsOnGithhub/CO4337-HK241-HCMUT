@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import ApexCharts from 'apexcharts';
 import ReactApexChart from 'react-apexcharts';
-import { apiGetDailyRevenueByDateRange, apiGetRevenueStatistic } from 'apis'
+import { apiGetDailyRevenueByDateRange, apiGetRevenueStatistic, apiGetUserVisitByDateRange } from 'apis'
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import Swal from 'sweetalert2'
@@ -15,6 +15,7 @@ const DashBoard = () => {
   const [monthRevenue, setMonthRevenue] = useState(0)
   const [monthOrders, setMonthOrders] = useState(0)
   const [monthCustomer, setMonthCustomer] = useState(0)
+  const [totalServices, setTotalServices] = useState(0)
 
   const fetchDailyRevenue = useCallback(async () => {
     const requestBody = {
@@ -29,6 +30,7 @@ const DashBoard = () => {
       setMonthRevenue(response.statistic?.monthRevenue);
       setMonthOrders(response.statistic?.monthOrders);
       setMonthCustomer(response.statistic?.monthCustomer);
+      setTotalServices(response.statistic?.totalServices)
     }
     else {
       Swal.fire({
@@ -86,6 +88,14 @@ const DashBoard = () => {
           </p>
         </div>
       </div>
+      <div class="max-w-sm rounded overflow-hidden grow">
+        <div class="px-6 py-4">
+          <p class="font-bold text-xl mb-2 text-center">Total Services</p>
+          <p class="font-bold text-blue-700 text-xl text-center">
+            {totalServices}
+          </p>
+        </div>
+      </div>
       {/* <div class="max-w-sm rounded overflow-hidden grow">
         <div class="px-6 py-4">
           <div class="font-bold text-xl mb-1 text-center">Total dsadsad</div>
@@ -98,43 +108,51 @@ const DashBoard = () => {
     </div>
     <div class="flex">
 
-      <ApexChart/>
-      <UserVisitStatChart />
+      <ApexChart />
+      <UserVisitStatChart
+        currentUser={current}
+      />
     </div>
     </>
   );
 }
 
 
-const UserVisitStatChart = () => {
+const UserVisitStatChart = ({currentUser}) => {
+  const [dataSeries, setDataSeries] = useState([])
+  const minDate = moment().subtract(2, 'months').startOf('month').toDate()
+  const maxDate = moment().add(2, 'months').startOf('month').toDate()
+
+  const fetchUserVisit = useCallback(async () => {
+    const requestBody = {
+      provider_id: currentUser.provider_id,
+      start_date: minDate,
+      end_date: maxDate
+    }
+    let response = await apiGetUserVisitByDateRange(requestBody)
+
+    console.log('_______', response, '____________')
+
+    if (response.success && response?.userVisit) {
+      setDataSeries(response.userVisit)
+    }
+    else {
+      Swal.fire({
+        title: 'Error Occured',
+        text: 'Error Occured Reading Data',
+        icon: 'warning',
+        showCancelButton: true
+      })
+    }
+  }, [])
+  useEffect(() => {
+    fetchUserVisit()
+  }, [])
+
     const state = {
       series: [{
-        name: "sales",
-        data: [{
-          x: '2019/01/01',
-          y: 400
-        }, {
-          x: '2019/04/01',
-          y: 430
-        }, {
-          x: '2019/07/01',
-          y: 448
-        }, {
-          x: '2019/10/01',
-          y: 470
-        }, {
-          x: '2020/01/01',
-          y: 540
-        }, {
-          x: '2020/04/01',
-          y: 580
-        }, {
-          x: '2020/07/01',
-          y: 690
-        }, {
-          x: '2020/10/01',
-          y: 690
-        }]
+        name: "user visit",
+        data: dataSeries
       }],
       options: {
         chart: {
@@ -148,16 +166,16 @@ const UserVisitStatChart = () => {
           //     return "Q" + dayjs(val).quarter()
           //   }
           // },
-          group: {
-            style: {
-              fontSize: '10px',
-              fontWeight: 700
-            },
-            groups: [
-              { title: '2019', cols: 4 },
-              { title: '2020', cols: 4 }
-            ]
-          },
+          // group: {
+          //   style: {
+          //     fontSize: '10px',
+          //     fontWeight: 700
+          //   },
+          //   groups: [
+          //     { title: '2019', cols: 4 },
+          //     { title: '2020', cols: 4 }
+          //   ]
+          // },
           borderColor: '#999',
           labels: {
             show: true,
@@ -208,18 +226,17 @@ const UserVisitStatChart = () => {
 
 function ApexChart() {
   const [chartSelection, setChartSelection] = useState("one_year")
-
-  const [dailyRevenue, setDailyRevenue] = useState([])
   const {current} = useSelector((state) => state.user);
 
-  const minDate = moment().subtract(2, 'months').startOf('month').toDate().getTime()
-  const maxDate = moment().add(2, 'months').startOf('month').toDate().getTime()
+  const [dailyRevenue, setDailyRevenue] = useState([])
+  const minDate = moment().subtract(2, 'months').startOf('month').toDate()
+  const maxDate = moment().add(2, 'months').startOf('month').toDate()
 
   const fetchDailyRevenue = useCallback(async () => {
     const requestBody = {
       provider_id: current.provider_id,
-      start_date: Date.parse("2024-05-01"),
-      end_date: new Date()
+      start_date: minDate,
+      end_date: maxDate
     }
     let response = await apiGetDailyRevenueByDateRange(requestBody)
 
@@ -253,6 +270,10 @@ function ApexChart() {
           autoScaleYaxis: true
         },
       },
+      title: {
+        text: 'Recent Revenue',
+        colors: "white",
+      },
       // annotations: {
         yaxis:{
           y: 30,
@@ -267,9 +288,9 @@ function ApexChart() {
         },
         xaxis: {
           type: 'datetime',
-          min: minDate,
+          min: minDate.getTime(),
           tickAmount: 6,
-          max: maxDate,
+          max: maxDate.getTime(),
           borderColor: '#999',
           yAxisIndex: 0,
           labels: {
