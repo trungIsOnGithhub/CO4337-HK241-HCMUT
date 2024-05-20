@@ -133,6 +133,13 @@ const StaffCalendar = () => {
     if (response?.order) {
       const newEventsList = mapOrderToCalendarEvents(response.order)
       setCalendarEvents(newEventsList)
+    } else {
+      Swal.fire({
+        title: 'Error Occured',
+        text: 'Error Occured Reading Data',
+        icon: 'warning',
+        showCancelButton: true
+      })
     }
   }
   useEffect(() => {

@@ -1,28 +1,42 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import ApexCharts from 'apexcharts';
 import ReactApexChart from 'react-apexcharts';
-import { apiGetDailyRevenueByDateRange } from 'apis'
+import { apiGetDailyRevenueByDateRange, apiGetRevenueStatistic } from 'apis'
 import { useSelector } from 'react-redux';
+import moment from 'moment';
+import Swal from 'sweetalert2'
 // // import './style.css';
 
 const button_string_style = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 roundedtext-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 text-sm'
 
 const DashBoard = () => {
-  const [dailyRevenue, setDailyRevenue] = useState([])
   const {current} = useSelector((state) => state.user);
+  const [totalRevenue, setTotalRevenue] = useState(0)
+  const [monthRevenue, setMonthRevenue] = useState(0)
+  const [monthOrders, setMonthOrders] = useState(0)
+  const [monthCustomer, setMonthCustomer] = useState(0)
 
   const fetchDailyRevenue = useCallback(async () => {
     const requestBody = {
-      provider_id: current.provider_id,
-      start_date: Date.parse("2024-05-01"),
-      end_date: new Date()
+      provider_id: current.provider_id
     }
-    let response = await apiGetDailyRevenueByDateRange(requestBody)
+    let response = await apiGetRevenueStatistic(requestBody)
 
     console.log('_______', response, '____________')
 
-    if (response.success) {
-      setDailyRevenue(response.revenue)
+    if (response.success && response?.success) {
+      setTotalRevenue(response.statistic?.totalRevenue);
+      setMonthRevenue(response.statistic?.monthRevenue);
+      setMonthOrders(response.statistic?.monthOrders);
+      setMonthCustomer(response.statistic?.monthCustomer);
+    }
+    else {
+      Swal.fire({
+        title: 'Error Occured',
+        text: 'Error Occured Reading Data',
+        icon: 'warning',
+        showCancelButton: true
+      })
     }
   }, [])
   useEffect(() => {
@@ -42,44 +56,44 @@ const DashBoard = () => {
     <div class="flex justify-center mb-8 flex-wrap">
       <div class="max-w-sm rounded overflow-hidden grow">
         <div class="px-6 py-4">
-          <p class="font-bold text-xl mb-2 text-center">Total dsadsad</p>
+          <p class="font-bold text-xl mb-2 text-center">Total Revenue</p>
           <p class="font-bold text-blue-700 text-xl text-center">
-            dákdjla
+            {totalRevenue}
           </p>
         </div>
       </div>
       <div class="max-w-sm rounded overflow-hidden grow">
         <div class="px-6 py-4">
-          <p class="font-bold text-xl mb-2 text-center">Total dsadsad</p>
+          <p class="font-bold text-xl mb-2 text-center">This Month Revenue</p>
           <p class="font-bold text-blue-700 text-xl text-center">
-            dákdjla
+            {monthRevenue}
           </p>
         </div>
       </div>
       <div class="max-w-sm rounded overflow-hidden grow">
         <div class="px-6 py-4">
-          <p class="font-bold text-xl mb-2 text-center">Total dsadsad</p>
+          <p class="font-bold text-xl mb-2 text-center">This Month Orders</p>
           <p class="font-bold text-blue-700 text-xl text-center">
-            dákdjla
+            {monthOrders}
           </p>
         </div>
       </div>
       <div class="max-w-sm rounded overflow-hidden grow">
         <div class="px-6 py-4">
-          <p class="font-bold text-xl mb-2 text-center">Total dsadsad</p>
+          <p class="font-bold text-xl mb-2 text-center">This Month Customers</p>
           <p class="font-bold text-blue-700 text-xl text-center">
-            sdk;alsdk
+            {monthCustomer}
           </p>
         </div>
       </div>
-      <div class="max-w-sm rounded overflow-hidden grow">
+      {/* <div class="max-w-sm rounded overflow-hidden grow">
         <div class="px-6 py-4">
           <div class="font-bold text-xl mb-1 text-center">Total dsadsad</div>
           <p class="font-bold text-blue-700 text-xl text-center">
             sdk;alsdk
           </p>
         </div>
-      </div>
+      </div> */}
 
     </div>
     <div class="flex">
@@ -195,15 +209,41 @@ const UserVisitStatChart = () => {
 function ApexChart() {
   const [chartSelection, setChartSelection] = useState("one_year")
 
+  const [dailyRevenue, setDailyRevenue] = useState([])
+  const {current} = useSelector((state) => state.user);
+
+  const minDate = moment().subtract(2, 'months').startOf('month').toDate().getTime()
+  const maxDate = moment().add(2, 'months').startOf('month').toDate().getTime()
+
+  const fetchDailyRevenue = useCallback(async () => {
+    const requestBody = {
+      provider_id: current.provider_id,
+      start_date: Date.parse("2024-05-01"),
+      end_date: new Date()
+    }
+    let response = await apiGetDailyRevenueByDateRange(requestBody)
+
+    console.log('_______', response, '____________')
+
+    if (response.success && response?.revenue) {
+      setDailyRevenue(response.revenue)
+    }
+    else {
+      Swal.fire({
+        title: 'Error Occured',
+        text: 'Error Occured Reading Data',
+        icon: 'warning',
+        showCancelButton: true
+      })
+    }
+  }, [])
+  useEffect(() => {
+    fetchDailyRevenue()
+  }, [])
+
   const state = {   
     series: [{
-      data: [
-        [1327359600000,30.95],
-        [1327446000000,31.34],
-        [1327532400000,31.18],
-        [1361833200000,38.59],
-        [1361919600000,39.60],
-      ]
+      data: dailyRevenue
     }],
     options: {
       chart: {
@@ -227,9 +267,9 @@ function ApexChart() {
         },
         xaxis: {
           type: 'datetime',
-          min: new Date('01 Mar 2012').getTime(),
+          min: minDate,
           tickAmount: 6,
-          x: new Date('14 Nov 2012').getTime(),
+          max: maxDate,
           borderColor: '#999',
           yAxisIndex: 0,
           labels: {
@@ -319,7 +359,7 @@ function ApexChart() {
     return (
       <div class="grow" style={{width: '55%'}}>
         <div id="chart">
-          <div class="toolbar flex gap-3 ml-4">
+          {/* <div class="toolbar flex gap-3 ml-4">
             <button id="one_month" style={{border: '1px solid white', padding: '3px', borderRadius: '5px'}}
                 onClick={()=>updateData('one_month')} className={ (state.selection==='one_month' ? 'active' : '') }>
               1M
@@ -344,7 +384,7 @@ function ApexChart() {
                 onClick={()=>updateData('all')} className={ (state.selection==='all' ? 'active' : '') }>
               ALL
             </button>
-          </div>
+          </div> */}
         
           <div id="chart-timeline">
             <ReactApexChart options={state.options} series={state.series} type="area" height={380} />
