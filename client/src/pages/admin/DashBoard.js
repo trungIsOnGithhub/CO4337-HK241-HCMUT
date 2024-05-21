@@ -131,7 +131,7 @@ const UserVisitStatChart = ({currentUser}) => {
     }
     let response = await apiGetUserVisitByDateRange(requestBody)
 
-    console.log('_______', response, '____________')
+    console.log('GMLVBDR:  ', response, 'GMLVBDR: ____________')
 
     if (response.success && response?.userVisit) {
       setDataSeries(response.userVisit)
