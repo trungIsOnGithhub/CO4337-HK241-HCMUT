@@ -44,9 +44,16 @@ const StaffCalendar = () => {
 
   const fetchService = async(params) => {
     const response = await apiGetServiceByAdmin()
-    if(response.success){
-      // console.log(response.staffs)
+    if(response?.success && response.services){
+      // console.log(response.services)
       setServices(response.services)
+    }
+    else {
+      Swal.fire({
+        title: 'Error Occured',
+        text: 'Error Occured Reading Data',
+        icon: 'warning',
+      })
     }
   }
   useEffect(() => {
@@ -108,7 +115,7 @@ const StaffCalendar = () => {
         title: order.service.name,
         start: datepair[0],
         end: datepair[1],
-        desc: order.staffs.map(staff => `${staff.firstName} ${staff.lastName}`).join(' '),
+        desc: order.service.name + ' - ' + order.staffs.map(staff => `${staff.firstName} ${staff.lastName}`).join(' '),
         color: 'lightgreen',
       };
     })
@@ -138,7 +145,6 @@ const StaffCalendar = () => {
         title: 'Error Occured',
         text: 'Error Occured Reading Data',
         icon: 'warning',
-        showCancelButton: true
       })
     }
   }

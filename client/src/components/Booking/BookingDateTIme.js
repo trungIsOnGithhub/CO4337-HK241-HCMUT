@@ -225,6 +225,7 @@ const BookingDateTIme = () => {
   };
 
   const handleOnClick = async(time) => {
+    console.log('---+++++', time)
     setSelectedTime(time);
     await apiUpdateCart({
       service: service?._id, 

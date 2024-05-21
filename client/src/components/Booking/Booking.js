@@ -103,6 +103,9 @@ const Booking = ({dispatch, navigate}) => {
               else saveOpeningTime += serviceDurationInMinutes;
             }
           }
+
+          console.log(timeOptions)
+
           return timeOptions;
         };
   

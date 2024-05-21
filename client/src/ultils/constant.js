@@ -290,13 +290,13 @@ export const adminSidebar = [
         ],
         icon: <BsFillTagsFill size={20}/>
     },
-    {
-        id: 9,
-        type: 'single',
-        text: 'Manage Revenue',
-        path: `/111`,
-        icon: <FaMoneyBillTrendUp size={20}/>
-    },
+    // {
+    //     id: 9,
+    //     type: 'single',
+    //     text: 'Manage Revenue',
+    //     path: `/111`,
+    //     icon: <FaMoneyBillTrendUp size={20}/>
+    // },
 ]
 
 export const roles = [

@@ -185,10 +185,6 @@ const UserVisitStatChart = ({currentUser}) => {
             }
           }
         },
-        title: {
-          text: 'Users Visits',
-          colors: "white",
-        },
         yaxis: {
           borderColor: '#999',
           labels: {
@@ -215,6 +211,7 @@ const UserVisitStatChart = ({currentUser}) => {
 
     return (
       <div class="grow" style={{width: '45%'}}>
+        <p class="font-bold text-xl mb-2 text-center">Monthly Visit</p>
         <div id="chart">
           <ReactApexChart options={state.options} series={state.series} type="bar" height={400} />
         </div>
@@ -266,13 +263,9 @@ function ApexChart() {
       chart: {
         id: 'area-datetime',
         type: 'area',
-        zoom: {
-          autoScaleYaxis: true
-        },
-      },
-      title: {
-        text: 'Recent Revenue',
-        colors: "white",
+        // zoom: {
+        //   autoScaleYaxis: true
+        // },
       },
       // annotations: {
         yaxis:{
@@ -379,6 +372,7 @@ function ApexChart() {
 
     return (
       <div class="grow" style={{width: '55%'}}>
+        <p class="font-bold text-xl mb-2 text-center">Recent Revenue</p>
         <div id="chart">
           {/* <div class="toolbar flex gap-3 ml-4">
             <button id="one_month" style={{border: '1px solid white', padding: '3px', borderRadius: '5px'}}
