@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react'
-import { InputForm, Pagination, Variant} from 'components'
+import { InputForm, Pagination} from 'components'
+
 import { useForm } from 'react-hook-form'
 import { apiGetProduct, apiDeleteProduct} from 'apis/product'
 import moment from 'moment'
@@ -13,7 +14,7 @@ import { apiDeleteServiceByAdmin, apiGetServiceByAdmin } from 'apis/service'
 import clsx from 'clsx'
 import { formatPricee } from 'ultils/helper'
 import UpdateService from './UpdateService'
-
+import VariantService from './VariantService'
 
 const ManageService = () => {
   const {MdModeEdit, MdDelete, FaCopy} = icons
@@ -94,7 +95,7 @@ const ManageService = () => {
 
       {variant &&  
       <div className='absolute inset-0 bg-zinc-900 h-fit z-50 flex-auto'>
-        <Variant variant={variant} render={render} setVariant={setVariant}/>
+        <VariantService variant={variant} render={render} setVariant={setVariant}/>
       </div>}
 
       <div className='h-[69px] w-full'>
@@ -135,7 +136,7 @@ const ManageService = () => {
                 {((+params.get('page')||1)-1)*+process.env.REACT_APP_LIMIT + idx + 1}
               </td>
               <td className='text-center py-2'>
-                <div className='flex gap-2 justify-start items-center font-semibold ml-5'>
+                <div className='flex gap-2 justify-start items-center font-semibold ml-5 pl-10'>
                   <img src={el.thumb} alt='thumb' className='w-14 h-14 rounded-md object-cover border-2 border-gray-600 shadow-inner'></img>
                   {el.name}
                 </div>

@@ -15,7 +15,7 @@ const Pagination = ({totalCount}) => {
     return `${start} - ${end}`
   }
   return (
-    <div className='flex w-full justify-between items-center'>
+    <div className='flex w-full justify-between items-center pl-2'>
       {!+params.get('page') ? <span className='text-sm italic '>{`Show ${Math.min(totalCount,1)}-${Math.min(+process.env.REACT_APP_LIMIT,totalCount)} of ${totalCount}`}</span>:''}
       {+params.get('page') ? <span className='text-sm italic '>{`Show ${range()} of ${totalCount}`}</span>:''}
       <div className='flex items-center'>

@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import React, { useEffect, useState } from 'react'
 import { format, addDays, subDays, endOfMonth, startOfMonth, addMonths, subMonths  } from 'date-fns'
 import { useSearchParams } from 'react-router-dom'
-import { apiGetOneService, apiGetOneStaff, apiGetServiceProviderById, apiUpdateCart } from 'apis'
+import { apiGetOneService, apiGetOneStaff, apiGetServiceProviderById, apiUpdateCartService } from 'apis'
 import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 import { formatPrice, formatPricee } from 'ultils/helper'
@@ -225,7 +225,7 @@ const BookingDateTIme = () => {
 
   const handleOnClick = async(time) => {
     setSelectedTime(time);
-    await apiUpdateCart({
+    await apiUpdateCartService({
       service: service?._id, 
       provider: provider?._id, 
       staff: staff?._id, 

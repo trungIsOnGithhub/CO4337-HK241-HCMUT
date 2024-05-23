@@ -1,5 +1,5 @@
 import React from "react";
-import {BestSeller, Sidebar, Banner, DealDaily, FeaturedProduct, Product, CustomSlider, HomeSearchBar} from '../../components' 
+import {BestSeller, Sidebar, Banner, DealDaily, FeaturedService, Service, CustomSlider, HomeSearchBar} from '../../components' 
 import { useSelector } from "react-redux";
 import icons from '../../ultils/icon'
 import withBaseComponent from "hocs/withBaseComponent";
@@ -25,7 +25,7 @@ const Home = ({navigate}) => {
             </div>
         </div>
         <div className="my-8">
-            <FeaturedProduct />
+            <FeaturedService />
         </div>
         <div className="my-8 w-main ">
             <h3 className='text-[20px] font-semibold py-[15px] border-b-2 border-main'>NEW ARRIVALS</h3>

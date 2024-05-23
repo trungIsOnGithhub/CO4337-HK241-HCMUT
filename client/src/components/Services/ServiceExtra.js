@@ -1,6 +1,6 @@
 import React, { memo } from 'react'
 
-const ProductExtra = ({icon, title, sup}) => {
+const ServiceExtra = ({icon, title, sup}) => {
   return (
     <div className='flex items-center p-3 gap-4 mb-[10px] border'>
         <span className='p-2 bg-gray-800 rounded-full flex items-center justify-center text-white'>
@@ -14,4 +14,4 @@ const ProductExtra = ({icon, title, sup}) => {
   )
 }
 
-export default memo(ProductExtra)
+export default memo(ServiceExtra)

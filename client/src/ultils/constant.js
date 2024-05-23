@@ -14,12 +14,12 @@ export const navigation = [
     {
         id: 2,
         value: 'SERVICES',
-        path: `/${path.PRODUCTS}`
+        path: `/${path.SERVICES}`
     },
     {
         id: 3,
         value: 'PRODUCTS',
-        path: ``
+        path: `/${path.PRODUCTS}`
     },
     {
         id: 4,
@@ -29,7 +29,7 @@ export const navigation = [
     {
         id: 5,
         value: 'OUR PROVIDERS',
-        path: `/${path.OUR_SERVICES}`
+        path: `/${path.OUR_PROVIDERS}`
     },
     {
         id: 6,

@@ -2,7 +2,7 @@ import withBaseComponent from 'hocs/withBaseComponent'
 import React, { memo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {renderStarfromNumber, formatPrice} from 'ultils/helper'
-const ProductCard = ({provider}) => {
+const ServiceCard = ({provider}) => {
   const navigate = useNavigate()
   return (
     <div 
@@ -24,4 +24,4 @@ const ProductCard = ({provider}) => {
   )
 }
 
-export default withBaseComponent(memo(ProductCard))
+export default withBaseComponent(memo(ServiceCard))

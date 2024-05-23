@@ -29,13 +29,21 @@ var userSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
-    cart:[{
+    cart_service:[{
         service: {type:mongoose.Types.ObjectId, ref: 'Service'},
         provider: {type:mongoose.Types.ObjectId, ref: 'Service_Provider'},
         staff:  {type:mongoose.Types.ObjectId, ref: 'Staff'},
         duration: Number,
         date: String,
         time: String
+    }],
+    cart_product:[{
+        product: {type:mongoose.Types.ObjectId, ref: 'Product'},
+        quantity: {type: Number},
+        color: {type: String},
+        price: {type: Number},
+        thumb: {type: String},
+        title: {type: String},  
     }],
     address:{
         type: String,

@@ -1,7 +1,7 @@
 import React ,{useState, useEffect, useCallback, memo, useRef}from 'react'
 import {createSearchParams, useParams} from 'react-router-dom'
 import { apiGetOneProduct, apiGetProduct } from '../../apis/product'
-import { apiGetOneService, apiGetServicePublic } from '../../apis/service'
+import { apiGetOneService } from '../../apis/service'
 import {Breadcrumb, Button, SelectQuantity, ServiceExtra, ServiceInformation, CustomSlider} from '../../components'
 import Slider from "react-slick";
 import ReactImageMagnify from 'react-image-magnify';
@@ -12,7 +12,7 @@ import clsx from 'clsx';
 import { set } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
-import { apiUpdateCart } from 'apis';
+import { apiUpdateCartProduct } from 'apis';
 import path from 'ultils/path';
 import withBaseComponent from 'hocs/withBaseComponent';
 import { toast } from 'react-toastify';
@@ -27,7 +27,7 @@ const settings = {
 };
 
 
-const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
+const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
   const nameRef = useRef()
   const {current} = useSelector(state => state.user)
   const params =useParams()
@@ -52,15 +52,22 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
     thumb:'',
     images: [],
     price:'',
-    description: []
+    color: ''
   })
   useEffect(() => {
     if(sid){
-      fetchServiceData()
-      fetchServiceCate()
+      fetchProductData()
+      fetchProductCate()
     }
     window.scrollTo(0,0)
     nameRef.current?.scrollIntoView({block: 'center'})
+    setCurrentProduct({
+      name:'',
+      thumb:'',
+      images: [],
+      price:'',
+      color: ''
+    })
   }, [sid])
   
   useEffect(() => {
@@ -79,49 +86,42 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
   useEffect(() => {
     if(variant){
       setCurrentProduct({
-        name: product?.variants?.find(el => el.sku === variant)?.title,
+        title: product?.variants?.find(el => el.sku === variant)?.title,
+        color: product?.variants?.find(el => el.sku === variant)?.color,
         thumb: product?.variants?.find(el => el.sku === variant)?.thumb,
         images: product?.variants?.find(el => el.sku === variant)?.image,
         price: product?.variants?.find(el => el.sku === variant)?.price,
-        description: product?.variants?.find(el => el.sku === variant)?.description,
       })
     }
     else{
       setCurrentProduct({
-        name: product?.title,
+        title: product?.title,
+        color: product?.color,
         thumb: product?.thumb,
         images: product?.image,
         price: product?.price,
-        description: product?.description
       })
     }
   }, [variant])
   
-  const fetchServiceData = async ()=>{
-    const response = await apiGetOneService(sid)
-    if(response?.success){
-      setProduct(response?.service)
-      setCurrentImage(response?.service?.thumb)
-      setCurrentProduct({
-        name: response?.service?.name,
-        thumb: response?.service?.thumb,
-        images: response?.service?.image,
-        price: response?.service?.price,
-        description: response?.service?.description,
-      })
+  const fetchProductData = async ()=>{
+    const response = await apiGetOneProduct(sid)
+    if(response.success){
+      setProduct(response?.product)
+      setCurrentImage(response?.product?.thumb)
     }
   }
 
-  const fetchServiceCate = async ()=>{
-    const response = await apiGetServicePublic({category})
-    if(response?.success){
-      setProductCate(response?.services)
+  const fetchProductCate = async ()=>{
+    const response = await apiGetProduct({category})
+    if(response.success){
+      setProductCate(response.products)
     }
   }
 
   useEffect(() => {
     if(sid){
-      fetchServiceData()
+      fetchProductData()
     }
   }, [update])
   
@@ -151,7 +151,7 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
     }
   },[quantity])
 
-  const handleBookService = async() => { 
+  const handleAddtoCart = async() => { 
     if(!current){
       return Swal.fire({
         name: "You haven't logged in",
@@ -171,45 +171,29 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
         }
       })
     }
+    const response = await apiUpdateCartProduct({
+        pid: sid, 
+        color: currentProduct?.color || product?.color, 
+        quantity, 
+        price: currentProduct?.price || product?.price, 
+        thumb: currentProduct?.thumb || product?.thumb,
+        title: currentProduct?.title || product?.title,
+      })
+    if(response.success){
+      toast.success(response.mes)
+      dispatch(getCurrent())
+    }
     else{
-      navigate({
-        pathname:  `/${path.BOOKING}`,
-        search: createSearchParams({sid: sid}).toString()
-    })
+      toast.error(response.mes)
     }
    }
-
-  const handleAddtoWishlist = async() => { 
-  if(!current){
-    return Swal.fire({
-      name: "You haven't logged in",
-      text: 'Please login and try again',
-      icon: 'warning',
-      showConfirmButton: true,
-      showCancelButton: true,
-      confirmButtonText: 'Go to Login',
-      cancelButtonText: 'Not now',                
-    }).then((rs)=>{
-      if(rs.isConfirmed){
-        navigate({
-          pathname: `/${path.LOGIN}`,
-          search: createSearchParams({
-            redirect: location.pathname}).toString(),
-        })
-      }
-    })
-  }
-  else{
-    
-  }
-  }
-
+  
   return (
     <div className={clsx('w-full')}> 
       {!isQuickView && <div className='h-[81px] flex items-center justify-center bg-gray-100'>
         <div ref={nameRef} className='w-main'>
-          <h3 className='font-semibold'>{currentProduct?.name || product?.name}</h3>
-          <Breadcrumb name={currentProduct?.name || product?.name} category={category} />
+          <h3 className='font-semibold'>{currentProduct?.title || product?.title}</h3>
+          <Breadcrumb name={currentProduct?.title || product?.title} category={category} />
         </div>
       </div>}
       <div onClick={e => e.stopPropagation()} className={clsx('bg-white m-auto mt-4 flex', isQuickView ? 'max-w-[900px] gap-16 p-8 max-h-[90vh] overflow-y-auto': 'w-main')}>
@@ -220,7 +204,11 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
           {/* <img src={product?.image} alt='product' className='border h-[458px] w-[458px] object-cover' /> */}
           <div className='w-[458px]'>
             <Slider className='image_slider flex gap-2'{...settings}>
-
+              {!currentProduct?.images && product?.image?.map(el => (
+                <div key={el}>
+                  <img onClick={e=> handleClickImage(e,el)} src={el} alt="sup_product" className='cursor-pointer border h-[141px] w-[141px] object-cover'/>
+                </div>
+              ))}
 
               {currentProduct?.images?.length > 0 && currentProduct?.images?.map(el => (
                 <div key={el}>
@@ -235,38 +223,41 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
             <h2 className='text-[30px] font-semibold'>
               {`${formatPrice(formatPricee(currentProduct?.price || product?.price))} VNĐ`}
             </h2>
-            <span className='text-sm text-main'>
-              {`(Booking: ${product?.bookingQuantity})`}
+            <span className='text-sm text-main'> 
+              {`In stock: ${product?.quantity}`}
             </span>
           </div>
           <div className='flex items-center gap-1'>
             {renderStarfromNumber(product?.totalRatings)?.map((el, index)=>(
               <span key={index}>{el}</span>
             ))}
+            <span className='text-sm text-main'>
+              {`(Sold: ${product?.soldQuantity})`}
+            </span>
           </div>
           <ul className='text-sm text-gray-500 list-square pl-4'>
-            {currentProduct?.description?.length > 1 
+            {product?.description?.length > 1 
               &&
-            currentProduct?.description?.map(el=>(
+            product?.description?.map(el=>(
               <li className=' leading-6' key={el}>{el}</li>
             )) }
-            {currentProduct?.description?.length === 1 
+            {product?.description?.length === 1 
               &&
-            <div className='text-sm line-clamp-[10] mb-8' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(currentProduct?.description[0])}}></div>}
+            <div className='text-sm line-clamp-[10] mb-8' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(product?.description[0])}}></div>}
           </ul>
 
-          <div className='my-4 flex flex-col gap-4'>
+          <div className='my-4 flex gap-4'>
             <span className='font-bold'>
-              Other options
+              Color
             </span>
-            <div className='flex flex-wrap items-center w-full gap-2'>
+            <div className='flex flex-wrap items-center w-full'>
               <div 
               onClick={() =>  setVariant(null)} 
-              className= {clsx('flex items-center gap-2 p-2 border cursor-pointer rounded-md', variant === null && 'border-gray-500 shadow-md rounded-md')}>
+              className= {clsx('flex items-center gap-2 p-2 border cursor-pointer', variant === null && 'border-red-500')}>
                 <img src={product?.thumb} alt='thumb' className='w-16 h-16 border rounded-md object-cover'></img>
                 <span className='flex flex-col'>
-                  <span>{product?.name}</span>
-                  <span className='text-sm '>{`${formatPrice(formatPricee(product?.price))} VNĐ`}</span>
+                  <span>{product?.color}</span>
+                  <span className='text-sm '>{product?.price}</span>
                 </span>
               </div>
               {
@@ -274,11 +265,11 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
                   <div 
                   key={el?.sku}
                   onClick={() =>  setVariant(el?.sku)} 
-                  className= {clsx('flex items-center gap-2 p-2 border cursor-pointer rounded-md', variant === el?.sku && 'border-gray-500 shadow-md rounded-md')}>
+                  className= {clsx('flex items-center gap-2 p-2 border cursor-pointer', variant === el?.sku && 'border-red-500')}>
                     <img src={el?.thumb} alt='thumb' className='w-16 h-16 border rounded-md object-cover'></img>
                     <span className='flex flex-col'>
-                      <span>{el?.name}</span>
-                      <span className='text-sm '>{`${formatPrice(formatPricee(el?.price))} VNĐ`}</span>
+                      <span>{el?.color}</span>
+                      <span className='text-sm '>{el?.price}</span>
                     </span>
                   </div>
                 ))
@@ -292,14 +283,9 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
               <span className='font-semibold'>Quantity: </span>
               <SelectQuantity quantity={quantity} editQuantity={editQuantity} handleChange={handleChange} />
             </div>
-            <div className='flex gap-4'>
-            <Button handleOnclick={handleBookService} style={`px-4 py-2 rounded-md text-white font-semibold my-2 bg-blue-500 w-fit`}>
-              Book now
+            <Button fullWidth handleOnclick={handleAddtoCart}>
+              Add to cart
             </Button>
-            <Button handleOnclick={handleAddtoWishlist}>
-              Add to wishlist
-            </Button>
-            </div>
           </div>
         </div>
         {!isQuickView && 
@@ -312,13 +298,13 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
       </div>
 
       {!isQuickView && <div className='w-main m-auto mt-[8px]'>
-        <ServiceInformation ratings={product?.rating} totalRatings={product?.totalRatings} nameProduct={product?.name} sid={product?._id} reRender={reRender}/>
+        <ServiceInformation ratings={product?.rating} totalRatings={product?.totalRatings} nameProduct={product?.title} sid={product?._id} reRender={reRender}/>
       </div>}
 
       {!isQuickView && 
       <>
         <div className='w-main m-auto mt-[8px]'>
-          <h3 className='text-[20px] font-semibold py-[15px] border-b-2 border-gray-500 shadow-sm'>OTHER CUSTOMERS ALSO BUY:</h3>
+          <h3 className='text-[20px] font-semibold py-[15px] border-b-2 border-main'>OTHER CUSTOMERS ALSO BUY:</h3>
           <CustomSlider products={productCate} normal={true}/>
         </div>
         <div className='h-[100px] w-full'></div>
@@ -327,4 +313,4 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
   )
 }
 
-export default withBaseComponent(memo(DetailService))
+export default withBaseComponent(memo(DetailProduct))
