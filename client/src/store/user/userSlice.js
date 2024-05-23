@@ -39,7 +39,7 @@ export const userSlice = createSlice({
           // Tắt trạng thái loading, lưu thông tin user vào store
           state.isLoading = false;
           state.current = action.payload;
-          state.currentCart = action.payload?.cart;
+          state.currentCart = action.payload?.cart_service;
           state.isLogin = true;
         });
     

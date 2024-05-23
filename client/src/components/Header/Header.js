@@ -51,7 +51,7 @@ const Header = ({dispatch}) => {
                 <Fragment>
                 <div onClick={()=> dispatch(showCart())} className="cursor-pointer flex items-center justify-center gap-2 px-6 border-r">
                     <FaShoppingBag color='red' />
-                    <span>{`${current?.cart?.length || 0} item(s)`}</span>
+                    <span>{`${current?.cart_product?.length || 0} item(s)`}</span>
                 </div>
 
                 <div
