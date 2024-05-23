@@ -2,6 +2,9 @@ import path from './path'
 import icons from './icon'
 import { FaUserGear } from "react-icons/fa6";
 import { BsFillTagsFill } from "react-icons/bs";
+import { SlCalender } from "react-icons/sl";
+import { FaMoneyBillTrendUp } from "react-icons/fa6";
+import { TbBrandBooking } from "react-icons/tb";
 export const navigation = [
     {
         id: 1,
@@ -10,21 +13,26 @@ export const navigation = [
     },
     {
         id: 2,
+        value: 'SERVICES',
+        path: `/${path.SERVICES}`
+    },
+    {
+        id: 3,
         value: 'PRODUCTS',
         path: `/${path.PRODUCTS}`
     },
     {
-        id: 3,
+        id: 4,
         value: 'BLOGS',
         path: `/${path.BLOGS}`
     },
     {
-        id: 4,
-        value: 'OUR SERVICES',
-        path: `/${path.OUR_SERVICES}`
+        id: 5,
+        value: 'OUR PROVIDERS',
+        path: `/${path.OUR_PROVIDERS}`
     },
     {
-        id: 5,
+        id: 6,
         value: 'FAQS',
         path: `/${path.FAQS}`
     },
@@ -209,12 +217,19 @@ export const adminSidebar = [
     {
         id: 2,
         type: 'single',
-        text: 'Manage User',
+        text: 'Working Calendar',
+        path: `/${path.ADMIN}/${path.STAFF_CALENDAR}`,
+        icon: <SlCalender size={20}/>
+    },
+    {
+        id: 3,
+        type: 'single',
+        text: 'Manage Customer',
         path: `/${path.ADMIN}/${path.MANAGE_USER}`,
         icon: <MdGroups size={20}/>
     },
     {
-        id: 3,
+        id: 4,
         type: 'parent',
         text: 'Manage Product',
         submenu:[
@@ -230,14 +245,21 @@ export const adminSidebar = [
         icon: <MdOutlineProductionQuantityLimits size={20}/>
     },
     {
-        id: 4,
+        id: 5,
         type: 'single',
         text: 'Manage Order',
         path: `/${path.ADMIN}/${path.MANAGE_ORDER}`,
         icon: <RiBillLine size={20}/>
     },
     {
-        id: 5,
+        id: 6,
+        type: 'single',
+        text: 'Manage Booking',
+        path: `/333`,
+        icon: <TbBrandBooking size={20}/>
+    },
+    {
+        id: 7,
         type: 'parent',
         text: 'Manage Staff',
         submenu:[
@@ -253,7 +275,7 @@ export const adminSidebar = [
         icon: <FaUserGear size={20}/>
     },
     {
-        id: 6,
+        id: 8,
         type: 'parent',
         text: 'Manage Service',
         submenu:[
@@ -268,6 +290,13 @@ export const adminSidebar = [
         ],
         icon: <BsFillTagsFill size={20}/>
     },
+    // {
+    //     id: 9,
+    //     type: 'single',
+    //     text: 'Manage Revenue',
+    //     path: `/111`,
+    //     icon: <FaMoneyBillTrendUp size={20}/>
+    // },
 ]
 
 export const roles = [

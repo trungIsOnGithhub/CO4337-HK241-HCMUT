@@ -1,6 +1,6 @@
 import React, { memo } from 'react'
 import Slider from "react-slick";
-import {Product} from '..'
+import {Service} from '..'
 const settings = {
     dots: false,
     infinite: false,
@@ -13,8 +13,8 @@ const CustomSlider = ({products, activeTab, normal}) => {
     <>
         {products &&<Slider className='custom_slider' {...settings}>
             {products?.map(el =>(
-                <Product key={el._id} 
-                    productData={el}
+                <Service key={el._id} 
+                    serviceData={el}
                     isNew={ activeTab === 1 ? false : true}
                     pid= {el._id}
                     normal={normal}

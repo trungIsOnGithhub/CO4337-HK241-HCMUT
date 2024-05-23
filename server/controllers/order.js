@@ -1,21 +1,32 @@
+const mongoose = require('mongoose');
+
 const Order = require('../models/order')
 const User = require('../models/user')
 const Coupon = require('../models/coupon')
 const asyncHandler = require('express-async-handler')
+const Staff = require('../models/staff')
 
 const createNewOrder = asyncHandler(async(req, res)=>{
     const {_id} = req.user
-    const {products, total, address} = req.body
-    console.log(address)
-    if(address){
-        await User.findByIdAndUpdate(_id, {address, cart:[]})
+    const {info, total} = req.body
+    if(!info || !total){
+        throw new Error("Missing input");
     }
-
-    const response = await Order.create({products, total, orderBy: _id, status: 'Successful'})
-    return res.status(200).json({
-        success: response ? true : false,
-        rs: response ? response : "Something went wrong",
-    })
+    else{
+        await User.findByIdAndUpdate(_id, {$set: {cart: []}}, {new: true});
+        let response;
+        await Staff.findByIdAndUpdate(info[0]?.staff, {$push: {work: {service : info[0]?.service, provider: info[0]?.provider, time: info[0]?.time, date: info[0]?.date, duration: info[0]?.duration}}}, {new: true});
+        try {
+            response = await Order.create({info, total, orderBy: _id, status: 'Successful'})
+        } catch (error) {
+            // Xử lý lỗi nếu có
+            return res.status(500).json({ success: false, mes: "Something went wrong" });
+        }
+        return res.status(200).json({
+            success: response ? true : false,
+            rs: response ? response : "Something went wrong",
+        })
+    }
 })
 
 const updateStatus = asyncHandler(async(req, res)=>{
@@ -176,9 +187,90 @@ const getOrdersByAdmin = asyncHandler(async(req, res)=>{
         });
     }
 })
+
+const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
+    const { provider_id, assigned_staff_ids, service_ids } = req.body;
+
+    console.log('0000000000000000000')
+    console.log(service_ids)
+
+    if (!provider_id || typeof(service_ids.length) !== 'number' || typeof(assigned_staff_ids.length) !== 'number') {
+        return res.status(400).json({
+            success: false,
+            error: 'Missing Input'
+        });
+    }
+
+    const service_obj_ids = service_ids.map(objIdStr => new mongoose.Types.ObjectId(objIdStr))
+
+    // console.log(assigned_staff_objids)
+
+    const providerObjectId = new mongoose.Types.ObjectId(provider_id)
+
+    let orders = await Order.aggregate([
+        {
+            $match: {
+                'info.provider': providerObjectId
+            }
+        },
+        {
+            $lookup: {
+                from: 'services',
+                localField: 'info.service',
+                foreignField: '_id',
+                as: 'service'
+            }
+        },
+        {
+            $unwind: "$service"
+        },
+        // {
+        //     $match: {
+        //         "$$this.service._id": { $in: service_obj_ids }
+        //     }
+        // },
+        {
+            $lookup: {
+                from: 'staffs',
+                localField: 'info.staff',
+                foreignField: '_id',
+                as: 'staffs'
+            }
+        }
+    ])
+
+    if (!orders || typeof(orders.length) !== 'number') {
+        return res.status(500).json({
+            success: false,
+            error: 'Cannot Get Order'
+        });
+    }
+
+    // temp
+    orders = orders.filter(order => {
+        // console.log('======',order.service._id.toString())
+        return service_ids.includes(order.service._id.toString())
+    })
+    orders = orders.filter(order => {
+        const thisOrderStaffs = order?.staffs || [];
+        // console.log('======',thisOrderStaffs)
+        for (const staff of thisOrderStaffs) {
+            if (assigned_staff_ids.includes(staff._id.toString()))
+                return true;
+        }
+        return false;
+    })
+
+    res.status(200).json({
+        success: true,
+        order: orders,
+    })
+})
+
 module.exports = {
     createNewOrder,
     updateStatus,
     getUserOrder,
-    getOrdersByAdmin
+    getOrdersByAdmin,
+    getOrdersForStaffCalendar
 }

@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react'
-import { InputForm, Pagination, Variant} from 'components'
+import { InputForm, Pagination} from 'components'
+
 import { useForm } from 'react-hook-form'
 import { apiGetProduct, apiDeleteProduct} from 'apis/product'
 import moment from 'moment'
@@ -13,7 +14,7 @@ import { apiDeleteServiceByAdmin, apiGetServiceByAdmin } from 'apis/service'
 import clsx from 'clsx'
 import { formatPricee } from 'ultils/helper'
 import UpdateService from './UpdateService'
-
+import VariantService from './VariantService'
 
 const ManageService = () => {
   const {MdModeEdit, MdDelete, FaCopy} = icons
@@ -37,11 +38,9 @@ const ManageService = () => {
       if(rs.isConfirmed){
         const response = await apiDeleteServiceByAdmin(sid)
         if(response.success){
-          console.log('sure')
          toast.success(response.mes)
         }
         else{
-          console.log('not sure')
          toast.error(response.mes)
         }
         render()
@@ -55,13 +54,11 @@ const ManageService = () => {
    })
 
   const handleSearchProduct = (data) => {
-    console.log(data)
   }
 
   const fetchProduct = async(params) => {
     const response = await apiGetServiceByAdmin({...params, limit: process.env.REACT_APP_LIMIT})
     if(response?.success){
-      console.log(response)
       setProducts(response.services)
       setCounts(response.counts)
     }
@@ -89,7 +86,6 @@ const ManageService = () => {
   }, [queryDebounce])
   
   
-  console.log(params.get('page'))
   return (
     <div className='w-full flex flex-col gap-4 relative'>
       {editService &&  
@@ -98,8 +94,8 @@ const ManageService = () => {
       </div>}
 
       {variant &&  
-      <div className='absolute inset-0 bg-zinc-900 h-[200%] z-50 flex-auto'>
-        <Variant variant={variant} render={render} setVariant={setVariant}/>
+      <div className='absolute inset-0 bg-zinc-900 h-fit z-50 flex-auto'>
+        <VariantService variant={variant} render={render} setVariant={setVariant}/>
       </div>}
 
       <div className='h-[69px] w-full'>
@@ -140,7 +136,7 @@ const ManageService = () => {
                 {((+params.get('page')||1)-1)*+process.env.REACT_APP_LIMIT + idx + 1}
               </td>
               <td className='text-center py-2'>
-                <div className='flex gap-2 justify-start items-center font-semibold ml-5'>
+                <div className='flex gap-2 justify-start items-center font-semibold ml-5 pl-10'>
                   <img src={el.thumb} alt='thumb' className='w-14 h-14 rounded-md object-cover border-2 border-gray-600 shadow-inner'></img>
                   {el.name}
                 </div>
@@ -186,9 +182,9 @@ const ManageService = () => {
                 size={24}/></span>
                 <span onClick={() => handleDeleteService(el._id)} 
                 className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>
-                {/* <span onClick={() => setVariant(el)} 
+                <span onClick={() => setVariant(el)} 
                 className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><FaCopy 
-                size={22}/></span> */}
+                size={22}/></span>
               </td>  
             </tr>
           ))}

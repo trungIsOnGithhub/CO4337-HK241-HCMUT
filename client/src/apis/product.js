@@ -1,9 +1,16 @@
 import axios from '../axios'
 export const apiGetProduct = (params) => axios({
-    url: '/product/',
+    url: '/product/public',
     method: 'get',
     params
 })
+
+export const apiGetProductByAdmin = (params) => axios({
+    url: '/product/',
+    method: 'get',
+    params,
+})
+
 
 export const apiGetOneProduct = (pid) => axios({
     url: '/product/'+pid,
@@ -37,4 +44,9 @@ export const apiAddVariant = (data, pid) => axios({
     url: '/product/variant/'+pid,
     method: 'put',
     data
+})
+
+export const apiRemoveCart = (pid, color) => axios({
+    url: `/user/remove-cart/${pid}/${color}`,
+    method: 'delete',
 })

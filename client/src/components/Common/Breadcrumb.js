@@ -3,11 +3,11 @@ import useBreadcrumbs from "use-react-router-breadcrumbs";
 import { Link , NavLink} from 'react-router-dom';
 import icons from '../../ultils/icon';
 const {MdArrowForwardIos} = icons
-const Breadcrumb = ({title, category}) => {
+const Breadcrumb = ({name, category}) => {
     const routes = [
       { path: "/:category", breadcrumb: category },
       { path: "/", breadcrumb: "Home" },
-      { path: "/:category/:pid/:title", breadcrumb: title },
+      { path: "/:category/:sid/:name", breadcrumb: name },
     ];
     const breadcrumbs = useBreadcrumbs(routes); 
     return (

@@ -13,6 +13,9 @@ const serviceRouter = require('./service')
 const serviceCategoryRouter = require('./serviceCategory')
 const ServiceProviderRouter = require('./ServiceProvider');
 
+const revenueRouter = require('./revenue')
+const interactionRouter = require('./interaction')
+
 const {notFound,errorHandler} = require('../middlewares/errorHandler')
 const ServiceProvider = require('../models/ServiceProvider')
 
@@ -31,7 +34,9 @@ const initRoutes = (app) => {
     app.use('/api/service', serviceRouter)
     app.use('/api/service_category', serviceCategoryRouter)
     app.use('/api/service_provider', ServiceProviderRouter)
-    
+    app.use('/api/revenue', revenueRouter)
+    app.use('/api/interaction', interactionRouter)
+
     app.use(notFound)
     app.use(errorHandler)
 }

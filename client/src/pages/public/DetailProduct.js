@@ -1,7 +1,8 @@
 import React ,{useState, useEffect, useCallback, memo, useRef}from 'react'
 import {createSearchParams, useParams} from 'react-router-dom'
 import { apiGetOneProduct, apiGetProduct } from '../../apis/product'
-import {Breadcrumb, Button, SelectQuantity, ProductExtra, ProductInformation, CustomSlider} from '../../components'
+import { apiGetOneService } from '../../apis/service'
+import {Breadcrumb, Button, SelectQuantity, ServiceExtra, ServiceInformation, CustomSlider} from '../../components'
 import Slider from "react-slick";
 import ReactImageMagnify from 'react-image-magnify';
 import { formatPrice, formatPricee, renderStarfromNumber } from '../../ultils/helper';
@@ -11,7 +12,7 @@ import clsx from 'clsx';
 import { set } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
-import { apiUpdateCart } from 'apis';
+import { apiUpdateCartProduct } from 'apis';
 import path from 'ultils/path';
 import withBaseComponent from 'hocs/withBaseComponent';
 import { toast } from 'react-toastify';
@@ -27,7 +28,7 @@ const settings = {
 
 
 const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
-  const titleRef = useRef()
+  const nameRef = useRef()
   const {current} = useSelector(state => state.user)
   const params =useParams()
   const [product, setProduct] = useState(null)
@@ -39,7 +40,7 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
   const [variant, setVariant] = useState(null)
   const [currentImage, setCurrentImage] = useState(null)
   
-  const [pid, setPid] = useState(null)
+  const [sid, setSid] = useState(null)
   
   const [update, setUpdate] = useState(false)
   const reRender = useCallback(() => {
@@ -47,35 +48,35 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
   },[update])
   
   const [currentProduct, setCurrentProduct] = useState({
-    title:'',
+    name:'',
     thumb:'',
     images: [],
     price:'',
     color: ''
   })
   useEffect(() => {
-    if(pid){
+    if(sid){
       fetchProductData()
       fetchProductCate()
     }
     window.scrollTo(0,0)
-    titleRef.current?.scrollIntoView({block: 'center'})
+    nameRef.current?.scrollIntoView({block: 'center'})
     setCurrentProduct({
-      title:'',
+      name:'',
       thumb:'',
       images: [],
       price:'',
       color: ''
     })
-  }, [pid])
+  }, [sid])
   
   useEffect(() => {
     if(data){
-      setPid(data.pid)
+      setSid(data.sid)
       setCategory(data.category)
     }
     else if(params){
-      setPid(params.pid)
+      setSid(params.sid)
       setCategory(params.category)
     }
 
@@ -104,12 +105,13 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
   }, [variant])
   
   const fetchProductData = async ()=>{
-    const response = await apiGetOneProduct(pid)
+    const response = await apiGetOneProduct(sid)
     if(response.success){
       setProduct(response?.product)
       setCurrentImage(response?.product?.thumb)
     }
   }
+
   const fetchProductCate = async ()=>{
     const response = await apiGetProduct({category})
     if(response.success){
@@ -118,7 +120,7 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
   }
 
   useEffect(() => {
-    if(pid){
+    if(sid){
       fetchProductData()
     }
   }, [update])
@@ -152,7 +154,7 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
   const handleAddtoCart = async() => { 
     if(!current){
       return Swal.fire({
-        title: "You haven't logged in",
+        name: "You haven't logged in",
         text: 'Please login and try again',
         icon: 'warning',
         showConfirmButton: true,
@@ -169,8 +171,8 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
         }
       })
     }
-    const response = await apiUpdateCart({
-        pid, 
+    const response = await apiUpdateCartProduct({
+        pid: sid, 
         color: currentProduct?.color || product?.color, 
         quantity, 
         price: currentProduct?.price || product?.price, 
@@ -185,32 +187,19 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
       toast.error(response.mes)
     }
    }
-
-  console.log({currentProduct, product})
   
   return (
     <div className={clsx('w-full')}> 
       {!isQuickView && <div className='h-[81px] flex items-center justify-center bg-gray-100'>
-        <div ref={titleRef} className='w-main'>
+        <div ref={nameRef} className='w-main'>
           <h3 className='font-semibold'>{currentProduct?.title || product?.title}</h3>
-          <Breadcrumb title={currentProduct?.title || product?.title} category={category} />
+          <Breadcrumb name={currentProduct?.title || product?.title} category={category} />
         </div>
       </div>}
       <div onClick={e => e.stopPropagation()} className={clsx('bg-white m-auto mt-4 flex', isQuickView ? 'max-w-[900px] gap-16 p-8 max-h-[90vh] overflow-y-auto': 'w-main')}>
         <div className={clsx('flex flex-col gap-4', isQuickView ? 'w-1/2' : 'w-2/5')}>
-          <div className='h-[458px] w-[458px] border overflow-hidden flex items-center'>
-            <ReactImageMagnify {...{
-              smallImage: {
-                  alt: 'Wristwatch by Ted Baker London',
-                  isFluidWidth: true,
-                  src: currentProduct?.thumb || currentImage
-              },
-              largeImage: {
-                  src: currentProduct?.thumb || currentImage,
-                  width: 1200,
-                  height: 1200
-              },
-            }} />
+          <div className='h-[458px] w-[458px] border overflow-hidden flex items-center justify-center'>
+            <img src={currentProduct?.thumb || currentImage} className='w-full h-full object-contain'></img>
           </div>
           {/* <img src={product?.image} alt='product' className='border h-[458px] w-[458px] object-cover' /> */}
           <div className='w-[458px]'>
@@ -302,14 +291,14 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
         {!isQuickView && 
           <div className='w-1/5'> 
             {productExtra.map(el =>(
-              <ProductExtra key={el.id} title={el.title} icon={el.icon} sup={el.sup}/>
+              <ServiceExtra key={el.id} name={el.name} icon={el.icon} sup={el.sup}/>
             ))}
           </div>
         }
       </div>
 
       {!isQuickView && <div className='w-main m-auto mt-[8px]'>
-        <ProductInformation ratings={product?.rating} totalRatings={product?.totalRatings} nameProduct={product?.title} pid={product?._id} reRender={reRender}/>
+        <ServiceInformation ratings={product?.rating} totalRatings={product?.totalRatings} nameProduct={product?.title} sid={product?._id} reRender={reRender}/>
       </div>}
 
       {!isQuickView && 

@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect} from 'react'
-import {InputForm, Select, Button, MarkdownEditor, Loading} from 'components'
+import {InputForm, Select, Button, MarkdownEditor, Loading, SelectCategory} from 'components'
 import { useForm } from 'react-hook-form'
 import {useSelector, useDispatch} from 'react-redux'
 import { validate, getBase64 } from 'ultils/helper'
@@ -7,11 +7,15 @@ import { toast } from 'react-toastify'
 import icons from 'ultils/icon'
 import {apiCreateProduct} from 'apis/product'
 import { showModal } from 'store/app/appSlice'
+import { getCurrent } from 'store/user/asyncAction'
 
-
-const {RiDeleteBin6Line} = icons
 const CreateProduct = () => {
-  const {categories} = useSelector(state => state.app)
+  const {categories_service} = useSelector(state => state.category)
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const {current} = useSelector(state => state.user)
+  useEffect(() => {
+    dispatch(getCurrent());
+  }, []);
 
   const dispatch = useDispatch()
   const {register, formState:{errors}, reset, handleSubmit, watch} = useForm()
@@ -30,7 +34,11 @@ const CreateProduct = () => {
     setPayload(e)
   },[payload])
 
-
+  const option_category = categories_service?.map((cate) => ({
+    label: cate?.title,
+    value: cate?._id,
+    color: cate?.color
+  }));
 
   const handlePreviewThumb = async(file) => {
     const base64Thumb = await getBase64(file)
@@ -66,10 +74,11 @@ const CreateProduct = () => {
   const handleCreateProduct = async(data) => {
     const invalid = validate(payload, setInvalidField)
     if(invalid === 0){
-      if(data?.category){
-        data.category = categories?.find(el => el._id === data.category)?.title
-      }
       const finalPayload = {...data,...payload}
+      finalPayload.provider_id = current.provider_id
+      if(selectedCategory){
+        finalPayload.category = selectedCategory
+      }
       const formData = new FormData()
       for(let i of Object.entries(finalPayload)){
         formData.append(i[0],i[1])
@@ -78,24 +87,25 @@ const CreateProduct = () => {
       if(finalPayload.images) {
         for (let image of finalPayload.images) formData.append('images', image)
       }
-      for (var pair of formData.entries()) {
-        console.log(pair[0]+ ', ' + pair[1]); 
-      }
       // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
-      // const response = await apiCreateProduct(formData)
+      const response = await apiCreateProduct(formData)
       // dispatch(showModal({isShowModal: false, modalChildren: null}))
-      // if(response.success){
-      //   toast.success(response.mes)
-      //   reset()
-      //   setPayload({
-      //     description: ''
-      //   })
-      // }
-      // else{
-      //   toast.error(response.mes)
-      // }
+      if(response.success){
+        toast.success(response.mes)
+        reset()
+        setPayload({
+          description: ''
+        })
+      }
+      else{
+        toast.error(response.mes)
+      }
     }
   }
+
+  const handleSelectCateChange = useCallback(selectedOptions => {
+    setSelectedCategory(selectedOptions);
+  }, []);
 
 
   return (
@@ -154,30 +164,19 @@ const CreateProduct = () => {
             />
           </div>
           <div className='w-full my-6 flex gap-4'>
-            <Select 
+            <SelectCategory
               label = 'Category'
-              options = {categories?.map(el =>(
-                {code: el._id,
-                value: el.title}
-              ))}
+              options = {option_category}
               register={register}
               id = 'category'
               validate = {{
                 required: 'Need fill this field'
               }}
-              style='flex-auto'
               errors={errors}
               fullWidth
-            />
-
-            <Select 
-              label = 'Brand (Optional)'
-              options = {categories?.find(el => el._id === watch('category'))?.brand?.map(item => ({code:item, value:item}))}
-              register={register}
-              id = 'brand'
-              style='flex-auto'
-              errors={errors}
-              fullWidth
+              onChangee={handleSelectCateChange}
+              values={selectedCategory}
+              style='flex-1'
             />
           </div>
           <MarkdownEditor 

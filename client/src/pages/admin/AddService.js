@@ -37,8 +37,8 @@ const AddService = () => {
   
   const [staffs, setStaffs] = useState(null)
   const fetchStaff = async(params) => {
-    const response = await apiGetAllStaffs()
-    if(response.success){
+    const response = await apiGetAllStaffs({limit:999})
+    if(response?.success){
       setStaffs(response.staffs)
     }
   }
@@ -65,7 +65,6 @@ const AddService = () => {
 
   const handleSelectCateChange = useCallback(selectedOptions => {
     setSelectedCategory(selectedOptions);
-    console.log(selectedCategory)
   }, []);
 
   const handleAddService = async(data) => {
@@ -79,7 +78,6 @@ const AddService = () => {
       if(selectedCategory){
         finalPayload.category = selectedCategory
       }
-      console.log(finalPayload)
       const formData = new FormData()
       for(let i of Object.entries(finalPayload)){
         formData.append(i[0],i[1])
@@ -93,7 +91,6 @@ const AddService = () => {
         for (let staff of finalPayload.assigned_staff) formData.append('assigned_staff', staff)
       }
       for (var pair of formData.entries()) {
-        console.log(pair[0]+ ', ' + typeof pair[1]); 
       }
 
       const response = await apiAddService(formData)

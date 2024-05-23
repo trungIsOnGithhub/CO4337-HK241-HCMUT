@@ -41,7 +41,7 @@ const fn2 = async(cate) => {
 }
 const insertCategory = asyncHandler(async(req, res)=>{
     const promises = []
-    console.log(categoryData)
+
     for(let cate of categoryData){
         promises.push(fn2(cate))
     }
@@ -59,7 +59,7 @@ const fn3 = async(cate) => {
 }
 const insertCategoryService = asyncHandler(async(req, res)=>{
     const promises = []
-    console.log(categoryServiceData)
+
     for(let cate of categoryServiceData){
         promises.push(fn3(cate))
     }

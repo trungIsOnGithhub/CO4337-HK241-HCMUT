@@ -114,22 +114,21 @@ const ManageUser = () => {
         <table className='table-auto mb-6 text-left w-full'>
           <thead className='font-bold bg-blue-500 text-[13px] text-white'>
            <tr className='border border-gray-500'>
-            <th className='px-2 py-2'>#</th>
-            <th className='px-2 py-2'>Email Address</th>
-            <th className='px-2 py-2'>First Name</th>
-            <th className='px-2 py-2'>Last Name</th>
-            <th className='px-2 py-2'>Role</th>
-            <th className='px-2 py-2'>Phone</th>
-            <th className='px-2 py-2'>Status</th>
-            <th className='px-2 py-2'>Created At</th>
-            <th className='px-2 py-2'>Actions</th>
+            <th className='text-center py-2'>#</th>
+            <th className='text-center py-2'>Email Address</th>
+            <th className='text-center py-2'>First Name</th>
+            <th className='text-center py-2'>Last Name</th>
+            <th className='text-center py-2'>Phone</th>
+            <th className='text-center py-2'>Status</th>
+            <th className='text-center py-2'>Created At</th>
+            <th className='text-center py-2'>Actions</th>
            </tr>
           </thead>
           <tbody>
             {user?.users?.map((el,idx)=>(
               <tr key={el._id} className='border border-gray-500'>
-                <td className='py-2 px-4'>{idx+1}</td>
-                <td className='py-2 px-4'>{
+                <td className='text-center py-2'>{idx+1}</td>
+                <td className='text-center py-2'>{
                 editEl?._id === el._id ? 
                 <InputForm 
                   register={register} 
@@ -147,7 +146,7 @@ const ManageUser = () => {
                 /> 
                 :
                 el.email}</td>
-                <td className='py-2 px-4'>
+                <td className='text-center py-2'>
                 {
                 editEl?._id === el._id ? 
                 <InputForm 
@@ -161,7 +160,7 @@ const ManageUser = () => {
                 :
                 el.firstName}
                 </td>
-                <td>
+                <td className='text-center py-2'>
                   {
                   editEl?._id === el._id ? 
                   <InputForm 
@@ -175,22 +174,7 @@ const ManageUser = () => {
                   :
                   el.lastName}
                 </td>
-                <td className='py-2 px-4'>
-                {
-                editEl?._id === el._id ? 
-                <Select 
-                  register={register} 
-                  fullWidth
-                  errors={errors} 
-                  defaultValue={el.role}      
-                  id={'role'} 
-                  validate={{required: 'Require fill'}} 
-                  options={roles}
-                /> 
-                : 
-                roles.find(role => +role.code === +el.role)?.value}
-                </td>
-                <td className='py-2 px-4'>
+                <td className='text-center py-2'>
                 {
                 editEl?._id === el._id ? 
                 <InputForm 
@@ -209,7 +193,7 @@ const ManageUser = () => {
                 /> 
                 : 
                 el.mobile}</td>
-                <td className='py-2 px-4'>{
+                <td className='text-center py-2'>{
                 editEl?._id === el._id ? 
                 <Select 
                   register={register} 
@@ -222,8 +206,8 @@ const ManageUser = () => {
                 /> 
                 : 
                 el.isBlocked? 'Block': 'Active'}</td>
-                <td className='py-2 px-4'>{moment(el.createdAt).format('DD/MM/YYYY')}</td>
-                <td className='py-2 px-4 '>
+                <td className='text-center py-2'>{moment(el.createdAt).format('DD/MM/YYYY')}</td>
+                <td className='text-center py-2'>
                   {editEl?._id === el._id ? <span onClick={()=>{setEditEl(null)}} className='px-2 text-orange-400 hover:underline cursor-pointer'>Back</span>
                           :
                           <span onClick={()=>{setEditEl(el)}} className='px-2 text-orange-400 hover:underline cursor-pointer'>Edit</span>}

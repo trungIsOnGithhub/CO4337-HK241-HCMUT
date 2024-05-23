@@ -25,9 +25,6 @@ var ProviderServiceSchema = new mongoose.Schema({
     homeurl: {
         type: String,
     },
-    phone: {
-        type: String,
-    },
     time: {
         type: Object,
     },

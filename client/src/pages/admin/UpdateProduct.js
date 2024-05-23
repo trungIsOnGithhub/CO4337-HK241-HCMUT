@@ -8,7 +8,6 @@ import {apiUpdateProduct} from 'apis/product'
 import { showModal } from 'store/app/appSlice'
 
 const UpdateProduct = ({editProduct, render, setEditProduct}) => {
-  console.log('update product')
   const {categories} = useSelector(state => state.app)
   const dispatch = useDispatch()
 
@@ -82,20 +81,15 @@ const UpdateProduct = ({editProduct, render, setEditProduct}) => {
       }
       let finalPayload = {...data,...payload}
       if(data.thumb?.length === 0){
-        console.log('check_1')
         finalPayload.thumb = preview.thumb
       }
       else{
-        console.log('check_2')
         finalPayload.thumb = data.thumb[0]
       }
-      console.log(finalPayload)
       if(data.images?.length === 0){
-        console.log('check_3')
         finalPayload.images = preview.images
       }
       else{
-        console.log('check_4')
         finalPayload.images = data.images
       }
       const formData = new FormData()
@@ -108,13 +102,12 @@ const UpdateProduct = ({editProduct, render, setEditProduct}) => {
 
       for (var pair of formData.entries())
       {
-      console.log(pair[0]+ ', '+ pair[1]); 
       }
     
       // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
       const response = await apiUpdateProduct(formData, editProduct._id)
       // dispatch(showModal({isShowModal: false, modalChildren: null}))
-      console.log(response)
+
       if(response.success){
         toast.success(response.mes)
         render()

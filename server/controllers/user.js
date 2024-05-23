@@ -1,4 +1,5 @@
 const User = require('../models/user')
+const Order = require('../models/order')
 const asyncHandler = require("express-async-handler")
 const {generateAccessToken, generateRefreshToken} = require('../middlewares/jwt')
 const jwt = require('jsonwebtoken')
@@ -30,7 +31,9 @@ const mongoose = require('mongoose');
 // })
 
 const register = asyncHandler(async(req, res) => {
+
     const {email, password, firstName, lastName, mobile, role} = req.body
+
 
     if(req.body?.role && req.body.role !== 202 && req.body.role !== 1411) {
         return res.status(400).json({
@@ -40,7 +43,7 @@ const register = asyncHandler(async(req, res) => {
     }
 
     if (!role) {
-        role = 202;
+        req.body.role = 202;
     }
 
     if(!email || !password || !firstName || !lastName || !mobile){
@@ -55,18 +58,18 @@ const register = asyncHandler(async(req, res) => {
     }
     else{
         const token = makeToken()
-        // const email_edit = btoa(email) + '@' + token
+        const email_edit = btoa(email) + '@' + token
         const newUser = await User.create({
-            email,password,firstName,lastName,mobile,role
+            email:email_edit,password,firstName,lastName,mobile
         })
         // res.cookie('dataregister', {...req.body, token}, {httpOnly: true, maxAge: 15*60*1000})
 
         if(newUser){
             const html = `<h2>Register code: </h2><br /><blockquote>${token}</blockquote>`
-            // await sendMail({email, html, subject: 'Complete Registration'})
+            await sendMail({email, html, subject: 'Complete Registration'})
         }
         setTimeout(async()=>{
-            await User.deleteOne({email})
+            await User.deleteOne({email: email_edit})
         },[15*60*1000])
         return res.json({
             success: newUser ? true : false,
@@ -74,9 +77,8 @@ const register = asyncHandler(async(req, res) => {
         })
     }
 })
-const finalRegister = asyncHandler(async(req, res)=>{
-    //const cookie = req.cookies
 
+const finalRegister = asyncHandler(async(req, res)=>{
     const {token} = req.params
     const notActiveEmail = await User.findOne({email:new RegExp(`${token}$`)})
     if(notActiveEmail){
@@ -87,23 +89,9 @@ const finalRegister = asyncHandler(async(req, res)=>{
         success: notActiveEmail ? true : false,
         mes: notActiveEmail? "Successfully" : "Something went wrong"
     })
-    // const newUser = await User.create({
-    //     email: cookie?.dataregister?.email,
-    //     password: cookie?.dataregister?.password,
-    //     mobile: cookie?.dataregister?.mobile,
-    //     firstName: cookie?.dataregister?.firstName,
-    //     lastName: cookie?.dataregister?.lastName,
-    // })
-
-    // res.clearCookie('dataregister')
-    // if(newUser){
-    //     return res.redirect(`${process.env.CLIENT_URL}/final_register/success`)
-    // }
-    // else{
-    //     return res.redirect(`${process.env.CLIENT_URL}/final_register/fail`)
-    // }
-    
 })
+
+
 //Refresh_token => de cap moi access token
 //Access_token => de xac thuc + phan quyen nguoi dung
 const login = asyncHandler(async(req, res)=>{
@@ -113,15 +101,11 @@ const login = asyncHandler(async(req, res)=>{
             success: false,
             mes: "Missing input"
         })}
-    console.log('-----')
     
-    // const response = await User.findOne({email})
+    
     const response = await User.findOne({email})
-    console.log(JSON.stringify(response))
-    if(response){
+    if(response && await response.isCorrectPassword(password)){
         const {isBlocked} = response.toObject()
-        console.log('check block')
-        console.log(isBlocked)
         if(isBlocked){
             return res.status(400).json({
                 success: false,
@@ -136,7 +120,6 @@ const login = asyncHandler(async(req, res)=>{
 
         //Luu refresh token vao cookie
         res.cookie('refreshToken', refreshToken, {httpOnly: true, maxAge: 7*24*60*60*1000})
-        console.log('-------');
         return res.status(200).json({
             success: true,
             accessToken,
@@ -152,13 +135,25 @@ const getOneUser = asyncHandler(async(req, res)=>{
     const {_id} = req.user
     // const _id = new mongoose.Types.ObjectId("6630a109a7e022636a2d2f38")
     const user = await User.findById({_id}).select('-refresh_token -password').populate({
-        path: 'cart',
+        path: 'cart_service',
         populate:{
-            path: 'product',
-            select: 'title thumb price'
-        }
-    }).populate('wishlist', 'title thumb price color')
-    console.log(_id);
+            path: 'service',
+            select: 'name price duration'
+        },
+    }).populate({
+        path: 'cart_service',
+        populate:{
+            path: 'provider',
+            select: 'bussinessName address'
+        },
+    }).populate({
+        path: 'cart_service',
+        populate:{
+            path: 'staff',
+            select: 'firstName lastName'
+        },
+    })
+
     return res.status(200).json({
         success: user? true : false,
         res: user? user : "User not found"
@@ -223,7 +218,7 @@ const forgotPassword = asyncHandler(async(req, res)=>{
             html,
             subject:'Forgot Password'
         }
-        // const rs = await sendMail(data)
+        const rs = await sendMail(data)
         return res.status(200).json({
             success: rs.response?.includes('OK')? true: false,
             mes: rs.response?.includes('OK')? "Please check your email": "Something went wrong"
@@ -323,6 +318,78 @@ const getAllUsers = asyncHandler(async (req, res) => {
     }
 })
 
+
+//get all customer from admin
+const getAllCustomers = asyncHandler(async (req, res) => {
+    const {_id} = req.user;
+    const user = await User.findById(_id).select('provider_id');
+    const providerId = user.provider_id;
+
+    // Prepare queries for filtering, sorting, and pagination
+    const queries = { ...req.query };
+    const excludeFields = ['limit', 'sort', 'page', 'fields'];
+    excludeFields.forEach(el => delete queries[el]);
+
+    let queryString = JSON.stringify(queries);
+    queryString = queryString.replace(
+        /\b(gte|gt|lt|lte)\b/g,
+        matchedEl => `$${matchedEl}`
+    );
+    const formatedQueries = JSON.parse(queryString);
+
+    if (queries?.name) formatedQueries.name = { $regex: queries.name, $options: 'i' };
+    if (req.query.q) {
+        delete formatedQueries.q;
+        formatedQueries['$or'] = [
+            { firstName: { $regex: req.query.q, $options: 'i' } },
+            { lastName: { $regex: req.query.q, $options: 'i' } },
+            { email: { $regex: req.query.q, $options: 'i' } }
+        ];
+    }
+
+    try {
+        // Find all orders where the first element in the info array matches the provider_id
+        const orders = await Order.find({ 'info.0.provider': providerId }).populate('orderBy').exec();
+
+        // Extract unique user IDs from the orders
+        const userIds = [...new Set(orders.map(order => order.orderBy._id.toString()))];
+
+        // Apply additional queries, filtering, sorting, and pagination to the user list
+        formatedQueries._id = { $in: userIds };
+
+        let queryCommand = User.find(formatedQueries);
+
+        if (req.query.sort) {
+            const sortBy = req.query.sort.split(',').join(' ');
+            queryCommand.sort(sortBy);
+        }
+
+        if (req.query.fields) {
+            const fields = req.query.fields.split(',').join(' ');
+            queryCommand.select(fields);
+        }
+
+        const page = +req.query.page || 1;
+        const limit = +req.query.limit || process.env.LIMIT_PRODUCT;
+        const skip = (page - 1) * limit;
+        queryCommand.skip(skip).limit(limit);
+
+        const users = await queryCommand;
+        const counts = await User.countDocuments(formatedQueries);
+
+        return res.status(200).json({
+            success: true,
+            counts: counts,
+            users: users,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            error: 'Cannot get users',
+        });
+    }
+});
+
 // delete user
 const deleteUser = asyncHandler(async (req, res) => {
     const {userId} = req.params
@@ -389,20 +456,64 @@ const updateUserAddress = asyncHandler(async (req, res) => {
 })
 
 
-// update cart
-const updateCart = asyncHandler(async (req, res) => {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// update cart_service
+const updateCartService = asyncHandler(async (req, res) => {
+    const {_id} = req.user;
+    const {service, provider, staff, time, date, duration} = req.body;
+    
+    if (!service || !provider || !staff || !time || !date || !duration) {
+        throw new Error("Missing input");
+    } else {
+        const user = await User.findById(_id).select('cart_service');
+        let response;
+
+        // Xóa hết tất cả các phần tử trong mảng 'cart'
+        await User.findByIdAndUpdate(_id, {$set: {cart_service: []}}, {new: true});
+
+        try {
+            // Thêm một phần tử mới vào mảng 'cart'
+            response = await User.findByIdAndUpdate(_id, {$push: {cart_service: {service, provider, staff, time, date, duration}}}, {new: true});
+        } catch (error) {
+            // Xử lý lỗi nếu có
+            return res.status(500).json({ success: false, mes: "Something went wrong" });
+        }
+
+        return res.status(200).json({
+            success: response ? true : false,
+            mes: response ? 'Updated your cart' : "Something went wrong"
+        });
+    }
+});
+
+// update cart_product
+const updateCartProduct = asyncHandler(async (req, res) => {
+    console.log('call api')
     const {_id} = req.user
+    console.log(req.body)
     const {pid, quantity = 1, color, price, thumb, title} = req.body
     if(!pid || !color || !price || !thumb|| !title) {
         throw new Error("Missing input")
     }
     else{
-        const user = await User.findById(_id).select('cart')
-        const alreadyProduct = user?.cart.find(e1 => e1.product.toString() === pid && e1.color === color)
+        const user = await User.findById(_id).select('cart_product')
+        const alreadyProduct = user?.cart_product.find(e1 => e1.product.toString() === pid && e1.color === color)
 
         if(alreadyProduct){
-            console.log('Already')
-            const response = await User.updateOne({cart:{$elemMatch: alreadyProduct}}, {$set: {"cart.$.quantity": quantity, "cart.$.price": price, "cart.$.thumb": thumb, "cart.$.title": title}},{new:true})
+            const response = await User.updateOne({cart_product:{$elemMatch: alreadyProduct}}, {$set: {"cart_product.$.quantity": quantity, "cart_product.$.price": price, "cart_product.$.thumb": thumb, "cart_product.$.title": title}},{new:true})
             return res.status(200).json({
                 success: response ? true : false,
                 mes: response ? 'Updated your cart' : "Something went wrong"
@@ -420,28 +531,7 @@ const updateCart = asyncHandler(async (req, res) => {
     }
 })
 
-//remove product from cart
-const removeProductFromCart = asyncHandler(async (req, res) => {
-    console.log('removeProductFromCart')
-    const {_id} = req.user
-    const {pid, color} = req.params
-    const user = await User.findById(_id).select('cart')
-    const alreadyProduct = user?.cart.find(e1 => e1.product.toString() === pid && e1.color === color)
-    if(!alreadyProduct){
-        return res.status(200).json({
-            success: true,
-            mes: 'Not Found'
-        })
-    }
-    else{
-        const response = await User.findByIdAndUpdate(_id,{$pull:{cart:{product:pid, color}}},{new: true})
-        return res.status(200).json({
-            success: response ? true : false,
-            mes: response ? 'Deleted successfully' : "Something went wrong"
-        })
-    }
-    
-})
+
 
 
 const createUsers = asyncHandler(async(req, res)=>{
@@ -453,35 +543,30 @@ const createUsers = asyncHandler(async(req, res)=>{
 })
 
 const updateWishlist = asyncHandler(async(req, res)=>{
-    const {pid} = req.params
-    console.log(pid)
+    const {sid} = req.params
+
     const {_id} = req.user
-    if(!pid) {
+    if(!sid) {
         throw new Error("Missing input")
     }
     const user = await User.findById(_id)
-    const alreadyWishList = user?.wishlist?.find(el => el.toString() === pid)
+    const alreadyWishList = user?.wishlist?.find(el => el.toString() === sid)
     if(alreadyWishList){
-        const response = await User.findByIdAndUpdate(_id, {$pull: {wishlist: pid}},{new: true})
+        const response = await User.findByIdAndUpdate(_id, {$pull: {wishlist: sid}},{new: true})
         return res.status(200).json({
             success: response ? true : false,
             mes: response ? 'Updated your wishlist successfully' : 'Something went wrong'
         })
     }
     else{
-        const response = await User.findByIdAndUpdate(_id, {$push: {wishlist: pid}},{new: true})
+        const response = await User.findByIdAndUpdate(_id, {$push: {wishlist: sid}},{new: true})
         return res.status(200).json({
             success: response ? true : false,
             mes: response ? 'Updated your wishlist successfully' : 'Something went wrong'
         })
     }
-
-    const response = await User.create(users)
-    return res.status(200).json({
-        success: response ? true : false,
-        user: response ? response : 'Something went wrong!'
-    })
 })
+
 module.exports = {
     register,
     login,
@@ -495,9 +580,10 @@ module.exports = {
     updateUser,
     updateUserByAdmin,
     updateUserAddress,
-    updateCart,
+    updateCartService,
+    updateCartProduct,
     finalRegister,
     createUsers,
-    removeProductFromCart,
-    updateWishlist
+    updateWishlist,
+    getAllCustomers
 }

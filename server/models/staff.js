@@ -29,6 +29,13 @@ var staffSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Service_Provider',
     },
+    work:{
+        service: {type:mongoose.Types.ObjectId, ref: 'Service'},
+        provider: {type:mongoose.Types.ObjectId, ref: 'Service_Provider'},
+        duration: Number,
+        date: String,
+        time: String,
+    }
 },{
     timestamps: true
 });

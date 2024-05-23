@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react'
-import { InputForm, Pagination, Variant} from 'components'
+import { InputForm, Pagination} from 'components'
 import { useForm } from 'react-hook-form'
-import { apiGetProduct, apiDeleteProduct} from 'apis/product'
+import { apiGetProductByAdmin, apiDeleteProduct} from 'apis/product'
 import moment from 'moment'
 import { useSearchParams, createSearchParams, useNavigate, useLocation} from 'react-router-dom'
 import useDebounce from 'hook/useDebounce'
@@ -9,6 +9,7 @@ import UpdateProduct from './UpdateProduct'
 import icons from 'ultils/icon'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
+import { VariantProduct } from '.'
 
 
 const ManageProduct = () => {
@@ -33,11 +34,9 @@ const ManageProduct = () => {
       if(rs.isConfirmed){
         const response = await apiDeleteProduct(pid)
         if(response.success){
-          console.log('sure')
          toast.success(response.mes)
         }
         else{
-          console.log('not sure')
          toast.error(response.mes)
         }
         render()
@@ -51,11 +50,10 @@ const ManageProduct = () => {
    })
 
   const handleSearchProduct = (data) => {
-    console.log(data)
   }
 
   const fetchProduct = async(params) => {
-    const response = await apiGetProduct({...params, limit: process.env.REACT_APP_LIMIT})
+    const response = await apiGetProductByAdmin({...params, limit: process.env.REACT_APP_LIMIT})
     if(response.success){
       setProducts(response.products)
       setCounts(response.counts)
@@ -83,8 +81,6 @@ const ManageProduct = () => {
     }
   }, [queryDebounce])
   
-  
-  console.log(params.get('page'))
   return (
     <div className='w-full flex flex-col gap-4 relative'>
       {editProduct &&  
@@ -94,7 +90,7 @@ const ManageProduct = () => {
 
       {variant &&  
       <div className='absolute inset-0 bg-zinc-900 h-[200%] z-50 flex-auto'>
-        <Variant variant={variant} render={render} setVariant={setVariant}/>
+        <VariantProduct variant={variant} render={render} setVariant={setVariant}/>
       </div>}
 
       <div className='h-[69px] w-full'>
@@ -120,9 +116,7 @@ const ManageProduct = () => {
         <thead className='font-bold bg-blue-500 text-[13px] text-white'>
           <tr className='border border-gray-500'>
             <th className='text-center py-2'>#</th>
-            <th className='text-center py-2'>Thumb</th>
-            <th className='text-center py-2'>Title</th>
-            <th className='text-center py-2'>Brand</th>
+            <th className='text-center py-2'>Name</th>
             <th className='text-center py-2'>Category</th>
             <th className='text-center py-2'>Price</th>
             <th className='text-center py-2'>Quantity</th>
@@ -138,9 +132,12 @@ const ManageProduct = () => {
           {products?.map((el,idx)=>(
             <tr key={el._id} className='border border-gray-500'>
               <td className='text-center py-2'>{((+params.get('page')||1)-1)*+process.env.REACT_APP_LIMIT + idx + 1}</td>
-              <td className='text-center py-2'><img src={el.thumb} alt='thumb' className='w-12 h-12 object-cover'></img></td>
-              <td className='text-center py-2'>{el.title}</td>
-              <td className='text-center py-2'>{el.brand}</td>
+              <td className='text-center py-2'>
+                <div className='flex gap-2 justify-start items-center font-semibold ml-5 pl-10'>
+                  <img src={el.thumb} alt='thumb' className='w-14 h-14 rounded-md object-cover border-2 border-gray-600 shadow-inner'></img>
+                  {el.title}
+                </div>
+              </td>
               <td className='text-center py-2'>{el.category}</td>
               <td className='text-center py-2'>{el.price}</td>
               <td className='text-center py-2'>{el.quantity}</td>

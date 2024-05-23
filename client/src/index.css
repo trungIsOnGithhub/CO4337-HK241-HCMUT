@@ -99,3 +99,21 @@
     margin: auto 0;
   }
 
+  .rbc-btn-group > button {
+    color: #ccc !important;
+  }
+  .rbc-off-range-bg {
+    background-color: lightgrey !important;
+    opacity: 0.4 !important;
+    /* border: 1px solid #ccc !important; */
+    color: #ccc !important;
+  }
+  .rbc-today {
+    background-color: lightslategray !important;
+    /* border: 1px solid #ccc !important; */
+    color: #ccc !important;
+  }
+  .apexcharts-tooltip {
+    background: grey;
+    color: lightseagreen  ;
+  }

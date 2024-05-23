@@ -1,15 +1,15 @@
-const Staff = require('../models/staff')
 const asyncHandler = require("express-async-handler")
-
+const User = require('../models/user')
+const Staff = require('../models/staff')
 
 const addStaff = asyncHandler(async(req, res)=>{
-    console.log(req.body)
+
     const {firstName, lastName, email, mobile, provider_id} = req.body
     if(!firstName || !lastName || !mobile || !email || !provider_id){
         throw new Error("Missing input")
     }
     const data = {firstName, lastName, mobile, email, provider_id}
-    // console.log(data)
+
     if(req.file){
         data.avatar = req.file.path
     }
@@ -21,7 +21,9 @@ const addStaff = asyncHandler(async(req, res)=>{
 })
 
 // get all staffs
-const getAllStaffs = asyncHandler(async (req, res) => {
+const getAllStaffsByAdmin = asyncHandler(async (req, res) => {
+    const {_id} = req.user
+    const {provider_id} = await User.findById({_id}).select('provider_id')
     const queries = { ...req.query };
     // Loại bỏ các trường đặc biệt ra khỏi query
     const excludeFields = ['limit', 'sort', 'page', 'fields'];
@@ -38,15 +40,20 @@ const getAllStaffs = asyncHandler(async (req, res) => {
     const formatedQueries = JSON.parse(queryString);
     // Filtering
     if (queries?.name) formatedQueries.name = { $regex: queries.name, $options: 'i' };  
-    if (req.query.q){
+
+    let queryFinish = {}
+    if (queries?.q){
         delete formatedQueries.q
-        formatedQueries['$or'] = [
-            {firstName : { $regex: req.query.q, $options: 'i' }},
-            {lastName : { $regex: req.query.q, $options: 'i' }},
-            {email : { $regex: req.query.q, $options: 'i' }},
-        ]
+        queryFinish = {
+            $or: [
+                {firstName : { $regex: req.query.q, $options: 'i' }},
+                {lastName : { $regex: req.query.q, $options: 'i' }},
+                {email : { $regex: req.query.q, $options: 'i' }},
+            ]
+        }
     }
-    let queryCommand =  Staff.find(formatedQueries)
+    const qr = {...formatedQueries, ...queryFinish,  provider_id}
+    let queryCommand =  Staff.find(qr)
     try {
         // sorting
         if(req.query.sort){
@@ -65,13 +72,13 @@ const getAllStaffs = asyncHandler(async (req, res) => {
         //+2 -> 2
         //+dgfbcxx -> NaN
         const page = +req.query.page || 1
-        const limit = +req.query.limit || process.env.LIMIT_PRODUCT
+        const limit = +req.query.limit || process.env.LIMIT_PRODeUCT
         const skip = (page-1)*limit
         queryCommand.skip(skip).limit(limit)
 
 
         const staffs = await queryCommand
-        const counts = await Staff.countDocuments(formatedQueries);
+        const counts = await Staff.countDocuments(qr);
         return res.status(200).json({
             success: true,
             counts: counts,
@@ -90,7 +97,7 @@ const getAllStaffs = asyncHandler(async (req, res) => {
 //update staff by admin
 const updateStaffByAdmin = asyncHandler(async (req, res) => {
     const {staffId} = req.params
-    console.log(req.body)
+
     if(!staffId || Object.keys(req.body).length === 0){
         throw new Error("Missing input")
     }
@@ -118,10 +125,34 @@ const deleteStaffByAdmin = asyncHandler(async (req, res) => {
     }
 })
 
+const getOneStaff = asyncHandler(async(req, res)=>{
+    const {stid} = req.params
+    const staff = await Staff.findById(stid)
+
+    return res.status(200).json({
+        success: staff? true : false,
+        staff: staff? staff : "Staff not found"
+    })
+})
+
+const updateStaffWork = asyncHandler(async(req, res)=>{
+    const {service, provider, staff, duration, time, date} = req.body?.info[0];
+    if (!service || !provider || !staff || !time || !date || !duration) {
+        throw new Error("Missing input");
+    } else {
+        const response = await Staff.findByIdAndUpdate(staff, {$push: {work: {service, provider, time, date, duration}}}, {new: true});
+        return res.status(200).json({
+            success: response ? true : false,
+            mes: response ? 'Updated staff' : "Something went wrong"
+        });
+    }
+})
 
 module.exports = {
     addStaff,
-    getAllStaffs,
+    getAllStaffsByAdmin,
     updateStaffByAdmin,
-    deleteStaffByAdmin
+    deleteStaffByAdmin,
+    getOneStaff,
+    updateStaffWork
 }

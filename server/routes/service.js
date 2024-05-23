@@ -2,6 +2,16 @@ const router = require("express").Router();
 const ctrls = require('../controllers/service')
 const {verifyAccessToken, isAdmin} = require('../middlewares/verify_token')
 const uploader = require('../config/cloudinary.config')
+router.put('/variant/:sid', [verifyAccessToken, isAdmin],uploader.fields([
+    {
+        name: 'images',
+        maxCount: 10
+    },
+    {
+        name: 'thumb',
+        maxCount: 1
+    }]), ctrls.addVariantService)
+
 
 router.post('/', [verifyAccessToken, isAdmin],uploader.fields([
     {
@@ -25,6 +35,7 @@ router.put('/:sid', [verifyAccessToken, isAdmin],uploader.fields([
         maxCount: 1
     }]), ctrls.updateServiceByAdmin)
 router.get('/public', ctrls.getAllServicesPublic)
+router.get('/:sid', ctrls.getOneService)
 module.exports = router
 
 

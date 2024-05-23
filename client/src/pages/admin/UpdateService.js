@@ -11,8 +11,6 @@ import { apiGetAllStaffs } from 'apis'
 import { apiUpdateServiceByAdmin } from 'apis/service'
 
 const UpdateService = ({editService, render, setEditService}) => {
-  console.log(editService)
-  console.log('update service')
   const {categories_service} = useSelector(state => state.category)
   const option_category = categories_service?.map((cate) => ({
     label: cate?.title,
@@ -64,7 +62,6 @@ const UpdateService = ({editService, render, setEditService}) => {
     })
     setSelectedCategory(editService?.category)
     setSelectedStaff(editService?.assigned_staff?.map(staff => staff._id))
-    console.log(selectedStaff)
   }, [editService])
   
   const [invalidField, setInvalidField] = useState([])
@@ -110,7 +107,6 @@ const UpdateService = ({editService, render, setEditService}) => {
 
   const handleSelectCateChange = useCallback(selectedOptions => {
     setSelectedCategory(selectedOptions);
-    console.log(selectedCategory)
   }, []);
 
   const handleUpdateService = async(data) => {
@@ -125,19 +121,15 @@ const UpdateService = ({editService, render, setEditService}) => {
         finalPayload.category = selectedCategory
       }
       if(data.thumb?.length === 0){
-        console.log('check_1')
         finalPayload.thumb = preview.thumb
       }
       else{
-        console.log('check_2')
         finalPayload.thumb = data.thumb[0]
       }
       if(data.images?.length === 0){
-        console.log('check_3')
         finalPayload.images = preview.images
       }
       else{
-        console.log('check_4')
         finalPayload.images = data.images
       }
       const formData = new FormData()
@@ -155,13 +147,11 @@ const UpdateService = ({editService, render, setEditService}) => {
 
       for (var pair of formData.entries())
       {
-      console.log(pair[0]+ ', '+ pair[1]); 
       }
     
       // // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
       const response = await apiUpdateServiceByAdmin(formData, editService._id)
       // // dispatch(showModal({isShowModal: false, modalChildren: null}))
-      // console.log(response)
       if(response.success){
         toast.success(response.mes)
         render()

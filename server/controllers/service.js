@@ -1,12 +1,14 @@
 const Service = require('../models/service')
+const User = require('../models/user')
 const asyncHandler = require("express-async-handler")
+const slugify = require('slugify')
+const makeSku = require('uniqid')
 
 
 const createService = asyncHandler(async(req, res)=>{
     const {name, price, description, category, assigned_staff, hour, minute, provider_id} = req.body
 
-    console.log('----call api----')
-    console.log({name, price, description, category, assigned_staff, hour, minute})
+
 
     const thumb = req.files?.thumb[0]?.path
     const image = req.files?.images?.map(el => el.path)
@@ -26,8 +28,8 @@ const createService = asyncHandler(async(req, res)=>{
 
 // get all staffs
 const getAllServicesByAdmin = asyncHandler(async (req, res) => {
-    // const {provider_id} = req.user
-
+    const {_id} = req.user
+    const {provider_id} = await User.findById({_id}).select('provider_id')
     const queries = { ...req.query };
 
     // Loại bỏ các trường đặc biệt ra khỏi query
@@ -43,9 +45,19 @@ const getAllServicesByAdmin = asyncHandler(async (req, res) => {
 
     // chuyen tu chuoi json sang object
     const formatedQueries = JSON.parse(queryString);
+
     //Filtering
+    let categoryFinish = {}
     if (queries?.name) formatedQueries.name = { $regex: queries.title, $options: 'i' };
-    if (queries?.category) formatedQueries.category = { $regex: queries.category, $options: 'i' };
+    if (queries?.category){
+        delete formatedQueries.category
+        const categoryArray = queries.category?.split(',')
+        const categoryQuery = categoryArray.map(el => ({
+            category: {$regex: el, $options: 'i' }
+        }))
+        categoryFinish = {$or: categoryQuery}
+    }
+
     let queryFinish = {}
     if(queries?.q){
         delete formatedQueries.q
@@ -56,7 +68,7 @@ const getAllServicesByAdmin = asyncHandler(async (req, res) => {
             ]
         }
     }
-    const qr = {...formatedQueries, ...queryFinish}
+    const qr = {...formatedQueries, ...queryFinish, ...categoryFinish, provider_id}
     let queryCommand =  Service.find(qr).populate({
         path: 'assigned_staff',
         select: 'firstName lastName avatar',
@@ -131,7 +143,7 @@ const updateServiceByAdmin = asyncHandler(async(req, res)=>{
 //update staff by admin
 // const updateStaffByAdmin = asyncHandler(async (req, res) => {
 //     const {staffId} = req.params
-//     console.log(req.body)
+
 //     if(!staffId || Object.keys(req.body).length === 0){
 //         throw new Error("Missing input")
 //     }
@@ -162,8 +174,6 @@ const updateServiceByAdmin = asyncHandler(async(req, res)=>{
 
 // get all staffs
 const getAllServicesPublic = asyncHandler(async (req, res) => {
-    // const {provider_id} = req.user
-
     const queries = { ...req.query };
 
     // Loại bỏ các trường đặc biệt ra khỏi query
@@ -180,8 +190,17 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
     // chuyen tu chuoi json sang object
     const formatedQueries = JSON.parse(queryString);
     //Filtering
+    let categoryFinish = {}
     if (queries?.name) formatedQueries.name = { $regex: queries.title, $options: 'i' };
-    if (queries?.category) formatedQueries.category = { $regex: queries.category, $options: 'i' };
+    if (queries?.category){
+        delete formatedQueries.category
+        const categoryArray = queries.category?.split(',')
+        const categoryQuery = categoryArray.map(el => ({
+            category: {$regex: el, $options: 'i' }
+        }))
+        categoryFinish = {$or: categoryQuery}
+    }
+
     let queryFinish = {}
     if(queries?.q){
         delete formatedQueries.q
@@ -192,7 +211,7 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
             ]
         }
     }
-    const qr = {...formatedQueries, ...queryFinish}
+    const qr = {...formatedQueries, ...queryFinish, ...categoryFinish}
     let queryCommand =  Service.find(qr).populate({
         path: 'assigned_staff',
         select: 'firstName lastName avatar',
@@ -238,11 +257,45 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
     }
 })
 
+const getOneService = asyncHandler(async(req, res)=>{
+    const {sid} = req.params
 
+    const service = await Service.findById(sid).populate({
+        path: 'assigned_staff',
+        select: 'firstName lastName avatar mobile email work',
+    })
+
+
+    
+    return res.status(200).json({
+        success: service ? true : false,
+        service: service ? service : "Cannot find product"
+    })
+})
+
+const addVariantService = asyncHandler(async(req, res)=>{
+    const {sid} = req.params
+    const {name, price, hour, minute, description} = req.body
+    const thumb = req.files?.thumb[0]?.path
+    const image = req.files?.images?.map(el => el.path)
+    const duration = +hour*60 + +minute
+
+    if(!name || !price || !hour || !minute || !description){
+        throw new Error("Missing input")
+    }
+    const response = await Service.findByIdAndUpdate(sid, {$push: {variants: {name, price, thumb, image, duration, description, sku: makeSku().toUpperCase()}}},{new: true})
+    return res.status(200).json({
+        success: response? true : false,
+        mes: response? 'Add variant successfully' : "Cannot add variant"
+    })
+    
+})
 module.exports = {
     createService,
     getAllServicesByAdmin,
     deleteServiceByAdmin,
     updateServiceByAdmin,
-    getAllServicesPublic
+    getAllServicesPublic,
+    getOneService,
+    addVariantService
 }

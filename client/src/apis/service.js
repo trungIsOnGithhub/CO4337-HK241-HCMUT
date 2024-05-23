@@ -27,3 +27,14 @@ export const apiGetServicePublic = (params) => axios({
     method: 'get',
     params,
 })
+
+export const apiGetOneService = (sid) => axios({
+    url: '/service/'+sid,
+    method: 'get',
+})
+
+export const apiAddVariantService = (data, sid) => axios({
+    url: '/service/variant/'+sid,
+    method: 'put',
+    data
+})

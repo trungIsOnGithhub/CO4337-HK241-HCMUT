@@ -4,16 +4,21 @@ const path = {
     HOME: '',
     ALL: '*',
     LOGIN: 'login',
-    PRODUCTS__CATEGORY: ':category',
+    SERVICES_CATEGORY: 'service/:category',
+    SERVICES: 'service/services',
+    PRODUCTS_CATEGORY: 'product/:category',
+    PRODUCTS: 'product/products',
     BLOGS: 'blogs',
-    OUR_SERVICES: 'services',
+    OUR_PROVIDERS: 'our_providers',
     FAQS: 'faqs',
-    DETAIL_PRODUCT__CATEGORY__PID__TITLE: ':category/:pid/:title',
+    DETAIL_SERVICE__CATEGORY__PID__TITLE: 'service/:category/:sid/:name',
+    DETAIL_PRODUCT__CATEGORY__PID__TITLE: 'product/:category/:sid/:name',
     FINAL_REGISTER: 'final_register/:status',
     RESET_PASSWORD: 'reset_password/:token',
     DETAIL_CART: 'detail_cart',
     CHECKOUT: 'checkout',
-    PRODUCTS: 'products',
+    BOOKING: 'booking',
+    BOOKING_DATE_TIME: 'booking_date_time',
 
     SERVICE_PROVIDER_REGISTER: 'sp_register',
 
@@ -29,6 +34,7 @@ const path = {
     CREATE_PRODUCT: 'create_product',
     ADD_STAFF: 'add_staff',
     ADD_SERVICE: 'add_service',
+    STAFF_CALENDAR: 'staff_calendar',
 
     //User
     USER: 'user',

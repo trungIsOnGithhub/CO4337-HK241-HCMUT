@@ -3,7 +3,7 @@ const asyncHandler = require('express-async-handler')
 
 const createBrand = asyncHandler(async(req, res)=>{
     const response = await Brand.create(req.body)
-    console.log(response)
+
     return res.status(200).json({
         success: response ? true : false,
         createdBrand: response ? response : "Cannot create new brand"

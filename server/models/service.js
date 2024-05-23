@@ -46,9 +46,27 @@ var serviceSchema = new mongoose.Schema({
             thumb: String,
             image: Array,
             name: String,
-            sku: String
+            sku: String,
+            description:Array,
         }
-    ]
+    ],
+    rating:[
+        {
+            star: {type: Number},
+            postedBy: {type: mongoose.Types.ObjectId, ref: 'User'},
+            comment: {type: String},
+            updatedAt: {
+                type: Date}
+        }
+    ],
+    totalRatings: {
+        type:Number,
+        default:0
+    },
+    bookingQuantity:{
+        type:Number,
+        default:0
+    },
 },{
     timestamps: true
 });
