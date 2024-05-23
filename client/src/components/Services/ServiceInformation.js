@@ -9,7 +9,7 @@ import Swal from 'sweetalert2'
 import path from 'ultils/path'
 import { useNavigate } from 'react-router-dom'
 
-const ProductInformation = ({totalRatings, ratings, nameProduct, pid, reRender}) => {
+const ServiceInformation = ({totalRatings, ratings, nameProduct, pid, reRender}) => {
     const [activeTab, setActiveTab] = useState(1)
     const dispatch = useDispatch()
 
@@ -53,7 +53,6 @@ const ProductInformation = ({totalRatings, ratings, nameProduct, pid, reRender})
 
     return (
     <div className=''>
-        
         <div className='flex items-center gap-2 relative bottom-[-1px]'>
             {tabs.map(el=>(
                 <span 
@@ -102,4 +101,4 @@ const ProductInformation = ({totalRatings, ratings, nameProduct, pid, reRender})
   )
 }
 
-export default memo(ProductInformation)
+export default memo(ServiceInformation)

@@ -135,19 +135,19 @@ const getOneUser = asyncHandler(async(req, res)=>{
     const {_id} = req.user
     // const _id = new mongoose.Types.ObjectId("6630a109a7e022636a2d2f38")
     const user = await User.findById({_id}).select('-refresh_token -password').populate({
-        path: 'cart',
+        path: 'cart_service',
         populate:{
             path: 'service',
             select: 'name price duration'
         },
     }).populate({
-        path: 'cart',
+        path: 'cart_service',
         populate:{
             path: 'provider',
             select: 'bussinessName address'
         },
     }).populate({
-        path: 'cart',
+        path: 'cart_service',
         populate:{
             path: 'staff',
             select: 'firstName lastName'
@@ -470,23 +470,23 @@ const updateUserAddress = asyncHandler(async (req, res) => {
 
 
 
-// update cart
-const updateCart = asyncHandler(async (req, res) => {
+// update cart_service
+const updateCartService = asyncHandler(async (req, res) => {
     const {_id} = req.user;
     const {service, provider, staff, time, date, duration} = req.body;
     
     if (!service || !provider || !staff || !time || !date || !duration) {
         throw new Error("Missing input");
     } else {
-        const user = await User.findById(_id).select('cart');
+        const user = await User.findById(_id).select('cart_service');
         let response;
 
         // Xóa hết tất cả các phần tử trong mảng 'cart'
-        await User.findByIdAndUpdate(_id, {$set: {cart: []}}, {new: true});
+        await User.findByIdAndUpdate(_id, {$set: {cart_service: []}}, {new: true});
 
         try {
             // Thêm một phần tử mới vào mảng 'cart'
-            response = await User.findByIdAndUpdate(_id, {$push: {cart: {service, provider, staff, time, date, duration}}}, {new: true});
+            response = await User.findByIdAndUpdate(_id, {$push: {cart_service: {service, provider, staff, time, date, duration}}}, {new: true});
         } catch (error) {
             // Xử lý lỗi nếu có
             return res.status(500).json({ success: false, mes: "Something went wrong" });
@@ -498,6 +498,39 @@ const updateCart = asyncHandler(async (req, res) => {
         });
     }
 });
+
+// update cart_product
+const updateCartProduct = asyncHandler(async (req, res) => {
+    console.log('call api')
+    const {_id} = req.user
+    console.log(req.body)
+    const {pid, quantity = 1, color, price, thumb, title} = req.body
+    if(!pid || !color || !price || !thumb|| !title) {
+        throw new Error("Missing input")
+    }
+    else{
+        const user = await User.findById(_id).select('cart_product')
+        const alreadyProduct = user?.cart_product.find(e1 => e1.product.toString() === pid && e1.color === color)
+
+        if(alreadyProduct){
+            const response = await User.updateOne({cart_product:{$elemMatch: alreadyProduct}}, {$set: {"cart_product.$.quantity": quantity, "cart_product.$.price": price, "cart_product.$.thumb": thumb, "cart_product.$.title": title}},{new:true})
+            return res.status(200).json({
+                success: response ? true : false,
+                mes: response ? 'Updated your cart' : "Something went wrong"
+            })     
+        }
+
+        // neu sp chua them vao gio hang || sp da them nhung khac color
+        else {
+            const response = await User.findByIdAndUpdate(_id,{$push:{cart:{product:pid, quantity, color, price, thumb, title}}},{new: true})
+            return res.status(200).json({
+                success: response ? true : false,
+                mes: response ? 'Updated your cart' : "Something went wrong"
+            })
+        }
+    }
+})
+
 
 
 
@@ -547,7 +580,8 @@ module.exports = {
     updateUser,
     updateUserByAdmin,
     updateUserAddress,
-    updateCart,
+    updateCartService,
+    updateCartProduct,
     finalRegister,
     createUsers,
     updateWishlist,

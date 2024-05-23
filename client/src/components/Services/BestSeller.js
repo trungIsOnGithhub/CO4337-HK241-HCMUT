@@ -1,6 +1,6 @@
 import React, {useState, useEffect, memo} from 'react'
 import {apiGetProduct} from 'apis/product'
-import {Product, CustomSlider} from '../'
+import {Service, CustomSlider} from '..'
 import {getNewProducts} from 'store/product/asyncAction'
 import { useDispatch, useSelector} from 'react-redux'
 import clsx from 'clsx'

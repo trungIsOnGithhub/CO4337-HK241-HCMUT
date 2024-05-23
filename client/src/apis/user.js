@@ -51,8 +51,14 @@ export const apiUpdateCurrent = (data) => axios({
     data
 })
 
-export const apiUpdateCart = (data) => axios({
-    url: '/user/cart',
+export const apiUpdateCartService = (data) => axios({
+    url: '/user/cart_service',
+    method: 'put',
+    data
+})
+
+export const apiUpdateCartProduct = (data) => axios({
+    url: '/user/cart_product',
     method: 'put',
     data
 })

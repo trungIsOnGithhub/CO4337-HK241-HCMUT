@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useCallback} from 'react'
 import { useParams, useSearchParams, createSearchParams, useNavigate} from 'react-router-dom'
-import { Breadcrumb, Product, SearchItem, InputSelect, Pagination} from '../../components'
-import { apiGetServicePublic } from '../../apis'
+import { Breadcrumb, Product, SearchItemProduct, InputSelect, Pagination} from '../../components'
+import { apiGetProduct } from '../../apis'
 import Masonry from 'react-masonry-css'
 import { sorts } from '../../ultils/constant'
 import clsx from 'clsx'
@@ -18,7 +18,7 @@ const breakpointColumnsObj = {
 
 const Products = ({dispatch}) => {
   const navigate = useNavigate()
-  const [services, setServices] = useState(null)
+  const [products, setProducts] = useState(null)
   const [active, setActive] = useState(null)
   const [params] = useSearchParams()
   const [sort, setSort] = useState('')
@@ -27,11 +27,11 @@ const Products = ({dispatch}) => {
 
 
   const fetchServiceCategories = async (queries) =>{
-    if(category && category !== 'services'){
+    if(category && category !== 'products'){
       queries.category = category
     }
-    const response = await apiGetServicePublic(queries)
-    if(response.success) setServices(response)
+    const response = await apiGetProduct(queries)
+    if(response.success) setProducts(response)
     dispatch(getCurrent())
   }
 
@@ -70,14 +70,13 @@ const Products = ({dispatch}) => {
   useEffect(() => {
     if(sort){
       navigate({
-      pathname: `/${category}`,
+      pathname: `/product/${category}`,
       search: createSearchParams({
         sort
       }).toString()
       }) 
     }   
   }, [sort])
-  
   return (
     <div className='w-full'>
       <div className='h-[81px] flex items-center justify-center bg-gray-100'>
@@ -90,8 +89,8 @@ const Products = ({dispatch}) => {
         <div className='w-4/5 flex-auto flex flex-col gap-3'>
           <span className='font-semibold text-sm'>Filter by:</span>
           <div className='flex items-center gap-4'>
-          <SearchItem name='price' activeClick={active} changeActiveFilter={changeActive} type='input'/>
-          <SearchItem name='category' activeClick={active} changeActiveFilter={changeActive}/>
+          <SearchItemProduct name='price' activeClick={active} changeActiveFilter={changeActive} type='input'/>
+          <SearchItemProduct name='category' activeClick={active} changeActiveFilter={changeActive}/>
           </div>
         </div>
         <div className='w-1/5 flex flex-col gap-3'>
@@ -106,10 +105,10 @@ const Products = ({dispatch}) => {
           breakpointCols={breakpointColumnsObj}
           className="my-masonry-grid flex mx-[-10px]"
           columnClassName="my-masonry-grid_column">
-          {services?.services?.map(el => (
+          {products?.products?.map(el => (
             <Product 
               key={el._id} 
-              serviceData={el}
+              productData={el}
               pid= {el._id}
               normal={true}
             />
@@ -117,9 +116,9 @@ const Products = ({dispatch}) => {
         </Masonry>
       </div>
       <div className='w-main m-auto my-4 flex justify-end'>
-       {services&&
+       {products&&
        <Pagination 
-       totalCount={services?.counts}/>}
+       totalCount={products?.counts}/>}
       </div>
       <div className='w-full h-[500px]'>
       </div>

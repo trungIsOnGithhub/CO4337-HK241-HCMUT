@@ -203,10 +203,10 @@ const StaffCalendar = () => {
         <UpdateService editService={editService} render={render} setEditService={setEditService}/>
       </div>}
 
-      {variant &&  
+      {/* {variant &&  
       <div className='absolute inset-0 bg-zinc-900 h-[200%] z-50 flex-auto'>
         <Variant variant={variant} render={render} setVariant={setVariant}/>
-      </div>}
+      </div>} */}
 
       <div className='h-[69px] w-full'>
       </div>

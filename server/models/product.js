@@ -16,10 +16,6 @@ var productSchema = new mongoose.Schema({
         type:Array,
         required:true
     },
-    brand:{
-        type:String,
-        required:true,
-    },
     price:{
         type:Number,
         required:true,
@@ -69,7 +65,11 @@ var productSchema = new mongoose.Schema({
             title: String,
             sku: String
         }
-    ]
+    ],
+    provider_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Service_Provider',
+    },
 },{
     timestamps: true
 });

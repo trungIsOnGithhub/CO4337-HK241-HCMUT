@@ -1,7 +1,8 @@
 import React, {useEffect} from 'react';
 import {Route, Routes} from 'react-router-dom'
+
 import { AdminLayout, ManageOrder, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar} from 'pages/admin'
-import {Login,Home,Public,Service,DetailService,FAQ,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister } from 'pages/public'
+import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct } from 'pages/public'
 
 import { UserLayout, History, Personal, WishList, Checkout,MyServiceProvider} from 'pages/user'
 import path from './ultils/path'
@@ -34,15 +35,17 @@ function App() {
       <Route path={path.PUBLIC} element={<Public />}>
         <Route path={path.HOME} element={<Home />} />
         <Route path={path.BLOGS} element={<Blogs />} />
-        <Route path={path.DETAIL_PRODUCT__CATEGORY__PID__TITLE} element={<DetailService />} />
+        <Route path={path.DETAIL_SERVICE__CATEGORY__PID__TITLE} element={<DetailService />} />
+        <Route path={path.DETAIL_PRODUCT__CATEGORY__PID__TITLE} element={<DetailProduct />} />
         <Route path={path.FAQS} element={<FAQ />} />
-        <Route path={path.OUR_SERVICES} element={<Service />} />
-        <Route path={path.PRODUCTS__CATEGORY} element={<Products />} />
+        <Route path={path.OUR_PROVIDERS} element={<OurProviders />} />
+        <Route path={path.SERVICES_CATEGORY} element={<Services />} />
+        <Route path={path.PRODUCTS_CATEGORY} element={<Products />} />
         <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
         <Route path={path.BOOKING} element={<Booking />} />
         <Route path={path.BOOKING_DATE_TIME} element={<BookingDateTIme />} />
         {/* <Route path={path.DETAIL_CART} element={<DetailCart />} /> */}
-        <Route path={path.ALL} element={<Home />} />
+        {/* <Route path={path.ALL} element={<Home />} /> */}
       </Route>
       <Route path={path.ADMIN} element={<AdminLayout />}>
         <Route path={path.DASHBOARD} element={<DashBoard/>}/>

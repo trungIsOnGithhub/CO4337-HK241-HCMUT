@@ -6,7 +6,7 @@ import { apiGetProduct } from '../../apis'
 import useDebounce from '../../hook/useDebounce'
 import { useSelector } from 'react-redux'
 const {FaCaretDown} = icons
-const SearchItem = ({name, activeClick, changeActiveFilter, type='checkbox'}) => {
+const SearchItemService = ({name, activeClick, changeActiveFilter, type='checkbox'}) => {
 
   const {categories_service} = useSelector(state => state.category)
   const navigate = useNavigate()
@@ -42,7 +42,7 @@ const SearchItem = ({name, activeClick, changeActiveFilter, type='checkbox'}) =>
 
     queries.page = 1
     navigate({
-      pathname: `/${category}`,
+      pathname: `/service/${category}`,
       search: createSearchParams(queries).toString()
     })    
   }, [deboucePriceFrom, deboucePriceTo])
@@ -61,7 +61,7 @@ const SearchItem = ({name, activeClick, changeActiveFilter, type='checkbox'}) =>
     }
     else delete queries.category
     navigate({
-      pathname: `/${category}`,
+      pathname: `/service/${category}`,
       search: createSearchParams(queries).toString()
     })    
   }, [selected])
@@ -163,4 +163,4 @@ const SearchItem = ({name, activeClick, changeActiveFilter, type='checkbox'}) =>
   )
 }
 
-export default memo(SearchItem)
+export default memo(SearchItemService)

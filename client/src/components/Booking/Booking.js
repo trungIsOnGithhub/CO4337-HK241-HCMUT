@@ -5,7 +5,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { createSearchParams, useSearchParams } from 'react-router-dom';
 import { formatPrice, formatPricee } from 'ultils/helper';
 import path from 'ultils/path';
-import { apiUpdateCart } from 'apis'
+import { apiUpdateCartService } from 'apis'
 import withBaseComponent from 'hocs/withBaseComponent';
 import { getCurrent } from 'store/user/asyncAction';
 
@@ -44,7 +44,6 @@ const Booking = ({dispatch, navigate}) => {
   }, [params]);
 
   useEffect(() => {
-    console.log(service?.assigned_staff)
     setStaffs(service?.assigned_staff);
     fetchProviderData();
   }, [service]);
@@ -136,7 +135,7 @@ const Booking = ({dispatch, navigate}) => {
   
   const handleOnClick = async(time, el) => {
     setSelectedStaff({time, staff:el, date:new Date().toLocaleDateString()});
-    await apiUpdateCart({
+    await apiUpdateCartService({
       service: service?._id, 
       provider: provider?._id, 
       staff: el?._id, 
