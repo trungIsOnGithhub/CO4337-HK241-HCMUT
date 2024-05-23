@@ -28,6 +28,7 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload, setIsSuccess}) 
     }, [currency, showSpinner])
 
     const handleCreateOrder = async() => {
+        console.log('===============', payload)
         const response = await apiCreateOrder(payload)
         if(response.success){
             setIsSuccess(true)

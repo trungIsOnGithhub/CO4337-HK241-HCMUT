@@ -30,12 +30,7 @@ var ProviderServiceSchema = new mongoose.Schema({
     },
     images: {
         type: [],
-    },
-    mobile:{
-        type:String,
-        unique:true,
-        required:true,  
-    },
+    }
 },{
     timestamps: true
 });

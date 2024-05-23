@@ -217,8 +217,8 @@ export const adminSidebar = [
     {
         id: 2,
         type: 'single',
-        text: 'Calender',
-        path: `/2222`,
+        text: 'Working Calendar',
+        path: `/${path.ADMIN}/${path.STAFF_CALENDAR}`,
         icon: <SlCalender size={20}/>
     },
     {
@@ -290,13 +290,13 @@ export const adminSidebar = [
         ],
         icon: <BsFillTagsFill size={20}/>
     },
-    {
-        id: 9,
-        type: 'single',
-        text: 'Manage Revenue',
-        path: `/111`,
-        icon: <FaMoneyBillTrendUp size={20}/>
-    },
+    // {
+    //     id: 9,
+    //     type: 'single',
+    //     text: 'Manage Revenue',
+    //     path: `/111`,
+    //     icon: <FaMoneyBillTrendUp size={20}/>
+    // },
 ]
 
 export const roles = [

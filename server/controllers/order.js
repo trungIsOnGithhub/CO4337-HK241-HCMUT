@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const Order = require('../models/order')
 const User = require('../models/user')
 const Coupon = require('../models/coupon')
@@ -185,9 +187,90 @@ const getOrdersByAdmin = asyncHandler(async(req, res)=>{
         });
     }
 })
+
+const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
+    const { provider_id, assigned_staff_ids, service_ids } = req.body;
+
+    console.log('0000000000000000000')
+    console.log(service_ids)
+
+    if (!provider_id || typeof(service_ids.length) !== 'number' || typeof(assigned_staff_ids.length) !== 'number') {
+        return res.status(400).json({
+            success: false,
+            error: 'Missing Input'
+        });
+    }
+
+    const service_obj_ids = service_ids.map(objIdStr => new mongoose.Types.ObjectId(objIdStr))
+
+    // console.log(assigned_staff_objids)
+
+    const providerObjectId = new mongoose.Types.ObjectId(provider_id)
+
+    let orders = await Order.aggregate([
+        {
+            $match: {
+                'info.provider': providerObjectId
+            }
+        },
+        {
+            $lookup: {
+                from: 'services',
+                localField: 'info.service',
+                foreignField: '_id',
+                as: 'service'
+            }
+        },
+        {
+            $unwind: "$service"
+        },
+        // {
+        //     $match: {
+        //         "$$this.service._id": { $in: service_obj_ids }
+        //     }
+        // },
+        {
+            $lookup: {
+                from: 'staffs',
+                localField: 'info.staff',
+                foreignField: '_id',
+                as: 'staffs'
+            }
+        }
+    ])
+
+    if (!orders || typeof(orders.length) !== 'number') {
+        return res.status(500).json({
+            success: false,
+            error: 'Cannot Get Order'
+        });
+    }
+
+    // temp
+    orders = orders.filter(order => {
+        // console.log('======',order.service._id.toString())
+        return service_ids.includes(order.service._id.toString())
+    })
+    orders = orders.filter(order => {
+        const thisOrderStaffs = order?.staffs || [];
+        // console.log('======',thisOrderStaffs)
+        for (const staff of thisOrderStaffs) {
+            if (assigned_staff_ids.includes(staff._id.toString()))
+                return true;
+        }
+        return false;
+    })
+
+    res.status(200).json({
+        success: true,
+        order: orders,
+    })
+})
+
 module.exports = {
     createNewOrder,
     updateStatus,
     getUserOrder,
-    getOrdersByAdmin
+    getOrdersByAdmin,
+    getOrdersForStaffCalendar
 }

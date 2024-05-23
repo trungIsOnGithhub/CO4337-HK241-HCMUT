@@ -12,7 +12,7 @@ import clsx from 'clsx';
 import { set } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
-import { apiUpdateCart } from 'apis';
+import { apiRecordInteraction } from 'apis';
 import path from 'ultils/path';
 import withBaseComponent from 'hocs/withBaseComponent';
 import { toast } from 'react-toastify';
@@ -41,6 +41,7 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
   const [currentImage, setCurrentImage] = useState(null)
   
   const [sid, setSid] = useState(null)
+  const [providerId, setProviderId] = useState("")
   
   const [update, setUpdate] = useState(false)
   const reRender = useCallback(() => {
@@ -62,6 +63,14 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
     window.scrollTo(0,0)
     nameRef.current?.scrollIntoView({block: 'center'})
   }, [sid])
+
+  useEffect(() => {
+    apiRecordInteraction({
+        user_id: current._id,
+        type: 2,
+        provider_id: providerId
+    })
+  }, [providerId])
   
   useEffect(() => {
     if(data){
@@ -109,6 +118,7 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
         price: response?.service?.price,
         description: response?.service?.description,
       })
+      setProviderId(response?.service.provider_id)
     }
   }
 
@@ -288,10 +298,10 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
           </div>
 
           <div className='flex flex-col gap-8'>
-            <div className='flex items-center gap-4'>
+            {/* <div className='flex items-center gap-4'>
               <span className='font-semibold'>Quantity: </span>
               <SelectQuantity quantity={quantity} editQuantity={editQuantity} handleChange={handleChange} />
-            </div>
+            </div> */}
             <div className='flex gap-4'>
             <Button handleOnclick={handleBookService} style={`px-4 py-2 rounded-md text-white font-semibold my-2 bg-blue-500 w-fit`}>
               Book now

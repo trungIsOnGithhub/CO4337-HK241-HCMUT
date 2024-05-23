@@ -8,6 +8,7 @@ import { IoIosArrowForward } from "react-icons/io";
 import { formatPrice, formatPricee } from 'ultils/helper'
 import Button from 'components/Buttons/Button'
 import path from 'ultils/path'
+import moment from 'moment'
 
 const BookingDateTIme = () => {
   const [type, setType] = useState('Week')
@@ -224,6 +225,7 @@ const BookingDateTIme = () => {
   };
 
   const handleOnClick = async(time) => {
+    console.log('---+++++', time)
     setSelectedTime(time);
     await apiUpdateCartService({
       service: service?._id, 
@@ -231,7 +233,7 @@ const BookingDateTIme = () => {
       staff: staff?._id, 
       duration: service?.duration,
       time: time,
-      date: new Date(datetime).toLocaleDateString()
+      date: moment(new Date(datetime)).format("DD/MM/YYYY")
     })
   }
 
@@ -344,13 +346,18 @@ const BookingDateTIme = () => {
           <div className='flex flex-col items-center'>
             <div className='font-semibold'>Choose time</div>
             <div className='flex flex-wrap gap-2 my-3 justify-center'>
-               {datetime && timeOptions?.map((time, idx) => (
-                (!staff.work || !isWorkingTime(time, staff.work)) && (
-                  <div className={clsx('px-3 py-1 border border-gray-400 rounded-md hover:bg-blue-400 cursor-pointer', selectedTime===time && 'bg-blue-400')} key={idx} onClick={() =>{handleOnClick(time)}}>
-                    {parseInt(time.split(':')[0]) >= 12 ? `${time} pm` : `${time} am`}
-                  </div>
-                )    
-                ))}
+              {
+                datetime &&
+                !timeOptions.length ?
+                  <h5 className='text-red-500'>Service is not available on {moment(datetime, 'YYYY-MM-DD').format('DD/MM/YYYY')}</h5>
+                  : timeOptions?.map((time, idx) => (
+                  (!staff.work || !isWorkingTime(time, staff.work)) && (
+                    <div className={clsx('px-3 py-1 border border-gray-400 rounded-md hover:bg-blue-400 cursor-pointer', selectedTime===time && 'bg-blue-400')} key={idx} onClick={() =>{handleOnClick(time)}}>
+                      {parseInt(time.split(':')[0]) >= 12 ? `${time} pm` : `${time} am`}
+                    </div>
+                  )
+                ))
+              }
             </div>
           </div>
         </div>

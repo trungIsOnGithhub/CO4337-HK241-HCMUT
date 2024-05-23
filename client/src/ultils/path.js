@@ -34,6 +34,7 @@ const path = {
     CREATE_PRODUCT: 'create_product',
     ADD_STAFF: 'add_staff',
     ADD_SERVICE: 'add_service',
+    STAFF_CALENDAR: 'staff_calendar',
 
     //User
     USER: 'user',
