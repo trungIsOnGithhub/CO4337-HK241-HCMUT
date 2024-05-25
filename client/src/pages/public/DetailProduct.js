@@ -2,7 +2,7 @@ import React ,{useState, useEffect, useCallback, memo, useRef}from 'react'
 import {createSearchParams, useParams} from 'react-router-dom'
 import { apiGetOneProduct, apiGetProduct } from '../../apis/product'
 import { apiGetOneService } from '../../apis/service'
-import {Breadcrumb, Button, SelectQuantity, ServiceExtra, ServiceInformation, CustomSlider} from '../../components'
+import {Breadcrumb, Button, SelectQuantity, ServiceExtra, ServiceInformation, CustomSliderProduct} from '../../components'
 import Slider from "react-slick";
 import ReactImageMagnify from 'react-image-magnify';
 import { formatPrice, formatPricee, renderStarfromNumber } from '../../ultils/helper';
@@ -61,13 +61,6 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
     }
     window.scrollTo(0,0)
     nameRef.current?.scrollIntoView({block: 'center'})
-    setCurrentProduct({
-      name:'',
-      thumb:'',
-      images: [],
-      price:'',
-      color: ''
-    })
   }, [sid])
   
   useEffect(() => {
@@ -109,6 +102,13 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
     if(response.success){
       setProduct(response?.product)
       setCurrentImage(response?.product?.thumb)
+      setCurrentProduct({
+        title: response?.product?.title,
+        thumb: response?.product?.thumb,
+        images: response?.product?.image,
+        price: response?.product?.price,
+        description: response?.product?.description,
+      })
     }
   }
 
@@ -178,6 +178,7 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
         price: currentProduct?.price || product?.price, 
         thumb: currentProduct?.thumb || product?.thumb,
         title: currentProduct?.title || product?.title,
+        provider:product?.provider_id,
       })
     if(response.success){
       toast.success(response.mes)
@@ -192,7 +193,7 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
     <div className={clsx('w-full')}> 
       {!isQuickView && <div className='h-[81px] flex items-center justify-center bg-gray-100'>
         <div ref={nameRef} className='w-main'>
-          <h3 className='font-semibold'>{currentProduct?.title || product?.title}</h3>
+          <h3 className='font-semibold uppercase '>{currentProduct?.title || product?.title}</h3>
           <Breadcrumb name={currentProduct?.title || product?.title} category={category} />
         </div>
       </div>}
@@ -204,7 +205,9 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
           {/* <img src={product?.image} alt='product' className='border h-[458px] w-[458px] object-cover' /> */}
           <div className='w-[458px]'>
             <Slider className='image_slider flex gap-2'{...settings}>
-              {!currentProduct?.images && product?.image?.map(el => (
+
+
+              {!currentProduct?.images?.length > 0 && currentProduct?.images?.map(el => (
                 <div key={el}>
                   <img onClick={e=> handleClickImage(e,el)} src={el} alt="sup_product" className='cursor-pointer border h-[141px] w-[141px] object-cover'/>
                 </div>
@@ -305,7 +308,7 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
       <>
         <div className='w-main m-auto mt-[8px]'>
           <h3 className='text-[20px] font-semibold py-[15px] border-b-2 border-main'>OTHER CUSTOMERS ALSO BUY:</h3>
-          <CustomSlider products={productCate} normal={true}/>
+          <CustomSliderProduct products={productCate} normal={true}/>
         </div>
         <div className='h-[100px] w-full'></div>
       </>}

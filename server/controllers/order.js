@@ -116,6 +116,8 @@ const getUserOrder = asyncHandler(async(req, res)=>{
 })
 
 const getOrdersByAdmin = asyncHandler(async(req, res)=>{
+    const {_id} = req.user
+    const {provider_id} = await User.findById({_id}).select('provider_id')
     const queries = { ...req.query };
 
     // Loại bỏ các trường đặc biệt ra khỏi query
@@ -145,8 +147,29 @@ const getOrdersByAdmin = asyncHandler(async(req, res)=>{
     //         ]
     //     }
     // }
-    const qr = {...formatedQueries}
-    let queryCommand =  Order.find(qr)
+    const qr = {...formatedQueries, 'info.provider': provider_id};
+    let queryCommand =  Order.find(qr).populate({
+        path: 'orderBy',
+        select: 'firstName lastName avatar email mobile',
+    }).populate({
+        path: 'info',
+        populate:{
+            path: 'service',
+            select: 'name price duration thumb'
+        },
+    }).populate({
+        path: 'info',
+        populate:{
+            path: 'provider',
+            select: 'bussinessName address'
+        },
+    }).populate({
+        path: 'info',
+        populate:{
+            path: 'staff',
+            select: 'firstName lastName'
+        },
+    })
     try {
         // sorting
         if(req.query.sort){
@@ -188,11 +211,42 @@ const getOrdersByAdmin = asyncHandler(async(req, res)=>{
     }
 })
 
+const getOneOrderByAdmin = asyncHandler(async(req, res)=>{
+    const {bookingid} = req.params
+
+    const booking = await Order.findById(bookingid).populate({
+        path: 'orderBy',
+        select: 'firstName lastName avatar email mobile',
+    }).populate({
+        path: 'info',
+        populate:{
+            path: 'service',
+            select: 'name price duration thumb'
+        },
+    }).populate({
+        path: 'info',
+        populate:{
+            path: 'provider',
+            select: 'bussinessName address'
+        },
+    }).populate({
+        path: 'info',
+        populate:{
+            path: 'staff',
+            select: 'firstName lastName avatar mobile email'
+        },
+    })
+
+    
+    return res.status(200).json({
+        success: booking ? true : false,
+        booking: booking ? booking : "Cannot find Booking"
+    })
+})
+
 const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
     const { provider_id, assigned_staff_ids, service_ids } = req.body;
 
-    console.log('0000000000000000000')
-    console.log(service_ids)
 
     if (!provider_id || typeof(service_ids.length) !== 'number' || typeof(assigned_staff_ids.length) !== 'number') {
         return res.status(400).json({
@@ -202,8 +256,6 @@ const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
     }
 
     const service_obj_ids = service_ids.map(objIdStr => new mongoose.Types.ObjectId(objIdStr))
-
-    // console.log(assigned_staff_objids)
 
     const providerObjectId = new mongoose.Types.ObjectId(provider_id)
 
@@ -248,12 +300,10 @@ const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
 
     // temp
     orders = orders.filter(order => {
-        // console.log('======',order.service._id.toString())
         return service_ids.includes(order.service._id.toString())
     })
     orders = orders.filter(order => {
         const thisOrderStaffs = order?.staffs || [];
-        // console.log('======',thisOrderStaffs)
         for (const staff of thisOrderStaffs) {
             if (assigned_staff_ids.includes(staff._id.toString()))
                 return true;
@@ -272,5 +322,6 @@ module.exports = {
     updateStatus,
     getUserOrder,
     getOrdersByAdmin,
-    getOrdersForStaffCalendar
+    getOrdersForStaffCalendar,
+    getOneOrderByAdmin
 }

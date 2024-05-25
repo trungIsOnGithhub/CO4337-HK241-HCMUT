@@ -225,7 +225,6 @@ const BookingDateTIme = () => {
   };
 
   const handleOnClick = async(time) => {
-    console.log('---+++++', time)
     setSelectedTime(time);
     await apiUpdateCartService({
       service: service?._id, 
@@ -250,7 +249,7 @@ const BookingDateTIme = () => {
   };
 
   const handleCheckout = () => {
-    window.open(`/${path.CHECKOUT}`, '_blank')
+    window.open(`/${path.CHECKOUT_SERVICE}`, '_blank')
   }
 
   const beforeCheckout = () => {

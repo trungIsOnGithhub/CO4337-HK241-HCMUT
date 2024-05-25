@@ -14,9 +14,6 @@ const getRevenueByDateRange = asyncHandler(async(req, res) => {
         });
     }
 
-    console.log('::::::::::::', start_date, '________________')
-    console.log(typeof start_date)
-
     const providerObjectId = new mongoose.Types.ObjectId(provider_id)
 
     const orders = await Order.find({
@@ -34,14 +31,12 @@ const getRevenueByDateRange = asyncHandler(async(req, res) => {
         revByDate.set(order.info[0].date, currRev + order.total)
     })
 
-    // console.log(revByDate,'===============')
 
     const dailyRevenue = []
     for(const dateKey of revByDate.keys()) {
         const ddmmyyArr = dateKey.split('/').map(Number)
-        console.log('------------' ,ddmmyyArr[2], ddmmyyArr[1]-1, ddmmyyArr[0], '--------')
         const revDate = new Date(ddmmyyArr[2], ddmmyyArr[1]-1, ddmmyyArr[0], 0, 0, 0)
-        console.log('-ihkhlkjj-----', revDate)
+
 
         dailyRevenue.push([revDate, revByDate.get(dateKey)])
     }
@@ -55,7 +50,6 @@ const getRevenueByDateRange = asyncHandler(async(req, res) => {
 const getRevenueStatistic = asyncHandler(async (req, res) => {
     const { provider_id } = req.body;
 
-    // console.log('0000000000000000000')
     if (!provider_id) {
         return res.status(400).json({
             success: false,

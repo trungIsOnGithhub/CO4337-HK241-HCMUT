@@ -20,7 +20,7 @@ const AdminSideBar = () => {
     }
   }
   return (
-    <div className='bg-zinc-800 h-full py-4'>
+    <div className='bg-zinc-800 z-30 h-full py-4 '>
         <Link to={'/'} className='flex items-center p-4 gap-2'>
             <span className='font-semibold text-3xl text-red-600'>Admin</span>
             <span className='font-semibold italic text-3xl text-white'>Workspace</span>

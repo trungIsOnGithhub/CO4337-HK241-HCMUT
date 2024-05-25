@@ -2,7 +2,7 @@ import React ,{useState, useEffect, useCallback, memo, useRef}from 'react'
 import {createSearchParams, useParams} from 'react-router-dom'
 import { apiGetOneProduct, apiGetProduct } from '../../apis/product'
 import { apiGetOneService, apiGetServicePublic } from '../../apis/service'
-import {Breadcrumb, Button, SelectQuantity, ServiceExtra, ServiceInformation, CustomSlider} from '../../components'
+import {Breadcrumb, Button, SelectQuantity, ServiceExtra, ServiceInformation, CustomSliderService} from '../../components'
 import Slider from "react-slick";
 import ReactImageMagnify from 'react-image-magnify';
 import { formatPrice, formatPricee, renderStarfromNumber } from '../../ultils/helper';
@@ -218,7 +218,7 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
     <div className={clsx('w-full')}> 
       {!isQuickView && <div className='h-[81px] flex items-center justify-center bg-gray-100'>
         <div ref={nameRef} className='w-main'>
-          <h3 className='font-semibold'>{currentProduct?.name || product?.name}</h3>
+          <h3 className='font-semibold  uppercase '>{currentProduct?.name || product?.name}</h3>
           <Breadcrumb name={currentProduct?.name || product?.name} category={category} />
         </div>
       </div>}
@@ -329,7 +329,7 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
       <>
         <div className='w-main m-auto mt-[8px]'>
           <h3 className='text-[20px] font-semibold py-[15px] border-b-2 border-gray-500 shadow-sm'>OTHER CUSTOMERS ALSO BUY:</h3>
-          <CustomSlider products={productCate} normal={true}/>
+          <CustomSliderService products={productCate} normal={true}/>
         </div>
         <div className='h-[100px] w-full'></div>
       </>}

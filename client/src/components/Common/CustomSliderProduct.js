@@ -1,6 +1,6 @@
 import React, { memo } from 'react'
 import Slider from "react-slick";
-import {Service} from '..'
+import {Product, Service} from '..'
 const settings = {
     dots: false,
     infinite: false,
@@ -8,15 +8,14 @@ const settings = {
     slidesToShow: 3,
     slidesToScroll: 1
   };
-const CustomSlider = ({products, activeTab, normal}) => {
+const CustomSliderProduct = ({products, activeTab, normal}) => {
   return (
     <>
         {products &&<Slider className='custom_slider' {...settings}>
             {products?.map(el =>(
-                <Service key={el._id} 
-                    serviceData={el}
+                <Product key={el._id} 
+                    productData={el}
                     isNew={ activeTab === 1 ? false : true}
-                    pid= {el._id}
                     normal={normal}
                 />
             ))}
@@ -25,4 +24,4 @@ const CustomSlider = ({products, activeTab, normal}) => {
   )
 }
 
-export default memo(CustomSlider)
+export default memo(CustomSliderProduct)

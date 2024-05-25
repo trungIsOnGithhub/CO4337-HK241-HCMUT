@@ -4,7 +4,7 @@ import {
     usePayPalScriptReducer
 } from "@paypal/react-paypal-js";
 import { current } from "@reduxjs/toolkit";
-import { apiCreateOrder } from "apis/order";
+import { apiCreateOrder } from "apis/orderProduct";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -63,7 +63,7 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload, setIsSuccess}) 
     );
 }
 
-export default function Paypal({amount, payload, setIsSuccess}) {
+export default function PaypalProduct({amount, payload, setIsSuccess}) {
     return (
         <div style={{ maxWidth: "750px", minHeight: "200px", margin: "auto" }}>
             <PayPalScriptProvider options={{ clientId: "test", components: "buttons", currency: "USD" }}>

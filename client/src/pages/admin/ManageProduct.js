@@ -23,7 +23,7 @@ const ManageProduct = () => {
   const [editProduct, setEditProduct] = useState(null)
   const [update, setUpdate] = useState(false)
   const [variant, setVariant] = useState(null)
-
+  const [showProductName, setShowProductName] = useState(null)
   const handleDeleteProduct = async(pid) => {
     Swal.fire({
       title: 'Are you sure',
@@ -84,7 +84,7 @@ const ManageProduct = () => {
   return (
     <div className='w-full flex flex-col gap-4 relative'>
       {editProduct &&  
-      <div className='absolute inset-0 bg-zinc-900 h-[200%] z-50 flex-auto'>
+      <div className='absolute inset-0 bg-zinc-900 h-fit z-50 flex-auto'>
         <UpdateProduct editProduct={editProduct} render={render} setEditProduct={setEditProduct}/>
       </div>}
 
@@ -116,7 +116,7 @@ const ManageProduct = () => {
         <thead className='font-bold bg-blue-500 text-[13px] text-white'>
           <tr className='border border-gray-500'>
             <th className='text-center py-2'>#</th>
-            <th className='text-center py-2'>Name</th>
+            <th className='text-center py-2'>Product</th>
             <th className='text-center py-2'>Category</th>
             <th className='text-center py-2'>Price</th>
             <th className='text-center py-2'>Quantity</th>
@@ -133,9 +133,17 @@ const ManageProduct = () => {
             <tr key={el._id} className='border border-gray-500'>
               <td className='text-center py-2'>{((+params.get('page')||1)-1)*+process.env.REACT_APP_LIMIT + idx + 1}</td>
               <td className='text-center py-2'>
-                <div className='flex gap-2 justify-start items-center font-semibold ml-5 pl-10'>
+                <div className='flex flex-col gap-2 font-semibold ml-5 pl-10 cursor-pointer relative' 
+                    onMouseEnter={() => setShowProductName(el?._id)}
+                    onMouseLeave={() => setShowProductName(null)}>
                   <img src={el.thumb} alt='thumb' className='w-14 h-14 rounded-md object-cover border-2 border-gray-600 shadow-inner'></img>
-                  {el.title}
+                {showProductName === el?._id && (
+                  <div className='absolute bg-white border-2 border-gray-400 shadow-sm p-2 top-14 left-10 rounded-md flex gap-4 z-50'>
+                    <div className='flex flex-col text-gray-700 w-[200px]'>
+                      <div><strong>Name:</strong> {el?.title}</div>
+                    </div>
+                  </div>
+                )}
                 </div>
               </td>
               <td className='text-center py-2'>{el.category}</td>

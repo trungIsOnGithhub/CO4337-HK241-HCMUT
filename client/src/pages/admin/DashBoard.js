@@ -23,7 +23,6 @@ const DashBoard = () => {
     }
     let response = await apiGetRevenueStatistic(requestBody)
 
-    console.log('_______', response, '____________')
 
     if (response.success && response?.success) {
       setTotalRevenue(response.statistic?.totalRevenue);
@@ -131,8 +130,6 @@ const UserVisitStatChart = ({currentUser}) => {
     }
     let response = await apiGetUserVisitByDateRange(requestBody)
 
-    console.log('GMLVBDR:  ', response, 'GMLVBDR: ____________')
-
     if (response.success && response?.userVisit) {
       setDataSeries(response.userVisit)
     }
@@ -236,8 +233,6 @@ function ApexChart() {
       end_date: maxDate
     }
     let response = await apiGetDailyRevenueByDateRange(requestBody)
-
-    console.log('_______', response, '____________')
 
     if (response.success && response?.revenue) {
       setDailyRevenue(response.revenue)

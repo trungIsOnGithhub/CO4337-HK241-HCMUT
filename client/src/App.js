@@ -1,10 +1,10 @@
 import React, {useEffect} from 'react';
 import {Route, Routes} from 'react-router-dom'
 
-import { AdminLayout, ManageOrder, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar} from 'pages/admin'
+import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail} from 'pages/admin'
 import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct } from 'pages/public'
 
-import { UserLayout, History, Personal, WishList, Checkout,MyServiceProvider} from 'pages/user'
+import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct} from 'pages/user'
 import path from './ultils/path'
 import {getCategories} from 'store/app/asyncAction'
 import {getCategorieService} from 'store/category/asyncAction'
@@ -31,7 +31,8 @@ function App() {
       }
       {isShowModal && <Modal>{modalChildren}</Modal>}
      <Routes>
-      <Route path={path.CHECKOUT} element={<Checkout />} />
+      <Route path={path.CHECKOUT_SERVICE} element={<CheckoutService />} />
+      <Route path={path.CHECKOUT_PRODUCT} element={<CheckoutProduct />} />
       <Route path={path.PUBLIC} element={<Public />}>
         <Route path={path.HOME} element={<Home />} />
         <Route path={path.BLOGS} element={<Blogs />} />
@@ -50,6 +51,8 @@ function App() {
       <Route path={path.ADMIN} element={<AdminLayout />}>
         <Route path={path.DASHBOARD} element={<DashBoard/>}/>
         <Route path={path.MANAGE_ORDER} element={<ManageOrder/>}/>
+        <Route path={path.MANAGE_BOOKING} element={<ManageBooking/>}/>
+        <Route path={path.MANAGE_BOOKING_DETAIL} element={<ManageBookingDetail/>}/>
         <Route path={path.MANAGE_PRODUCT} element={<ManageProduct/>}/>
         <Route path={path.MANAGE_USER} element={<ManageUser/>}/>
         <Route path={path.MANAGE_STAFF} element={<ManageStaff/>}/>

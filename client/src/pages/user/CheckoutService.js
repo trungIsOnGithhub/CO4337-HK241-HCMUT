@@ -10,9 +10,9 @@ import path from 'ultils/path';
 import axios from 'axios'; // Import Axios
 import { apiGetCurrent } from 'apis';
 
-const Checkout = ({ dispatch, navigate }) => {
+const CheckoutService = ({ dispatch, navigate }) => {
   // dispatch(getCurrent())
-  const { currentCart, current } = useSelector((state) => state.user);
+  const { currentCartService, current } = useSelector((state) => state.user);
   const [isSuccess, setIsSuccess] = useState(false);
   const [exchangeRate, setExchangeRate] = useState(null); // State để lưu trữ tỉ giá hối đoái
   
@@ -47,7 +47,7 @@ const Checkout = ({ dispatch, navigate }) => {
   }, []); 
 
   // quy doi tu VND -> USD
-  const totalPriceUSD = exchangeRate ? currentCart[0]?.service?.price / exchangeRate : null;
+  const totalPriceUSD = exchangeRate ? currentCartService[0]?.service?.price / exchangeRate : null;
 
   return (
     <div className="p-8 w-full grid grid-cols-10 h-full max-h-screen overflow-y-auto gap-6">
@@ -65,38 +65,38 @@ const Checkout = ({ dispatch, navigate }) => {
             <div className="px-3 flex flex-col gap-2">
               <div className='flex gap-4'>
                 <span className='text-gray-700 font-bold'>Service Name:</span>
-                <span className='font-semibold text-gray-600'>{currentCart[0]?.service ? currentCart[0]?.service?.name : ''}</span>
+                <span className='font-semibold text-gray-600'>{currentCartService[0]?.service ? currentCartService[0]?.service?.name : ''}</span>
               </div>
               <div className='flex gap-4'>
                 <span className='text-gray-700 font-bold'>Duration:</span>
-                <span className='font-semibold text-gray-600'>{currentCart[0]?.service ? `${currentCart[0]?.service?.duration} minutes` : ''}</span>
+                <span className='font-semibold text-gray-600'>{currentCartService[0]?.service ? `${currentCartService[0]?.service?.duration} minutes` : ''}</span>
               </div>
               <div className='flex gap-4'>
                 <span className='text-gray-700 font-bold'>Provider Name:</span>
-                <span className='font-semibold text-gray-600'>{currentCart[0]?.provider ? `${currentCart[0]?.provider?.bussinessName}` : ''}</span>
+                <span className='font-semibold text-gray-600'>{currentCartService[0]?.provider ? `${currentCartService[0]?.provider?.bussinessName}` : ''}</span>
               </div>
               <div className='flex gap-4'>
                 <span className='text-gray-700 font-bold'>Address:</span>
-                <span className='font-semibold text-gray-600'>{currentCart[0]?.provider ? `${currentCart[0]?.provider?.address}` : ''}</span>
+                <span className='font-semibold text-gray-600'>{currentCartService[0]?.provider ? `${currentCartService[0]?.provider?.address}` : ''}</span>
               </div>
               <div className='flex gap-4'>
                 <span className='text-gray-700 font-bold'>Staff:</span>
-                <span className='font-semibold text-yellow-600'>{currentCart[0]?.staff ? `${currentCart[0]?.staff?.lastName} ${currentCart[0]?.staff?.firstName}` : ''}</span>
+                <span className='font-semibold text-yellow-600'>{currentCartService[0]?.staff ? `${currentCartService[0]?.staff?.lastName} ${currentCartService[0]?.staff?.firstName}` : ''}</span>
               </div>
               <div className='flex gap-4'>
                 <span className='text-gray-700 font-bold'>Date & Time:</span>
-                <span className='font-semibold text-green-600'>{currentCart[0]?.time ? `${currentCart[0]?.time} ${currentCart[0]?.date}` : ''}</span>
+                <span className='font-semibold text-green-600'>{currentCartService[0]?.time ? `${currentCartService[0]?.time} ${currentCartService[0]?.date}` : ''}</span>
               </div>
               <div className='flex gap-4'>
                 <span className='text-gray-700 font-bold'>Total Price:</span>
-                <span className='font-semibold text-main'>{currentCart[0]?.service ? `${formatPrice(formatPricee(currentCart[0]?.service?.price))} VNĐ` : ''}</span>
+                <span className='font-semibold text-main'>{currentCartService[0]?.service ? `${formatPrice(formatPricee(currentCartService[0]?.service?.price))} VNĐ` : ''}</span>
               </div>
             </div>
           </div>
           <div className="w-[60%]">
             <Paypal
               payload={{
-                info: currentCart,
+                info: currentCartService,
                 total: Math.round(totalPriceUSD), // Sử dụng giá trị đã quy đổi
               }}
               setIsSuccess={setIsSuccess}
@@ -109,4 +109,4 @@ const Checkout = ({ dispatch, navigate }) => {
   );
 };
 
-export default withBaseComponent(memo(Checkout));
+export default withBaseComponent(memo(CheckoutService));

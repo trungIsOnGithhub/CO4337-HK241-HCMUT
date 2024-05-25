@@ -16,7 +16,8 @@ const path = {
     FINAL_REGISTER: 'final_register/:status',
     RESET_PASSWORD: 'reset_password/:token',
     DETAIL_CART: 'detail_cart',
-    CHECKOUT: 'checkout',
+    CHECKOUT_SERVICE: 'checkout_service',
+    CHECKOUT_PRODUCT: 'checkout_product',
     BOOKING: 'booking',
     BOOKING_DATE_TIME: 'booking_date_time',
 
@@ -31,6 +32,8 @@ const path = {
     MANAGE_SERVICE: 'manage_service',
     MANAGE_PRODUCT: 'manage_product',
     MANAGE_ORDER: 'manage_order',
+    MANAGE_BOOKING: 'manage_booking',
+    MANAGE_BOOKING_DETAIL: 'manage_booking_dt',
     CREATE_PRODUCT: 'create_product',
     ADD_STAFF: 'add_staff',
     ADD_SERVICE: 'add_service',

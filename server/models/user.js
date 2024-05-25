@@ -44,6 +44,7 @@ var userSchema = new mongoose.Schema({
         price: {type: Number},
         thumb: {type: String},
         title: {type: String},  
+        provider: {type:mongoose.Types.ObjectId, ref: 'Service_Provider'},
     }],
     address:{
         type: String,

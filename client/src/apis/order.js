@@ -11,6 +11,11 @@ export const apiGetOrdersByAdmin = (params) => axios({
     params
 })
 
+export const apiGetOneOrderByAdmin = (bookingid) => axios({
+    url: '/order/admin/' + bookingid,
+    method: 'get',
+})
+
 export const apiGetOrdersByUser = (params) => axios({
     url: '/order/',
     method: 'get',

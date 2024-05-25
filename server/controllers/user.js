@@ -501,11 +501,9 @@ const updateCartService = asyncHandler(async (req, res) => {
 
 // update cart_product
 const updateCartProduct = asyncHandler(async (req, res) => {
-    console.log('call api')
     const {_id} = req.user
-    console.log(req.body)
-    const {pid, quantity = 1, color, price, thumb, title} = req.body
-    if(!pid || !color || !price || !thumb|| !title) {
+    const {pid, quantity = 1, color, price, thumb, title, provider} = req.body
+    if(!pid || !color || !price || !thumb|| !title|| !provider) {
         throw new Error("Missing input")
     }
     else{
@@ -513,7 +511,7 @@ const updateCartProduct = asyncHandler(async (req, res) => {
         const alreadyProduct = user?.cart_product.find(e1 => e1.product.toString() === pid && e1.color === color)
 
         if(alreadyProduct){
-            const response = await User.updateOne({cart_product:{$elemMatch: alreadyProduct}}, {$set: {"cart_product.$.quantity": quantity, "cart_product.$.price": price, "cart_product.$.thumb": thumb, "cart_product.$.title": title}},{new:true})
+            const response = await User.updateOne({cart_product:{$elemMatch: alreadyProduct}}, {$set: {"cart_product.$.quantity": quantity, "cart_product.$.price": price, "cart_product.$.thumb": thumb, "cart_product.$.title": title,  "cart_product.$.provider": provider}},{new:true})
             return res.status(200).json({
                 success: response ? true : false,
                 mes: response ? 'Updated your cart' : "Something went wrong"
@@ -522,7 +520,7 @@ const updateCartProduct = asyncHandler(async (req, res) => {
 
         // neu sp chua them vao gio hang || sp da them nhung khac color
         else {
-            const response = await User.findByIdAndUpdate(_id,{$push:{cart:{product:pid, quantity, color, price, thumb, title}}},{new: true})
+            const response = await User.findByIdAndUpdate(_id,{$push:{cart_product:{product:pid, quantity, color, price, thumb, title, provider}}},{new: true})
             return res.status(200).json({
                 success: response ? true : false,
                 mes: response ? 'Updated your cart' : "Something went wrong"

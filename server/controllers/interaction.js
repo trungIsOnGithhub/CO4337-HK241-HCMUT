@@ -29,14 +29,10 @@ const getMonthlyVisitByDateRange = asyncHandler(async(req, res) => {
         });
     }
 
-    console.log('GMLVBDR: ', start_date, '________________')
-    console.log(typeof start_date)
 
     const providerObjectId = new mongoose.Types.ObjectId(provider_id)
 
     const interactions = await Interaction.find();
-
-    console.log('GMLVBDR: ', interactions, 'GMLVBDR=============')
 
     const startDateObj = new Date(start_date)
     const endDateObj = new Date(end_date)
@@ -71,27 +67,20 @@ const getMonthlyVisitByDateRange = asyncHandler(async(req, res) => {
         }
     }
 
-    // console.log('GMLVBDR:   ', endYear)
 
     interactions.forEach(ele => {
         if(!ele?.createdAt || !ele?.user_id || !ele?.provider_id) return;
-        // console.log('FFFF', ele.createdAt)
-        // console.log('FFFF', typeof(ele.createdAt))
         // const dateCreated = new Date(ele.createdAt)
-        // console.log('FFFFF', dateCreated)
         const interactionMonth = ele.createdAt.getMonth()
         const interactionYear = ele.createdAt.getFullYear()
-        // console.log('FFFF', interactionYear)
 
         const dateCategoryLabel = interactionMonth + 1 + "/" + interactionYear
         if(visByMonth[dateCategoryLabel] >= 0) {
             visByMonth[dateCategoryLabel] += 1
         }
 
-        console.log('FFFF', visByMonth)
     })
 
-    // console.log(revByDate,'===============')
     const userVisit = Object.entries(visByMonth).map(ele => {
         return {
             x: ele[0],

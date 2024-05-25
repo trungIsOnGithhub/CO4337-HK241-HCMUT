@@ -16,6 +16,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from "moment";
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Provider, useSelector } from 'react-redux';
+import path from 'ultils/path'
 
 const localizer = momentLocalizer(moment);
 
@@ -34,7 +35,6 @@ const StaffCalendar = () => {
   const fetchStaff = async(params) => {
     const response = await apiGetAllStaffs()
     if(response.success){
-      // console.log(response.staffs)
       setStaffs(response.staffs)
     }
   }
@@ -45,7 +45,6 @@ const StaffCalendar = () => {
   const fetchService = async(params) => {
     const response = await apiGetServiceByAdmin()
     if(response?.success && response.services){
-      // console.log(response.services)
       setServices(response.services)
     }
     else {
@@ -84,7 +83,6 @@ const StaffCalendar = () => {
     const ddmmyyArr = dateStr.split('/').map(Number)
     const hhmmArr = timeStr.split(':').map(Number)
 
-    console.log(ddmmyyArr,'dasdsad', hhmmArr)
 
     const startDate = new Date(ddmmyyArr[2], ddmmyyArr[1]-1, ddmmyyArr[0], hhmmArr[0], hhmmArr[1], 0)
     const endDate = moment(startDate).add(duration, 'm')
@@ -100,7 +98,6 @@ const StaffCalendar = () => {
    })
 
   const handleSearchProduct = (data) => {
-    console.log(data)
   }
 
   const mapOrderToCalendarEvents = useCallback((orderRaw) => {
@@ -112,10 +109,11 @@ const StaffCalendar = () => {
 
       return {
         id: index,
-        title: order.service.name,
+        title: order?.service?.name,
+        bookingid: order?._id,
         start: datepair[0],
         end: datepair[1],
-        desc: order.service.name + ' - ' + order.staffs.map(staff => `${staff.firstName} ${staff.lastName}`).join(' '),
+        desc: order?.service?.name + ' - ' + order?._id,
         color: 'lightgreen',
       };
     })
@@ -127,18 +125,13 @@ const StaffCalendar = () => {
       assigned_staff_ids: selectedStaff,
       service_ids: selectedServices
     }
-    console.log(payload)
-    console.log('+++++++++++++++++++++')
     const response = await apiGetOrdersForStaffCalendar(payload)
-    console.log(response)
-    console.log('((((((((((((((((((((((')
     // for (const order of response.order) {
     //   if (order.info && order.info.length > 0) {
-    //     console.log(dateParse(order.info[0].date, order.info[0].time))
     //   }
     // }
     if (response?.order) {
-      const newEventsList = mapOrderToCalendarEvents(response.order)
+      const newEventsList = mapOrderToCalendarEvents(response?.order)
       setCalendarEvents(newEventsList)
     } else {
       Swal.fire({
@@ -155,7 +148,6 @@ const StaffCalendar = () => {
   // const fetchProduct = async(params) => {
   //   const response = await apiGetServiceByAdmin({...params, limit: process.env.REACT_APP_LIMIT})
   //   if(response?.success){
-  //     console.log(response)
   //     setProducts(response.services)
   //     setCounts(response.counts)
   //   }
@@ -194,6 +186,13 @@ const StaffCalendar = () => {
         return {
             style: style
         };
+    }
+  
+    const handleOnClickDetail = (bookingid) => {
+      navigate({
+        pathname:  `/${path.ADMIN}/${path.MANAGE_BOOKING_DETAIL}`,
+        search: createSearchParams({bookingid}).toString()
+      })
     }
 
   return (
@@ -251,7 +250,7 @@ const StaffCalendar = () => {
             defaultDate={moment().toDate()}
             localizer={localizer}
             eventPropGetter={eventStyleGetter}
-            onSelectEvent={event => alert(event.desc)}
+            onSelectEvent={event => handleOnClickDetail(event.bookingid)}
         />
       </div>
     </div>

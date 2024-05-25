@@ -103,7 +103,6 @@ const Booking = ({dispatch, navigate}) => {
             }
           }
 
-          console.log(timeOptions)
 
           return timeOptions;
         };
@@ -146,7 +145,7 @@ const Booking = ({dispatch, navigate}) => {
   }
 
   const handleCheckout = () => {
-    window.open(`/${path.CHECKOUT}`, '_blank')
+    window.open(`/${path.CHECKOUT_SERVICE}`, '_blank')
   }
 
   const isWorkingTime = (time, workSchedule) => {

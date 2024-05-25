@@ -255,7 +255,7 @@ export const adminSidebar = [
         id: 6,
         type: 'single',
         text: 'Manage Booking',
-        path: `/333`,
+        path: `/${path.ADMIN}/${path.MANAGE_BOOKING}`,
         icon: <TbBrandBooking size={20}/>
     },
     {
@@ -361,7 +361,7 @@ export const userSidebar = [
         text: 'My Bussiness',
         path: `/${path.USER}/${path.MY_SERVICE_PROVIDER}`,
         icon: <RiBillLine size={20}/>,
-        visibleForRole: [202, 1411],
+        visibleForRole: [1411],
     },
 ]
 

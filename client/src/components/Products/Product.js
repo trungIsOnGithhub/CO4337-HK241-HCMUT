@@ -50,6 +50,7 @@ const Product = ({productData, isNew, normal, navigate, dispatch, location, isNo
           price: productData?.price, 
           thumb: productData?.thumb, 
           title: productData?.title, 
+          provider: productData?.provider_id
         })
       if(response.success){
         toast.success(response.mes)

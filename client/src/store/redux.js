@@ -12,7 +12,7 @@ const commonConfig = {
 }
 const userConfig = {
   ...commonConfig,
-  whitelist: ['token', 'isLogin', 'current', 'currentCart'],
+  whitelist: ['token', 'isLogin', 'current', 'currentCartService', 'currentCartProduct'],
   key: 'shop/user'
 }
 
