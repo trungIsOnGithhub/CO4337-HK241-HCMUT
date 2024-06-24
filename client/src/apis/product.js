@@ -45,8 +45,3 @@ export const apiAddVariant = (data, pid) => axios({
     method: 'put',
     data
 })
-
-export const apiRemoveCart = (pid, color) => axios({
-    url: `/user/remove-cart/${pid}/${color}`,
-    method: 'delete',
-})

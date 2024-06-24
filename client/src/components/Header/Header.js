@@ -30,7 +30,8 @@ const Header = ({dispatch}) => {
     return (
         <div className="flex justify-between w-main h-[110px] py-[35px]">
             <Link to={`/${path.HOME}`}>
-                <img src={logo} alt="logo" className="w-[234px] object-contain" ></img>
+                <span className="text-gray-600 text-3xl font-bold">Service&nbsp;</span>
+                <span className="text-main text-3xl italic font-bold">Provider</span>
             </Link>
             <div className="flex text-[13px]">
                 <div className="flex flex-col items-center px-6 border-r">

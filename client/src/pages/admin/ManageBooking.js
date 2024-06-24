@@ -19,7 +19,9 @@ const ManageBooking = ({ dispatch, navigate }) => {
   const fetchBooking = async (params) => {
     const response = await apiGetOrdersByAdmin({ ...params, limit: process.env.REACT_APP_LIMIT });
     if (response?.success) {
-      setBookings(response?.order);
+      // Sắp xếp các đơn đặt chỗ theo `createdAt` từ mới nhất đến cũ nhất
+      const sortedBookings = response?.order?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setBookings(sortedBookings);
       setCounts(response?.counts);
     }
   };
@@ -48,7 +50,6 @@ const ManageBooking = ({ dispatch, navigate }) => {
     if (!bookings) return 0;
     return bookings?.length;
   };
-
 
   useEffect(() => {
     setCounts(countBookingsByMonth(filterBookingsByMonth(booking, selectedMonth)));
@@ -87,8 +88,6 @@ const ManageBooking = ({ dispatch, navigate }) => {
                 <div>
                   <img className='w-[560px] h-[320px] object-cover border border-gray-500 rounded-md shadow-2xl' src={bookingItem?.info[0]?.service?.thumb} />
                 </div>
-
-
                 <div className='flex flex-col gap-4 text-gray-700'>
                   <div className='flex items-center gap-2'>
                     <span><strong className='text-main'>#ID: {bookingItem?._id}</strong></span>
@@ -102,8 +101,7 @@ const ManageBooking = ({ dispatch, navigate }) => {
                   <div>
                     <span><strong>Total Price:</strong> {`${formatPrice(formatPricee(bookingItem?.info[0]?.service?.price))} VND`}</span>
                   </div>
-
-              </div>
+                </div>
             </div>
           ))}
         </div>

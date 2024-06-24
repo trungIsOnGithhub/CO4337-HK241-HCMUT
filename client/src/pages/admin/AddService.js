@@ -6,20 +6,21 @@ import { validate, getBase64 } from 'ultils/helper'
 import { toast } from 'react-toastify'
 import icons from 'ultils/icon'
 import { apiAddStaff, apiGetAllStaffs } from 'apis'
-import { showModal } from 'store/app/appSlice'
 import { FaUserGear } from "react-icons/fa6";
 import { getCurrent } from 'store/user/asyncAction'
 import withBaseComponent from 'hocs/withBaseComponent'
 import { hour } from 'ultils/constant'
 import { minute } from 'ultils/constant'
 import { apiAddService } from 'apis/service'
+import { HashLoader } from 'react-spinners';
 
 
 const AddService = () => {
   const {categories_service} = useSelector(state => state.category)
   const dispatch = useDispatch()
   const {register, formState:{errors}, reset, handleSubmit, watch} = useForm()
- 
+  const [isLoading, setIsLoading] = useState(false);
+
   const {current} = useSelector(state => state.user)
   useEffect(() => {
     dispatch(getCurrent());
@@ -93,9 +94,9 @@ const AddService = () => {
       for (var pair of formData.entries()) {
       }
 
+      setIsLoading(true);
       const response = await apiAddService(formData)
-      // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
-      // dispatch(showModal({isShowModal: false, modalChildren: null}))
+      setIsLoading(false);
       if(response.success){
         toast.success(response.mes)
         reset()
@@ -287,6 +288,11 @@ const AddService = () => {
             </Button>
           </div>
         </form>
+        {isLoading && (
+        <div className='flex justify-center z-50 w-full h-full fixed top-0 left-0 items-center bg-overlay'>
+            <HashLoader className='z-50' color='#3B82F6' loading={isLoading} size={80} />
+        </div>
+        )}
       </div>
     </div>
   )

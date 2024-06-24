@@ -18,6 +18,7 @@ router.put('/current', [verifyAccessToken],uploader.single('avatar'), ctrls.upda
 router.put('/address/', [verifyAccessToken], ctrls.updateUserAddress)
 router.put('/cart_service/', [verifyAccessToken], ctrls.updateCartService)
 router.put('/cart_product/', [verifyAccessToken], ctrls.updateCartProduct)
+router.delete('/remove_cart_product/:pid/:color', [verifyAccessToken], ctrls.removeProductFromCart)
 router.delete('/:userId', [verifyAccessToken, isAdmin], ctrls.deleteUser)
 router.put('/wishlist/:sid', [verifyAccessToken], ctrls.updateWishlist)
 router.put('/:userId', [verifyAccessToken, isAdmin], ctrls.updateUserByAdmin)

@@ -263,6 +263,12 @@ const getOneService = asyncHandler(async(req, res)=>{
     const service = await Service.findById(sid).populate({
         path: 'assigned_staff',
         select: 'firstName lastName avatar mobile email work',
+    }).populate({
+        path: 'rating',
+        populate: {
+            path: 'postedBy',
+            select: 'firstName lastName avatar',
+        }
     })
 
 
@@ -290,6 +296,47 @@ const addVariantService = asyncHandler(async(req, res)=>{
     })
     
 })
+
+const ratingService = asyncHandler(async(req, res)=>{
+
+    const {_id} = req.user
+    const {star, comment, sid, updatedAt} = req.body
+
+    if(!star || !sid){
+        throw new Error("Missing input")
+    }
+    const ratingService = await Service.findById(sid)
+    
+    //alreadyRating tra ve element trong Rating neu co
+    const alreadyRating = ratingService?.rating?.find(e1 => e1.postedBy.toString() === _id)
+
+    if(alreadyRating){
+        await Service.updateOne(
+            {rating: {$elemMatch: alreadyRating}},
+            {$set: {"rating.$.star": star, "rating.$.comment": comment,  "rating.$.updatedAt": updatedAt}}
+            )
+    }
+    else{
+        await Service.findByIdAndUpdate(
+            sid,
+            {$push:{rating :{star, comment, postedBy: _id, updatedAt}}},
+            {new: true})
+    }
+
+    // Average rating
+    const updatedService = await Service.findById(sid)
+    const totalRatings = updatedService.rating.length
+    
+    // reduce: 2 doi so (callback + initial value)
+    const totalScores = updatedService.rating.reduce((sum,ele) => sum + (+ele.star),0)
+    updatedService.totalRatings = Math.round(totalScores/totalRatings)
+    await updatedService.save()
+
+    return res.status(200).json({
+        success: true,
+        updatedService
+    })
+})
 module.exports = {
     createService,
     getAllServicesByAdmin,
@@ -297,5 +344,6 @@ module.exports = {
     updateServiceByAdmin,
     getAllServicesPublic,
     getOneService,
-    addVariantService
+    addVariantService,
+    ratingService
 }

@@ -2,14 +2,15 @@ import React, { memo,useState,useCallback} from 'react'
 import {tabs} from 'ultils/constant'
 import {VoteBar, Button, VoteOption, Comment} from '../index'
 import { renderStarfromNumber } from 'ultils/helper'
-import { apiRatings } from 'apis'
+import { apiRatingService } from 'apis'
 import { useDispatch, useSelector } from 'react-redux'
 import {showModal} from 'store/app/appSlice'
 import Swal from 'sweetalert2'
 import path from 'ultils/path'
 import { useNavigate } from 'react-router-dom'
 
-const ServiceInformation = ({totalRatings, ratings, nameProduct, pid, reRender}) => {
+const ServiceInformation = ({totalRatings, ratings, nameProduct, sid, reRender}) => {
+
     const [activeTab, setActiveTab] = useState(1)
     const dispatch = useDispatch()
 
@@ -19,11 +20,11 @@ const ServiceInformation = ({totalRatings, ratings, nameProduct, pid, reRender})
 
     const {isLogin} = useSelector(state => state.user)
     const handleSubmitVoteOption = async({comment, score})=>{
-        if(!comment|| !score|| !pid) {
+        if(!comment|| !score|| !sid) {
             alert('Missing input. Please rating again!')
             return
         }
-        await apiRatings({star:score, comment, pid, updatedAt:Date.now() })
+        await apiRatingService({star:score, comment, sid, updatedAt:Date.now() })
         dispatch(showModal({isShowModal:false, modalChildren: null}))
         reRender()
     }
@@ -90,9 +91,9 @@ const ServiceInformation = ({totalRatings, ratings, nameProduct, pid, reRender})
                     <Comment 
                         key = {el._id}
                         star = {el.star}
-                        updatedAt = {el.updatedAt}
-                        comment = {el.comment}
-                        name={`${el.postedBy.lastName} ${el.postedBy.firstName}`}c
+                        updatedAt = {el?.updatedAt}
+                        comment = {el?.comment}
+                        name={`${el?.postedBy?.lastName} ${el?.postedBy?.firstName}`}c
                     />
                 ))}
             </div>

@@ -17,10 +17,8 @@ const ManageBookingDetail = ({ dispatch, navigate }) => {
   const [showTooltip, setShowTooltip] = useState(false);
 
   const fetchBookingData = async () => {
-    console.log('check')
     const response = await apiGetOneOrderByAdmin(params?.get('bookingid'));
     if (response?.success) {
-      console.log(response)
       setBooking(response?.booking);
     }
   };

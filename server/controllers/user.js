@@ -565,6 +565,27 @@ const updateWishlist = asyncHandler(async(req, res)=>{
     }
 })
 
+const removeProductFromCart = asyncHandler(async (req, res) => {
+    const {_id} = req.user
+    const {pid, color} = req.params
+    const user = await User.findById(_id).select('cart_product')
+    const alreadyProduct = user?.cart_product?.find(e1 => e1?.product?.toString() === pid && e1?.color === color)
+    if(!alreadyProduct){
+        return res.status(200).json({
+            success: true,
+            mes: 'Not Found'
+        })
+    }
+    else{
+        const response = await User.findByIdAndUpdate(_id,{$pull:{cart_product:{product:pid, color}}},{new: true})
+        return res.status(200).json({
+            success: response ? true : false,
+            mes: response ? 'Deleted successfully' : "Something went wrong"
+        })
+    }
+    
+})
+
 module.exports = {
     register,
     login,
@@ -583,5 +604,6 @@ module.exports = {
     finalRegister,
     createUsers,
     updateWishlist,
-    getAllCustomers
+    getAllCustomers,
+    removeProductFromCart
 }

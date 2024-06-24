@@ -11,10 +11,12 @@ import { showModal } from 'store/app/appSlice'
 import { useDispatch } from 'react-redux';
 import { toast} from 'react-toastify'
 import { validate } from "ultils/helper";
+import { HashLoader } from "react-spinners";
 
 const Login = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
+    const [isLoading, setIsLoading] = useState(false);
 
     const [payload, setPayload] = useState({
         email: '',
@@ -32,7 +34,9 @@ const Login = () => {
     const [searchParams] = useSearchParams()
 
     const handleForgotPassword = async() =>{
+        setIsLoading(true)
         const response = await apiForgotPassword({email})
+        setIsLoading(false)
         if(response.success){
             toast.success(response.mes, {theme:"colored"})
         }
@@ -62,9 +66,10 @@ const Login = () => {
         {
             if(isRegister){
                 // call api to register
-                dispatch(showModal({isShowModal: true, modalChildren:<Loading />}))
+                setIsLoading(true)
                 const response = await apiRegister(payload)
-                dispatch(showModal({isShowModal: false, modalChildren:null}))
+                setIsLoading(false)
+
                 if(response.success){
                     setIsVerify(true)
                 }
@@ -74,7 +79,9 @@ const Login = () => {
             }
             else{
                 // call api to login
+                setIsLoading(true)
                 const result = await apiLogin(data)
+                setIsLoading(false)
                 if(result?.success){ 
                     dispatch(login({
                         isLogin: true,
@@ -214,6 +221,11 @@ const Login = () => {
                 </Link>
                 </div>
             </div>
+            {isLoading && (
+            <div className='flex justify-center z-50 w-full h-full fixed top-0 left-0 items-center bg-overlay'>
+                <HashLoader className='z-50' color='#3B82F6' loading={isLoading} size={80} />
+            </div>
+            )}
         </div>
     )
 }

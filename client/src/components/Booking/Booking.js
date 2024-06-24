@@ -8,6 +8,7 @@ import path from 'ultils/path';
 import { apiUpdateCartService } from 'apis'
 import withBaseComponent from 'hocs/withBaseComponent';
 import { getCurrent } from 'store/user/asyncAction';
+import moment from 'moment';
 
 const Booking = ({dispatch, navigate}) => {
   const [params] = useSearchParams();
@@ -189,7 +190,10 @@ const Booking = ({dispatch, navigate}) => {
                 <div className='w-fit h-fit bg-green-500 px-1 rounded-md text-white'>Today</div>
               </div>
               <div className='flex flex-wrap gap-2 my-3'>
-              {timeOptions.map((time, idx) => (
+              {!timeOptions.length ?
+                  <h5 className='text-red-500'>Service is not available today</h5>
+                  :
+                timeOptions.map((time, idx) => (
                 (!el.work || !isWorkingTime(time, el.work)) && (
                   <div className={clsx('px-3 py-1 border border-gray-400 rounded-md hover:bg-blue-400 cursor-pointer', (selectedStaff.time===time && selectedStaff.staff===el) && 'bg-blue-400')} key={idx} onClick={() =>{handleOnClick(time,el)}}>
                     {parseInt(time.split(':')[0]) >= 12 ? `${time} pm` : `${time} am`}

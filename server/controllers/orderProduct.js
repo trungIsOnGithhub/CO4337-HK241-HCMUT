@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const OrderProduct = require('../models/orderProduct')
+const Product = require('../models/product')
 const User = require('../models/user')
 const Coupon = require('../models/coupon')
 const asyncHandler = require('express-async-handler')
@@ -14,6 +15,13 @@ const createNewOrder = asyncHandler(async(req, res)=>{
     }
 
     const response = await OrderProduct.create({products, total, orderBy: _id, status: 'Successful'})
+    if (response) {
+        for (const product of products) {
+            await Product.findByIdAndUpdate(product?.product, {
+                $inc: { quantity: -product.quantity }
+            });
+        }
+    }
     return res.status(200).json({
         success: response ? true : false,
         rs: response ? response : "Something went wrong",

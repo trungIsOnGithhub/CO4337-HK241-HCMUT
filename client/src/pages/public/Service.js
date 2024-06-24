@@ -121,7 +121,7 @@ const Services = ({dispatch}) => {
        <Pagination 
        totalCount={services?.counts}/>}
       </div>
-      <div className='w-full h-[500px]'>
+      <div className='w-full h-[200px]'>
       </div>
     </div>
 

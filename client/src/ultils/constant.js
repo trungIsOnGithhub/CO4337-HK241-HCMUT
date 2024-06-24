@@ -5,6 +5,8 @@ import { BsFillTagsFill } from "react-icons/bs";
 import { SlCalender } from "react-icons/sl";
 import { FaMoneyBillTrendUp } from "react-icons/fa6";
 import { TbBrandBooking } from "react-icons/tb";
+import { MdPostAdd } from "react-icons/md";
+import { CiDiscount1 } from "react-icons/ci";
 export const navigation = [
     {
         id: 1,
@@ -178,7 +180,7 @@ export const sorts = [
     {
         id:7,
         value: '-createdAt',
-        text: 'Price, new to old'
+        text: 'Date, new to old'
     },
 ]
 
@@ -290,13 +292,38 @@ export const adminSidebar = [
         ],
         icon: <BsFillTagsFill size={20}/>
     },
-    // {
-    //     id: 9,
-    //     type: 'single',
-    //     text: 'Manage Revenue',
-    //     path: `/111`,
-    //     icon: <FaMoneyBillTrendUp size={20}/>
-    // },
+    {
+        id: 9,
+        type: 'parent',
+        text: 'Manage Post',
+        submenu:[
+            {
+                text: 'Add Post',
+                path: `/${path.ADMIN}/${path.ADD_SERVICE}`
+            },
+            {
+                text: 'Manage Post',
+                path: `/${path.ADMIN}/${path.MANAGE_SERVICE}`
+            }
+        ],
+        icon: <MdPostAdd size={20}/>
+    },
+    {
+        id: 10,
+        type: 'parent',
+        text: 'Manage Customer Program',
+        submenu:[
+            {
+                text: 'Add Customer Program',
+                path: `/${path.ADMIN}/${path.ADD_SERVICE}`
+            },
+            {
+                text: 'Manage Customer Program',
+                path: `/${path.ADMIN}/${path.MANAGE_SERVICE}`
+            }
+        ],
+        icon: <CiDiscount1 size={20}/>
+    },
 ]
 
 export const roles = [
@@ -364,6 +391,7 @@ export const userSidebar = [
         visibleForRole: [1411],
     },
 ]
+
 
 export const statusOrder = [
     {

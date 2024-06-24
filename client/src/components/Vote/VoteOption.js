@@ -14,9 +14,8 @@ const VoteOption = ({nameProduct, handleSubmitVoteOption}) => {
     modalRef.current.scrollIntoView({block:'center', behavior:'smooth'})
   },[])
   return (
-    <div onClick={e=> e.stopPropagation()} ref={modalRef} className='bg-white w-[700px] p-4 flex flex-col gap-4 items-center justify-center'>
-      <img src={logo_digital_new_250x} alt='logo' className='w-[300px] my-8 object-contain'></img>
-      <h2 className='text-center text-medium text-lg'>{`Rating ${nameProduct}`}</h2>
+    <div onClick={e=> e.stopPropagation()} ref={modalRef} className='bg-white w-[700px] p-6 flex flex-col gap-4 items-center justify-center rounded-md border border-gray-500 shadow-md animate-scale-up-center'>
+      <h1 className='text-center font-semibold text-main text-3xl'>{`Rating ${nameProduct}`}</h1>
       <textarea 
       onChange={e=>setComment(e.target.value)}
       value = {comment}
@@ -24,8 +23,8 @@ const VoteOption = ({nameProduct, handleSubmitVoteOption}) => {
       placeholder='Type something ...'
       ></textarea>
       <div className='w-full flex flex-col gap-4'>
-        <p className='text-center'>How do you like about this product?</p>
-        <div className='flex items-center justify-center gap-4'>
+        <p className='text-center'>How do you like about this service?</p>
+        <div className='flex items-center justify-center gap-4'>  
           {voteOptions.map(el=>(
             <div 
               onClick={()=>setChooseStar(el.id)}

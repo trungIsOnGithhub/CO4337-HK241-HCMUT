@@ -8,10 +8,13 @@ import icons from 'ultils/icon'
 import {apiCreateProduct} from 'apis/product'
 import { showModal } from 'store/app/appSlice'
 import { getCurrent } from 'store/user/asyncAction'
+import { HashLoader } from 'react-spinners'
 
 const CreateProduct = () => {
   const {categories_service} = useSelector(state => state.category)
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const {current} = useSelector(state => state.user)
   useEffect(() => {
     dispatch(getCurrent());
@@ -87,9 +90,9 @@ const CreateProduct = () => {
       if(finalPayload.images) {
         for (let image of finalPayload.images) formData.append('images', image)
       }
-      // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
+      setIsLoading(true)
       const response = await apiCreateProduct(formData)
-      // dispatch(showModal({isShowModal: false, modalChildren: null}))
+      setIsLoading(false)
       if(response.success){
         toast.success(response.mes)
         reset()
@@ -233,6 +236,11 @@ const CreateProduct = () => {
             </Button>
           </div>
         </form>
+        {isLoading && (
+        <div className='flex justify-center z-50 w-full h-full fixed top-0 left-0 items-center bg-overlay'>
+            <HashLoader className='z-50' color='#3B82F6' loading={isLoading} size={80} />
+        </div>
+        )}
       </div>
     </div>
   )

@@ -50,7 +50,7 @@ const CheckoutProduct = ({dispatch, navigate}) => {
           </table>
           </div>
           <div className='flex-1 flex flex-col justify-between'>
-            <div className='flex flex-col gap-6'>
+            <div className='flex flex-col gap-6 mb-6'>
               <span className='flex items-center gap-8 text-sm font-semibold'>
                 <span>
                     Subtotal

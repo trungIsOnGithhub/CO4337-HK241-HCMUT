@@ -38,3 +38,9 @@ export const apiAddVariantService = (data, sid) => axios({
     method: 'put',
     data
 })
+
+export const apiRatingService = (data) => axios({
+    url: '/service/rating_service',
+    method: 'put',
+    data
+})

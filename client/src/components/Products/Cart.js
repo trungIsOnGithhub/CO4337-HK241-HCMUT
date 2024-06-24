@@ -1,4 +1,4 @@
-import { apiRemoveCart} from 'apis'
+import { apiRemoveCartProduct} from 'apis'
 import Button from 'components/Buttons/Button'
 import withBaseComponent from 'hocs/withBaseComponent'
 import React, { memo } from 'react'
@@ -14,11 +14,10 @@ const {IoCloseSharp, FaTrashCan} = icons
 const Cart = ({dispatch, navigate}) => {
     const {current, currentCartProduct} = useSelector(state => state.user)
     const removeCart = async(pid, color) => {
-        const response = await apiRemoveCart(pid,color)
+        const response = await apiRemoveCartProduct(pid,color)
         if(response.success){
             dispatch(getCurrent())
-        }
-        
+        }    
     }
 
     return (
@@ -40,7 +39,7 @@ const Cart = ({dispatch, navigate}) => {
                             <span className='text-sm'>{formatPrice(el?.price)+' VND'}</span>
                         </div>
                     </div>
-                    <span onClick={()=>{removeCart(el?.product?._id, el?.color)}} className='h-8 w-8 flex items-center justify-center rounded-full hover:bg-gray-700 cursor-pointer'>
+                    <span onClick={()=>{removeCart(el?.product, el?.color)}} className='h-8 w-8 flex items-center justify-center rounded-full hover:bg-gray-700 cursor-pointer'>
                         <FaTrashCan size={20}/>
                     </span>
                 </div>

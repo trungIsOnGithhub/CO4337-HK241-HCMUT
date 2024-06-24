@@ -114,7 +114,7 @@ const Service = ({serviceData, isNew, normal, navigate, dispatch, location, isNo
           ) : null}
         </div>
         <div className='flex flex-col mt-[15px] items-start gap-1 w-full'>
-          <span className='flex h-4'>{renderStarfromNumber(4)?.map((el,index)=>(
+          <span className='flex h-4'>{renderStarfromNumber(serviceData?.totalRatings)?.map((el,index)=>(
             <span key={index}>{el}</span>
           ))}</span>
           <span className='line-clamp-1 text-base font-semibold'>{serviceData?.name}</span>
