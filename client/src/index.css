@@ -138,3 +138,44 @@
     animation: glow 0.2s infinite;
     transform: scale(1.02);
   }
+
+
+  .custom-datepicker .MuiInputBase-root {
+    color: white !important;
+  }
+  
+  .custom-datepicker .MuiFormLabel-root {
+    color: white !important;
+  }
+  
+  .custom-datepicker .MuiInput-underline:before {
+    border-bottom-color: white !important;
+  }
+  
+  .custom-datepicker .MuiInput-underline:hover:not(.Mui-disabled):before {
+    border-bottom-color: white !important;
+  }
+  
+  .custom-datepicker .MuiInput-underline:after {
+    border-bottom-color: white !important;
+  }
+  
+  .custom-datepicker .MuiFormHelperText-root {
+    color: white !important;
+  }
+  
+  .custom-datepicker .MuiSvgIcon-root {
+    color: white !important;
+  }
+  
+  .custom-datepicker .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
+    border-color: white !important;
+  }
+  
+  .custom-datepicker .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+    border-color: white !important;
+  }
+  
+  .custom-datepicker .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: white !important;
+  }

@@ -16,3 +16,10 @@ export {default as UpdateService} from './UpdateService'
 export {default as StaffCalendar} from './StaffCalendar'
 export {default as VariantService} from './VariantService'
 export {default as VariantProduct} from './VariantProduct'
+
+export {default as AddVoucher} from './AddVoucher'
+export {default as AddSaleEvent} from './AddSaleEvent'
+export {default as ManageVoucher} from './ManageVoucher'
+export {default as ManageEvent} from './ManageEvent'
+
+

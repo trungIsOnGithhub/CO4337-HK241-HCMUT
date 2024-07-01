@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {Route, Routes} from 'react-router-dom'
 
-import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail} from 'pages/admin'
+import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageEvent} from 'pages/admin'
 import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct } from 'pages/public'
 
 import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct} from 'pages/user'
@@ -61,6 +61,10 @@ function App() {
         <Route path={path.ADD_STAFF} element={<AddStaff/>}/>
         <Route path={path.ADD_SERVICE} element={<AddService/>}/>
         <Route path={path.STAFF_CALENDAR} element={<StaffCalendar/>}/>
+        <Route path={path.ADD_VOUCHER} element={<AddVoucher/>}/>
+        <Route path={path.ADD_SALE_EVENT} element={<AddSaleEvent/>}/>
+        <Route path={path.MANAGE_VOUCHER} element={<ManageVoucher/>}/>
+        <Route path={path.MANAGE_SALE_EVENT} element={<ManageEvent/>}/>
       </Route>
       <Route path={path.USER} element={<UserLayout />}>
         <Route path={path.PERSONAL} element={<Personal />}/>

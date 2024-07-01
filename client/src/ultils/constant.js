@@ -314,13 +314,22 @@ export const adminSidebar = [
         text: 'Manage Customer Program',
         submenu:[
             {
-                text: 'Add Customer Program',
-                path: `/${path.ADMIN}/${path.ADD_SERVICE}`
+                text: 'Add Vourcher Code',
+                path: `/${path.ADMIN}/${path.ADD_VOUCHER}`
             },
             {
-                text: 'Manage Customer Program',
-                path: `/${path.ADMIN}/${path.MANAGE_SERVICE}`
-            }
+                text: 'Add Sale Event',
+                path: `/${path.ADMIN}/${path.ADD_SALE_EVENT}`
+            },
+            {
+                text: 'Manage Voucher',
+                path: `/${path.ADMIN}/${path.MANAGE_VOUCHER}`
+            },
+            {
+                text: 'Manage Event',
+                path: `/${path.ADMIN}/${path.MANAGE_SALE_EVENT}`
+            },
+
         ],
         icon: <CiDiscount1 size={20}/>
     },
