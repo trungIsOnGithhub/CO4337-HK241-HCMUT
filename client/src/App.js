@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {Route, Routes} from 'react-router-dom'
 
-import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail} from 'pages/admin'
+import { AddPost, AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail } from 'pages/admin'
 import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct } from 'pages/public'
 
 import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct} from 'pages/user'
@@ -61,6 +61,7 @@ function App() {
         <Route path={path.ADD_STAFF} element={<AddStaff/>}/>
         <Route path={path.ADD_SERVICE} element={<AddService/>}/>
         <Route path={path.STAFF_CALENDAR} element={<StaffCalendar/>}/>
+        <Route path={path.ADD_POST} element={<AddPost/>}/>
       </Route>
       <Route path={path.USER} element={<UserLayout />}>
         <Route path={path.PERSONAL} element={<Personal />}/>
