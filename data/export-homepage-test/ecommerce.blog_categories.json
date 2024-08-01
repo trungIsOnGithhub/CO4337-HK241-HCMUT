@@ -1,0 +1,54 @@
+[{
+    "_id": {
+      "$oid": "66377327edf989f1ae865513"
+    },
+    "title": "Hairstylist"
+  },
+  {
+    "_id": {
+      "$oid": "66377327edf989f1ae865514"
+    },
+    "title": "Barber"
+  },
+  {
+    "_id": {
+      "$oid": "66377327edf989f1ae865515"
+    },
+    "title": "Nail"
+  },
+  {
+    "_id": {
+      "$oid": "66377327edf989f1ae865516"
+    },
+    "title": "Makeup"
+  },
+  {
+    "_id": {
+      "$oid": "66377327edf989f1ae865517"
+    },
+    "title": "Tattoo"
+  },
+  {
+    "_id": {
+      "$oid": "66377327edf989f1ae865518"
+    },
+    "title": "Massage"
+  },
+  {
+    "_id": {
+      "$oid": "66377327edf989f1ae865519"
+    },
+    "title": "Gym"
+  },
+  {
+    "_id": {
+      "$oid": "66377327edf989f1ae86551a"
+    },
+    "title": "Yoga"
+  },
+  {
+    "_id": {
+      "$oid": "66377327edf989f1ae86551b"
+    },
+    "title": "Fitness"
+}]
