@@ -2,53 +2,23 @@
     "_id": {
       "$oid": "66377327edf989f1ae865513"
     },
-    "title": "Hairstylist"
+    "title": "Travel"
   },
   {
     "_id": {
-      "$oid": "66377327edf989f1ae865514"
+      "$oid": "66377327edf989f1ae865513"
     },
-    "title": "Barber"
+    "title": "Lifestyle"
   },
   {
     "_id": {
-      "$oid": "66377327edf989f1ae865515"
+      "$oid": "66377327edf989f1ae865513"
     },
-    "title": "Nail"
-  },
-  {
-    "_id": {
-      "$oid": "66377327edf989f1ae865516"
-    },
-    "title": "Makeup"
-  },
-  {
-    "_id": {
-      "$oid": "66377327edf989f1ae865517"
-    },
-    "title": "Tattoo"
-  },
-  {
-    "_id": {
-      "$oid": "66377327edf989f1ae865518"
-    },
-    "title": "Massage"
-  },
-  {
-    "_id": {
-      "$oid": "66377327edf989f1ae865519"
-    },
-    "title": "Gym"
-  },
-  {
-    "_id": {
-      "$oid": "66377327edf989f1ae86551a"
-    },
-    "title": "Yoga"
+    "title": "Daily Tips"
   },
   {
     "_id": {
       "$oid": "66377327edf989f1ae86551b"
     },
-    "title": "Fitness"
+    "title": "Restaurant"
 }]
