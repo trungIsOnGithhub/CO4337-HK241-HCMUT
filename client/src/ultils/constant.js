@@ -303,7 +303,7 @@ export const adminSidebar = [
             },
             {
                 text: 'Manage Post',
-                path: `/${path.ADMIN}/${path.MANAGE_SERVICE}`
+                path: `/${path.ADMIN}/${path.MANAGE_POST}`
             }
         ],
         icon: <MdPostAdd size={20}/>

@@ -15,6 +15,7 @@ const InputForm = ({label, disabled, register, errors, id, validate, type='text'
                 className={clsx('form-input text-gray-600 my-auto', fullWidth && 'w-full')}
                 defaultValue={defaultValue}
                 readOnly={readOnly}
+                value={'djaokdpoadkapss'}
             />
             {errors[id] && <small className='text-xs text-red-500'>{errors[id]?.message}</small>}
         </div>

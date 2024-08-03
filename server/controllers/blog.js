@@ -28,10 +28,60 @@ const updateBlog = asyncHandler(async(req, res)=>{
 })
 
 const getAllBlogs = asyncHandler(async(req, res)=>{
-    const response = await Blog.find()
+    // const response = await Blog.find()
+    const response = [
+        {
+            "_id": {
+              "$oid": "66377327edf989f1ae865513"
+            },
+            title: "Sample Title",
+            description: "An interesting blog...",
+            category: "Sample category",
+            "numberView": 9999,
+            "likes":[],
+            "dislikes":[],
+            "image": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI"
+          },
+          {
+            "_id": {
+              "$oid": "66377327edf989f1ae865513"
+            },
+            title: "Sample Title 222",
+            description: "An interesting blog... 222",
+            category: "Sample category 222",
+            "numberView": 99999222,
+            "likes":[],
+            "dislikes":[],
+            "image": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI"
+          },
+          {
+            "_id": {
+              "$oid": "66377327edf989f1ae865513"
+            },
+            title: "Sample Title 222",
+            description: "An interesting blog... 222",
+            category: "Sample category 222",
+            "numberView": 99999222,
+            "likes":[],
+            "dislikes":[],
+            "image": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI"
+          },
+          {
+            "_id": {
+              "$oid": "66377327edf989f1ae865513"
+            },
+            title: "Sample Title 222",
+            description: "An interesting blog... 222",
+            category: "Sample category 222",
+            "numberView": 99999222,
+            "likes":[],
+            "dislikes":[],
+            "image": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI"
+          }
+      ]
     return res.status(200).json({
         success: response ? true : false,
-        getAllBlogs: response ? response : "Cannot get all blogs"
+        blogs: response ? response : "Cannot get all blogs"
     })
 })
 
@@ -105,13 +155,25 @@ const dislikeBlog = asyncHandler(async(req, res)=>{
 
 const excludeField = '-refresh_token -password -role -createdAt -updatedAt'
 const getBlog = asyncHandler(async(req, res)=>{
-    const {bid} = req.params
-    const blog = await Blog.findByIdAndUpdate(bid, {$inc: {numberView:1}}, {new: true})
-                .populate('likes', excludeField)
-                .populate('dislikes', excludeField)
+    // const {bid} = req.params
+    // const blog = await Blog.findByIdAndUpdate(bid, {$inc: {numberView:1}}, {new: true})
+    //             .populate('likes', excludeField)
+    //             .populate('dislikes', excludeField)
+    const blog = {
+        "_id": {
+          "$oid": "66377327edf989f1ae865513"
+        },
+        title: "Sample Title 222",
+        description: "An interesting blog... 222",
+        category: "Sample category 222",
+        "numberView": 99999222,
+        "likes":[],
+        "dislikes":[],
+        "image": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI"
+      }
     return res.status(200).json({
         success: blog ? true : false,
-        rs: blog
+        blog: blog
     })
 })
 
