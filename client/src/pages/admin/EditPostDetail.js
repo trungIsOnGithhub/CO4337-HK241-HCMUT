@@ -8,7 +8,7 @@ import {useSelector, useDispatch} from 'react-redux'
 import { validate, getBase64 } from 'ultils/helper'
 import { toast } from 'react-toastify'
 import icons from 'ultils/icon'
-import { apiGetOneBlog, api } from 'apis/blog'
+import { apiGetOneBlog, apiUpdateBlog } from 'apis/blog'
 import { showModal } from 'store/app/appSlice'
 import { getCurrent } from 'store/user/asyncAction'
 import { HashLoader } from 'react-spinners'
@@ -17,25 +17,15 @@ const EditPostDetail = () => {
   const {blogCategories_service} = useSelector(state => state.blogCategory)
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [post, setPost] = useState(null);
+  const [post, setPost] = useState({
+  });
   const [params] = useSearchParams();
 
   const {current} = useSelector(state => state.user)
+
   useEffect(() => {
     dispatch(getCurrent());
   }, []);
-
-  const fetchPostData = async () => {
-    const response = await apiGetOneBlog(params?.get('postid'));
-    if (response?.success) {
-      setPost(response?.post);
-    }
-    // setPost()
-  };
-
-  useEffect(() => {
-    fetchPostData();
-  }, [params]);
 
   const dispatch = useDispatch()
   const {register, formState:{errors}, reset, handleSubmit, watch} = useForm()
@@ -90,6 +80,35 @@ const EditPostDetail = () => {
   //   handlePreviewImages(watch('images'))
   // }, [watch('images')])
 
+  const fetchPostData = async () => {
+    // const response = await apiGetOneBlog(params?.get('postid'));
+    //  console.log('--->',response);
+    const response = {
+      success: true,
+      blog: {
+        "_id": {
+          "$oid": "66377327edf989f1ae865513"
+        },
+        title: "Sample Title 222",
+        description: "An interesting blog... 222",
+        category: "Barber",
+        "numberView": 99999222,
+        "likes":[],
+        "dislikes":[],
+        "image": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI"
+      }
+    }
+    if (response?.success) {
+      setPost(response?.blog);
+      setSelectedCategory(response?.blog?.category);
+    }
+    // setPost()
+  };
+
+  useEffect(() => {
+    console.log('----------++++')
+    fetchPostData();
+  }, []);
 
   const handleCreateProduct = async(data) => {
     const invalid = validate(payload, setInvalidField)
@@ -136,6 +155,23 @@ const EditPostDetail = () => {
     setSelectedCategory(selectedOptions);
   }, []);
 
+  // const blog = {
+  //   success: true,
+  //   blog: {
+  //     "_id": {
+  //       "$oid": "66377327edf989f1ae865513"
+  //     },
+  //     title: "Sample Title 222",
+  //     description: "An interesting blog... 222",
+  //     category: "Sample category 222",
+  //     "numberView": 99999222,
+  //     "likes":[],
+  //     "dislikes":[],
+  //     "image": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI"
+  //   }
+  // }
+  
+  //   setPost(blog);
 
   return (
     <div className='w-full'>
@@ -154,7 +190,7 @@ const EditPostDetail = () => {
             }}
             fullWidth
             placeholder='Name of new product'
-            value={post?.title}
+            defaultValue={post?.title}
           />
           {/* <div className='w-full my-6 flex gap-4'>
             <InputForm 
@@ -205,8 +241,8 @@ const EditPostDetail = () => {
               errors={errors}
               fullWidth
               onChangee={handleSelectCateChange}
-              values={selectedCategory}
               style='flex-1'
+              values={selectedCategory}
             />
           </div>
           <MarkdownEditor 
@@ -215,6 +251,7 @@ const EditPostDetail = () => {
             label = 'Description'
             invalidField={invalidField}
             setInvalidField={setInvalidField}
+            value={post?.description}
           />
           <div className='flex flex-col gap-2 mt-8'>
             <label className='font-semibold' htmlFor='thumb'>Upload Thumb</label>
@@ -226,10 +263,10 @@ const EditPostDetail = () => {
             {errors['thumb'] && <small className='text-xs text-red-500'>{errors['thumb']?.message}</small>}
           </div>
           
-          {preview.thumb 
+          {post?.thumb 
             && 
           <div className='my-4'>
-            <img src={preview.thumb} alt='thumbnail' className='w-[200px] object-contain'></img>
+            <img src={post?.thumb} alt='thumbnail' className='w-[200px] object-contain'></img>
           </div>
           }
 {/* 
@@ -244,22 +281,21 @@ const EditPostDetail = () => {
             {errors['images'] && <small className='text-xs text-red-500'>{errors['product']?.message}</small>}
           </div> */}
 
-          {preview.images?.length > 0 
+          {post.images?.length > 0 
             && 
           <div className='my-4 flex w-full gap-2 flex-wrap'>
             {
-              preview.images?.map((el,index) => (
+              post.images?.map((el,index) => (
                 <div key={index} className='w-fit relative'>
                   <img src={el.path} alt='image of product' className='w-[200px] object-contain'></img>
                 </div>
               ))
             }
-          </div>
-          }
+          </div>}
 
           <div className='mt-8'>
             <Button handleOnclick={handleSubmit(handleCreateProduct)}>
-              Create a new Post
+              Update Post
             </Button>
           </div>
         </form>

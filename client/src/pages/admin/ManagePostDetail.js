@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createSearchParams, useSearchParams } from 'react-router-dom';
 import { apiGetOneOrderByAdmin } from 'apis/order';
 import moment from 'moment';
+import DOMPurify from 'dompurify';
 import { Pagination } from 'components';
 import { FiCalendar, FiUser, FiBriefcase, FiClock, FiDollarSign } from 'react-icons/fi';
 import { IoIosTimer } from "react-icons/io";
@@ -16,6 +17,14 @@ const ManagePostDetail = ({ dispatch, navigate }) => {
   const [params] = useSearchParams();
   const [post, setPost] = useState(null);
   const [showTooltip, setShowTooltip] = useState(false);
+
+  const description =
+    ["<p>Fresh Herb and skillful practioner will bring you best experience</p> <h1>huojoijioji</h1> Fresh Herb and skillful practioner will bring you best experience"]
+    // "<h1> Cai Nay La H1</h1>",
+    // ["</br>"],
+    // "<p>Fresh Herb and skillful practioner will bring you best experience</p>",
+    // "<strong> Cai Nay La Strong</strong>"
+  
 
   const fetchPostData = async () => {
     // const response = await apiGetOneOrderByAdmin(params?.get('postid'));
@@ -105,8 +114,19 @@ const ManagePostDetail = ({ dispatch, navigate }) => {
           </div>
         </div>
       </div>
-      <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Content</label>
-      <textarea id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your thoughts here..."></textarea>
+      <h3 className='text-xl font-bold tracking-tight text-white p-4'>Blog Post Content</h3>
+      {/* <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Content</label>
+      <textarea id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your thoughts here..."></textarea> */}
+          <ul className='text-sm text-gray-500 list-square pl-4'>
+            {description?.length > 1 
+              &&
+            description?.map(el=>(
+              <li className=' leading-6' key={el}>{el}</li>
+            )) }
+            {description?.length === 1 
+              &&
+            <div className='text-sm line-clamp-[10] mb-8' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(description[0])}}></div>}
+          </ul>
     </div>
   );
 };

@@ -255,6 +255,7 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
             ))}
           </div>
           <ul className='text-sm text-gray-500 list-square pl-4'>
+            {JSON.stringify(currentProduct?.description)}
             {currentProduct?.description?.length > 1 
               &&
             currentProduct?.description?.map(el=>(
