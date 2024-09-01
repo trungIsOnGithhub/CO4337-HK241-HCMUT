@@ -16,9 +16,18 @@ import { validate } from "ultils/helper";
 import { quan_huyen } from "quan_huyen";
 import { xa_phuong } from "xa_phuong";
 import { HashLoader } from "react-spinners";
+import goongjs from '@goongmaps/goong-js';
+import '@goongmaps/goong-js/dist/goong-js.css';
+import axios from 'axios';
+import clsx from "clsx";
+
+const GOONG_API_KEY = '2jcRRCquuKp2hdK4BcQsMZLsrJuXSNuXYlfcWXyA';
+const GOONG_MAPTILES_KEY = 'hzX8cXab72XCozZSYvZqkV26qMMQ8JdpkiUwK1Iy';
 
 const ServiceProviderRegister = () => {
     const dispatch = useDispatch();
+    const mapContainer = useRef(null);
+    const map = useRef(null);
 
     const daysInWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
     const provinces = Object.values(tinh_thanhpho);
@@ -57,20 +66,32 @@ const ServiceProviderRegister = () => {
     const [searchParams] = useSearchParams();
     const [isInTimeForm, setIsInTimeForm] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const handleForgotPassword = async () => {
-        setIsLoading(true);
-        const response = await apiForgotPassword({ email });
-        setIsLoading(false);
-        if (response.success) {
-            toast.success(response.mes, { theme: "colored" });
-        } else {
-            toast.info(response.mes, { theme: "colored" });
-        }
-    };
+    const [coordinates, setCoordinates] = useState(null);
+    const [error, setError] = useState('');
+    const [isMapVisible, setIsMapVisible] = useState(false); // State to control map visibility
 
     useEffect(() => {
         resetPayload();
     }, [isRegister]);
+
+    useEffect(() => {
+        goongjs.accessToken = GOONG_MAPTILES_KEY;
+
+        map.current = new goongjs.Map({
+            container: mapContainer.current,
+            style: 'https://tiles.goong.io/assets/goong_map_web.json',
+            center: [105.83991, 21.02800],
+            zoom: 9,
+        });
+        
+
+    }, []);
+
+    useEffect(() => {
+        if (isMapVisible && map.current) {
+            map.current.resize(); // Resize the map when it becomes visible
+        }
+    }, [isMapVisible]);
 
     const resetPayload = () => {
         setPayload({
@@ -96,6 +117,57 @@ const ServiceProviderRegister = () => {
         });
         setWards([]);
         setDistricts([]);
+    };
+
+    const handleCheckLocation = async () => {
+        try {
+            const response = await axios.get(`https://rsapi.goong.io/Geocode?address=${encodeURIComponent(payload.address)}&api_key=${GOONG_API_KEY}`);
+            const data = await response.data;
+
+            if (data.results && data.results.length > 0) {
+                const { lat, lng } = data.results[0].geometry.location;
+                setCoordinates({ lat, lng });
+                setError('');
+                setIsMapVisible(true); // Show map when location is found
+
+                if (map.current) {
+                    console.log('Updating map center');
+                    map.current.setCenter([lng, lat]);
+                    map.current.setZoom(15);
+
+                    // Remove existing markers
+                    const markers = document.getElementsByClassName('mapboxgl-marker');
+                    while (markers[0]) {
+                        markers[0].parentNode.removeChild(markers[0]);
+                    }
+
+                    // Add new marker
+                    const el = document.createElement('div');
+                    el.className = 'marker';
+                    el.innerHTML = `
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 0C7.02944 0 3 4.02944 3 9C3 13.9706 12 24 12 24C12 24 21 13.9706 21 9C21 4.02944 16.9706 0 12 0ZM12 12C10.3431 12 9 10.6569 9 9C9 7.34315 10.3431 6 12 6C13.6569 6 15 7.34315 15 9C15 10.6569 13.6569 12 12 12Z" fill="#3887be"/>
+                      </svg>
+                    `;
+                    el.style.width = '24px';
+                    el.style.height = '24px';
+                    el.style.cursor = 'pointer';
+
+                    new goongjs.Marker(el)
+                        .setLngLat([lng, lat])
+                        .addTo(map.current);
+                } else {
+                    console.error('Map not initialized');
+                }
+            } else {
+                setCoordinates(null);
+                setError('Invalid location');
+            }
+        } catch (error) {
+            console.error('Error in handleCheckLocation:', error);
+            setCoordinates(null);
+            setError('Error fetching location');
+        }
     };
 
     //SUBMIT
@@ -179,6 +251,17 @@ const ServiceProviderRegister = () => {
             newTimeOpenPayload[`end${otherDay}`] = timeOpenPayload[endDayKey];
         }
         setTimeOpenPayload(newTimeOpenPayload);
+    };
+
+    const handleAddressKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleCheckLocation();
+        }
+    };
+
+    const handleCloseMap = () => {
+        setIsMapVisible(false);
     };
 
     return (
@@ -335,10 +418,8 @@ const ServiceProviderRegister = () => {
                             invalidField={invalidField}
                             setInvalidField={setInvalidField}
                             fullWidth
+                            onKeyPress={handleAddressKeyPress}
                         />
-                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 p-4 rounded mt-5 w-full" onClick={() => { setIsInTimeForm(prevState => { setIsInTimeForm(!prevState); }); }}>
-                            {isInTimeForm ? 'Close Time Select' : 'Open Time Select'}
-                        </button>
                         <Button
                             handleOnclick={handleSubmit}
                             fullWidth
@@ -403,6 +484,11 @@ const ServiceProviderRegister = () => {
                 <HashLoader className='z-50' color='#3B82F6' loading={isLoading} size={80} />
             </div>
             )}
+            
+            <div className={clsx("absolute top-0 right-0 w-1/2 h-full", isMapVisible ? 'block' : 'hidden')}>
+                <button onClick={handleCloseMap} className={clsx("absolute top-2 right-2 bg-red-500 text-white p-2 rounded", isMapVisible ? 'block' : 'hidden')} style={{ zIndex: 1000 }}>X</button>
+                <div ref={mapContainer} className={clsx("w-full h-full", isMapVisible ? 'block' : 'hidden')} style={{ zIndex: 1000 }}/>
+            </div>
         </div>
     );
 };

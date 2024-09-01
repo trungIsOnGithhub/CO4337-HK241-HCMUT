@@ -1,6 +1,6 @@
 import React, { memo } from 'react'
 import clsx from 'clsx'
-const InputField = ({value, setValue, nameKey, type, invalidField, setInvalidField, style, fullWidth, placeholder, isHideLabel}) => {
+const InputField = ({value, setValue, nameKey, type, invalidField, setInvalidField, style, fullWidth, placeholder, isHideLabel, onKeyPress}) => {
     return (
     <div className={clsx('relative flex flex-col mb-2 text-gray-600', fullWidth && 'w-full')}>
         {!isHideLabel&& value?.trim() !== '' &&<label className='text-[10px] animate-slide-top-sm absolute top-[2px] left-[8px] block bg-white px-2' htmlFor={nameKey}>{nameKey?.slice(0,1)?.toUpperCase() + nameKey?.slice(1)}</label>}
@@ -10,6 +10,7 @@ const InputField = ({value, setValue, nameKey, type, invalidField, setInvalidFie
         value = {value}
         onChange={e=> setValue(prev => ({...prev, [nameKey]:e.target.value}))}
         onFocus={()=> setInvalidField && setInvalidField([])}
+        onKeyDown={onKeyPress}
         />
         {invalidField?.some(el => el.name === nameKey) && <small className='text-main font-[10px] italic'>
           {invalidField?.find(el => el.name === nameKey)?.mes}
