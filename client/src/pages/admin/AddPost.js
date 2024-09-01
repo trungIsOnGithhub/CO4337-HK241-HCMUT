@@ -1,11 +1,11 @@
 import React, { useCallback, useState, useEffect} from 'react'
-import {InputForm, Select, Button, MarkdownEditor, Loading, SelectCategory} from 'components'
+import {InputForm, Select, Button, MarkdownEditor, Loading, SelectCategory, MultiSelect} from 'components'
 import { useForm } from 'react-hook-form'
 import {useSelector, useDispatch} from 'react-redux'
 import { validate, getBase64 } from 'ultils/helper'
 import { toast } from 'react-toastify'
 import icons from 'ultils/icon'
-import { apiCreateBlog } from 'apis/blog'
+import { apiCreateBlog, apiGetAllPostTags } from 'apis/blog'
 import { showModal } from 'store/app/appSlice'
 import { getCurrent } from 'store/user/asyncAction'
 import { HashLoader } from 'react-spinners'
@@ -14,6 +14,24 @@ const AddPost = () => {
   const {blogCategories_service} = useSelector(state => state.blogCategory)
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [title, setTitle] = useState(null);
+
+  const [tags, setTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const fetchTags = async() => {
+    const response = await apiGetAllPostTags();
+    console.log('HHEEHE', response,'HEHHEHEH')
+    if(response?.success){
+      const tagOptions = response?.tags.map((tag) => ({
+        label: tag.label,
+        value: tag.label
+      })) || [];
+      setTags(tagOptions)
+    }
+  }
+  useEffect(() => {
+    fetchTags();
+  }, [])
 
   const {current} = useSelector(state => state.user)
   useEffect(() => {
@@ -32,7 +50,6 @@ const AddPost = () => {
   })
 
   const [invalidField, setInvalidField] = useState([])
-  
   const changeValue = useCallback((e)=>{
     setPayload(e)
   },[payload])
@@ -74,15 +91,19 @@ const AddPost = () => {
   // }, [watch('images')])
 
 
-  const handleCreateProduct = async(data) => {
-    const invalid = validate(payload, setInvalidField)
-    if(invalid === 0){
-      const finalPayload = {...data,...payload}
-      finalPayload.provider_id = current.provider_id
-      if(selectedCategory){
-        finalPayload.category = selectedCategory
+  const handleCreateBlogPost = async(data) => {
+    // const invalid = validate(payload, setInvalidField)
+    // console.log('---->' + invalid);
+    // if(!invalid){
+      const finalPayload = {...data,...payload};
+      finalPayload.provider_id = current?.provider_id;
+      if(selectedTags?.length > 0){
+        finalPayload.tags = selectedTags
       }
-      finalPayload.description = 'kdlsakdl;askdlsakdl;'
+      if(title){
+        finalPayload.title = title
+      }
+      // finalPayload.description = 'kdlsakdl;askdlsakdl;'
       const formData = new FormData()
       for(let i of Object.entries(finalPayload)){
         console.log(i[0] + '-------' + i[1]);
@@ -94,41 +115,44 @@ const AddPost = () => {
       }
 
       setIsLoading(true)
-
       console.log(':==========', formData)
 
       const response = await apiCreateBlog(finalPayload)
-
       console.log(response);
 
       setIsLoading(false)
       if(response.success){
-        toast.success(response.mes)
-        reset()
+        toast.success('Create New Post Blog Successfully');
+        reset();
         setPayload({
           description: ''
-        })
+        });
       }
       else{
         toast.error(response.mes)
       }
-    }
+    // }
+    // else {
+    //   toast.error("Please Recheck Your Input Information.");
+    // }
   }
 
-  const handleSelectCateChange = useCallback(selectedOptions => {
-    setSelectedCategory(selectedOptions);
+  // const handleSelectCateChange = useCallback(selectedOptions => {
+  //   setSelectedCategory(selectedOptions);
+  // }, []);
+  const handleSelectTagChange = useCallback(selectedOptions => {
+    setSelectedTags(selectedOptions);
   }, []);
-
 
   return (
     <div className='w-full'>
       <h1 className='h-[75px] flex justify-between items-center text-3xl font-bold px-4 border-b'>
-        <span>Create New Blog</span>
+        <span>Create a New Blog Post</span>
       </h1>
       <div className='p-4 '>
-        <form onSubmit={handleSubmit(handleCreateProduct)}>
+        <form onSubmit={() => {handleCreateBlogPost(); console.log('---')}}>
           <InputForm
-            label = 'Name product'
+            label = 'Post Title'
             register={register}
             errors={errors}
             id = 'title'
@@ -136,7 +160,7 @@ const AddPost = () => {
               required: 'Need fill this field'
             }}
             fullWidth
-            placeholder='Name of new product'
+            onInput={(eve) => {setTitle(eve.target.value)}}
           />
           {/* <div className='w-full my-6 flex gap-4'>
             <InputForm 
@@ -175,7 +199,7 @@ const AddPost = () => {
               placeholder='Color of new product'
             />
           </div> */}
-          <div className='w-full my-6 flex gap-4'>
+          {/* <div className='w-full my-6 flex gap-4'>
             <SelectCategory
               label = 'Category'
               options = {option_category}
@@ -190,14 +214,24 @@ const AddPost = () => {
               values={selectedCategory}
               style='flex-1'
             />
-          </div>
+          </div> */}
           <MarkdownEditor 
-            name = 'description'
+            name = 'content'
             changeValue={changeValue}
-            label = 'Description'
+            label = 'Blog Content'
             invalidField={invalidField}
             setInvalidField={setInvalidField}
           />
+          <div className='w-full my-6 flex gap-4' style={{zIndex:88}}>
+            <MultiSelect
+              title='Tags'
+              label='Tags'
+              id='assigned_tags' 
+              options={tags}
+              onChangee={handleSelectTagChange}
+              values={selectedTags}
+            />
+          </div>
           <div className='flex flex-col gap-2 mt-8'>
             <label className='font-semibold' htmlFor='thumb'>Upload Thumb</label>
             <input 
@@ -240,7 +274,7 @@ const AddPost = () => {
           }
 
           <div className='mt-8'>
-            <Button handleOnclick={handleSubmit(handleCreateProduct)}>
+            <Button handleOnclick={() => {handleCreateBlogPost(); console.log('---')}}>
               Create a new Post
             </Button>
           </div>

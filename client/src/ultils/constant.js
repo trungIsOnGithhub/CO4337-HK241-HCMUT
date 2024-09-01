@@ -299,7 +299,7 @@ export const adminSidebar = [
         submenu:[
             {
                 text: 'Add Post',
-                path: `/${path.ADMIN}/${path.ADD_SERVICE}`
+                path: `/${path.ADMIN}/${path.ADD_POST}`
             },
             {
                 text: 'Manage Post',

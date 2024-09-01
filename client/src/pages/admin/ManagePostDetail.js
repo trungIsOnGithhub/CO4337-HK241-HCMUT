@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createSearchParams, useSearchParams } from 'react-router-dom';
-import { apiGetOneOrderByAdmin } from 'apis/order';
+import { apiGetOneBlog } from 'apis/blog';
 import moment from 'moment';
 import DOMPurify from 'dompurify';
 import { Pagination } from 'components';
@@ -10,16 +10,13 @@ import { FaTags } from "react-icons/fa";
 import { AiOutlineUser, AiOutlineTeam } from 'react-icons/ai';  // New icons for Customer and Staff
 import path from 'ultils/path';
 import withBaseComponent from 'hocs/withBaseComponent';
-import { formatPrice, formatPricee } from 'ultils/helper';
 import Button from 'components/Buttons/Button';
 
 const ManagePostDetail = ({ dispatch, navigate }) => {
   const [params] = useSearchParams();
   const [post, setPost] = useState(null);
   const [showTooltip, setShowTooltip] = useState(false);
-
-  const description =
-    ["<p>Fresh Herb and skillful practioner will bring you best experience</p> <h1>huojoijioji</h1> Fresh Herb and skillful practioner will bring you best experience"]
+    
     // "<h1> Cai Nay La H1</h1>",
     // ["</br>"],
     // "<p>Fresh Herb and skillful practioner will bring you best experience</p>",
@@ -27,11 +24,13 @@ const ManagePostDetail = ({ dispatch, navigate }) => {
   
 
   const fetchPostData = async () => {
-    // const response = await apiGetOneOrderByAdmin(params?.get('postid'));
-    // if (response?.success) {
-    //   setPost(response?.post);
-    // }
-    setPost()
+    const response = await apiGetOneBlog(params?.get('postid'));
+    if (response?.success) {
+      setPost(response?.post);
+    } else {
+
+    }
+    // setPost()
   };
 
   useEffect(() => {
@@ -67,10 +66,10 @@ const ManagePostDetail = ({ dispatch, navigate }) => {
               <span><strong>Like:</strong> {`${post?.likes}`}&nbsp;&nbsp;&nbsp;</span>
               <span><strong>Dislike:</strong> {`${post?.dislikes}`}</span>
             </div>
-            <div className='flex items-center gap-2'>
+            {/* <div className='flex items-center gap-2'>
               <FiBriefcase className='text-xl text-teal-400' />
-              <span><strong className='text-gray-700'>Description:</strong> {post?.description}</span>
-            </div>
+              <span><strong className='text-gray-700'>Description:</strong> {post?.content}</span>
+            </div> */}
             {/* <div className='flex items-center gap-2'>
               <FaTags className='text-xl text-purple-400' />
               <span><strong className='text-gray-700'>Service Name:</strong> {post?.info[0]?.service?.name}</span>
@@ -118,12 +117,12 @@ const ManagePostDetail = ({ dispatch, navigate }) => {
       {/* <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Content</label>
       <textarea id="message" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your thoughts here..."></textarea> */}
           <ul className='text-sm text-gray-500 list-square pl-4'>
-            {description?.length > 1 
+            {post?.content?.length > 1 
               &&
-            description?.map(el=>(
+            post?.content?.map(el=>(
               <li className=' leading-6' key={el}>{el}</li>
             )) }
-            {description?.length === 1 
+            {post?.content?.length === 1 
               &&
             <div className='text-sm line-clamp-[10] mb-8' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(description[0])}}></div>}
           </ul>

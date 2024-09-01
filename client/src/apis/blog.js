@@ -1,14 +1,14 @@
 import axios from '../axios'
 export const apiCreateBlog = (data) => axios({
-    url: '/blog/',
+    url: '/blog/create',
     method: 'post',
     data,
 })
 
-export const apiGetAllBlogsByProvider = (params) => axios({
+export const apiGetAllBlogsByProvider = (data) => axios({
     url: '/blog/',
-    method: 'get',
-    params,
+    method: 'post',
+    data,
 })
 
 export const apiDeleteBlog = (id) => axios({
@@ -37,4 +37,9 @@ export const apiRatingBlog = (data) => axios({
     url: '/blog/rating_blog',
     method: 'put',
     data
+})
+
+export const apiGetAllPostTags = (data) => axios({
+    url: '/blog/tags',
+    method: 'get',
 })

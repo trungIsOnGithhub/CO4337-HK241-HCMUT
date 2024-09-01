@@ -9,18 +9,26 @@ import { AiOutlineUser, AiOutlineTeam } from 'react-icons/ai';
 import path from 'ultils/path';
 import withBaseComponent from 'hocs/withBaseComponent';
 import { formatPrice, formatPricee } from 'ultils/helper';
+import {useSelector, useDispatch} from 'react-redux';
+import { toast } from 'react-toastify';
 
 const ManagePost = ({ dispatch, navigate }) => {
   const [params] = useSearchParams();
   const [post, setPosts] = useState(null);
   const [counts, setCounts] = useState(0);
+  const {current} = useSelector(state => state.user)
   // const [selectedMonth, setSelectedMonth] = useState(12);
 
   const fetchPost = async (params) => {
     // const response = await apiGetPostByAdmin({ ...params, limit: process.env.REACT_APP_LIMIT });
     // if (response?.success) {
       // const sortedPosts = response?.order?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      const sortedPosts = await apiGetAllBlogsByProvider({ ...params, provider_id: 1,  limit: process.env.REACT_APP_LIMIT });
+      if (!current?.provider_id) {
+        toast.success('Please Log In To Continue!');
+        return;
+      }
+      const sortedPosts = await apiGetAllBlogsByProvider({ ...params, provider_id: current?.provider_id,  limit: process.env.REACT_APP_LIMIT });
+      console.log('das--------',sortedPosts);
       setPosts(sortedPosts?.blogs);
       setCounts(sortedPosts?.blogs.length);
     // }
@@ -93,7 +101,7 @@ const ManagePost = ({ dispatch, navigate }) => {
                     <span><strong className='text-main'>{`Title: ${postItem?.title}`}</strong></span>
                   </div>
                   <span>
-                    <span><strong>Category:</strong> {`${postItem?.category}`}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span><strong>Category:</strong> {`${postItem?.tags.map(tag => <h4>{tag},</h4>)}`}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                   </span>
                   <span>
                     {/* <div> */}

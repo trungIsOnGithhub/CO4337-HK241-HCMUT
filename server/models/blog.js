@@ -6,13 +6,17 @@ var blogSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    description:{
-        type:String,
+    content:{
+        type:Array,
         required:true
     },
-    category:{
-        type:String,
-        required:true,
+    provider_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Service_Provider',
+    },
+    tags:{
+        type:Array,
+        required:true
     },
     numberView:{
         type:Number,
