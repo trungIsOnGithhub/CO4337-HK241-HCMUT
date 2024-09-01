@@ -2,27 +2,54 @@ import withBaseComponent from 'hocs/withBaseComponent';
 
 import React, { useCallback, useState, useEffect} from 'react'
 import { createSearchParams, useSearchParams } from 'react-router-dom';
-import {InputForm, Select, Button, MarkdownEditor, Loading, SelectCategory} from 'components'
+import {InputForm, Select, Button, MarkdownEditor, Loading, SelectCategory, MultiSelect} from 'components'
 import { useForm } from 'react-hook-form'
 import {useSelector, useDispatch} from 'react-redux'
 import { validate, getBase64 } from 'ultils/helper'
 import { toast } from 'react-toastify'
 import icons from 'ultils/icon'
-import { apiGetOneBlog, apiUpdateBlog } from 'apis/blog'
+import { apiGetOneBlog, apiUpdateBlog, apiGetAllPostTags } from 'apis/blog'
 import { showModal } from 'store/app/appSlice'
 import { getCurrent } from 'store/user/asyncAction'
 import { HashLoader } from 'react-spinners'
 
 const EditPostDetail = () => {
-  const {blogCategories_service} = useSelector(state => state.blogCategory)
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [post, setPost] = useState({
-  });
+  const [blogContent, setBlogContent] = useState([]);
   const [params] = useSearchParams();
+  const [currBlog, setCurrBlog] = useState(null);
+  const fetchCurrentBlogPost = async () => {
+    // console.log('====={{{{{', id);
+    const response = await apiGetOneBlog(params?.get('id'));
+    console.log('====={{{{{', response?.blog);
+    setCurrBlog(response?.blog);
+    setSelectedTags(response?.blog?.tags);
+    setBlogContent(response?.blog?.content?.join(''));
+  };
+  useEffect(() => {
+    fetchCurrentBlogPost();
+  }, [])
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [title, setTitle] = useState(null);
+
+  const [tags, setTags] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const fetchTags = async() => {
+    const response = await apiGetAllPostTags();
+    console.log('HHEEHE', response,'HEHHEHEH')
+    if(response?.success){
+      const tagOptions = response?.tags.map((tag) => ({
+        label: tag.label,
+        value: tag.label
+      })) || [];
+      setTags(tagOptions)
+    }
+  }
+  useEffect(() => {
+    fetchTags();
+  }, [])
 
   const {current} = useSelector(state => state.user)
-
   useEffect(() => {
     dispatch(getCurrent());
   }, []);
@@ -30,25 +57,16 @@ const EditPostDetail = () => {
   const dispatch = useDispatch()
   const {register, formState:{errors}, reset, handleSubmit, watch} = useForm()
 
-  const [payload, setPayload] = useState({
-    description: ''
-  })
+  const [payload, setPayload] = useState({})
   const [preview, setPreview] = useState({
     thumb: null,
     images: []
   })
 
   const [invalidField, setInvalidField] = useState([])
-  
   const changeValue = useCallback((e)=>{
     setPayload(e)
   },[payload])
-
-  const option_category = blogCategories_service?.map((cate) => ({
-    label: cate?.title,
-    value: cate?.title,
-    // color: cate?.color
-  })) || [];
 
   const handlePreviewThumb = async(file) => {
     const base64Thumb = await getBase64(file)
@@ -80,45 +98,20 @@ const EditPostDetail = () => {
   //   handlePreviewImages(watch('images'))
   // }, [watch('images')])
 
-  const fetchPostData = async () => {
-    // const response = await apiGetOneBlog(params?.get('postid'));
-    //  console.log('--->',response);
-    const response = {
-      success: true,
-      blog: {
-        "_id": {
-          "$oid": "66377327edf989f1ae865513"
-        },
-        title: "Sample Title 222",
-        description: "An interesting blog... 222",
-        category: "Barber",
-        "numberView": 99999222,
-        "likes":[],
-        "dislikes":[],
-        "image": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI"
-      }
-    }
-    if (response?.success) {
-      setPost(response?.blog);
-      setSelectedCategory(response?.blog?.category);
-    }
-    // setPost()
-  };
 
-  useEffect(() => {
-    console.log('----------++++')
-    fetchPostData();
-  }, []);
-
-  const handleCreateProduct = async(data) => {
-    const invalid = validate(payload, setInvalidField)
-    if(invalid === 0){
-      const finalPayload = {...data,...payload}
-      finalPayload.provider_id = current.provider_id
-      if(selectedCategory){
-        finalPayload.category = selectedCategory
+  const handleEditBlogPost = async(data) => {
+    // const invalid = validate(payload, setInvalidField)
+    // console.log('---->' + invalid);
+    // if(!invalid){
+      const finalPayload = {...data,...payload};
+      finalPayload.provider_id = current?.provider_id;
+      if(selectedTags?.length > 0){
+        finalPayload.tags = selectedTags
       }
-      finalPayload.description = 'kdlsakdl;askdlsakdl;'
+      if(title){
+        finalPayload.title = title
+      }
+      // finalPayload.description = 'kdlsakdl;askdlsakdl;'
       const formData = new FormData()
       for(let i of Object.entries(finalPayload)){
         console.log(i[0] + '-------' + i[1]);
@@ -129,59 +122,41 @@ const EditPostDetail = () => {
         for (let image of finalPayload.images) formData.append('images', image)
       }
 
-      setIsLoading(true)
-
-      console.log(':==========', formData)
-
-      const response = await apiUpdateBlog(finalPayload)
-
-    console.log(response);
+      setIsLoading(true);
+      console.log(':==========', formData);
+      const response = await apiUpdateBlog(finalPayload, params?.get('id'))
+      console.log(response);
 
       setIsLoading(false)
       if(response.success){
-        toast.success(response.mes)
-        reset()
-        setPayload({
-          description: ''
-        })
+        toast.success('Update Post Blog Successfully');
+        reset();
       }
       else{
         toast.error(response.mes)
       }
-    }
+    // }
+    // else {
+    //   toast.error("Please Recheck Your Input Information.");
+    // }
   }
 
-  const handleSelectCateChange = useCallback(selectedOptions => {
-    setSelectedCategory(selectedOptions);
+  // const handleSelectCateChange = useCallback(selectedOptions => {
+  //   setSelectedCategory(selectedOptions);
+  // }, []);
+  const handleSelectTagChange = useCallback(selectedOptions => {
+    setSelectedTags(selectedOptions);
   }, []);
-
-  // const blog = {
-  //   success: true,
-  //   blog: {
-  //     "_id": {
-  //       "$oid": "66377327edf989f1ae865513"
-  //     },
-  //     title: "Sample Title 222",
-  //     description: "An interesting blog... 222",
-  //     category: "Sample category 222",
-  //     "numberView": 99999222,
-  //     "likes":[],
-  //     "dislikes":[],
-  //     "image": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI"
-  //   }
-  // }
-  
-  //   setPost(blog);
 
   return (
     <div className='w-full'>
       <h1 className='h-[75px] flex justify-between items-center text-3xl font-bold px-4 border-b'>
-        <span>Edit Blog</span>
+        <span>Update a Blog Post</span>
       </h1>
       <div className='p-4 '>
-        <form onSubmit={handleSubmit(handleCreateProduct)}>
+        <form onSubmit={() => {handleEditBlogPost(); console.log('---')}}>
           <InputForm
-            label = 'Name product'
+            label = 'Post Title'
             register={register}
             errors={errors}
             id = 'title'
@@ -189,70 +164,26 @@ const EditPostDetail = () => {
               required: 'Need fill this field'
             }}
             fullWidth
-            placeholder='Name of new product'
-            defaultValue={post?.title}
+            onInput={(eve) => {setTitle(eve.target.value)}}
+            defaultValue={currBlog?.title}
           />
-          {/* <div className='w-full my-6 flex gap-4'>
-            <InputForm 
-              label = 'Price'
-              register={register}
-              errors={errors}
-              id = 'price'
-              validate = {{
-                required: 'Need fill this field'
-              }}
-              style='flex-auto'
-              placeholder='Price of new product'
-              type='number'
-            />
-            <InputForm 
-              label = 'Quantity'
-              register={register}
-              errors={errors}
-              id = 'quantity'
-              validate = {{
-                required: 'Need fill this field'
-              }}
-              style='flex-auto'
-              placeholder='Quantity of new product'
-              type='number'
-            />
-            <InputForm 
-              label = 'Color'
-              register={register}
-              errors={errors}
-              id = 'color'
-              validate = {{
-                required: 'Need fill this field'
-              }}
-              style='flex-auto'
-              placeholder='Color of new product'
-            />
-          </div> */}
-          <div className='w-full my-6 flex gap-4'>
-            <SelectCategory
-              label = 'Category'
-              options = {option_category}
-              register={register}
-              id = 'category'
-              validate = {{
-                required: 'This field is required'
-              }}
-              errors={errors}
-              fullWidth
-              onChangee={handleSelectCateChange}
-              style='flex-1'
-              values={selectedCategory}
+          <MarkdownEditor 
+            name = 'content'
+            changeValue={changeValue}
+            label = 'Blog Content'
+            setInvalidField={setInvalidField}
+            value={blogContent}
+          />
+          <div className='w-full my-6 flex gap-4' style={{zIndex:88}}>
+            <MultiSelect
+              title='Tags'
+              label='Tags'
+              id='assigned_tags' 
+              options={tags}
+              onChangee={handleSelectTagChange}
+              values={selectedTags}
             />
           </div>
-          <MarkdownEditor 
-            name = 'description'
-            changeValue={changeValue}
-            label = 'Description'
-            invalidField={invalidField}
-            setInvalidField={setInvalidField}
-            value={post?.description}
-          />
           <div className='flex flex-col gap-2 mt-8'>
             <label className='font-semibold' htmlFor='thumb'>Upload Thumb</label>
             <input 
@@ -263,10 +194,10 @@ const EditPostDetail = () => {
             {errors['thumb'] && <small className='text-xs text-red-500'>{errors['thumb']?.message}</small>}
           </div>
           
-          {post?.thumb 
+          {preview.thumb 
             && 
           <div className='my-4'>
-            <img src={post?.thumb} alt='thumbnail' className='w-[200px] object-contain'></img>
+            <img src={preview.thumb} alt='thumbnail' className='w-[200px] object-contain'></img>
           </div>
           }
 {/* 
@@ -281,21 +212,22 @@ const EditPostDetail = () => {
             {errors['images'] && <small className='text-xs text-red-500'>{errors['product']?.message}</small>}
           </div> */}
 
-          {post.images?.length > 0 
+          {preview.images?.length > 0 
             && 
           <div className='my-4 flex w-full gap-2 flex-wrap'>
             {
-              post.images?.map((el,index) => (
+              preview.images?.map((el,index) => (
                 <div key={index} className='w-fit relative'>
                   <img src={el.path} alt='image of product' className='w-[200px] object-contain'></img>
                 </div>
               ))
             }
-          </div>}
+          </div>
+          }
 
           <div className='mt-8'>
-            <Button handleOnclick={handleSubmit(handleCreateProduct)}>
-              Update Post
+            <Button handleOnclick={() => {handleEditBlogPost(); console.log('---')}}>
+              Update a Post
             </Button>
           </div>
         </form>

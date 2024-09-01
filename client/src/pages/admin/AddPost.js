@@ -54,11 +54,11 @@ const AddPost = () => {
     setPayload(e)
   },[payload])
 
-  const option_category = blogCategories_service?.map((cate) => ({
-    label: cate?.title,
-    value: cate?.title,
-    // color: cate?.color
-  })) || [];
+  // const option_category = blogCategories_service?.map((cate) => ({
+  //   label: cate?.title,
+  //   value: cate?.title,
+  //   // color: cate?.color
+  // })) || [];
 
   const handlePreviewThumb = async(file) => {
     const base64Thumb = await getBase64(file)
@@ -124,9 +124,7 @@ const AddPost = () => {
       if(response.success){
         toast.success('Create New Post Blog Successfully');
         reset();
-        setPayload({
-          description: ''
-        });
+        setSelectedTags([]);
       }
       else{
         toast.error(response.mes)

@@ -24,9 +24,10 @@ const ManagePostDetail = ({ dispatch, navigate }) => {
   
 
   const fetchPostData = async () => {
-    const response = await apiGetOneBlog(params?.get('postid'));
+    const response = await apiGetOneBlog(params?.get('id'));
+    console.log(response,'----');
     if (response?.success) {
-      setPost(response?.post);
+      setPost(response?.blog);
     } else {
 
     }
@@ -55,16 +56,16 @@ const ManagePostDetail = ({ dispatch, navigate }) => {
           className='cursor-pointer w-full p-6 border rounded-lg shadow-md flex justify-between gap-4 h-fit text-gray-700 bg-white'
         >
           <div className='flex flex-col gap-4'>
-            <div className='flex items-center gap-2'>
+            {/* <div className='flex items-center gap-2'>
               <span><strong className='text-main text-xl'>Id: {post?._id}</strong></span>
-            </div>
+            </div> */}
             <div className='flex items-center gap-2'>
               <span><strong className='text-main text-xl'>Title: {post?.title}</strong></span>
             </div>
             <div className='flex items-center gap-2'>
               <AiOutlineUser className='text-xl text-blue-400' />
-              <span><strong>Like:</strong> {`${post?.likes}`}&nbsp;&nbsp;&nbsp;</span>
-              <span><strong>Dislike:</strong> {`${post?.dislikes}`}</span>
+              <span><strong>Like:</strong> {`${post?.likes?.length}`}&nbsp;&nbsp;&nbsp;</span>
+              <span><strong>Dislike:</strong> {`${post?.dislikes?.length}`}</span>
             </div>
             {/* <div className='flex items-center gap-2'>
               <FiBriefcase className='text-xl text-teal-400' />
@@ -108,9 +109,9 @@ const ManagePostDetail = ({ dispatch, navigate }) => {
               <span><strong className='text-gray-700'>Total price:</strong> {`${formatPrice(formatPricee(post?.info[0]?.service?.price))} VND`}</span>
             </div> */}
           </div>
-          <div className='mt-4'>
+          {/* <div className='mt-4'>
             <img className='w-96 h-56 object-cover border-2 border-gray-300 rounded-md shadow-lg animate-shadow-drop-2-center hover:animate-shadow-pop-tr' src={post?.info[0]?.service?.thumb} />
-          </div>
+          </div> */}
         </div>
       </div>
       <h3 className='text-xl font-bold tracking-tight text-white p-4'>Blog Post Content</h3>
@@ -124,7 +125,7 @@ const ManagePostDetail = ({ dispatch, navigate }) => {
             )) }
             {post?.content?.length === 1 
               &&
-            <div className='text-sm line-clamp-[10] mb-8' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(description[0])}}></div>}
+            <div className='text-sm line-clamp-[10] mb-8' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(post?.content[0])}}></div>}
           </ul>
     </div>
   );

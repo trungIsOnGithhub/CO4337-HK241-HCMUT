@@ -91,7 +91,7 @@ const ManagePost = ({ dispatch, navigate }) => {
             <div
               key={index}
               className='cursor-pointer w-[45%] p-6 border rounded-lg shadow-md flex flex-col items-center gap-4 bg-gray-200 hover:animate-scale-in-center'
-              onClick={() => { handleOnClickDetail(postItem?._id?.$oid) }}
+              onClick={() => { handleOnClickDetail(postItem?._id) }}
             >
                 <div>
                   <img className='w-[480px] h-[260px] object-cover border border-gray-500 rounded-md shadow-2xl' src={postItem?.in?.service?.thumb} />
@@ -101,12 +101,12 @@ const ManagePost = ({ dispatch, navigate }) => {
                     <span><strong className='text-main'>{`Title: ${postItem?.title}`}</strong></span>
                   </div>
                   <span>
-                    <span><strong>Category:</strong> {`${postItem?.tags.map(tag => <h4>{tag},</h4>)}`}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span><strong>Category:</strong> {`${postItem?.tags.join(', ')}`}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                   </span>
                   <span>
                     {/* <div> */}
-                        <span><strong>Like:</strong> {`${postItem?.likes}`}&nbsp;&nbsp;&nbsp;</span>
-                        <span><strong>Dislike:</strong> {`${postItem?.dislikes}`}</span>
+                        <span><strong>Like:</strong> {`${postItem?.likes?.length}`}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span><strong>Dislike:</strong> {`${postItem?.dislikes?.length}`}</span>
                     {/* </div> */}
                   </span>
                   <span><strong>Viewed By:</strong> {`${postItem?.numberView}`}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
