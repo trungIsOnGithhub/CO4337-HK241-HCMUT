@@ -69,6 +69,7 @@ const ServiceProviderRegister = () => {
     const [coordinates, setCoordinates] = useState(null);
     const [error, setError] = useState('');
     const [isMapVisible, setIsMapVisible] = useState(false); // State to control map visibility
+    const [addressSuggestions, setAddressSuggestions] = useState([]); // State for address suggestions
 
     useEffect(() => {
         resetPayload();
@@ -153,9 +154,20 @@ const ServiceProviderRegister = () => {
                     el.style.height = '24px';
                     el.style.cursor = 'pointer';
 
-                    new goongjs.Marker(el)
+                    const marker = new goongjs.Marker(el)
                         .setLngLat([lng, lat])
-                        .addTo(map.current);
+                        .addTo(map.current)
+                        .setDraggable(true); // Make the marker draggable
+
+                    // Enable dragging the marker
+                    marker.on('dragend', async () => {
+                        const lngLat = marker.getLngLat();
+                        setCoordinates({ lat: lngLat.lat, lng: lngLat.lng });
+                        await updateAddressFromCoordinates(lngLat.lat, lngLat.lng); // Update address input
+                    });
+
+                    // Set the marker's position initially
+                    marker.setLngLat([lng, lat]);
                 } else {
                     console.error('Map not initialized');
                 }
@@ -167,6 +179,21 @@ const ServiceProviderRegister = () => {
             console.error('Error in handleCheckLocation:', error);
             setCoordinates(null);
             setError('Error fetching location');
+        }
+    };
+
+    // Function to update address input based on coordinates
+    const updateAddressFromCoordinates = async (lat, lng) => {
+        try {
+            const response = await axios.get(`https://rsapi.goong.io/Geocode?latlng=${lat},${lng}&api_key=${GOONG_API_KEY}`);
+            const data = await response.data;
+
+            if (data.results && data.results.length > 0) {
+                const address = data.results[0].formatted_address; // Get the formatted address
+                setPayload(prev => ({ ...prev, address })); // Update the address in the payload
+            }
+        } catch (error) {
+            console.error('Error fetching address from coordinates:', error);
         }
     };
 
@@ -264,6 +291,30 @@ const ServiceProviderRegister = () => {
         setIsMapVisible(false);
     };
 
+    const handleAddressInputChange = async (e) => {
+        const value = e.target.value;
+        console.log(value)
+        setPayload(prev => ({ ...prev, address: value })); // Update address in payload
+
+        if (value.length > 2) {
+            try {
+                const response = await axios.get(`https://rsapi.goong.io/Place/AutoComplete?api_key=${GOONG_API_KEY}&input=${encodeURIComponent(value)}`);
+                const data = await response.data;
+                setAddressSuggestions(data.predictions || []); // Set suggestions
+            } catch (error) {
+                console.error('Error fetching address suggestions:', error);
+            }
+        } else {
+            setAddressSuggestions([]); // Clear suggestions if input is less than 3 characters
+        }
+    };
+
+    const handleSuggestionSelect = (suggestion) => {
+        setPayload(prev => ({ ...prev, address: suggestion.description })); // Set selected address
+        setAddressSuggestions([]); // Clear suggestions
+    };
+
+    console.log(addressSuggestions)
     return (
         <div className="w-screen h-screen relative flex justify-center items-center flex-row">
             {isVerify &&
@@ -418,8 +469,26 @@ const ServiceProviderRegister = () => {
                             invalidField={invalidField}
                             setInvalidField={setInvalidField}
                             fullWidth
+                            onChange={handleAddressInputChange}
                             onKeyPress={handleAddressKeyPress}
                         />
+                        {addressSuggestions.length > 0 && (
+                            <div className="min-w-[100%]">
+                            <ul className="bg-white border border-gray-300 z-10 min-w-[100%] max-h-60 overflow-y-auto">
+                                {addressSuggestions.map((suggestion) => (
+                                    <div className="max-w-[528px] line-clamp-1">
+                                    <li
+                                        key={suggestion.place_id}
+                                        onClick={() => handleSuggestionSelect(suggestion)}
+                                        className="p-2 cursor-pointer hover:bg-gray-200"
+                                    >
+                                        {suggestion.description}
+                                    </li>
+                                    </div>
+                                ))}
+                            </ul>
+                            </div>
+                        )}
                         <Button
                             handleOnclick={handleSubmit}
                             fullWidth
