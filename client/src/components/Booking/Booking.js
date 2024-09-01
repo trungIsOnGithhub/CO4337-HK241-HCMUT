@@ -1,42 +1,63 @@
-import { apiGetOneService, apiGetServiceProviderById } from 'apis';
+import { apiGetCouponsByServiceId, apiGetOneService, apiGetServiceProviderById } from 'apis';
 import clsx from 'clsx';
 import Button from 'components/Buttons/Button';
-import React, { memo, useEffect, useState } from 'react';
-import { createSearchParams, useSearchParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { formatPrice, formatPricee } from 'ultils/helper';
 import path from 'ultils/path';
-import { apiUpdateCartService } from 'apis'
+import { apiUpdateCartService } from 'apis';
 import withBaseComponent from 'hocs/withBaseComponent';
+import { useSelector, useDispatch } from 'react-redux';
 import { getCurrent } from 'store/user/asyncAction';
-import moment from 'moment';
 
-const Booking = ({dispatch, navigate}) => {
+const Booking = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [params] = useSearchParams();
   const [staffs, setStaffs] = useState(null);
   const [service, setService] = useState(null);
   const [provider, setProvider] = useState(null);
   const [duration, setDuration] = useState(null);
-  const [currentTime, setCurrentTime] = useState(null)
-
+  const [currentTime, setCurrentTime] = useState(null);
   const [selectedStaff, setSelectedStaff] = useState({
     time: null,
     date: null,
     staff: null
   });
   const [timeOptions, setTimeOptions] = useState([]);
+  const [discountCodes, setDiscountCodes] = useState([]);
+  const [selectedDiscount, setSelectedDiscount] = useState(null);
+  const [discountValue, setDiscountValue] = useState(-1);
+  const [originalPrice, setOriginalPrice] = useState(0);
+
+  const currentUser = useSelector(state => state.user.current);
+
+  useEffect(() => {
+    dispatch(getCurrent());
+  }, [dispatch]);
 
   const fetchServiceData = async () => {
     const response = await apiGetOneService(params?.get('sid'));
     if (response?.success) {
       setService(response?.service);
       setDuration(response?.service?.duration);
+      const coupons = await apiGetCouponsByServiceId(response?.service?._id);
+      if(coupons?.success){
+        setDiscountCodes(coupons?.coupons);
+      }
     }
   };
 
+  useEffect(() => {
+    setOriginalPrice(service?.price)
+  }, [service])
+  
   const fetchProviderData = async () => {
-    const response = await apiGetServiceProviderById(service?.provider_id);
-    if (response?.success) {
-      setProvider(response?.payload);
+    if (service?.provider_id) {
+      const response = await apiGetServiceProviderById(service?.provider_id);
+      if (response?.success) {
+        setProvider(response?.payload);
+      }
     }
   };
 
@@ -85,13 +106,13 @@ const Booking = ({dispatch, navigate}) => {
             let currentMinute = currentTime % 100;
             let currentTimeInMinutes = currentHour * 60 + currentMinute;
             let serviceDurationInMinutes = duration;
-            let saveOpeningTime = openingTime
+            let saveOpeningTime = openingTime;
 
-            setCurrentTime(currentTimeInMinutes)
-            setTimeOptions([])
+            setCurrentTime(currentTimeInMinutes);
+            setTimeOptions([]);
 
             while (saveOpeningTime <= (closingTime - serviceDurationInMinutes)) {
-              if(saveOpeningTime >= currentTimeInMinutes){
+              if (saveOpeningTime >= currentTimeInMinutes) {
                 const hour = Math.floor(saveOpeningTime / 60);
                 const minute = saveOpeningTime % 60;
                 const formattedHour = hour.toString().padStart(2, '0');
@@ -99,11 +120,11 @@ const Booking = ({dispatch, navigate}) => {
                 const formattedTime = `${formattedHour}:${formattedMinute}`;
                 timeOptions.push(formattedTime);
                 saveOpeningTime += serviceDurationInMinutes;
+              } else {
+                saveOpeningTime += serviceDurationInMinutes;
               }
-              else saveOpeningTime += serviceDurationInMinutes;
             }
           }
-
 
           return timeOptions;
         };
@@ -126,7 +147,7 @@ const Booking = ({dispatch, navigate}) => {
       pathname:  `/${path.BOOKING_DATE_TIME}`,
       search: createSearchParams({sid: service?._id, st: el?._id}).toString()
     })
-   }
+  }
 
   const parseTimee = (time) => {
     const [hour, minute] = time.split(':').map(Number);
@@ -141,22 +162,36 @@ const Booking = ({dispatch, navigate}) => {
       staff: el?._id, 
       time: time,
       duration: service?.duration,
-      date: new Date().toLocaleDateString()
+      date: new Date().toLocaleDateString(),
+      price: +discountValue > 0 ? +discountValue : +originalPrice
     })
   }
 
-  const handleCheckout = () => {
-    window.open(`/${path.CHECKOUT_SERVICE}`, '_blank')
+  const handleCheckout = async() => {
+    const finalPrice = +discountValue > 0 ? +discountValue : +originalPrice;
+    await apiUpdateCartService({
+      service: service?._id, 
+      provider: provider?._id, 
+      staff: selectedStaff?.staff?._id, 
+      time: selectedStaff?.time,
+      duration: service?.duration,
+      date: new Date().toLocaleDateString(),
+      price: finalPrice
+    })
+    if(selectedDiscount){
+      window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}&couponCode=${selectedDiscount}`, '_blank');
+    }
+    else {
+      window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}`, '_blank');
+    }
   }
 
   const isWorkingTime = (time, workSchedule) => {
     const currentDate = new Date(); 
     for (const schedule of workSchedule) {
-      // Chuyển đổi chuỗi ngày thành đối tượng Date
       const scheduleDateParts = schedule.date.split('/');
       const scheduleDate = new Date(parseInt(scheduleDateParts[2]), parseInt(scheduleDateParts[1]) - 1, parseInt(scheduleDateParts[0]));
   
-      // Kiểm tra xem ngày trong lịch làm việc có trùng với ngày hiện tại không
       if (scheduleDate.getDate() === currentDate.getDate() &&
           scheduleDate.getMonth() === currentDate.getMonth() &&
           scheduleDate.getFullYear() === currentDate.getFullYear()) {
@@ -164,12 +199,40 @@ const Booking = ({dispatch, navigate}) => {
         const endTime = startTime + schedule.duration;
         const selectedTime = parseTimee(time);
         if (selectedTime >= startTime && selectedTime < endTime) {
-          return true; // Thời gian đã có lịch làm việc
+          return true;
         }
       }
     }
-    return false; // Thời gian không có lịch làm việc hoặc không trùng ngày hiện tại
+    return false;
   };
+
+  const handleDiscountChange = (event) => {
+    setSelectedDiscount(event.target.value);
+  };
+
+  useEffect(() => {
+    const coupon = discountCodes?.find(el => el?.code === selectedDiscount)
+    if(coupon?.discount_type === 'percentage'){
+      const percent = coupon?.percentageDiscount?.find(e => e.id===service?._id)?.value
+      const discountPrice = Math.round(service?.price * (100-percent)/100)
+      discountPrice === originalPrice ? setDiscountValue(-1) : setDiscountValue(discountPrice)
+    }
+    if(coupon?.discount_type === 'fixed'){
+      const fixed = coupon?.fixedAmount?.find(e => e.id===service?._id)?.value
+      const discountPrice = Math.round(service?.price - fixed)
+      discountPrice === originalPrice ? setDiscountValue(-1) : setDiscountValue(discountPrice)
+    }
+  }, [selectedDiscount]);
+
+  const canUseDiscount = (coupon) => {
+    if (!currentUser) return false;
+    
+    const userUsage = coupon.usedBy.find(usage => usage.user.toString() === currentUser._id);
+    
+    return coupon.noLimitPerUser || !userUsage || userUsage.usageCount < coupon.limitPerUser;
+  };
+
+  const usableDiscountCodes = discountCodes.filter(canUseDiscount);
 
   return (
     <div className='w-main'>
@@ -190,7 +253,7 @@ const Booking = ({dispatch, navigate}) => {
                 <div className='w-fit h-fit bg-green-500 px-1 rounded-md text-white'>Today</div>
               </div>
               <div className='flex flex-wrap gap-2 my-3'>
-              {!timeOptions.length ?
+              {timeOptions.length <= 0 ?
                   <h5 className='text-red-500'>Service is not available today</h5>
                   :
                 timeOptions.map((time, idx) => (
@@ -206,7 +269,7 @@ const Booking = ({dispatch, navigate}) => {
         </div>
         <div className='flex-3 flex-col'>
           <div className='border border-gray-400 h-fit pb-5 rounded-md'>
-            <div className='mb-4 border-b-2 border-gray-200 px-3 pb-4'><span className='font-semibold text-3xl'>Booking Details</span></div>
+            <div className='mb-4 border-b-2 border-gray-200 px-3 pb-4 flex justify-center'><span className='font-semibold text-3xl'>Booking Details</span></div>
             <div className='px-3 flex flex-col gap-2'>
               <div className='flex gap-2'>
                 <span className='text-gray-700 font-bold'>Service Name:</span>
@@ -234,8 +297,32 @@ const Booking = ({dispatch, navigate}) => {
               </div>
               <div className='flex gap-2'>
                 <span className='text-gray-700 font-bold'>Total Price:</span>
-                <span className='font-semibold text-main'>{`${formatPrice(formatPricee(service?.price))} VNĐ`}</span>
+                <span className={clsx('font-semibold text-main', discountValue > 0 && 'line-through')}>
+                  {`${formatPrice(formatPricee(originalPrice))} VNĐ`}
+                </span>
+                {discountValue > 0 && <span className='font-semibold text-green-500'>{` ${formatPrice(formatPricee(discountValue))} VNĐ`}</span>}
               </div>
+              <div className='flex flex-col gap-2 cursor-pointer mt-4 border-t-2 mx-[-12px] px-3'>
+                <span className='text-gray-700 font-bold'>Discount Code:</span>
+                <select 
+                  value={selectedDiscount || ''} 
+                  onChange={handleDiscountChange} 
+                  className='border border-gray-400 rounded-md px-2 py-1 cursor-pointer outline-none'
+                >
+                  <option value=''>Select Discount</option>
+                  {usableDiscountCodes.map((code, idx) => (
+                    <option key={idx} value={code?.code}>
+                      {code?.name} 
+                      {code?.discount_type === 'fixed' 
+                        ? `( ↓ ${code?.fixedAmount?.find(e => e.id===service?._id)?.value} VNĐ )` 
+                        : `( ↓ ${code?.percentageDiscount?.find(e => e.id===service?._id)?.value} % )`}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div>
+               {/* Mã giảm giá */}
             </div>
           </div>
           <div className='text-right'>
@@ -247,4 +334,4 @@ const Booking = ({dispatch, navigate}) => {
   );
 };
 
-export default withBaseComponent(memo(Booking));
+export default Booking;

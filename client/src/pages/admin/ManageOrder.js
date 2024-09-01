@@ -6,10 +6,10 @@ import { Pagination } from 'components';
 import { FiCalendar, FiUser, FiBriefcase, FiClock, FiDollarSign } from 'react-icons/fi';
 import { FaTags } from "react-icons/fa";
 import path from 'ultils/path';
-import withBaseComponent from 'hocs/withBaseComponent';
 import { formatPrice, formatPricee } from 'ultils/helper';
+import withBaseComponent from 'hocs/withBaseComponent';
 
-const ManageOrder = ({dispatch, navigate}) => {
+const ManageOrder = () => {
   const [params] = useSearchParams();
   const [orders, setOrders] = useState(null);
   const [counts, setCounts] = useState(0);

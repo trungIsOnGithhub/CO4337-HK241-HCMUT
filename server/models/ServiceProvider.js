@@ -30,6 +30,14 @@ var ProviderServiceSchema = new mongoose.Schema({
     },
     images: {
         type: [],
+    },
+    latitude: {
+        type: Number,
+        required: true,
+    },
+    longitude: {
+        type: Number,
+        required: true,
     }
 },{
     timestamps: true

@@ -7,6 +7,7 @@ import { FaMoneyBillTrendUp } from "react-icons/fa6";
 import { TbBrandBooking } from "react-icons/tb";
 import { MdPostAdd } from "react-icons/md";
 import { CiDiscount1 } from "react-icons/ci";
+import { IoIosSettings } from "react-icons/io";
 export const navigation = [
     {
         id: 1,
@@ -332,6 +333,13 @@ export const adminSidebar = [
 
         ],
         icon: <CiDiscount1 size={20}/>
+    },
+    {
+        id: 11,
+        type: 'single',
+        text: 'Setting',
+        path: `/${path.ADMIN}/${path.SETTING}`,
+        icon: <IoIosSettings size={20}/>
     },
 ]
 

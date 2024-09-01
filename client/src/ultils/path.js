@@ -44,6 +44,7 @@ const path = {
     MANAGE_VOUCHER: 'manage_voucher',
     MANAGE_SALE_EVENT: 'manage_sale_event',
 
+    SETTING: 'setting',
     //User
     USER: 'user',
     PERSONAL: 'personal',

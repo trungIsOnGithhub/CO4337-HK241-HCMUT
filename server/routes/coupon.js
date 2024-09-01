@@ -3,7 +3,8 @@ const ctrls = require('../controllers/coupon')
 const {verifyAccessToken, isAdmin} = require('../middlewares/verify_token')
 
 router.post('/', [verifyAccessToken, isAdmin], ctrls.createNewCoupon)
-router.get('/',  ctrls.getAllCoupon)
-router.put('/:cid',[verifyAccessToken, isAdmin],  ctrls.updateCoupon)
-router.delete('/:cid',[verifyAccessToken, isAdmin],  ctrls.deleteCoupon)
+router.get('/getCouponsByServiceId/:serviceId', ctrls.getCouponsByServiceId)
+router.post('/validate', verifyAccessToken, ctrls.validateAndUseCoupon)
+router.post('/update-usage', verifyAccessToken, ctrls.updateCouponUsage)
+
 module.exports = router

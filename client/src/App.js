@@ -13,6 +13,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Booking, BookingDateTIme, Cart, Modal } from './components';
 import { showCart } from 'store/app/appSlice';
+import Mapbox from './components/Map/Mapbox'; // Add this import
+import MapConvert from 'components/Map/MapConvert';
 
 function App() {
   const dispatch = useDispatch()
@@ -23,6 +25,7 @@ function App() {
     dispatch(getCategorieService())
   },[])
   return (
+    
     <div className="w-screen h-screen relative">
       {isShowCart && 
         <div onClick={()=>dispatch(showCart())} className='absolute inset-0 bg-overlay z-50 flex justify-end'>
@@ -45,8 +48,6 @@ function App() {
         <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
         <Route path={path.BOOKING} element={<Booking />} />
         <Route path={path.BOOKING_DATE_TIME} element={<BookingDateTIme />} />
-        {/* <Route path={path.DETAIL_CART} element={<DetailCart />} /> */}
-        {/* <Route path={path.ALL} element={<Home />} /> */}
       </Route>
       <Route path={path.ADMIN} element={<AdminLayout />}>
         <Route path={path.DASHBOARD} element={<DashBoard/>}/>
@@ -88,8 +89,11 @@ function App() {
         draggable
         pauseOnHover
         theme="colored" />
-      <ToastContainer />
     </div>
+    
+    // <div className='w-screen h-screen'>
+    //   <MapConvert />
+    // </div>
   );
 }
 

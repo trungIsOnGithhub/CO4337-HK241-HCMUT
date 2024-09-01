@@ -3,14 +3,15 @@ import logo from "assets/logo_black.png"
 import icons from 'ultils/icon'
 import {Link} from 'react-router-dom'
 import path from 'ultils/path'
-import {useSelector } from 'react-redux'
+import {useDispatch, useSelector } from 'react-redux'
 import { logout } from "store/user/userSlice";
 import { useEffect } from "react";
-import withBaseComponent from "hocs/withBaseComponent";
+// import withBaseComponent from "hocs/withBaseComponent";
 import { showCart } from "store/app/appSlice";
 
 const {FaPhoneAlt, MdEmail, FaUser, FaShoppingBag} = icons
-const Header = ({dispatch}) => {
+const Header = () => {
+    const dispatch = useDispatch()
     const {current} = useSelector(state => state.user)
     const [isShowOptions, setIsShowOptions] = useState(false)
     useEffect(() => {
@@ -89,4 +90,4 @@ const Header = ({dispatch}) => {
     )
 }
 
-export default withBaseComponent(memo(Header))
+export default memo(Header)

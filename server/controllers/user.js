@@ -138,7 +138,7 @@ const getOneUser = asyncHandler(async(req, res)=>{
         path: 'cart_service',
         populate:{
             path: 'service',
-            select: 'name price duration'
+            select: 'name duration'
         },
     }).populate({
         path: 'cart_service',
@@ -473,9 +473,9 @@ const updateUserAddress = asyncHandler(async (req, res) => {
 // update cart_service
 const updateCartService = asyncHandler(async (req, res) => {
     const {_id} = req.user;
-    const {service, provider, staff, time, date, duration} = req.body;
+    const {service, provider, staff, time, date, duration, price} = req.body;
     
-    if (!service || !provider || !staff || !time || !date || !duration) {
+    if (!service || !provider || !staff || !time || !date || !duration || !price) {
         throw new Error("Missing input");
     } else {
         const user = await User.findById(_id).select('cart_service');
@@ -486,7 +486,7 @@ const updateCartService = asyncHandler(async (req, res) => {
 
         try {
             // Thêm một phần tử mới vào mảng 'cart'
-            response = await User.findByIdAndUpdate(_id, {$push: {cart_service: {service, provider, staff, time, date, duration}}}, {new: true});
+            response = await User.findByIdAndUpdate(_id, {$push: {cart_service: {service, provider, staff, time, date, duration, price}}}, {new: true});
         } catch (error) {
             // Xử lý lỗi nếu có
             return res.status(500).json({ success: false, mes: "Something went wrong" });
