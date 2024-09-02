@@ -81,7 +81,8 @@ var couponSchema = new mongoose.Schema({
             type: Number,
             default: 0
         }
-    }]
+    }],
+    providerId: {type:mongoose.Types.ObjectId, ref: 'Service_Provider'},
 },{
     timestamps: true
 });

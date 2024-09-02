@@ -14,11 +14,12 @@ const createNewCoupon = asyncHandler(async (req, res) => {
         noUsageLimit,
         limitPerUser,
         noLimitPerUser,
-        services
+        services,
+        providerId
     } = req.body;
 
     // Validate required fields
-    if (!name || !code || !discount_type || !expirationDate) {
+    if (!name || !code || !discount_type || !expirationDate || !providerId) {
         return res.status(400).json({ message: 'Name, code, discount_type, and expirationDate are required fields.' });
     }
 
@@ -41,7 +42,8 @@ const createNewCoupon = asyncHandler(async (req, res) => {
         noLimitPerUser,
         services,
         usageCount: 0, // Khởi tạo giá trị mặc định
-        usedBy: [] // Khởi tạo mảng rỗng
+        usedBy: [], // Khởi tạo mảng rỗng
+        providerId
     });
 
     // Save the coupon to the database
@@ -129,4 +131,23 @@ const updateCouponUsage = asyncHandler(async (req, res) => {
     return res.status(200).json({ success: true, message: 'Coupon usage updated successfully' });
 });
 
-module.exports = { createNewCoupon, getCouponsByServiceId, validateAndUseCoupon, updateCouponUsage };
+const getCouponsByProviderId = asyncHandler(async (req, res) => {
+    const { providerId } = req.params; // Lấy providerId từ tham số của request
+
+    if (!providerId) {
+        return res.status(400).json({ message: 'Provider ID is required.' });
+    }
+
+    // Tìm tất cả các mã giảm giá mà thuộc tính providerId trùng với providerId
+    // và populate trường services với thông tin name từ bảng Service
+    const coupons = await Coupon.find({ providerId })
+        .populate('services', 'name'); // Populate trường services với thông tin name
+
+    if (coupons.length === 0) {
+        return res.status(404).json({ message: 'No coupons found for the given provider ID.' });
+    }
+
+    return res.status(200).json({ success: true, coupons });
+});
+
+module.exports = { createNewCoupon, getCouponsByServiceId, validateAndUseCoupon, updateCouponUsage, getCouponsByProviderId };

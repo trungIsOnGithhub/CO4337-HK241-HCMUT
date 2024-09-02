@@ -21,8 +21,8 @@ import '@goongmaps/goong-js/dist/goong-js.css';
 import axios from 'axios';
 import clsx from "clsx";
 
-const GOONG_API_KEY = '2jcRRCquuKp2hdK4BcQsMZLsrJuXSNuXYlfcWXyA';
-const GOONG_MAPTILES_KEY = 'hzX8cXab72XCozZSYvZqkV26qMMQ8JdpkiUwK1Iy';
+const GOONG_API_KEY = 'cedceGY7oXTnY8vjoUpEmr2BhoqBM0PkBjqjzj58';
+const GOONG_MAPTILES_KEY = 'IXqHXe9w2riica5A829SuB6HUl5Fi1Yg7LC9OHF2';
 
 const ServiceProviderRegister = () => {
     const dispatch = useDispatch();

@@ -105,10 +105,8 @@ const Mapbox = () => {
             .addTo(map.current);
         }
       }, () => {
-        console.log("Unable to retrieve your location");
       });
     } else {
-      console.log("Geolocation not supported");
     }
   }, []);
 

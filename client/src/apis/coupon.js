@@ -10,6 +10,11 @@ export const apiGetCouponsByServiceId = (serviceId) => axios({
     method: 'get',
 })
 
+export const apiGetAllCouponsByProviderId = (providerId) => axios({
+    url: '/coupon/getCouponsByProviderId/'+ providerId,
+    method: 'get',
+})
+
 // Thêm hai hàm mới này
 export const apiValidateAndUseCoupon = (data) => axios({
     url: '/coupon/validate',

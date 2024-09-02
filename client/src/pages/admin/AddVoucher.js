@@ -9,6 +9,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { apiCreateNewCoupon, apiGetServiceByAdmin } from 'apis';
 import { Slider } from '@mui/material';
 import moment from 'moment'
+import { useSelector } from 'react-redux';
 
 const AddVoucher = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,6 +23,7 @@ const AddVoucher = () => {
   const [percentageDiscount, setPercentageDiscount] = useState([]);
   const [fixedAmount, setFixedAmount] = useState([]);
   const [exprDate, setExprdate] = useState(null)
+  const {current} = useSelector(state => state.user)
   const handleAddVoucherCode = async (data) => {
     try {
       setIsLoading(true);
@@ -33,6 +35,7 @@ const AddVoucher = () => {
         percentageDiscount: voucherType === 'percentage' ? percentageDiscount : [],
         fixedAmount: voucherType === 'fixed' ? fixedAmount : [],
       };
+      couponData.providerId = current?.provider_id
       //Call API to create a new coupon
       const response = await apiCreateNewCoupon(couponData);
       if (response?.success) {
@@ -44,7 +47,6 @@ const AddVoucher = () => {
         alert('Failed to create voucher.');
       }
     } catch (error) {
-      console.error('Error creating voucher:', error);
       alert('An error occurred. Please try again.');
     }
     setIsLoading(false);
@@ -168,18 +170,39 @@ const AddVoucher = () => {
     });
   };
 
+  const handleFixedAmountInputChange = (serviceId, value) => {
+    const numericValue = parseFloat(value);
+    if (!isNaN(numericValue)) {
+      setFixedAmount(prev => {
+        return prev.map(item =>
+          item.id === serviceId ? { ...item, value: numericValue } : item
+        );
+      });
+    }
+    else{
+      setFixedAmount(prev => {
+        return prev.map(item =>
+          item.id === serviceId ? { ...item, value: 0 } : item
+        );
+      });
+    }
+  };
+
+
   const handleEventVoucherType = (type) => {
     if(type === 'fixed' && voucherType === 'percentage') {
       setFixedAmount(percentageDiscount)
       setPercentageDiscount([])
     }
     if(type === 'percentage' && voucherType === 'fixed'){
-      setPercentageDiscount(fixedAmount)
-      setFixedAmount([])
+      setPercentageDiscount(fixedAmount?.map(item => ({ id: item.id, value: 0 })));
+      setFixedAmount([]);
     }
     setVoucherType(type)
   }
 
+
+  
   return (
     <div className='w-full'>
       <h1 className='h-[75px] flex justify-between items-center text-3xl font-bold px-4 border-b'>
@@ -364,9 +387,9 @@ const AddVoucher = () => {
           {voucherType === 'fixed' && selectedService.length > 0 && (
             <div className='w-full my-6 flex flex-col gap-4'>
               {selectedService.map((service) => (
-                <div key={service.value} className='w-[80%]'>
+                <div key={service.value} className='w-[80%] flex flex-col items-start'>
                   <label className='block mb-2'>{services.find(s => s._id === service)?.name}</label>
-                  <div className='p-2'>
+                  <div className='p-2 flex w-full justify-between items-center gap-16 text-white'>
                     <Slider
                       defaultValue={0}
                       min={0}
@@ -376,6 +399,8 @@ const AddVoucher = () => {
                       valueLabelDisplay="auto"
                       color="secondary"
                       marks={marks(services.find(s => s._id === service)?.price)}
+                      onChange={handleSliderChange(service)}
+                      value={fixedAmount.find(item => item.id === service)?.value || 0}
                       sx={{
                         '& .MuiSlider-markLabel': {
                           color: 'white',
@@ -397,8 +422,13 @@ const AddVoucher = () => {
                           backgroundColor: 'transparent', // Hoặc bất kỳ màu nào bạn muốn
                         },
                       }}
-                      onChange={handleSliderChange(service)}
-                      value={fixedAmount.find(item => item.id === service)?.value || 0}
+                    />
+                    <input
+                      type="number"
+                      className="border border-gray-300 rounded p-1 w-24 ml-2 text-black outline-none text-center"
+                      placeholder="Enter amount"
+                      onChange={(e) => handleFixedAmountInputChange(service, e.target.value)}
+                      value={fixedAmount.find(item => item.id === service)?.value || ''}
                     />
                   </div>
                 </div>
