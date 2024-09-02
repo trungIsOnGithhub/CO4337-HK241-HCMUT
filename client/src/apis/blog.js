@@ -5,7 +5,7 @@ export const apiCreateBlog = (data) => axios({
     data,
 })
 
-export const apiGetAllBlogsByProvider = (data) => axios({
+export const apiGetAllBlogs = (data) => axios({
     url: '/blog/',
     method: 'post',
     data,

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createSearchParams, useSearchParams } from 'react-router-dom';
-import { apiGetAllBlogsByProvider } from 'apis/blog';
+import { apiGetAllBlogs } from 'apis/blog';
 import moment from 'moment';
 import { Pagination } from 'components';
 import { FiCalendar, FiDollarSign } from 'react-icons/fi';
@@ -27,7 +27,7 @@ const ManagePost = ({ dispatch, navigate }) => {
         toast.success('Please Log In To Continue!');
         return;
       }
-      const sortedPosts = await apiGetAllBlogsByProvider({ ...params, provider_id: current?.provider_id,  limit: process.env.REACT_APP_LIMIT });
+      const sortedPosts = await apiGetAllBlogs({ ...params, provider_id: current?.provider_id,  limit: process.env.REACT_APP_LIMIT });
       console.log('das--------',sortedPosts);
       setPosts(sortedPosts?.blogs);
       setCounts(sortedPosts?.blogs.length);

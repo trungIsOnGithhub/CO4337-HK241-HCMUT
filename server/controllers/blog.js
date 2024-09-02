@@ -64,61 +64,19 @@ const getAllBlogTags = asyncHandler(async (req,res) => {
 
 const getAllBlogs = asyncHandler(async (req, res)=>{
     console.log(req.body);
-    const { provider_id } = req.body;
-    if(!provider_id){
-        throw new Error ("Missing input")
+    const { provider_id, title } = req.body;
+    // if(!provider_id){
+    //     throw new Error ("Missing input")
+    // }
+    const searchFilter = {};
+    if (!provider_id) {
+        searchFilter.provider_id = provider_id;
     }
-    const response = await Blog.find({provider_id});
-    // const response = [
-    //     {
-    //         "_id": {
-    //           "$oid": "66377327edf989f1ae865513"
-    //         },
-    //         title: "Sample Title",
-    //         description: "An interesting blog...",
-    //         category: "Sample category",
-    //         "numberView": 9999,
-    //         "likes":[],
-    //         "dislikes":[],
-    //         "image": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI"
-    //       },
-    //       {
-    //         "_id": {
-    //           "$oid": "66377327edf989f1ae865513"
-    //         },
-    //         title: "Sample Title 222",
-    //         description: "An interesting blog... 222",
-    //         category: "Sample category 222",
-    //         "numberView": 99999222,
-    //         "likes":[],
-    //         "dislikes":[],
-    //         "image": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI"
-    //       },
-    //       {
-    //         "_id": {
-    //           "$oid": "66377327edf989f1ae865513"
-    //         },
-    //         title: "Sample Title 222",
-    //         description: "An interesting blog... 222",
-    //         category: "Sample category 222",
-    //         "numberView": 99999222,
-    //         "likes":[],
-    //         "dislikes":[],
-    //         "image": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI"
-    //       },
-    //       {
-    //         "_id": {
-    //           "$oid": "66377327edf989f1ae865513"
-    //         },
-    //         title: "Sample Title 222",
-    //         description: "An interesting blog... 222",
-    //         category: "Sample category 222",
-    //         "numberView": 99999222,
-    //         "likes":[],
-    //         "dislikes":[],
-    //         "image": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI"
-    //       }
-    //   ]
+    if (!title) {
+        searchFilter.title = title;
+    }
+    const response = await Blog.find(searchFilter);
+
     return res.status(200).json({
         success: response ? true : false,
         blogs: response ? response : "Cannot get all blogs"
