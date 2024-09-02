@@ -36,6 +36,7 @@ const ServiceProviderRegister = () => {
     const provinceInputRef = useRef(null);
     const districtInputRef = useRef(null);
     const wardInputRef = useRef(null);
+    const [selectedProvince, setSelectedProvince] = useState('');
 
     const [payload, setPayload] = useState({
         firstName: '',
@@ -118,6 +119,11 @@ const ServiceProviderRegister = () => {
         });
         setWards([]);
         setDistricts([]);
+        setSelectedProvince('');
+        
+        // Reset các trường select
+        if (districtInputRef.current) districtInputRef.current.value = '';
+        if (wardInputRef.current) wardInputRef.current.value = '';
     };
 
     const handleCheckLocation = async () => {
@@ -130,6 +136,9 @@ const ServiceProviderRegister = () => {
                 setCoordinates({ lat, lng });
                 setError('');
                 setIsMapVisible(true); // Show map when location is found
+
+                // Add this line to update the payload with the coordinates
+                setPayload(prev => ({ ...prev, longitude: lng, latitude: lat }));
 
                 if (map.current) {
                     console.log('Updating map center');
@@ -209,6 +218,15 @@ const ServiceProviderRegister = () => {
             payload.time[endKey] = timeOpenPayload[endKey];
         }
 
+        // Add longitude and latitude to the payload
+        if (coordinates) {
+            payload.longitude = coordinates.lng;
+            payload.latitude = coordinates.lat;
+        } else {
+            Swal.fire('Opps!', 'Please check your location on the map', 'error');
+            return;
+        }
+
         const invalid = validate(payload, setInvalidField);
         if (invalid === 0) {
             payload.role = 1411;
@@ -248,6 +266,7 @@ const ServiceProviderRegister = () => {
         if (event.target.id === 'province') {
             const province_index = parseInt(event.target.value);
             newPayLoad[event.target.id] = provinces[province_index].name;
+            setSelectedProvince(provinces[province_index].name);
             setDistricts(Object.values(quan_huyen).filter(district => district.parent_code === provinces[province_index].code));
         } else if (event.target.id === 'district') {
             const district_index = parseInt(event.target.value);
@@ -293,7 +312,6 @@ const ServiceProviderRegister = () => {
 
     const handleAddressInputChange = async (e) => {
         const value = e.target.value;
-        console.log(value)
         setPayload(prev => ({ ...prev, address: value })); // Update address in payload
 
         if (value.length > 2) {
@@ -309,12 +327,53 @@ const ServiceProviderRegister = () => {
         }
     };
 
-    const handleSuggestionSelect = (suggestion) => {
+    const handleSuggestionSelect = async (suggestion) => {
         setPayload(prev => ({ ...prev, address: suggestion.description })); // Set selected address
         setAddressSuggestions([]); // Clear suggestions
+    
+        try {
+            // Fetch the coordinates for the selected address
+            const response = await axios.get(`https://rsapi.goong.io/Geocode?address=${encodeURIComponent(suggestion.description)}&api_key=${GOONG_API_KEY}`);
+            const data = await response.data;
+    
+            if (data.results && data.results.length > 0) {
+                const { lat, lng } = data.results[0].geometry.location;
+                setCoordinates({ lat, lng });
+                setIsMapVisible(true);
+    
+                if (map.current) {
+                    map.current.setCenter([lng, lat]);
+                    map.current.setZoom(15);
+    
+                    // Remove existing markers
+                    const markers = document.getElementsByClassName('mapboxgl-marker');
+                    while (markers[0]) {
+                        markers[0].parentNode.removeChild(markers[0]);
+                    }
+    
+                    // Add new marker
+                    const el = document.createElement('div');
+                    el.className = 'marker';
+                    el.innerHTML = `
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 0C7.02944 0 3 4.02944 3 9C3 13.9706 12 24 12 24C12 24 21 13.9706 21 9C21 4.02944 16.9706 0 12 0ZM12 12C10.3431 12 9 10.6569 9 9C9 7.34315 10.3431 6 12 6C13.6569 6 15 7.34315 15 9C15 10.6569 13.6569 12 12 12Z" fill="#3887be"/>
+                      </svg>
+                    `;
+                    el.style.width = '24px';
+                    el.style.height = '24px';
+                    el.style.cursor = 'pointer';
+    
+                    new goongjs.Marker(el)
+                        .setLngLat([lng, lat])
+                        .addTo(map.current);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching coordinates for selected address:', error);
+        }
     };
 
-    console.log(addressSuggestions)
+    console.log(coordinates)
     return (
         <div className="w-screen h-fit relative flex justify-center items-center flex-row overflow-y-auto">
             {isVerify &&
@@ -405,13 +464,16 @@ const ServiceProviderRegister = () => {
                 <form onChange={locationFormondayChange} className="flex items-center gap-2">
                     <Select
                         label='Province'
-                        options={provinces?.map((el, index) => (
-                            {
-                                code: index,
-                                value: el.name
-                            }
-                        ))}
+                        options={provinces?.map((el, index) => ({
+                            code: index,
+                            value: el.name
+                        }))}
                         register={(a, b) => { }}
+                        value={selectedProvince}
+                        onChange={(e) => {
+                            setSelectedProvince(e.target.value);
+                            locationFormondayChange(e);
+                        }}
                         id='province'
                         validate={{
                             required: 'Need fill this field'
@@ -419,7 +481,6 @@ const ServiceProviderRegister = () => {
                         style='flex-auto'
                         errors={{}}
                         fullWidth
-                        ref={provinceInputRef}
                     />
 
                     <Select
