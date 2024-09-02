@@ -83,7 +83,7 @@ const ManagePost = ({ dispatch, navigate }) => {
               ))}
             </select> */}
           </div>
-          <p className="text-blue-600 italic font-semibold">Total posts in selected month: {counts}</p>
+          <p className="text-blue-600 italic font-semibold">Total Posts In Current Page: {counts}</p>
         </div>
         <div className='flex gap-8 items-center flex-wrap justify-center'>
           {/* {post && filterPostsByMonth(post, selectedMonth).map((postItem, index) => ( */}

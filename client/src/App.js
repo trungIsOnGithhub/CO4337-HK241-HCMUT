@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {Route, Routes} from 'react-router-dom'
 
 import { AddPost, AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, ManagePostDetail, EditPostDetail} from 'pages/admin'
-import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct } from 'pages/public'
+import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct,ViewBlog } from 'pages/public'
 
 import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct} from 'pages/user'
 import path from './ultils/path'
@@ -46,6 +46,7 @@ function App() {
         <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
         <Route path={path.BOOKING} element={<Booking />} />
         <Route path={path.BOOKING_DATE_TIME} element={<BookingDateTIme />} />
+        <Route path={path.VIEW_POST} element={<ViewBlog />} />
         {/* <Route path={path.DETAIL_CART} element={<DetailCart />} /> */}
         {/* <Route path={path.ALL} element={<Home />} /> */}
       </Route>

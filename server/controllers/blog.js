@@ -69,10 +69,10 @@ const getAllBlogs = asyncHandler(async (req, res)=>{
     //     throw new Error ("Missing input")
     // }
     const searchFilter = {};
-    if (!provider_id) {
+    if (provider_id) {
         searchFilter.provider_id = provider_id;
     }
-    if (!title) {
+    if (title) {
         searchFilter.title = title;
     }
     const response = await Blog.find(searchFilter);
