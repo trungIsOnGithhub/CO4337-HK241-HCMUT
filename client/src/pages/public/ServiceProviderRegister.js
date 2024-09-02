@@ -316,7 +316,7 @@ const ServiceProviderRegister = () => {
 
     console.log(addressSuggestions)
     return (
-        <div className="w-screen h-screen relative flex justify-center items-center flex-row">
+        <div className="w-screen h-fit relative flex justify-center items-center flex-row overflow-y-auto">
             {isVerify &&
                 <div className="absolute top-0 bottom-0 left-0 right-0 bg-overlay z-50 flex flex-row items-center justify-center">
                     <div className="bg-white w-[500px] rounded-md p-8">
@@ -338,225 +338,228 @@ const ServiceProviderRegister = () => {
             }
 
             <img src="https://images.rawpixel.com/image_800/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTA4L3Jhd3BpeGVsX29mZmljZV8zM18zZF9pbGx1c3RyYXRpb25fb2ZfYV9uZW9uX2ljb25zX3Nob3BwaW5nX2lzb19hYTQwZTZhNi0xOTk1LTRlMTUtOTJjYy03ZjJlODdlNjkyODNfMS5qcGc.jpg" alt=""
-                className='w-full min-h-full object-cover'></img>
-            <div className="absolute top-0 bottom-0 left-1/4 flex items-center justify-center">
-                <div className="p-8 bg-white rounded-md min-w-[500px] flex flex-row items-center">
-                    <div className="p-8 bg-white rounded-md min-w-[500px] flex flex-col items-center">
-                        <h1 className="text-[28px] font-semibold text-main mb-8">Đăng ký Dịch vụ Kinh Doanh của Bạn</h1>
+                className='w-screen min-h-screen object-cover'>    
+            </img>
 
-                        <div className="flex gap-2 w-full">
-                            <InputField
-                                value={payload.firstName}
-                                setValue={setPayload}
-                                nameKey='firstName'
-                                invalidField={invalidField}
-                                setInvalidField={setInvalidField}
-                                style='flex-auto'
-                                fullWidth
-                            />
-                            <InputField
-                                value={payload.lastName}
-                                setValue={setPayload}
-                                nameKey='lastName'
-                                invalidField={invalidField}
-                                setInvalidField={setInvalidField}
-                                style='flex-auto'
-                                fullWidth
-                            />
-                        </div>
+            <div className="absolute top-0 mt-4 p-8 bg-white rounded-md max-w-[600px] h-fit flex flex-col items-center overflow-y-auto">
+                <h1 className="text-[28px] font-semibold text-main mb-8">Đăng ký Dịch vụ Kinh Doanh của Bạn</h1>
 
-                        <InputField
-                            value={payload.email}
-                            setValue={setPayload}
-                            nameKey='email'
-                            invalidField={invalidField}
-                            setInvalidField={setInvalidField}
-                            fullWidth
-                        />
-
-                        <InputField
-                            value={payload.password}
-                            setValue={setPayload}
-                            nameKey='password'
-                            type='password'
-                            invalidField={invalidField}
-                            setInvalidField={setInvalidField}
-                            fullWidth
-                        />
-
-                        <InputField
-                            value={payload.mobile}
-                            setValue={setPayload}
-                            nameKey='mobile'
-                            invalidField={invalidField}
-                            setInvalidField={setInvalidField}
-                            fullWidth
-                        />
-
-                        <InputField
-                            value={payload.bussinessName}
-                            setValue={setPayload}
-                            nameKey='bussinessName'
-                            invalidField={invalidField}
-                            setInvalidField={setInvalidField}
-                            fullWidth
-                        />
-
-                        <form onChange={locationFormondayChange} className="flex items-center gap-2">
-                            <Select
-                                label='Province'
-                                options={provinces?.map((el, index) => (
-                                    {
-                                        code: index,
-                                        value: el.name
-                                    }
-                                ))}
-                                register={(a, b) => { }}
-                                id='province'
-                                validate={{
-                                    required: 'Need fill this field'
-                                }}
-                                style='flex-auto'
-                                errors={{}}
-                                fullWidth
-                                ref={provinceInputRef}
-                            />
-
-                            <Select
-                                label='District'
-                                options={districts?.map((el, index) => (
-                                    {
-                                        code: index,
-                                        value: el.name
-                                    }
-                                ))}
-                                register={(a, b) => { }}
-                                id='district'
-                                validate={{
-                                    required: 'Need fill this field'
-                                }}
-                                style='flex-auto'
-                                errors={{}}
-                                fullWidth
-                                ref={districtInputRef}
-                            />
-
-                            <Select
-                                label='Ward'
-                                options={wards?.map((el, index) => (
-                                    {
-                                        code: index,
-                                        value: el.name
-                                    }
-                                ))}
-                                register={(a, b) => { }}
-                                id='ward'
-                                validate={{
-                                    required: 'Need fill this field'
-                                }}
-                                style='flex-auto'
-                                errors={{}}
-                                fullWidth
-                                ref={wardInputRef}
-                            />
-                        </form>
-
-                        <InputField
-                            value={payload.address}
-                            setValue={setPayload}
-                            nameKey='address'
-                            type='address'
-                            invalidField={invalidField}
-                            setInvalidField={setInvalidField}
-                            fullWidth
-                            onChange={handleAddressInputChange}
-                            onKeyPress={handleAddressKeyPress}
-                        />
-                        {addressSuggestions.length > 0 && (
-                            <div className="min-w-[100%]">
-                            <ul className="bg-white border border-gray-300 z-10 min-w-[100%] max-h-60 overflow-y-auto">
-                                {addressSuggestions.map((suggestion) => (
-                                    <div className="max-w-[528px] line-clamp-1">
-                                    <li
-                                        key={suggestion.place_id}
-                                        onClick={() => handleSuggestionSelect(suggestion)}
-                                        className="p-2 cursor-pointer hover:bg-gray-200"
-                                    >
-                                        {suggestion.description}
-                                    </li>
-                                    </div>
-                                ))}
-                            </ul>
-                            </div>
-                        )}
-                        <Button
-                            handleOnclick={handleSubmit}
-                            fullWidth
-                        >
-                            Register As Provider
-                        </Button>
-
-                        <Link className="text-blue-500 text-sm hover:underline cursor-pointer" to={`/${path.LOGIN}`}>
-                            Go to Login Page
-                        </Link>
-                    </div>
-
-                    {isInTimeForm &&
-                        <div className="bg-white p-10 flex flex-col items-center justify-center px-4 py-6 fixed top-0" style={{ width: '50%', margin: '0 auto' }}>
-                            <h5 className="text-center text-gray-600 text-3xl font-bold">Select Time Schedule</h5>
-                            {isInTimeForm &&
-                                daysInWeek.map(day => {
-                                    return (
-                                        <div className="flex items-center gap-2 w-full mb-2" key={day}>
-                                            <div className="flex-auto capitalize">{day}</div>
-                                            <InputField
-                                                value={timeOpenPayload[`start${day}`]}
-                                                setValue={setTimeOpenPayload}
-                                                nameKey={`start${day}`}
-                                                invalidField={invalidField}
-                                                setInvalidField={setInvalidField}
-                                                type="time"
-                                                className="flex-auto"
-                                            />
-                                            <InputField
-                                                value={timeOpenPayload[`end${day}`]}
-                                                setValue={setTimeOpenPayload}
-                                                nameKey={`end${day}`}
-                                                invalidField={invalidField}
-                                                setInvalidField={setInvalidField}
-                                                type="time"
-                                                className="flex-auto"
-                                            />
-                                            <button
-                                                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-2 rounded w-20 text-sm"
-                                                onClick={() => applySpecificDayToAllDays(day)}
-                                            >
-                                                Apply to all
-                                            </button>
-                                        </div>
-                                    );
-                                })
-                            }
-
-                            <Button
-                                handleOnclick={() => { setIsInTimeForm(prevState => { setIsInTimeForm(!prevState); }); }}
-                                fullWidth
-                            >
-                                Close Time Select
-                            </Button>
-                        </div>
-                    }
+                <div className="flex gap-2 w-full">
+                    <InputField
+                        value={payload.firstName}
+                        setValue={setPayload}
+                        nameKey='firstName'
+                        invalidField={invalidField}
+                        setInvalidField={setInvalidField}
+                        style='flex-auto'
+                        fullWidth
+                    />
+                    <InputField
+                        value={payload.lastName}
+                        setValue={setPayload}
+                        nameKey='lastName'
+                        invalidField={invalidField}
+                        setInvalidField={setInvalidField}
+                        style='flex-auto'
+                        fullWidth
+                    />
                 </div>
+
+                <InputField
+                    value={payload.email}
+                    setValue={setPayload}
+                    nameKey='email'
+                    invalidField={invalidField}
+                    setInvalidField={setInvalidField}
+                    fullWidth
+                />
+
+                <InputField
+                    value={payload.password}
+                    setValue={setPayload}
+                    nameKey='password'
+                    type='password'
+                    invalidField={invalidField}
+                    setInvalidField={setInvalidField}
+                    fullWidth
+                />
+
+                <InputField
+                    value={payload.mobile}
+                    setValue={setPayload}
+                    nameKey='mobile'
+                    invalidField={invalidField}
+                    setInvalidField={setInvalidField}
+                    fullWidth
+                />
+
+                <InputField
+                    value={payload.bussinessName}
+                    setValue={setPayload}
+                    nameKey='bussinessName'
+                    invalidField={invalidField}
+                    setInvalidField={setInvalidField}
+                    fullWidth
+                />
+
+                <form onChange={locationFormondayChange} className="flex items-center gap-2">
+                    <Select
+                        label='Province'
+                        options={provinces?.map((el, index) => (
+                            {
+                                code: index,
+                                value: el.name
+                            }
+                        ))}
+                        register={(a, b) => { }}
+                        id='province'
+                        validate={{
+                            required: 'Need fill this field'
+                        }}
+                        style='flex-auto'
+                        errors={{}}
+                        fullWidth
+                        ref={provinceInputRef}
+                    />
+
+                    <Select
+                        label='District'
+                        options={districts?.map((el, index) => (
+                            {
+                                code: index,
+                                value: el.name
+                            }
+                        ))}
+                        register={(a, b) => { }}
+                        id='district'
+                        validate={{
+                            required: 'Need fill this field'
+                        }}
+                        style='flex-auto'
+                        errors={{}}
+                        fullWidth
+                        ref={districtInputRef}
+                    />
+
+                    <Select
+                        label='Ward'
+                        options={wards?.map((el, index) => (
+                            {
+                                code: index,
+                                value: el.name
+                            }
+                        ))}
+                        register={(a, b) => { }}
+                        id='ward'
+                        validate={{
+                            required: 'Need fill this field'
+                        }}
+                        style='flex-auto'
+                        errors={{}}
+                        fullWidth
+                        ref={wardInputRef}
+                    />
+                </form>
+
+                <div className="flex flex-col items-start w-full h-fit">
+                <InputField
+                    value={payload.address}
+                    setValue={setPayload}
+                    nameKey='address'
+                    type='address'
+                    invalidField={invalidField}
+                    setInvalidField={setInvalidField}
+                    fullWidth
+                    onChange={handleAddressInputChange}
+                    onKeyPress={handleAddressKeyPress}
+                />
+                <div className="w-[100%]">
+                {addressSuggestions.length > 0 && (
+                    <ul className="bg-white border border-gray-300 z-10 min-w-[100%] max-h-60 overflow-y-auto">
+                        {addressSuggestions.map((suggestion) => (
+                            <li
+                                key={suggestion.place_id}
+                                onClick={() => handleSuggestionSelect(suggestion)}
+                                className="p-2 cursor-pointer hover:bg-gray-200"
+                            >
+                                {suggestion.description}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+                </div>
+                </div>
+                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 p-4 rounded mt-5 w-full" onClick={() => { setIsInTimeForm(prevState => { setIsInTimeForm(!prevState); }); }}>
+                    {isInTimeForm ? 'Close Time Select' : 'Open Time Select'}
+                </button>
+                <Button
+                    handleOnclick={handleSubmit}
+                    fullWidth
+                >
+                    Register As Provider
+                </Button>
+
+                <Link className="text-blue-500 text-sm hover:underline cursor-pointer" to={`/${path.LOGIN}`}>
+                    Go to Login Page
+                </Link>
             </div>
+
+            {isInTimeForm &&
+                <div className="bg-white p-10 flex flex-col items-center justify-center px-4 py-6 fixed top-0" style={{ width: '50%', margin: '0 auto' }}>
+                    <h5 className="text-center text-gray-600 text-3xl font-bold">Select Time Schedule</h5>
+                    {isInTimeForm &&
+                        daysInWeek.map(day => {
+                            return (
+                                <div className="flex items-center gap-2 w-full mb-2" key={day}>
+                                    <div className="flex-auto capitalize">{day}</div>
+                                    <InputField
+                                        value={timeOpenPayload[`start${day}`]}
+                                        setValue={setTimeOpenPayload}
+                                        nameKey={`start${day}`}
+                                        invalidField={invalidField}
+                                        setInvalidField={setInvalidField}
+                                        type="time"
+                                        className="flex-auto"
+                                    />
+                                    <InputField
+                                        value={timeOpenPayload[`end${day}`]}
+                                        setValue={setTimeOpenPayload}
+                                        nameKey={`end${day}`}
+                                        invalidField={invalidField}
+                                        setInvalidField={setInvalidField}
+                                        type="time"
+                                        className="flex-auto"
+                                    />
+                                    <button
+                                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-2 rounded w-20 text-sm"
+                                        onClick={() => applySpecificDayToAllDays(day)}
+                                    >
+                                        Apply to all
+                                    </button>
+                                </div>
+                            );
+                        })
+                    }
+
+                    <Button
+                        handleOnclick={() => { setIsInTimeForm(prevState => { setIsInTimeForm(!prevState); }); }}
+                        fullWidth
+                    >
+                        Close Time Select
+                    </Button>
+                </div>
+            }
+           
             {isLoading && (
             <div className='flex justify-center z-50 w-full h-full fixed top-0 left-0 items-center bg-overlay'>
                 <HashLoader className='z-50' color='#3B82F6' loading={isLoading} size={80} />
             </div>
             )}
             
-            <div className={clsx("absolute top-0 right-0 w-1/2 h-full", isMapVisible ? 'block' : 'hidden')}>
-                <button onClick={handleCloseMap} className={clsx("absolute top-2 right-2 bg-red-500 text-white p-2 rounded", isMapVisible ? 'block' : 'hidden')} style={{ zIndex: 1000 }}>X</button>
-                <div ref={mapContainer} className={clsx("w-full h-full", isMapVisible ? 'block' : 'hidden')} style={{ zIndex: 1000 }}/>
+            <div className={clsx("absolute inset-0 w-screen h-screen", isMapVisible ? 'flex items-center justify-center' : 'hidden')}>
+                <div ref={mapContainer} className={clsx("absolute w-[75%] h-[90%] border-2 border-gray-300 rounded-md", isMapVisible ? 'block' : 'hidden')} style={{ zIndex: 1000 }}>
+                    <button onClick={handleCloseMap} className={clsx("absolute top-2 right-2 bg-red-500 text-white p-2 rounded", isMapVisible ? 'block' : 'hidden')} style={{ zIndex: 1000 }}>X</button>
+                </div>
             </div>
         </div>
     );
