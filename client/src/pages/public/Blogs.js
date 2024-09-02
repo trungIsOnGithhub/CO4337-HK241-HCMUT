@@ -102,7 +102,7 @@ const Blogs = () => {
           <MultiSelect
             title='Tags Of Post'
             label='Tags Of Post'
-            id='assigned_tags' 
+            id='assigned_tags'
             options={tags}
             onChangee={handleSelectTagChange}
             values={selectedTags}
