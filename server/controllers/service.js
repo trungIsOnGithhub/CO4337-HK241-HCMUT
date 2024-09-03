@@ -269,6 +269,9 @@ const getOneService = asyncHandler(async(req, res)=>{
             path: 'postedBy',
             select: 'firstName lastName avatar',
         }
+    }).populate({
+        path: 'provider_id',
+        select: 'bussinessName address province latitude longitude'
     })
 
 
