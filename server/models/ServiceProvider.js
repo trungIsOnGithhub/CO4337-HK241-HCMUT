@@ -8,16 +8,9 @@ var ProviderServiceSchema = new mongoose.Schema({
         unique: true,
         index: true,
     },
-    province: {
+    province:{
         type: String,
         required: true,
-        index: true,
-    },
-    district: {
-        type: String,
-    },
-    ward: {
-        type: String,
     },
     address: {
         type: String,

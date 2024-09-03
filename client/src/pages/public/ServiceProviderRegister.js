@@ -1,27 +1,20 @@
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import { InputField, Button, Loading, Select } from '../../components';
-import { apiRegister, apiLogin, apiForgotPassword, apiFinalRegister } from "../../apis/user";
+import { InputField, Button } from '../../components';
+import {apiFinalRegister } from "../../apis/user";
 import { apiCreateServiceProvider } from "../../apis/ServiceProvider";
 import Swal from 'sweetalert2';
-import { useNavigate, Link, useSearchParams } from 'react-router-dom';
+import {Link, useSearchParams } from 'react-router-dom';
 import path from "../../ultils/path";
-import { login } from "../../store/user/userSlice";
-import { tinh_thanhpho } from "tinh_thanhpho";
-
-import { showModal } from 'store/app/appSlice';
 
 import { useDispatch } from 'react-redux';
-import { toast } from 'react-toastify';
 import { validate } from "ultils/helper";
-import { quan_huyen } from "quan_huyen";
-import { xa_phuong } from "xa_phuong";
 import { HashLoader } from "react-spinners";
 import goongjs from '@goongmaps/goong-js';
 import '@goongmaps/goong-js/dist/goong-js.css';
 import axios from 'axios';
 import clsx from "clsx";
 
-const GOONG_API_KEY = 'cedceGY7oXTnY8vjoUpEmr2BhoqBM0PkBjqjzj58';
+const GOONG_API_KEY = 'HjmMHCMNz4xyFqc54FsgxrobHmt48vwp7U8xzQUC';
 const GOONG_MAPTILES_KEY = 'IXqHXe9w2riica5A829SuB6HUl5Fi1Yg7LC9OHF2';
 
 const ServiceProviderRegister = () => {
@@ -30,13 +23,6 @@ const ServiceProviderRegister = () => {
     const map = useRef(null);
 
     const daysInWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-    const provinces = Object.values(tinh_thanhpho);
-    const [districts, setDistricts] = useState([]);
-    const [wards, setWards] = useState([]);
-    const provinceInputRef = useRef(null);
-    const districtInputRef = useRef(null);
-    const wardInputRef = useRef(null);
-    const [selectedProvince, setSelectedProvince] = useState('');
 
     const [payload, setPayload] = useState({
         firstName: '',
@@ -46,9 +32,6 @@ const ServiceProviderRegister = () => {
         password: '',
         bussinessName: '',
         address: '',
-        province: '',
-        district: '',
-        ward: '',
     });
     const [timeOpenPayload, setTimeOpenPayload] = useState({
         startmonday: '', endmonday: '',
@@ -95,6 +78,10 @@ const ServiceProviderRegister = () => {
         }
     }, [isMapVisible]);
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     const resetPayload = () => {
         setPayload({
             firstName: '',
@@ -104,9 +91,6 @@ const ServiceProviderRegister = () => {
             password: '',
             bussinessName: '',
             address: '',
-            province: '',
-            district: '',
-            ward: '',
         });
         setTimeOpenPayload({
             startmonday: '', endmonday: '',
@@ -117,13 +101,6 @@ const ServiceProviderRegister = () => {
             startsaturday: '', endsaturday: '',
             startsunday: '', endsunday: '',
         });
-        setWards([]);
-        setDistricts([]);
-        setSelectedProvince('');
-        
-        // Reset các trường select
-        if (districtInputRef.current) districtInputRef.current.value = '';
-        if (wardInputRef.current) wardInputRef.current.value = '';
     };
 
     const handleCheckLocation = async () => {
@@ -137,11 +114,10 @@ const ServiceProviderRegister = () => {
                 setError('');
                 setIsMapVisible(true); // Show map when location is found
 
-                // Add this line to update the payload with the coordinates
-                setPayload(prev => ({ ...prev, longitude: lng, latitude: lat }));
+                // Update the payload with the coordinates
+                setPayload(prev => ({ ...prev, longitude: lng, latitude: lat, province: data.results[0].compound.province }));
 
                 if (map.current) {
-                    console.log('Updating map center');
                     map.current.setCenter([lng, lat]);
                     map.current.setZoom(15);
 
@@ -228,6 +204,7 @@ const ServiceProviderRegister = () => {
         }
 
         const invalid = validate(payload, setInvalidField);
+        console.log(payload)
         if (invalid === 0) {
             payload.role = 1411;
             setIsLoading(true)
@@ -257,26 +234,6 @@ const ServiceProviderRegister = () => {
         }
         setIsVerify(false);
         setToken('');
-    };
-
-    const locationFormondayChange = (event) => {
-        const newPayLoad = {
-            ...payload,
-        };
-        if (event.target.id === 'province') {
-            const province_index = parseInt(event.target.value);
-            newPayLoad[event.target.id] = provinces[province_index].name;
-            setSelectedProvince(provinces[province_index].name);
-            setDistricts(Object.values(quan_huyen).filter(district => district.parent_code === provinces[province_index].code));
-        } else if (event.target.id === 'district') {
-            const district_index = parseInt(event.target.value);
-            newPayLoad[event.target.id] = districts[district_index].name;
-            setWards(Object.values(xa_phuong).filter(ward => ward.parent_code === districts[district_index].code));
-        } else if (event.target.id === 'ward') {
-            newPayLoad[event.target.id] = wards[parseInt(event.target.value)].name;
-        }
-
-        setPayload(newPayLoad);
     };
 
     const applyTimeToAllDays = () => {
@@ -340,7 +297,7 @@ const ServiceProviderRegister = () => {
                 const { lat, lng } = data.results[0].geometry.location;
                 setCoordinates({ lat, lng });
                 setIsMapVisible(true);
-    
+                setPayload(prev => ({ ...prev, province: data.results[0].compound.province }));
                 if (map.current) {
                     map.current.setCenter([lng, lat]);
                     map.current.setZoom(15);
@@ -373,7 +330,8 @@ const ServiceProviderRegister = () => {
         }
     };
 
-    console.log(coordinates)
+    
+
     return (
         <div className="w-screen h-fit relative flex justify-center items-center flex-row overflow-y-auto">
             {isVerify &&
@@ -460,68 +418,7 @@ const ServiceProviderRegister = () => {
                     setInvalidField={setInvalidField}
                     fullWidth
                 />
-
-                <form onChange={locationFormondayChange} className="flex items-center gap-2">
-                    <Select
-                        label='Province'
-                        options={provinces?.map((el, index) => ({
-                            code: index,
-                            value: el.name
-                        }))}
-                        register={(a, b) => { }}
-                        value={selectedProvince}
-                        onChange={(e) => {
-                            setSelectedProvince(e.target.value);
-                            locationFormondayChange(e);
-                        }}
-                        id='province'
-                        validate={{
-                            required: 'Need fill this field'
-                        }}
-                        style='flex-auto'
-                        errors={{}}
-                        fullWidth
-                    />
-
-                    <Select
-                        label='District'
-                        options={districts?.map((el, index) => (
-                            {
-                                code: index,
-                                value: el.name
-                            }
-                        ))}
-                        register={(a, b) => { }}
-                        id='district'
-                        validate={{
-                            required: 'Need fill this field'
-                        }}
-                        style='flex-auto'
-                        errors={{}}
-                        fullWidth
-                        ref={districtInputRef}
-                    />
-
-                    <Select
-                        label='Ward'
-                        options={wards?.map((el, index) => (
-                            {
-                                code: index,
-                                value: el.name
-                            }
-                        ))}
-                        register={(a, b) => { }}
-                        id='ward'
-                        validate={{
-                            required: 'Need fill this field'
-                        }}
-                        style='flex-auto'
-                        errors={{}}
-                        fullWidth
-                        ref={wardInputRef}
-                    />
-                </form>
-
+                
                 <div className="flex flex-col items-start w-full h-fit">
                 <InputField
                     value={payload.address}
@@ -536,7 +433,7 @@ const ServiceProviderRegister = () => {
                 />
                 <div className="w-[100%]">
                 {addressSuggestions.length > 0 && (
-                    <ul className="bg-white border border-gray-300 z-10 min-w-[100%] max-h-60 overflow-y-auto">
+                    <ul className="bg-white border border-gray-300 z-10 w-[100%] max-h-60 overflow-y-auto">
                         {addressSuggestions.map((suggestion) => (
                             <li
                                 key={suggestion.place_id}
@@ -566,7 +463,7 @@ const ServiceProviderRegister = () => {
             </div>
 
             {isInTimeForm &&
-                <div className="bg-white p-10 flex flex-col items-center justify-center px-4 py-6 fixed top-0" style={{ width: '50%', margin: '0 auto' }}>
+                <div className="bg-white p-10 flex flex-col items-center justify-center px-4 py-6 fixed top-4 border-2 border-gray-800 rounded-md" style={{ width: '50%', margin: '0 auto' }}>
                     <h5 className="text-center text-gray-600 text-3xl font-bold">Select Time Schedule</h5>
                     {isInTimeForm &&
                         daysInWeek.map(day => {
