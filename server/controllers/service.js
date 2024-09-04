@@ -1,9 +1,10 @@
+const mongoose = require('mongoose');
 const Service = require('../models/service')
 const User = require('../models/user')
 const asyncHandler = require("express-async-handler")
 const slugify = require('slugify')
 const makeSku = require('uniqid')
-
+const Order = require('../models/order')
 
 const createService = asyncHandler(async(req, res)=>{
     const {name, price, description, category, assigned_staff, hour, minute, provider_id} = req.body
@@ -298,7 +299,6 @@ const addVariantService = asyncHandler(async(req, res)=>{
 })
 
 const ratingService = asyncHandler(async(req, res)=>{
-
     const {_id} = req.user
     const {star, comment, sid, updatedAt} = req.body
 
@@ -337,6 +337,63 @@ const ratingService = asyncHandler(async(req, res)=>{
         updatedService
     })
 })
+
+const getMostPurchasedService = asyncHandler(async(req, res) => {
+    const {provider_id, year} = req.body;
+
+    console.log('getMostPurchasedService::::::', req.body, '================')
+
+    if (!provider_id || !year) {
+        throw new Error("Missing input")
+    }
+
+    const providerObjectId = new mongoose.Types.ObjectId(provider_id)
+
+    let orders = await Order.aggregate([
+        {
+            $match: {
+                'info.provider': providerObjectId
+            }
+        },
+        {
+            $lookup: {
+                from: 'services',
+                localField: 'info.service',
+                foreignField: '_id',
+                as: 'service'
+            }
+        },
+        {
+            $unwind: "$service"
+        },
+        // {
+        //     $match: {
+        //         "$$this.service._id": { $in: service_obj_ids }
+        //     }
+        // },
+        // {
+        //     $lookup: {
+        //         from: 'staffs',
+        //         localField: 'info.staff',
+        //         foreignField: '_id',
+        //         as: 'staffs'
+        //     }
+        // }
+    ])
+
+    if (!orders || typeof(orders.length) !== 'number') {
+        return res.status(500).json({
+            success: false,
+            error: 'Cannot Get Order'
+        });
+    }
+
+    return res.status(200).json({
+        success: true,
+        services: orders
+    });
+})
+
 module.exports = {
     createService,
     getAllServicesByAdmin,
@@ -345,5 +402,6 @@ module.exports = {
     getAllServicesPublic,
     getOneService,
     addVariantService,
-    ratingService
+    ratingService,
+    getMostPurchasedService
 }

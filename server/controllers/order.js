@@ -255,14 +255,14 @@ const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
         });
     }
 
-    const service_obj_ids = service_ids.map(objIdStr => new mongoose.Types.ObjectId(objIdStr))
+    // const service_obj_ids = service_ids.map(objIdStr => new mongoose.Types.ObjectId(objIdStr))
 
     const providerObjectId = new mongoose.Types.ObjectId(provider_id)
 
     let orders = await Order.aggregate([
         {
             $match: {
-                'info.provider': providerObjectId
+                'info.provider': provider_id
             }
         },
         {
@@ -277,18 +277,21 @@ const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
             $unwind: "$service"
         },
         // {
+        //     $match
+        // }
+        // {
         //     $match: {
         //         "$$this.service._id": { $in: service_obj_ids }
         //     }
         // },
-        {
-            $lookup: {
-                from: 'staffs',
-                localField: 'info.staff',
-                foreignField: '_id',
-                as: 'staffs'
-            }
-        }
+        // {
+        //     $lookup: {
+        //         from: 'staffs',
+        //         localField: 'info.staff',
+        //         foreignField: '_id',
+        //         as: 'staffs'
+        //     }
+        // }
     ])
 
     if (!orders || typeof(orders.length) !== 'number') {
@@ -299,17 +302,17 @@ const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
     }
 
     // temp
-    orders = orders.filter(order => {
-        return service_ids.includes(order.service._id.toString())
-    })
-    orders = orders.filter(order => {
-        const thisOrderStaffs = order?.staffs || [];
-        for (const staff of thisOrderStaffs) {
-            if (assigned_staff_ids.includes(staff._id.toString()))
-                return true;
-        }
-        return false;
-    })
+    // orders = orders.filter(order => {
+    //     return service_ids.includes(order.service._id.toString())
+    // })
+    // orders = orders.filter(order => {
+    //     const thisOrderStaffs = order?.staffs || [];
+    //     for (const staff of thisOrderStaffs) {
+    //         if (assigned_staff_ids.includes(staff._id.toString()))
+    //             return true;
+    //     }
+    //     return false;
+    // })
 
     res.status(200).json({
         success: true,
