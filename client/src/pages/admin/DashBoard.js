@@ -155,11 +155,11 @@ const MostPurchasedServicesByYear = ({currentUser}) => {
   const state = {
     series: [44, 55, 13, 43, 22],
     options: {
-    theme: {
-      monochrome: {
-        enabled: true,
-      },
-    },
+    // theme: {
+    //   monochrome: {
+    //     enabled: true,
+    //   },
+    // },
     chart: {
       // height: 220,
       type: 'pie',
