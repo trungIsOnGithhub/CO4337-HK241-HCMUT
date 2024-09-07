@@ -1,211 +1,211 @@
 import { Button, InputForm, MultiSelect } from 'components';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { HashLoader } from 'react-spinners';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { apiCreateNewCoupon, apiGetServiceByAdmin } from 'apis';
-import { Slider } from '@mui/material';
-import moment from 'moment'
-import { useSelector } from 'react-redux';
+// import { useForm } from 'react-hook-form';
+// import { HashLoader } from 'react-spinners';
+// import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+// import { apiCreateNewCoupon, apiGetServiceByAdmin } from 'apis';
+// import { Slider } from '@mui/material';
+// import moment from 'moment'
+// import { useSelector } from 'react-redux';
 
 const AddVoucher = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [voucherType, setVoucherType] = useState('percentage');
-  const [noUsageLimit, setNoUsageLimit] = useState(false);
-  const [noLimitPerUser, setNoLimitPerUser] = useState(false);
-  const { register, formState: { errors }, reset, handleSubmit, watch, setValue } = useForm();
-  const [expirationDate, setExpirationDate] = useState({});
-  const [services, setServices] = useState([]);
-  const [selectedService, setSelectedService] = useState([]);
-  const [percentageDiscount, setPercentageDiscount] = useState([]);
-  const [fixedAmount, setFixedAmount] = useState([]);
-  const [exprDate, setExprdate] = useState(null)
-  const {current} = useSelector(state => state.user)
-  const handleAddVoucherCode = async (data) => {
-    try {
-      setIsLoading(true);
-      const couponData = {
-        ...data,
-        expirationDate,
-        services: selectedService,
-        discount_type: voucherType,
-        percentageDiscount: voucherType === 'percentage' ? percentageDiscount : [],
-        fixedAmount: voucherType === 'fixed' ? fixedAmount : [],
-      };
-      couponData.providerId = current?.provider_id
-      //Call API to create a new coupon
-      const response = await apiCreateNewCoupon(couponData);
-      if (response?.success) {
-        alert('Voucher created successfully!');
-        reset(); // Reset the form fields
-        setSelectedService([])
-        setExprdate(null)
-      } else {
-        alert('Failed to create voucher.');
-      }
-    } catch (error) {
-      alert('An error occurred. Please try again.');
-    }
-    setIsLoading(false);
-  };
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [voucherType, setVoucherType] = useState('percentage');
+  // const [noUsageLimit, setNoUsageLimit] = useState(false);
+  // const [noLimitPerUser, setNoLimitPerUser] = useState(false);
+  // const { register, formState: { errors }, reset, handleSubmit, watch, setValue } = useForm();
+  // const [expirationDate, setExpirationDate] = useState({});
+  // const [services, setServices] = useState([]);
+  // const [selectedService, setSelectedService] = useState([]);
+  // const [percentageDiscount, setPercentageDiscount] = useState([]);
+  // const [fixedAmount, setFixedAmount] = useState([]);
+  // const [exprDate, setExprdate] = useState(null)
+  // const {current} = useSelector(state => state.user)
+  // const handleAddVoucherCode = async (data) => {
+  //   try {
+  //     setIsLoading(true);
+  //     const couponData = {
+  //       ...data,
+  //       expirationDate,
+  //       services: selectedService,
+  //       discount_type: voucherType,
+  //       percentageDiscount: voucherType === 'percentage' ? percentageDiscount : [],
+  //       fixedAmount: voucherType === 'fixed' ? fixedAmount : [],
+  //     };
+  //     couponData.providerId = current?.provider_id
+  //     //Call API to create a new coupon
+  //     const response = await apiCreateNewCoupon(couponData);
+  //     if (response?.success) {
+  //       alert('Voucher created successfully!');
+  //       reset(); // Reset the form fields
+  //       setSelectedService([])
+  //       setExprdate(null)
+  //     } else {
+  //       alert('Failed to create voucher.');
+  //     }
+  //   } catch (error) {
+  //     alert('An error occurred. Please try again.');
+  //   }
+  //   setIsLoading(false);
+  // };
 
-  const handleDateChange = (date) => {
-    setExpirationDate({
-      date: moment(new Date(date)).format("DD/MM/YYYY"),
-      time: '23:59'
-    })
-    setExprdate(date)
-  };
+  // const handleDateChange = (date) => {
+  //   setExpirationDate({
+  //     date: moment(new Date(date)).format("DD/MM/YYYY"),
+  //     time: '23:59'
+  //   })
+  //   setExprdate(date)
+  // };
 
-  const handleNoUsageLimitChange = () => {
-    setNoUsageLimit(prev => {
-      const newValue = !prev;
-      if (newValue) {
-        setValue('usageLimit', ''); // Set Usage Limit to 0
-      }
-      return newValue;
-    });
-  };
+  // const handleNoUsageLimitChange = () => {
+  //   setNoUsageLimit(prev => {
+  //     const newValue = !prev;
+  //     if (newValue) {
+  //       setValue('usageLimit', ''); // Set Usage Limit to 0
+  //     }
+  //     return newValue;
+  //   });
+  // };
 
-  const handleNoLimitPerUserChange = () => {
-    setNoLimitPerUser(prev => {
-      const newValue = !prev;
-      if (newValue) {
-        setValue('limitPerUser', ''); // Set Limit Per User to 0
-      }
-      return newValue;
-    });
-  };
+  // const handleNoLimitPerUserChange = () => {
+  //   setNoLimitPerUser(prev => {
+  //     const newValue = !prev;
+  //     if (newValue) {
+  //       setValue('limitPerUser', ''); // Set Limit Per User to 0
+  //     }
+  //     return newValue;
+  //   });
+  // };
 
-  useEffect(() => {
-    fetchAllServiceByAdmin();
-  }, []);
+  // useEffect(() => {
+  //   fetchAllServiceByAdmin();
+  // }, []);
 
-  const fetchAllServiceByAdmin = async () => {
-    const response = await apiGetServiceByAdmin({ limit: 999 });
-    if (response?.success) {
-      setServices(response?.services);
-    }
-  };
+  // const fetchAllServiceByAdmin = async () => {
+  //   const response = await apiGetServiceByAdmin({ limit: 999 });
+  //   if (response?.success) {
+  //     setServices(response?.services);
+  //   }
+  // };
 
-  const options = services?.map((service) => ({
-    label: service?.name,
-    value: service?._id
-  }));
+  // const options = services?.map((service) => ({
+  //   label: service?.name,
+  //   value: service?._id
+  // }));
 
-  const handleSelectServiceChange = useCallback(selectedOptions => {
-    // Update selected services
-    setSelectedService(selectedOptions);
+  // const handleSelectServiceChange = useCallback(selectedOptions => {
+  //   // Update selected services
+  //   setSelectedService(selectedOptions);
 
-    // Update percentageDiscount state
-    if(voucherType === 'percentage'){
-      setPercentageDiscount(prev => {
-        // Remove services that are no longer selected
-        const updated = prev.filter(item => selectedOptions.some(opt => opt === item.id));
+  //   // Update percentageDiscount state
+  //   if(voucherType === 'percentage'){
+  //     setPercentageDiscount(prev => {
+  //       // Remove services that are no longer selected
+  //       const updated = prev.filter(item => selectedOptions.some(opt => opt === item.id));
   
-        // Add new services with default value 0
-        selectedOptions.forEach(option => {
-          if (!updated.find(item => item.id === option)) {
-            updated.push({ id: option, value: 0 });
-          }
-        });
+  //       // Add new services with default value 0
+  //       selectedOptions.forEach(option => {
+  //         if (!updated.find(item => item.id === option)) {
+  //           updated.push({ id: option, value: 0 });
+  //         }
+  //       });
   
-        return updated;
-      });
-    }
-    // Update fixedAmount state
-    if(voucherType === 'fixed'){
-      setFixedAmount(prev => {
-        // Remove services that are no longer selected
-        const updated = prev.filter(item => selectedOptions.some(opt => opt === item.id));
+  //       return updated;
+  //     });
+  //   }
+  //   // Update fixedAmount state
+  //   if(voucherType === 'fixed'){
+  //     setFixedAmount(prev => {
+  //       // Remove services that are no longer selected
+  //       const updated = prev.filter(item => selectedOptions.some(opt => opt === item.id));
   
-        // Add new services with default value 0
-        selectedOptions.forEach(option => {
-          if (!updated.find(item => item.id === option)) {
-            updated.push({ id: option, value: 0 });
-          }
-        });
+  //       // Add new services with default value 0
+  //       selectedOptions.forEach(option => {
+  //         if (!updated.find(item => item.id === option)) {
+  //           updated.push({ id: option, value: 0 });
+  //         }
+  //       });
   
-        return updated;
-      });
-    }
-  }, [voucherType]);
+  //       return updated;
+  //     });
+  //   }
+  // }, [voucherType]);
 
-  const marks = (price) => {
-    return [
-      {
-        value: 0,
-        label: 'MIN: 0',
-      },
-      {
-        value: price,
-        label:`MAX: ${price}`,
-      }
-    ]
-  };
+  // const marks = (price) => {
+  //   return [
+  //     {
+  //       value: 0,
+  //       label: 'MIN: 0',
+  //     },
+  //     {
+  //       value: price,
+  //       label:`MAX: ${price}`,
+  //     }
+  //   ]
+  // };
 
-  const handleSliderChange = (serviceId) => (event, newValue) => {
-    setFixedAmount(prev => {
-      const updated = prev.map(item =>
-        item.id === serviceId ? { ...item, value: newValue } : item
-      );
-      return updated;
-    });
-  };
+  // const handleSliderChange = (serviceId) => (event, newValue) => {
+  //   setFixedAmount(prev => {
+  //     const updated = prev.map(item =>
+  //       item.id === serviceId ? { ...item, value: newValue } : item
+  //     );
+  //     return updated;
+  //   });
+  // };
 
-  const handlePercentChange = (serviceId) => (event) => {
-    const value = parseFloat(event.target.value);
-    if (value < 0 || value > 100) return; // Validate ngay khi nhập
-    setPercentageDiscount(prev => {
-      const updated = prev.map(item =>
-        item.id === serviceId ? { ...item, value: value } : item
-      );
-      if (!updated.find(item => item.id === serviceId)) {
-        updated.push({ id: serviceId, value: value });
-      }
-      return updated;
-    });
-  };
+  // const handlePercentChange = (serviceId) => (event) => {
+  //   const value = parseFloat(event.target.value);
+  //   if (value < 0 || value > 100) return; // Validate ngay khi nhập
+  //   setPercentageDiscount(prev => {
+  //     const updated = prev.map(item =>
+  //       item.id === serviceId ? { ...item, value: value } : item
+  //     );
+  //     if (!updated.find(item => item.id === serviceId)) {
+  //       updated.push({ id: serviceId, value: value });
+  //     }
+  //     return updated;
+  //   });
+  // };
 
-  const handleFixedAmountInputChange = (serviceId, value) => {
-    const numericValue = parseFloat(value);
-    if (!isNaN(numericValue)) {
-      setFixedAmount(prev => {
-        return prev.map(item =>
-          item.id === serviceId ? { ...item, value: numericValue } : item
-        );
-      });
-    }
-    else{
-      setFixedAmount(prev => {
-        return prev.map(item =>
-          item.id === serviceId ? { ...item, value: 0 } : item
-        );
-      });
-    }
-  };
+  // const handleFixedAmountInputChange = (serviceId, value) => {
+  //   const numericValue = parseFloat(value);
+  //   if (!isNaN(numericValue)) {
+  //     setFixedAmount(prev => {
+  //       return prev.map(item =>
+  //         item.id === serviceId ? { ...item, value: numericValue } : item
+  //       );
+  //     });
+  //   }
+  //   else{
+  //     setFixedAmount(prev => {
+  //       return prev.map(item =>
+  //         item.id === serviceId ? { ...item, value: 0 } : item
+  //       );
+  //     });
+  //   }
+  // };
 
 
-  const handleEventVoucherType = (type) => {
-    if(type === 'fixed' && voucherType === 'percentage') {
-      setFixedAmount(percentageDiscount)
-      setPercentageDiscount([])
-    }
-    if(type === 'percentage' && voucherType === 'fixed'){
-      setPercentageDiscount(fixedAmount?.map(item => ({ id: item.id, value: 0 })));
-      setFixedAmount([]);
-    }
-    setVoucherType(type)
-  }
+  // const handleEventVoucherType = (type) => {
+  //   if(type === 'fixed' && voucherType === 'percentage') {
+  //     setFixedAmount(percentageDiscount)
+  //     setPercentageDiscount([])
+  //   }
+  //   if(type === 'percentage' && voucherType === 'fixed'){
+  //     setPercentageDiscount(fixedAmount?.map(item => ({ id: item.id, value: 0 })));
+  //     setFixedAmount([]);
+  //   }
+  //   setVoucherType(type)
+  // }
 
 
   
   return (
     <div className='w-full'>
-      <h1 className='h-[75px] flex justify-between items-center text-3xl font-bold px-4 border-b'>
+      {/* <h1 className='h-[75px] flex justify-between items-center text-3xl font-bold px-4 border-b'>
         <span>Add Voucher Code</span>
       </h1>
       <div className='p-4'>
@@ -447,7 +447,7 @@ const AddVoucher = () => {
             <HashLoader className='z-50' color='#3B82F6' loading={isLoading} size={80} />
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useCallback} from 'react'
 import { useParams, useSearchParams, createSearchParams, useNavigate} from 'react-router-dom'
-import { Breadcrumb, Service, SearchItemService, InputSelect, Pagination} from '../../components'
+import { Breadcrumb, Service, SearchItemService, InputSelect, Pagination, InputField} from '../../components'
 import { apiGetServicePublic } from '../../apis'
 import Masonry from 'react-masonry-css'
 import { sorts } from '../../ultils/constant'
@@ -24,12 +24,31 @@ const Services = ({dispatch}) => {
   const [sort, setSort] = useState('')
   const {category} = useParams()
   const {isShowModal} = useSelector(state => state.app)
+  const {current} = useSelector((state) => state.user);
 
+  const [searchFilter, setSearchFilter] = useState({
+    term: '',
+    province: '',
+    maxDistance: ''
+  })
 
   const fetchServiceCategories = async (queries) =>{
     if(category && category !== 'services'){
       queries.category = category
     }
+    if (searchFilter.province) {
+      queries.province = searchFilter.province
+    }
+    if (current?.lastGeoLocation?.coordinates?.length === 2) {
+      queries.current_client_location = {
+        longtitude: current.lastGeoLocation.coordinates[0],
+        lattitude: current.lastGeoLocation.coordinates[1]
+      }
+      if (searchFilter?.maxDistance && isNaN(parseFloat(searchFilter.maxDistance))) {
+        queries.current_client_location.maxDistance = searchFilter.maxDistance;
+      }
+    }
+
     const response = await apiGetServicePublic(queries)
     if(response.success) setServices(response)
     dispatch(getCurrent())
@@ -77,7 +96,11 @@ const Services = ({dispatch}) => {
       }) 
     }   
   }, [sort])
-  
+
+  useEffect(() => {
+    console.log('Search Filter: ', searchFilter, '++++');
+  }, [searchFilter])
+
   return (
     <div className='w-full'>
       <div className='h-[81px] flex items-center justify-center bg-gray-100'>
@@ -86,7 +109,7 @@ const Services = ({dispatch}) => {
           <Breadcrumb category={category} />
         </div>
       </div>
-      <div className='w-main border p-4 flex justify-between m-auto mt-8'>
+      <div className='w-main border p-4 flex justify-start m-auto mt-8'>
         <div className='w-4/5 flex-auto flex flex-col gap-3'>
           <span className='font-semibold text-sm'>Filter by:</span>
           <div className='flex items-center gap-4'>
@@ -98,6 +121,14 @@ const Services = ({dispatch}) => {
           <span className='font-semibold text-sm'>Sort by:</span>
           <div className='w-full'> 
             <InputSelect value={sort} options={sorts} changeValue={changeValue} />
+          </div>
+        </div>
+        <div className='w-1/5 flex flex-col gap-3'>
+          <span className='font-semibold text-sm'>Search By:</span>
+          <div className='w-full'>
+            <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} />
+            <span>Within:</span>
+            <InputField nameKey='maxDistance' value={searchFilter.maxDistance} setValue={setSearchFilter} placeholder={"Maximum Distance"} />
           </div>
         </div>
       </div>

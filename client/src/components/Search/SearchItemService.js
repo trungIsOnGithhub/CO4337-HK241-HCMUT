@@ -83,8 +83,6 @@ const SearchItemService = ({name, activeClick, changeActiveFilter, type='checkbo
     }
   }
 
-
-  //goi 1 lan duy nhat thoi
   useEffect(() => { 
     if(type==='input') fetchHighestPrice()
    },[])

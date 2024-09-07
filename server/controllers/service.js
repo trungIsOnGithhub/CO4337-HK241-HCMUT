@@ -213,9 +213,16 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
     }
     const qr = {...formatedQueries, ...queryFinish, ...categoryFinish}
     let queryCommand =  Service.find(qr).populate({
-        path: 'assigned_staff',
-        select: 'firstName lastName avatar',
+        path: 'provider_id',
+        select: 'province geolocation',
     })
+
+    if (queries?.province?.length > 0) {
+        queryCommand.find({
+            $or: {'provider_id.province': {$regex: queries.province, $options: 'i' }}
+        })
+    }
+
     try {
         // sorting
         if(req.query.sort){
@@ -227,14 +234,15 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
         if(req?.query?.current_client_location){
             const {longtitude, lattitude, maxDistance} = req.query.current_client_location;
 
-            if (longitude < -180 || longitude > 180
-                || latitude < -90 || latitude > 90) {// valid long and lat
+            if (longtitude < -180 || longtitude > 180
+                || lattitude < -90 || lattitude > 90) {// valid long and lat
                 return res.status(500).json({
                     success: false,
                     error: 'Invalid Input Data!',
                 });
             }
 
+            console.log('-----+++', req.query.current_client_location)
             const nearbyFilterObj = {
                 $geometry:{
                     type:"Point",
@@ -248,6 +256,8 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
                 }
             }
 
+            console.log('-----+++', nearbyFilterObj)
+
             queryCommand.find({
                 $near: {
                     geolocation: {
@@ -256,7 +266,6 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
                 }
             })
         }
-
 
         //filtering
         if(req.query.fields){
