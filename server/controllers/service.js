@@ -1,9 +1,9 @@
 const Service = require('../models/service')
+const ServiceProvider = require('../models/ServiceProvider')
 const User = require('../models/user')
 const asyncHandler = require("express-async-handler")
 const slugify = require('slugify')
 const makeSku = require('uniqid')
-
 
 const createService = asyncHandler(async(req, res)=>{
     const {name, price, description, category, assigned_staff, hour, minute, provider_id} = req.body
@@ -174,7 +174,11 @@ const updateServiceByAdmin = asyncHandler(async(req, res)=>{
 
 // get all staffs
 const getAllServicesPublic = asyncHandler(async (req, res) => {
-    const queries = { ...req.query };
+    let queries = { ...req.query };
+
+    // queries = { current_client_location: { longtitude: '6', lattitude: '8' } };
+
+    // console.log('dwdwdqqdw', queries ,'dwqdwqdwq')
 
     // Loại bỏ các trường đặc biệt ra khỏi query
     const excludeFields = ['limit', 'sort', 'page', 'fields'];
@@ -212,27 +216,32 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
         }
     }
     const qr = {...formatedQueries, ...queryFinish, ...categoryFinish}
-    let queryCommand =  Service.find(qr).populate({
-        path: 'provider_id',
-        select: 'province geolocation',
-    })
-
-    if (queries?.province?.length > 0) {
-        queryCommand.find({
-            $or: {'provider_id.province': {$regex: queries.province, $options: 'i' }}
-        })
-    }
+    // console.log('aaaaaaaaaaaa', qr, 'sssssssss')
+    let queryCommand =  Service.find(qr)
+    // console.log('===>', queryCommand);
 
     try {
         // sorting
         if(req.query.sort){
+            console.log('CAC1');
             const sortBy = req.query.sort.split(',').join(' ')
             queryCommand.sort(sortBy)
         }
 
+        let providersQueryCommand = ServiceProvider.find({});
 
-        if(req?.query?.current_client_location){
-            const {longtitude, lattitude, maxDistance} = req.query.current_client_location;
+        if (req?.query?.province?.length > 0) {
+            providersQueryCommand.find({
+                province: {
+                    $regex: queries.province, $options: 'i'
+                }
+            })
+        }
+        if (req?.query?.current_client_location) {
+            let {longtitude, lattitude, maxDistance} = req.query.current_client_location;
+
+            longtitude = parseFloat(longtitude);
+            lattitude = parseFloat(lattitude);
 
             if (longtitude < -180 || longtitude > 180
                 || lattitude < -90 || lattitude > 90) {// valid long and lat
@@ -243,13 +252,15 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
             }
 
             console.log('-----+++', req.query.current_client_location)
-            const nearbyFilterObj = {
+            let nearbyFilterObj = {
                 $geometry:{
                     type:"Point",
                     coordinates:[longtitude, lattitude]
                 }
             };
-            if (typeof maxDistance === 'number') {
+
+            maxDistance = parseFloat(maxDistance);
+            if (!isNaN(maxDistance)) {
                 nearbyFilterObj = {
                     ...nearbyFilterObj,
                     $maxDistance: maxDistance
@@ -258,13 +269,25 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
 
             console.log('-----+++', nearbyFilterObj)
 
-            queryCommand.find({
-                $near: {
-                    geolocation: {
-                        $near: nearbyFilterObj
-                    }
+            providersQueryCommand.find({
+                geolocation: {
+                    $near: nearbyFilterObj
                 }
             })
+            // aggregate([
+            //     {
+            //         $geoNear: {
+            //             near: {
+            //                 type: "Point",
+            //                 coordinates: [28.411134,77.331801]
+            //             },
+            //             distanceField: "serviceDistance",
+            //             $maxDistance:150000,
+            //             spherical: true
+            //         }
+            //     }
+            // ])
+            // console.log('==============')
         }
 
         //filtering
@@ -278,22 +301,42 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
         //skip: n, nghia la bo qua n cai dau tien
         //+2 -> 2
         //+dgfbcxx -> NaN
+        let services = await queryCommand
+        let serviceProviders = await providersQueryCommand
+        {
+            const mapByProviderId = new Map();
+            for (const provider of serviceProviders) {
+                // console.log(provider,'---------------');
+                mapByProviderId.set(provider._id.toString(), []);
+            }
+            console.log(mapByProviderId);
+            for (const i in services) {
+                console.log('===============', mapByProviderId.get(services[i]?.provider_id.toString()));
+                mapByProviderId.get(services[i]?.provider_id.toString())?.push(services[i]);
+            }
+            services = [];
+            mapByProviderId.forEach((value, _, __) => {
+                // console.log('value--->', value);
+                services = services.concat(value);
+            })
+        }
+        console.log('----->', services);
+
         const page = +req.query.page || 1
         const limit = +req.query.limit || process.env.LIMIT_PRODUCT
         const skip = (page-1)*limit
-        queryCommand.skip(skip).limit(limit)
+        // queryCommand.skip(skip).limit(limit)
+        services.slice(skip, skip+limit)
 
-
-        const services = await queryCommand
-        const counts = await Service.countDocuments(qr);
+        const counts = services.length;
         return res.status(200).json({
             success: true,
             counts: counts,
             services: services,
-            });
-        
+        });
     } catch (error) {
         // Xử lý lỗi nếu có
+        console.log('+++++', error, '++++')
         return res.status(500).json({
         success: false,
         error: 'Cannot get services',

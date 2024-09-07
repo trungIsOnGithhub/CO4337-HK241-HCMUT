@@ -8,6 +8,7 @@ import clsx from 'clsx'
 import { useSelector } from 'react-redux'
 import withBaseComponent from 'hocs/withBaseComponent'
 import { getCurrent } from 'store/user/asyncAction'
+import { tinh_thanhpho } from 'tinh_thanhpho'
 
 const breakpointColumnsObj = {
   default: 4,
@@ -22,6 +23,7 @@ const Services = ({dispatch}) => {
   const [active, setActive] = useState(null)
   const [params] = useSearchParams()
   const [sort, setSort] = useState('')
+  const [nearMeOption, setNearMeOption] = useState(false)
   const {category} = useParams()
   const {isShowModal} = useSelector(state => state.app)
   const {current} = useSelector((state) => state.user);
@@ -36,6 +38,9 @@ const Services = ({dispatch}) => {
     if(category && category !== 'services'){
       queries.category = category
     }
+    if (searchFilter.term) {
+      queries.name = searchFilter.term
+    }
     if (searchFilter.province) {
       queries.province = searchFilter.province
     }
@@ -44,7 +49,7 @@ const Services = ({dispatch}) => {
         longtitude: current.lastGeoLocation.coordinates[0],
         lattitude: current.lastGeoLocation.coordinates[1]
       }
-      if (searchFilter?.maxDistance && isNaN(parseFloat(searchFilter.maxDistance))) {
+      if (searchFilter?.maxDistance && !isNaN(parseFloat(searchFilter.maxDistance))) {
         queries.current_client_location.maxDistance = searchFilter.maxDistance;
       }
     }
@@ -73,7 +78,7 @@ const Services = ({dispatch}) => {
     delete queries.to
     const q = {...priceQuery, ...queries}
     fetchServiceCategories(q)
-  }, [params])
+  }, [params, searchFilter])
   
   const changeActive = useCallback((name)=>{
     if(name===active) setActive(null)
@@ -110,28 +115,32 @@ const Services = ({dispatch}) => {
         </div>
       </div>
       <div className='w-main border p-4 flex justify-start m-auto mt-8'>
-        <div className='w-4/5 flex-auto flex flex-col gap-3'>
+        <div className='flex-auto flex flex-col gap-3'>
           <span className='font-semibold text-sm'>Filter by:</span>
           <div className='flex items-center gap-4'>
           <SearchItemService name='price' activeClick={active} changeActiveFilter={changeActive} type='input'/>
           <SearchItemService name='category' activeClick={active} changeActiveFilter={changeActive}/>
           </div>
         </div>
-        <div className='w-1/5 flex flex-col gap-3'>
+        <div className='flex flex-col gap-3'>
           <span className='font-semibold text-sm'>Sort by:</span>
           <div className='w-full'> 
             <InputSelect value={sort} options={sorts} changeValue={changeValue} />
           </div>
         </div>
-        <div className='w-1/5 flex flex-col gap-3'>
-          <span className='font-semibold text-sm'>Search By:</span>
-          <div className='w-full'>
-            <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} />
-            <span>Within:</span>
-            <InputField nameKey='maxDistance' value={searchFilter.maxDistance} setValue={setSearchFilter} placeholder={"Maximum Distance"} />
-          </div>
-        </div>
       </div>
+      <div className='w-main border p-4 flex justify-start m-auto mt-8'>
+          <span className='font-semibold text-sm'>Search By:</span>
+          {/* <div className='w-full'> */}
+          <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} />
+          <InputSelect value={searchFilter?.province} options={Object.entries(tinh_thanhpho).map(ele => { return {label:ele[1]?.name, value:ele[0]}})} changeValue={changeValue} />
+          <span className='font-semibold text-sm'>
+            Near Me:
+          </span>
+          <input className='ml-3' onInput={() => {setNearMeOption(prev => !prev)}} type="checkbox"/>
+          { nearMeOption && <InputField nameKey='maxDistance' value={searchFilter.maxDistance} setValue={setSearchFilter} placeholder={"Maximum Distance"} /> }
+          {/* </div> */}
+        </div>
       <div className={clsx('mt-8 w-main m-auto', isShowModal ? 'hidden' : '')}>
         <Masonry
           breakpointCols={breakpointColumnsObj}
