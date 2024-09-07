@@ -223,6 +223,41 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
             queryCommand.sort(sortBy)
         }
 
+
+        if(req?.query?.current_client_location){
+            const {longtitude, lattitude, maxDistance} = req.query.current_client_location;
+
+            if (longitude < -180 || longitude > 180
+                || latitude < -90 || latitude > 90) {// valid long and lat
+                return res.status(500).json({
+                    success: false,
+                    error: 'Invalid Input Data!',
+                });
+            }
+
+            const nearbyFilterObj = {
+                $geometry:{
+                    type:"Point",
+                    coordinates:[longtitude, lattitude]
+                }
+            };
+            if (typeof maxDistance === 'number') {
+                nearbyFilterObj = {
+                    ...nearbyFilterObj,
+                    $maxDistance: maxDistance
+                }
+            }
+
+            queryCommand.find({
+                $near: {
+                    geolocation: {
+                        $near: nearbyFilterObj
+                    }
+                }
+            })
+        }
+
+
         //filtering
         if(req.query.fields){
             const fields = req.query.fields.split(',').join(' ')
