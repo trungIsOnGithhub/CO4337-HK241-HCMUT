@@ -48,7 +48,7 @@ const getAllServicesByAdmin = asyncHandler(async (req, res) => {
 
     //Filtering
     let categoryFinish = {}
-    if (queries?.name) formatedQueries.name = { $regex: queries.title, $options: 'i' };
+    if (queries?.name) formatedQueries.name = { $regex: queries.name, $options: 'i' };
     if (queries?.category){
         delete formatedQueries.category
         const categoryArray = queries.category?.split(',')
@@ -175,17 +175,16 @@ const updateServiceByAdmin = asyncHandler(async(req, res)=>{
 // get all staffs
 const getAllServicesPublic = asyncHandler(async (req, res) => {
     let queries = { ...req.query };
-
     // queries = { current_client_location: { longtitude: '6', lattitude: '8' } };
 
-    // console.log('dwdwdqqdw', queries ,'dwqdwqdwq')
+    console.log('dwdwdqqdw', queries ,'dwqdwqdwq')
 
     // Loại bỏ các trường đặc biệt ra khỏi query
     const excludeFields = ['limit', 'sort', 'page', 'fields'];
     excludeFields.forEach((el) => delete queries[el]);
 
-    // Format lại các toán tử cho đúng cú pháp của mongoose
-    let queryString = JSON.stringify(queries);
+    // // Format lại các toán tử cho đúng cú pháp của mongoose
+    let queryString = JSON.stringify({});
     queryString = queryString.replace(
         /\b(gte|gt|lt|lte)\b/g,
         (matchedEl) => `$${matchedEl}`
@@ -195,7 +194,7 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
     const formatedQueries = JSON.parse(queryString);
     //Filtering
     let categoryFinish = {}
-    if (queries?.name) formatedQueries.name = { $regex: queries.title, $options: 'i' };
+    if (queries?.name) formatedQueries.name = { $regex: queries.name, $options: 'i' };
     if (queries?.category){
         delete formatedQueries.category
         const categoryArray = queries.category?.split(',')
@@ -206,19 +205,19 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
     }
 
     let queryFinish = {}
-    if(queries?.q){
-        delete formatedQueries.q
-        queryFinish = {
-            $or: [
-                {name: {$regex: queries.q, $options: 'i' }},
-                {category: {$regex: queries.q, $options: 'i' }},
-            ]
-        }
-    }
+    // if(queries?.q){
+    //     delete formatedQueries.q
+    //     queryFinish = {
+    //         $or: [
+    //             {name: {$regex: queries.q, $options: 'i' }},
+    //             {category: {$regex: queries.q, $options: 'i' }},
+    //         ]
+    //     }
+    // }
     const qr = {...formatedQueries, ...queryFinish, ...categoryFinish}
-    // console.log('aaaaaaaaaaaa', qr, 'sssssssss')
-    let queryCommand =  Service.find(qr)
-    // console.log('===>', queryCommand);
+        console.log('aaaaaaaaaaaa', qr, 'sssssssss')
+    let services = await Service.find(qr);
+    console.log('===+++++++>', services);
 
     try {
         // sorting
@@ -228,15 +227,8 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
             queryCommand.sort(sortBy)
         }
 
-        let providersQueryCommand = ServiceProvider.find({});
-
-        if (req?.query?.province?.length > 0) {
-            providersQueryCommand.find({
-                province: {
-                    $regex: queries.province, $options: 'i'
-                }
-            })
-        }
+        let aggregations = []
+        // let providersQueryCommand = ServiceProvider.find({});
         if (req?.query?.current_client_location) {
             let {longtitude, lattitude, maxDistance} = req.query.current_client_location;
 
@@ -253,74 +245,103 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
 
             console.log('-----+++', req.query.current_client_location)
             let nearbyFilterObj = {
-                $geometry:{
-                    type:"Point",
-                    coordinates:[longtitude, lattitude]
-                }
+                type:"Point",
+                coordinates:[longtitude, lattitude]
             };
 
             maxDistance = parseFloat(maxDistance);
             if (!isNaN(maxDistance)) {
-                nearbyFilterObj = {
-                    ...nearbyFilterObj,
-                    $maxDistance: maxDistance
-                }
+                console.log('<<<<<<-->', maxDistance);
+                aggregations.push({
+                    $geoNear: {
+                        "near": nearbyFilterObj,
+                        "distanceField": "clientDistance",
+                        "maxDistance": maxDistance,
+                        "spherical": true
+                    }
+                });
             }
-
-            console.log('-----+++', nearbyFilterObj)
-
-            providersQueryCommand.find({
-                geolocation: {
-                    $near: nearbyFilterObj
-                }
-            })
-            // aggregate([
-            //     {
-            //         $geoNear: {
-            //             near: {
-            //                 type: "Point",
-            //                 coordinates: [28.411134,77.331801]
-            //             },
-            //             distanceField: "serviceDistance",
-            //             $maxDistance:150000,
-            //             spherical: true
-            //         }
+            else {
+                aggregations.push({
+                    $geoNear: {
+                        "near": nearbyFilterObj,
+                        "distanceField": "clientDistance",
+                        // "maxDistance": maxDistance,
+                        "spherical": true
+                    }
+                });
+            }
+            // providersQueryCommand.find({
+            //     geolocation: {
+            //         $near: nearbyFilterObj
             //     }
-            // ])
-            // console.log('==============')
+            // })
+ 
+            // console.log('----->', services);
+        }
+        else {
+            for (let i=0; i < services?.length; ++i) {
+                services[i] = {
+                    sv: services[i],
+                };
+                // console.log('===============', clientDistance);
+            }
         }
 
-        //filtering
-        if(req.query.fields){
-            const fields = req.query.fields.split(',').join(' ')
-            queryCommand.select(fields)
+        if (req?.query?.province?.length > 0) {
+            aggregations.push({
+                $match: {
+                    province: {$regex: req.query.province, $options: 'i' }
+                }
+            });
         }
 
-        //pagination
-        //limit: so object lay ve 1 lan goi API
-        //skip: n, nghia la bo qua n cai dau tien
-        //+2 -> 2
-        //+dgfbcxx -> NaN
-        let services = await queryCommand
-        let serviceProviders = await providersQueryCommand
-        {
+        let serviceProviders = [];
+        if (aggregations?.length > 0) {
+            serviceProviders = await ServiceProvider.aggregate(aggregations);
+        }
+        if (req?.query?.province?.length > 0 || req?.query?.current_client_location){
             const mapByProviderId = new Map();
             for (const provider of serviceProviders) {
                 // console.log(provider,'---------------');
-                mapByProviderId.set(provider._id.toString(), []);
+                mapByProviderId.set(provider._id.toString(), [provider.clientDistance]);
+            }
+            // console.log(mapByProviderId);
+            for (let i=0; i < services?.length; ++i) {
+                // console.log('===============', services[i]);
+                mapByProviderId.get(services[i]?.provider_id.toString())?.push(services[i]);
+                // console.log('===============', services[i]);
             }
             console.log(mapByProviderId);
-            for (const i in services) {
-                console.log('===============', mapByProviderId.get(services[i]?.provider_id.toString()));
-                mapByProviderId.get(services[i]?.provider_id.toString())?.push(services[i]);
-            }
             services = [];
             mapByProviderId.forEach((value, _, __) => {
-                // console.log('value--->', value);
-                services = services.concat(value);
+                console.log('value--->', value);
+                // const serviceList = value
+                // for (let i=1; i<value.length; ++i) {
+                //     value[i] = {
+                //         ...value[i],
+                //         clientDistance: value[0]
+                //     };
+                // }
+                services = services.concat(value.slice(1));
             })
+
+            for (let i=0; i < services?.length; ++i) {
+                // console.log('===============', services[i]);
+                const clientDistance = mapByProviderId.get(services[i]?.provider_id.toString())[0];
+                services[i] = {
+                    sv: services[i],
+                    clientDistance
+                };
+                console.log('===============', clientDistance);
+            }
         }
-        console.log('----->', services);
+
+        //filtering
+        // if (req.query.fields){
+        //     const fields = req.query.fields.split(',').join(' ')
+        //     queryCommand.select(fields)
+        // }
 
         const page = +req.query.page || 1
         const limit = +req.query.limit || process.env.LIMIT_PRODUCT
@@ -358,8 +379,6 @@ const getOneService = asyncHandler(async(req, res)=>{
         }
     })
 
-
-    
     return res.status(200).json({
         success: service ? true : false,
         service: service ? service : "Cannot find product"

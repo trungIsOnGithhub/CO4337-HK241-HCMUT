@@ -41,10 +41,10 @@ const Services = ({dispatch}) => {
     if (searchFilter.term) {
       queries.name = searchFilter.term
     }
-    if (searchFilter.province) {
-      queries.province = searchFilter.province
+    if (nearMeOption && searchFilter.province) {
+      queries.province = tinh_thanhpho[searchFilter.province].name
     }
-    if (current?.lastGeoLocation?.coordinates?.length === 2) {
+    if (nearMeOption && current?.lastGeoLocation?.coordinates?.length === 2) {
       queries.current_client_location = {
         longtitude: current.lastGeoLocation.coordinates[0],
         lattitude: current.lastGeoLocation.coordinates[1]
@@ -78,7 +78,7 @@ const Services = ({dispatch}) => {
     delete queries.to
     const q = {...priceQuery, ...queries}
     fetchServiceCategories(q)
-  }, [params, searchFilter])
+  }, [params, searchFilter, nearMeOption])
   
   const changeActive = useCallback((name)=>{
     if(name===active) setActive(null)
@@ -94,10 +94,10 @@ const Services = ({dispatch}) => {
   useEffect(() => {
     if(sort){
       navigate({
-      pathname: `/service/${category}`,
-      search: createSearchParams({
-        sort
-      }).toString()
+        pathname: `/service/${category}`,
+        search: createSearchParams({
+          sort
+        }).toString()
       }) 
     }   
   }, [sort])
@@ -130,15 +130,22 @@ const Services = ({dispatch}) => {
         </div>
       </div>
       <div className='w-main border p-4 flex justify-start m-auto mt-8'>
-          <span className='font-semibold text-sm'>Search By:</span>
+          <span className='font-semibold text-sm p-5'>Search By:</span>
           {/* <div className='w-full'> */}
           <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} />
-          <InputSelect value={searchFilter?.province} options={Object.entries(tinh_thanhpho).map(ele => { return {label:ele[1]?.name, value:ele[0]}})} changeValue={changeValue} />
-          <span className='font-semibold text-sm'>
-            Near Me:
-          </span>
-          <input className='ml-3' onInput={() => {setNearMeOption(prev => !prev)}} type="checkbox"/>
-          { nearMeOption && <InputField nameKey='maxDistance' value={searchFilter.maxDistance} setValue={setSearchFilter} placeholder={"Maximum Distance"} /> }
+          <span className='font-semibold text-sm p-5'>Near Me:</span>
+          <input className='ml-3 p-5' onInput={() => {setNearMeOption(prev => !prev);}} type="checkbox"/>
+          { nearMeOption && 
+            <>
+              <span className='font-semibold text-sm p-3'>Province:</span>
+              <InputSelect
+                value={searchFilter?.province}
+                options={Object.entries(tinh_thanhpho).map(ele => { return {id:ele[0], text:ele[1]?.name, value:ele[0]}})}
+                changeValue={(value) => {console.log(value); setSearchFilter(function(prev) {return {...prev, province: value};}) }}
+              />
+            </>
+          }
+          { nearMeOption && <InputField nameKey='maxDistance' value={searchFilter.maxDistance} setValue={setSearchFilter} placeholder={"Maximum Distance(optional)"} /> }
           {/* </div> */}
         </div>
       <div className={clsx('mt-8 w-main m-auto', isShowModal ? 'hidden' : '')}>
@@ -148,12 +155,13 @@ const Services = ({dispatch}) => {
           columnClassName="my-masonry-grid_column">
           {services?.services?.map(el => (
             <Service 
-              key={el._id} 
-              serviceData={el}
-              pid= {el._id}
+              key={el.sv._id} 
+              serviceData={el.sv}
+              pid= {el.sv._id}
               normal={true}
+              clientDistance={el?.clientDistance}
             />
-          ))}
+          )) || "Your Search Result Here..."}
         </Masonry>
       </div>
       <div className='w-main m-auto my-4 flex justify-end'>
