@@ -9,6 +9,8 @@ import { useSelector } from 'react-redux'
 import withBaseComponent from 'hocs/withBaseComponent'
 import { getCurrent } from 'store/user/asyncAction'
 import { tinh_thanhpho } from 'tinh_thanhpho'
+import { apiModifyUser } from '../../apis/user'
+import Swal from "sweetalert2";
 
 const breakpointColumnsObj = {
   default: 4,
@@ -106,6 +108,37 @@ const Services = ({dispatch}) => {
     console.log('Search Filter: ', searchFilter, '++++');
   }, [searchFilter])
 
+    const handleGetDirections = () => {
+    Swal.fire({
+      title: 'Chia sẻ vị trí',
+      text: "Bạn có muốn chia sẻ vị trí hiện tại của mình để xem đường đi?",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Chia sẻ',
+      cancelButtonText: 'Không'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(async (position) => {
+            const { latitude, longitude } = position.coords;
+            console.log(latitude, longitude);
+            await apiModifyUser({ lastGeoLocation: {
+              type: "Point",
+              coordinates: [longitude, latitude]
+            } }, current._id);
+            // Call the function to show the route using latitude and longitude
+            // showRoute(latitude, longitude);
+            setNearMeOption(prev => !prev);
+          }, () => {
+            Swal.fire('Không thể lấy vị trí của bạn.');
+          });
+        } else {
+          Swal.fire('Geolocation không khả dụng.');
+        }
+      }
+    });
+  };
+
   return (
     <div className='w-full'>
       <div className='h-[81px] flex items-center justify-center bg-gray-100'>
@@ -134,7 +167,7 @@ const Services = ({dispatch}) => {
           {/* <div className='w-full'> */}
           <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} />
           <span className='font-semibold text-sm p-5'>Near Me:</span>
-          <input className='ml-3 p-5' onInput={() => {setNearMeOption(prev => !prev);}} type="checkbox"/>
+          <input className='ml-3 p-5' onInput={() => {handleGetDirections()}} type="checkbox"/>
           { nearMeOption && 
             <>
               <span className='font-semibold text-sm p-3'>Province:</span>

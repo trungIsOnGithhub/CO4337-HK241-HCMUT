@@ -428,6 +428,7 @@ const updateUser = asyncHandler(async (req, res) => {
 //update user by admin
 const updateUserByAdmin = asyncHandler(async (req, res) => {
     const {userId} = req.params
+    console.log('++++)))))))))', req.body)
     if(!userId || Object.keys(req.body).length === 0){
         throw new Error("Missing input")
     }
