@@ -198,6 +198,11 @@ const ServiceProviderRegister = () => {
         if (coordinates) {
             payload.longitude = coordinates.lng;
             payload.latitude = coordinates.lat;
+            payload.geolocation = {
+                type: "Point",
+                coordinates: [coordinates.lng,coordinates.lat]
+            }
+            console.log(coordinates,'------');
         } else {
             Swal.fire('Opps!', 'Please check your location on the map', 'error');
             return;
@@ -212,6 +217,7 @@ const ServiceProviderRegister = () => {
             setIsLoading(false)
             if (response.success) {
                 setIsVerify(true);
+                Swal.fire('Opps!', 'Add tu Dong redirect login', 'error');
             } else {
                 Swal.fire('Opps!', response.mes, 'error');
                 return;
