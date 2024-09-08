@@ -43,3 +43,13 @@ export const apiGetAllPostTags = (data) => axios({
     url: '/blog/tags',
     method: 'get',
 })
+
+export const apiLikeBlog = (data) => axios({
+    url: 'like/:bid',
+    method: 'put',
+})
+
+export const apiDislikeBlog = (data) => axios({
+    url: 'dislike/:bid',
+    method: 'pur',
+})
