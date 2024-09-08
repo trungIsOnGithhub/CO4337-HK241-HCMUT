@@ -49,7 +49,10 @@ function decodePolyline(str, precision) {
   return coordinates;
 }
 
-const Mapbox = () => {
+const Mapbox = ({ userCoords, providerCoords }) => {
+  console.log(userCoords, providerCoords)
+
+  
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [startLocation, setStartLocation] = useState('');
@@ -59,6 +62,20 @@ const Mapbox = () => {
   const [startCoords, setStartCoords] = useState(null);
   const [destCoords, setDestCoords] = useState(null);
   const [isUpdatingStart, setIsUpdatingStart] = useState(false);
+
+  // Add this new function
+  const reverseGeocode = async (lat, lng) => {
+    try {
+      const response = await fetch(`https://rsapi.goong.io/Geocode?latlng=${lat},${lng}&api_key=${GOONG_API_KEY}`);
+      const data = await response.json();
+      if (data.results && data.results.length > 0) {
+        return data.results[0].formatted_address;
+      }
+    } catch (error) {
+      console.error("Error in reverse geocoding:", error);
+    }
+    return "";
+  };
 
   useEffect(() => {
     if (map.current) return; // initialize map only once
@@ -248,24 +265,83 @@ const Mapbox = () => {
     }
   };
 
+  useEffect(() => {
+    if (userCoords && providerCoords) {
+      setStartCoords([userCoords.longitude, userCoords.latitude]);
+      setDestCoords([providerCoords.longitude, providerCoords.latitude]);
+      
+      // Add this: Update destination address
+      reverseGeocode(providerCoords.latitude, providerCoords.longitude)
+        .then(address => setDestination(address));
+    }
+  }, [userCoords, providerCoords]);
+
   return (
-    <div style={{ position: 'relative' }}>
-      <div ref={mapContainer} style={{ height: '400px' }} />
-      <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1000 }}>
-        <input
-          type="text"
-          placeholder="Enter your start location"
-          value={startLocation}
-          onChange={(e) => handleLocationInput(e, true)}
-          style={{ width: '250px', padding: '10px', marginBottom: '10px' }}
-        />
-        <input
-          type="text"
-          placeholder="Enter destination"
-          value={destination}
-          onChange={(e) => handleLocationInput(e, false)}
-          style={{ width: '250px', padding: '10px' }}
-        />
+    <div style={{ position: 'relative' }} className='h-full'>
+      <div ref={mapContainer} className='h-full' />
+      <div style={{
+        position: 'absolute',
+        top: '10px',
+        left: '10px',
+        zIndex: 1000,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        padding: '10px',
+        borderRadius: '5px'
+      }}>
+        <div>
+          <label 
+          htmlFor="start-location" 
+          style={{
+            display: 'block',
+            marginBottom: '5px',
+            color: '#3887be'  // Blue color for user location
+          }}
+          className='font-semibold'
+          >
+            Your Location
+          </label>
+          <input
+            id="start-location"
+            type="text"
+            placeholder="Enter your start location"
+            value={startLocation}
+            onChange={(e) => handleLocationInput(e, true)}
+            style={{
+              width: '250px',
+              padding: '6px',
+              border: '1px solid #3887be',
+              borderRadius: '4px'
+            }}
+          />
+        </div>
+        <div>
+          <label 
+          htmlFor="destination" 
+          style={{
+            display: 'block',
+            marginBottom: '5px',
+            color: '#f30'  // Red color for destination
+          }}
+          className='font-semibold'>
+            Destination
+          </label>
+          <input
+            id="destination"
+            type="text"
+            placeholder="Enter destination"
+            value={destination}
+            onChange={(e) => handleLocationInput(e, false)}
+            style={{
+              width: '250px',
+              padding: '6px',
+              border: '1px solid #f30',
+              borderRadius: '4px'
+            }}
+          />
+        </div>
         {suggestions.length > 0 && (
           <ul style={{ 
             backgroundColor: 'white', 

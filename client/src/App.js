@@ -15,6 +15,7 @@ import { Booking, BookingDateTIme, Cart, Modal } from './components';
 import { showCart } from 'store/app/appSlice';
 import Mapbox from './components/Map/Mapbox'; // Add this import
 import MapConvert from 'components/Map/MapConvert';
+import MessageComponent from 'components/MessageComponent';
 
 function App() {
   const dispatch = useDispatch()
@@ -93,7 +94,7 @@ function App() {
     
     
     // <div className='w-screen h-screen'>
-    //   <Mapbox />
+    //   <MessageComponent userId={'6613f975bc65bac9278a7b52'}/>
     // </div>
   );
 }

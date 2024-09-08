@@ -1,22 +1,20 @@
 import React ,{useState, useEffect, useCallback, memo, useRef}from 'react'
-import {createSearchParams, useParams} from 'react-router-dom'
+import {createSearchParams, useLocation, useNavigate, useParams} from 'react-router-dom'
 import { apiGetOneProduct, apiGetProduct } from '../../apis/product'
 import { apiGetOneService, apiGetServicePublic } from '../../apis/service'
 import {Breadcrumb, Button, SelectQuantity, ServiceExtra, ServiceInformation, CustomSliderService} from '../../components'
 import Slider from "react-slick";
-import ReactImageMagnify from 'react-image-magnify';
 import { formatPrice, formatPricee, renderStarfromNumber } from '../../ultils/helper';
 import {productExtra} from '../../ultils/constant'
 import DOMPurify from 'dompurify';
 import clsx from 'clsx';
-import { set } from 'react-hook-form';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
 import { apiRecordInteraction } from 'apis';
 import path from 'ultils/path';
 import withBaseComponent from 'hocs/withBaseComponent';
-import { toast } from 'react-toastify';
-import { getCurrent } from 'store/user/asyncAction';
+import { FaLocationDot } from "react-icons/fa6";
+import Mapbox from 'components/Map/Mapbox'
 
 const settings = {
   dots: false,
@@ -27,7 +25,10 @@ const settings = {
 };
 
 
-const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
+const DetailService = ({isQuickView, data}) => {
+  const location = useLocation()
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
   const nameRef = useRef()
   const {current} = useSelector(state => state.user)
   const params =useParams()
@@ -44,6 +45,10 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
   const [providerId, setProviderId] = useState("")
   
   const [update, setUpdate] = useState(false)
+  const [showMap, setShowMap] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
+  const [providerLocation, setProviderLocation] = useState(null);
+
   const reRender = useCallback(() => {
     setUpdate(!update)
   },[update])
@@ -110,6 +115,8 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
     const response = await apiGetOneService(sid)
     if(response?.success){
       setProduct(response?.service)
+      console.log(response?.service)
+      
       setCurrentImage(response?.service?.thumb)
       setCurrentProduct({
         name: response?.service?.name,
@@ -213,6 +220,41 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
     
   }
   }
+
+  const showRoute = (userLat, userLng) => {
+    // Logic to display the route from user's location to the service provider's location
+    const providerLat = product?.provider_id?.latitude; // Assuming you have the provider's latitude
+    const providerLng = product?.provider_id?.longitude; // Assuming you have the provider's longitude
+    setUserLocation({ latitude: userLat, longitude: userLng });
+    setProviderLocation({ latitude: providerLat, longitude: providerLng });
+    setShowMap(true);
+    
+  };
+  const handleGetDirections = () => {
+    Swal.fire({
+      title: 'Chia sẻ vị trí',
+      text: "Bạn có muốn chia sẻ vị trí hiện tại của mình để xem đường đi?",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Chia sẻ',
+      cancelButtonText: 'Không'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(position => {
+            const { latitude, longitude } = position.coords;
+            console.log(latitude, longitude);
+            // Call the function to show the route using latitude and longitude
+            showRoute(latitude, longitude);
+          }, () => {
+            Swal.fire('Không thể lấy vị trí của bạn.');
+          });
+        } else {
+          Swal.fire('Geolocation không khả dụng.');
+        }
+      }
+    });
+  };
 
   return (
     <div className={clsx('w-full')}> 
@@ -321,6 +363,20 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
         }
       </div>
 
+      <div className='w-main m-auto mt-[8px] cursor-pointer'>
+        <div className='flex items-center gap-2 bg-green-800 text-white p-2 rounded-md w-fit' onClick={handleGetDirections}>
+          <span className='text-xl font-semibold'><FaLocationDot /></span>
+          <span className='font-semibold text-xl'>Chỉ đường</span>
+        </div>
+      </div>
+
+      {
+        showMap && 
+        <div className='w-main h-[500px] m-auto mt-[8px]'>
+          <Mapbox userCoords={userLocation} providerCoords={providerLocation} />
+        </div>
+      }
+
       {!isQuickView && <div className='w-main m-auto mt-[8px]'>
         <ServiceInformation ratings={product?.rating} totalRatings={product?.totalRatings} nameProduct={product?.name} sid={product?._id} reRender={reRender}/>
       </div>}
@@ -337,4 +393,4 @@ const DetailService = ({isQuickView, data, location, dispatch, navigate}) => {
   )
 }
 
-export default withBaseComponent(memo(DetailService))
+export default memo(DetailService)
