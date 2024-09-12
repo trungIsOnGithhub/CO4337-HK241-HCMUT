@@ -269,6 +269,40 @@ const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
     })
 })
 
+const getTopBlogs = asyncHandler(async(req, res)=>{
+    // console.log('=========',req.body,'=========');
+    let { limit } = req.body
+    if(!limit){
+        limit = 5;
+    }
+    let response = await Blog.find({});
+    response.sort((a,b) => a.likes.length - b.likes.length);
+    response.slice(0, 5);
+    // .aggregate([
+    //     {$unwind: "$likes"}, 
+    //     {$group: {_id:"$_id", likes: {$push:"$answers"}, size: {$sum:1}}}, 
+    //     {$sort:{size:1}}]).limit(5);
+
+    return res.status(200).json({
+        success: response ? true : false,
+        blogs: response ? response : "Cannot Get Blogs!"
+    })
+})
+
+const getTopTags = asyncHandler(async(req, res)=>{
+    // console.log('=========',req.body,'=========');
+    let { limit } = req.body
+    if(!limit){
+        limit = 5;
+    }
+    const response = await PostTag.find({}).limit(5)
+
+    return res.status(200).json({
+        success: response ? true : false,
+        tags: response ? response : "Cannot Get Post Tags!"
+    })
+})
+
 module.exports = {
     updateBlog,
     getAllBlogs,
@@ -281,4 +315,6 @@ module.exports = {
     createNewBlogPost,
     createNewPostTag,
     getBlogsBySearchTerm,
+    getTopBlogs,
+    getTopTags
 }
