@@ -5,13 +5,17 @@ import {useSelector, useDispatch} from 'react-redux'
 import { validate, getBase64 } from 'ultils/helper'
 import { toast } from 'react-toastify'
 import icons from 'ultils/icon'
-import { apiCreateBlog, apiGetAllPostTags } from 'apis/blog'
+import { apiCreateBlog, apiGetAllPostTags, apiCreateNewPostTag } from 'apis/blog'
 import { showModal } from 'store/app/appSlice'
 import { getCurrent } from 'store/user/asyncAction'
 import { HashLoader } from 'react-spinners'
+import { FaPlus } from "react-icons/fa";
+import Swal from 'sweetalert2'
 
 const AddPost = () => {
   const {blogCategories_service} = useSelector(state => state.blogCategory)
+  const [addNewTagMenu, setAddNewTagMenu] = useState(false);
+  const [newTagLabel, setNewTagLabel] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [title, setTitle] = useState(null);
@@ -121,7 +125,7 @@ const AddPost = () => {
       console.log(response);
 
       setIsLoading(false)
-      if(response.success){
+      if(response && response.success){
         toast.success('Create New Post Blog Successfully');
         reset();
         setSelectedTags([]);
@@ -141,6 +145,30 @@ const AddPost = () => {
   const handleSelectTagChange = useCallback(selectedOptions => {
     setSelectedTags(selectedOptions);
   }, []);
+
+  const validateNewTagLabel = useCallback(newTagLabel => {
+  return (newTagLabel?.length) && newTagLabel?.indexOf(' ') < 0 && newTagLabel?.indexOf('#') < 0;
+  }, []);
+  const addNewTagOnClick = useCallback(async (newTagLabel) => {
+    let validate = validateNewTagLabel(newTagLabel);
+    if (!validate) {
+      Swal.fire('Invalid Label!!', 'Please check your input Tag Name!!', 'error')
+      return;
+    }
+
+    let response = await apiCreateNewPostTag({ label:newTagLabel, created_by: current?.provider_id });
+
+    console.log('=================', response);
+    if (response && response.success) {
+      Swal.fire('Sucessful!!', 'Create new Post Tag Sucessfully!!', 'success');
+      setAddNewTagMenu(false);
+    }
+    else {
+      Swal.fire('Error Ocurred!!', 'Cannot create new Post Tag!!', 'error')
+    }
+
+    fetchTags();
+  }, [])
 
   return (
     <div className='w-full'>
@@ -220,7 +248,7 @@ const AddPost = () => {
             invalidField={invalidField}
             setInvalidField={setInvalidField}
           />
-          <div className='w-full my-6 flex gap-4' style={{zIndex:88}}>
+          <div className='w-full my-6 flex gap-4 z-60 items-center'>
             <MultiSelect
               title='Tags'
               label='Tags'
@@ -229,7 +257,40 @@ const AddPost = () => {
               onChangee={handleSelectTagChange}
               values={selectedTags}
             />
+            { !addNewTagMenu && 
+            <Button
+              style="p-1 px-3 rounded-md text-white bg-main"
+              handleOnclick={() => {setAddNewTagMenu(prev => !prev);}}
+            ><FaPlus /></Button>
+            }
           </div>
+          {
+              addNewTagMenu &&
+              <div className='w-full my-6 flex flex-col z-60'>
+                <span className='flex gap-2 justify-items-end'>
+                  <Button
+                    style={"rounded-md text-white bg-main font-semibold p-1 w-1/6"}
+                    handleOnclick={() => { setAddNewTagMenu(false); }}
+                  >Close
+                  </Button>
+                  <Button
+                    style={"rounded-md text-white bg-main font-semibold p-1 w-1/6"}
+                    handleOnclick={() => { addNewTagOnClick(newTagLabel) }}
+                  >Add Tag
+                  </Button>
+                </span>
+                <InputForm
+                  label = 'Create New Tag'
+                  register={register}
+                  errors={errors}
+                  id = 'title'
+                  validate = {{
+                    required: 'Need fill this field'
+                  }}
+                  onInput={(eve) => {setNewTagLabel(eve.target.value)}}
+                />
+              </div>
+            }
           <div className='flex flex-col gap-2 mt-8'>
             <label className='font-semibold' htmlFor='thumb'>Upload Thumb</label>
             <input 

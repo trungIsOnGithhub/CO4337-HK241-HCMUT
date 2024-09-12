@@ -1,11 +1,13 @@
 import React, {useState, useCallback, useEffect } from 'react'
 import { MultiSelect } from 'components';
-import { apiGetAllBlogs, apiGetAllPostTags } from 'apis/blog';
+import { apiGetAllBlogs, apiGetAllPostTags, apiSearchBlogByParams } from 'apis/blog';
 import Button from 'components/Buttons/Button';
 import { HashLoader } from 'react-spinners';
 import path from 'ultils/path';
 import DOMPurify from 'dompurify';
 import { useNavigate, createSearchParams, useSearchParams } from "react-router-dom";
+import { FaCheck } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 
 const Blogs = () => {
   const navigate = useNavigate();
@@ -33,6 +35,7 @@ const Blogs = () => {
     setIsLoading(true);
     let response = await apiGetAllBlogs({ title: searchTerm,  limit: process.env.REACT_APP_LIMIT });
     if(response?.success && response?.blogs){
+      console.log('++++++', response.blogs, '+++++');
       setCurrBlogList(response.blogs);
       setIsLoading(false);
     }
@@ -55,6 +58,30 @@ const Blogs = () => {
       search: createSearchParams({id}).toString()
     })
    }
+  const multiSearchByTerm = useCallback(async () => {
+    let response = await apiSearchBlogByParams({ searchTerm })
+
+    if (response && response.success) {
+      setCurrBlogList(response.blogs);
+      setIsLoading(false);
+    }
+    else {
+      Swal.fire('Error Ocurred!!', 'Cannot Find Post Blogs!!', 'error');
+      setIsLoading(false);
+    }
+  }, [searchTerm]);
+  const multiSearchBySelectedTags = useCallback(async () => {
+    let response = await apiSearchBlogByParams({ selectedTags })
+
+    if (response && response.success) {
+      setCurrBlogList(response.blogs);
+      setIsLoading(false);
+    }
+    else {
+      Swal.fire('Error Ocurred!!', 'Cannot create new Post Tag!!', 'error');
+      setIsLoading(false);
+    }
+  }, [selectedTags]);
 
   return (
     <div className='w-main mb-8'>
@@ -68,7 +95,16 @@ const Blogs = () => {
     </div>
     <div className='w-full flex flex-row'>
       <div className='w-2/3 flex flex-col'>
-        <h2 className='text-[18px] font-semibold py-[15px] border-b-2 border-main'>TRENDING BLOGS</h2>
+        <h2 className='text-[18px] font-semibold py-[15px] border-b-2 border-main'>Trending Blogs</h2>
+        <MultiSelect
+            title='Sorted By'
+            label='Tags Of Post'
+            id='assigned_tags'
+            options={tags}
+            onChangee={handleSelectTagChange}
+            values={selectedTags}
+        />
+
         {currBlogList && currBlogList.map(
           blog => {
             return (
@@ -76,21 +112,23 @@ const Blogs = () => {
               onClick={() => {handleChooseBlogPost(blog?._id);}}>
                 <img src={blog?.thumb} className='gap-0.5 min-w-64 mr-5'/>
                 <div>
-                  <h3 className="font-bold text-xl">{blog?.title || 'Title'}</h3>
+                  <h3 className="font-bold text-red-500 text-lg">{blog?.title || 'Title'}</h3>
+                  <h5 className="font-semibold text-md">{blog?.provider_id?.province || 'Location'}</h5>
+                  <span>
+                    <h5 className="font-semibold text-md">Liked by: {blog?.likes?.length || 0}</h5>
+                    <h5 className="font-semibold text-md">Disliked by: {blog?.dislikes?.length || 0}</h5>
+                  </span>
                   <br></br>
                   {/* {blog?.content?.length > 0 
                   &&
                   <div className='text-sm line-clamp-[10] mb-8' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(blog?.content[0])}}></div>} */}
 
                   {/* <div className='w'> */}
-                    <MultiSelect
-                      title='Tags'
-                      label='Tags'
-                      id='assigned_tags'
-                      onChangee={() => {}}
-                      values={['dlka', 'dsadsa']}
-                      disabled={true}
-                    />
+                    {blog?.tags.map(label =>
+                        (<span className='bg-green-700 p-3 mr-3 rounded-full w-1/2'>
+                          {label}
+                        </span>)
+                    )}
                   {/* </div> */}
                 </div>
               </div>
@@ -108,7 +146,7 @@ const Blogs = () => {
         </div> */}
       </div>
 
-      <div className='w-1/3 flex flex-col gap-5 justify-items-center justify-start items-center border-l-2 border-main pl-5'>
+      <div className='w-1/3 flex flex-col gap-4 justify-items-center justify-start items-center border-l-2 border-main pl-5'>
         <div className="relative flex items-left h-12 rounded-lg focus-within:shadow-lg bg-white overflow-hidden border-2 w-full">
           <div class="grid place-items-center h-full w-12 text-gray-300">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -121,11 +159,12 @@ const Blogs = () => {
           style={{width:'90%'}}
           type="text"
           id="search"
-          placeholder="Find a tag, title......"
+          placeholder="Find Title, Service Provider......"
           onInput={(e) => {setSearchTerm(e.target.value)}}/>
         </div>
+        {searchTerm?.length > 0 && <Button style='px-2 rounded-md text-white bg-blue-500 font-semibold h-fit py-2 w-fit' handleOnclick={multiSearchByTerm}>Search Keyword</Button>}
 
-        <div className='w-full my-6 flex gap-4' style={{zIndex:88}}>
+        <div className='w-full my-6 flex gap-4 relative' style={{zIndex:88}}>
           <MultiSelect
             title='Tags Of Post'
             label='Tags Of Post'
@@ -134,13 +173,13 @@ const Blogs = () => {
             onChangee={handleSelectTagChange}
             values={selectedTags}
           />
-           <Button style='px-6 rounded-md text-white bg-blue-500 font-semibold h-fit py-2 w-fit mt-5' handleOnclick={()=>fetchCurrentBlogList(searchTerm, selectedTags)}>Choose</Button>
+          {selectedTags?.length > 0 && <Button style='px-2 rounded-md text-white bg-blue-500 font-semibold h-fit py-2 w-fit absolute -bottom-8' handleOnclick={multiSearchBySelectedTags}>Select Tags</Button>}
         </div>
 
         <div className="p-2 text-center text-white bg-red-600 text-semibold w-1/2 rounded-md">Top Search:</div>
-        <div className="p-2 text-center text-white bg-slate-600 text-semibold w-2/3 rounded-md">Nha Hang Gan Toi</div>
+        {/* <div className="p-2 text-center text-white bg-slate-600 text-semibold w-2/3 rounded-md">Nha Hang Gan Toi</div>
         <div className="p-2 text-center text-white bg-slate-600 text-semibold w-2/3 rounded-md">Spa Khuyen Mai</div>
-        <div className="p-2 text-center text-white bg-slate-600 text-semibold w-2/3 rounded-md">Gym Gia Tot</div>
+        <div className="p-2 text-center text-white bg-slate-600 text-semibold w-2/3 rounded-md">Gym Gia Tot</div> */}
 
       </div>
       {isLoading && (

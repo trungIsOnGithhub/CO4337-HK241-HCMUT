@@ -1,11 +1,11 @@
 import React, {useState,useEffect} from 'react'
 import { Button } from '../../components'
 import { useSearchParams, useNavigate } from 'react-router-dom'
-import { apiGetOneBlog } from '../../apis/blog'
+import { apiGetOneBlog  } from '../../apis/blog'
 import { toast } from 'react-toastify'
 import DOMPurify from 'dompurify';
 import path from 'ultils/path';
-import icons from '../../ultils/icon'
+import { FaRegTrashAlt, FaRegThumbsDown, FaRegThumbsUp } from 'react-icons/fa'
 import {useSelector } from 'react-redux'
 
 const ViewBlog = () => {
@@ -27,10 +27,10 @@ const ViewBlog = () => {
       console.log(response,'----');
       if (response?.success) {
         setPost(response?.blog);
-        if (response?.blog?.likes?.includes(current._id)) {
+        if (response?.blog?.likes?.includes(current?._id)) {
           setLiked(true);
         }
-        if (response?.blog?.dislikes?.includes(current._id)) {
+        if (response?.blog?.dislikes?.includes(current?._id)) {
           setDisliked(true);
         }
       } else {
@@ -58,7 +58,7 @@ const ViewBlog = () => {
           
         }
       }
-      else if (reacttion === 'dislike') {
+      else if (reaction === 'dislike') {
         if (disliked) {
 
         } else {
@@ -83,34 +83,36 @@ const ViewBlog = () => {
                 <br></br>
                 <h3 className="font-bold text-3xl text-center">{post?.title || 'Title'}</h3>
                 <br></br>
-                <p className="font-semibold text-xl text-center">Like: {post?.likes.length || 0}</p>
+                <span>
+                  <p className="font-semibold text-xl text-center">Like: {post?.likes.length || 0}</p>
+                  <span>I Like This:</span>
+                  <span onClick={() => { setLiked(prev => !prev); triggerReaction("like"); }}><FaRegThumbsUp  color={liked ? 'orange' : 'lightgrey'}/></span>
+                  {/* <span className='w-1/3'></span> */}
+                </span>
                 &nbsp;&nbsp;&nbsp;&nbsp;
                 <p className="font-semibold text-xl text-center">Dislike: {post?.dislikes.length || 0}</p>
                 <br></br>
                 <span className='w-1/2'>
-                  <span>I Like This:</span>
-                  <span onClick={() => { setLiked(prev => !prev); triggerReaction("like"); }}>
-                  <FaStar  color={liked ? 'orange' : 'lightgrey'}/></span>
-                  <span className='w-1/3'></span>
+
                   <span>I Don't Like This</span>
-                  <span onClick={() => { setDisiked(prev => !prev); triggerReaction("dislike"); }}>
-                  <FaStar color={disliked ? 'orange' : 'lightgrey'}/></span>
-                </span>
-                <br></br>
-                <span>
-                  <span>Share This Post Via:</span>
-                  &nbsp;&nbsp;&nbsp;&nbsp;
-                  <span className="flex gap-4">
-                    <FaTrashCan color="blue"/>
-                    <FaTrashCan color="blue"/>
-                    <FaTrashCan color="blue"/>
-                    <FaTrashCan color="blue"/>
-                  </span>
+                  <span onClick={() => { setDisliked(prev => !prev); triggerReaction("dislike"); }}>
+                  <FaRegThumbsDown color={disliked ? 'orange' : 'lightgrey'}/></span>
                 </span>
                 <br></br>
                 {post?.content?.length === 1 
                 &&
                 <p className='text-lg line-clamp-[10] mb-8 text-center' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(post?.content[0])}}></p>}
+                    <br></br>
+                <span className="flex justify-center">
+                  <span>Share This Post Via:</span>
+                  &nbsp;&nbsp;&nbsp;&nbsp;
+                  <span className="flex gap-4">
+                    <FaRegTrashAlt color="blue"/>
+                    <FaRegTrashAlt color="blue"/>
+                    <FaRegTrashAlt color="blue"/>
+                    <FaRegTrashAlt color="blue"/>
+                  </span>
+                </span>
             </div>
         </div>
       )

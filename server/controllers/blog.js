@@ -1,4 +1,5 @@
 const Blog = require('../models/blog')
+const PostTag = require('../models/postTag')
 const asyncHandler = require('express-async-handler')
 
 const createNewBlogPost = asyncHandler(async(req, res)=>{
@@ -29,33 +30,33 @@ const updateBlog = asyncHandler(async(req, res)=>{
 })
 
 const getAllBlogTags = asyncHandler(async (req,res) => {
-    // const response = await Blog.find()
-    const response = [
-        {
-            "_id": {
-              "$oid": "66377327edf989f1ae865513"
-            },
-            label: "Tag 68",
-          },
-          {
-            "_id": {
-              "$oid": "66377327edf989f1ae865513"
-            },
-            label: "Sample Tag 999",
-          },
-          {
-            "_id": {
-              "$oid": "66377327edf989f1ae865513"
-            },
-            label: "Label Tag 99",
-          },
-          {
-            "_id": {
-              "$oid": "66377327edf989f1ae865513"
-            },
-            label: "Tag 96",
-          }
-      ]
+    const response = await PostTag.find()
+    // const response = [
+    //     {
+    //         "_id": {
+    //           "$oid": "66377327edf989f1ae865513"
+    //         },
+    //         label: "Tag 68",
+    //       },
+    //       {
+    //         "_id": {
+    //           "$oid": "66377327edf989f1ae865513"
+    //         },
+    //         label: "Sample Tag 999",
+    //       },
+    //       {
+    //         "_id": {
+    //           "$oid": "66377327edf989f1ae865513"
+    //         },
+    //         label: "Label Tag 99",
+    //       },
+    //       {
+    //         "_id": {
+    //           "$oid": "66377327edf989f1ae865513"
+    //         },
+    //         label: "Tag 96",
+    //       }
+    //   ]
     return res.status(200).json({
         success: response ? true : false,
         tags: response ? response : []
@@ -75,7 +76,10 @@ const getAllBlogs = asyncHandler(async (req, res)=>{
     if (title) {
         searchFilter.title = title;
     }
-    const response = await Blog.find(searchFilter);
+    const response = await Blog.find(searchFilter).populate({
+        path: 'provider_id',
+        select: 'bussinessName province',
+    });
 
     return res.status(200).json({
         success: response ? true : false,
@@ -190,6 +194,70 @@ const uploadImage = asyncHandler(async(req, res)=>{
     }
 })
 
+const createNewPostTag = asyncHandler(async(req, res)=>{
+    console.log('=========',req.body,'=========');
+    const {label, created_by} = req.body
+    if(!label || !created_by){
+        throw new Error ("Missing input")
+    }
+    const response = await PostTag.create(req.body)
+
+    return res.status(200).json({
+        success: response ? true : false,
+        postTag: response ? response : "Cannot create new blog post tag"
+    })
+})
+
+const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
+    const { searchTerm, selectedTags } = req.query;
+
+    console.log(req.query)
+
+    if (!searchTerm) {
+        throw new Error ("Missing input");
+    }
+
+    // Loại bỏ các trường đặc biệt ra khỏi query
+    const excludeFields = ['limit', 'sort', 'page', 'fields'];
+    excludeFields.forEach((el) => delete req.query[el]);
+
+    // Format lại các toán tử cho đúng cú pháp của mongoose
+    // let queryString = JSON.stringify(queries);
+    // queryString = queryString.replace(
+    //     /\b(gte|gt|lt|lte)\b/g,
+    //     (matchedEl) => `$${matchedEl}`
+    // );
+
+    let queryFinish = {}
+    if(searchTerm?.length){
+        queryFinish = {
+            $or: [
+                {title: {$regex: searchTerm, $options: 'i' }},
+                {author: {$regex: searchTerm, $options: 'i' }},
+                {'provider_id.bussinessName': {$regex: searchTerm, $options: 'i' }},
+                {'provider_id.province': {$regex: searchTerm, $options: 'i' }},
+                {tags: {$regex: searchTerm, $options: 'i' }}
+            ]
+        }
+    }
+
+    const qr = { ...queryFinish }
+    console.log(qr)
+    let queryCommand = Blog.find({}).populate({
+        path: 'provider_id',
+        select: 'bussinessName province',
+    }).find(qr);
+
+    const blogs = await queryCommand;
+
+    console.log(blogs)
+
+    return res.status(200).json({
+        success: blogs?.length ? true : false,
+        blogs: blogs?.length ? blogs : "Cannot Find Post Blogs"
+    })
+})
+
 module.exports = {
     updateBlog,
     getAllBlogs,
@@ -199,5 +267,7 @@ module.exports = {
     deleteBlog,
     uploadImage,
     getAllBlogTags,
-    createNewBlogPost
+    createNewBlogPost,
+    createNewPostTag,
+    getBlogsBySearchTerm,
 }
