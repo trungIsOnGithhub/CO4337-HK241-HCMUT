@@ -65,3 +65,9 @@ export const apiSearchBlogByParams = (params) => axios({
     method: 'get',
     params
 })
+
+export const apiGetTopTags = (data) => axios({
+    url: '/blog/top_tags',
+    method: 'post',
+    data
+})

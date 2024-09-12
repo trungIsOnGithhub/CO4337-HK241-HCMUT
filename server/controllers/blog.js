@@ -209,12 +209,15 @@ const createNewPostTag = asyncHandler(async(req, res)=>{
 })
 
 const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
-    const { searchTerm, selectedTags } = req.query;
+    let { searchTerm, selectedTags } = req.query;
 
-    console.log(req.query)
+    // console.log(req.query)
 
     if (!searchTerm) {
-        throw new Error ("Missing input");
+        searchTerm = '';
+    }
+    if (!selectedTags) {
+        selectedTags = [];
     }
 
     // Loại bỏ các trường đặc biệt ra khỏi query
@@ -248,9 +251,17 @@ const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
         select: 'bussinessName province',
     }).find(qr);
 
-    const blogs = await queryCommand;
+    let blogs = await queryCommand;
 
-    console.log(blogs)
+    // console.log(blogs)
+    blogs = blogs.filter(blog => {
+        for (const tag of selectedTags) {
+            if (blog?.tags.includes(tag)) {
+                return true;
+            }
+        }
+        return false;
+    })
 
     return res.status(200).json({
         success: blogs?.length ? true : false,

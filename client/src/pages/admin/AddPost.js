@@ -248,7 +248,7 @@ const AddPost = () => {
             invalidField={invalidField}
             setInvalidField={setInvalidField}
           />
-          <div className='w-full my-6 flex gap-4 z-60 items-center'>
+          <div className='w-full my-6 flex gap-4 z-60'>
             <MultiSelect
               title='Tags'
               label='Tags'
@@ -259,7 +259,7 @@ const AddPost = () => {
             />
             { !addNewTagMenu && 
             <Button
-              style="p-1 px-3 rounded-md text-white bg-main"
+              style="p-2 rounded-md text-white bg-main"
               handleOnclick={() => {setAddNewTagMenu(prev => !prev);}}
             ><FaPlus /></Button>
             }
@@ -267,14 +267,14 @@ const AddPost = () => {
           {
               addNewTagMenu &&
               <div className='w-full my-6 flex flex-col z-60'>
-                <span className='flex gap-2 justify-items-end'>
+                <span className='flex gap-2 m-auto'>
                   <Button
-                    style={"rounded-md text-white bg-main font-semibold p-1 w-1/6"}
+                    style={"rounded-md text-white bg-main font-semibold p-2 w-fit"}
                     handleOnclick={() => { setAddNewTagMenu(false); }}
                   >Close
                   </Button>
                   <Button
-                    style={"rounded-md text-white bg-main font-semibold p-1 w-1/6"}
+                    style={"rounded-md text-white bg-main font-semibold p-2 w-fit"}
                     handleOnclick={() => { addNewTagOnClick(newTagLabel) }}
                   >Add Tag
                   </Button>

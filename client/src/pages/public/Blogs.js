@@ -1,12 +1,12 @@
 import React, {useState, useCallback, useEffect } from 'react'
 import { MultiSelect } from 'components';
-import { apiGetAllBlogs, apiGetAllPostTags, apiSearchBlogByParams } from 'apis/blog';
+import { apiGetAllBlogs, apiGetAllPostTags, apiSearchBlogByParams, apiGetTopTags } from 'apis/blog';
 import Button from 'components/Buttons/Button';
 import { HashLoader } from 'react-spinners';
 import path from 'ultils/path';
 import DOMPurify from 'dompurify';
 import { useNavigate, createSearchParams, useSearchParams } from "react-router-dom";
-import { FaCheck } from 'react-icons/fa';
+import { FaCheck, FaRegThumbsUp, FaRegThumbsDown, FaLocationArrow } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 
 const Blogs = () => {
@@ -15,6 +15,7 @@ const Blogs = () => {
 
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [topTags, setTopTags] = useState([]);
   const fetchTags = async() => {
     const response = await apiGetAllPostTags();
     if(response?.success){
@@ -45,6 +46,22 @@ const Blogs = () => {
   }
   useEffect(() => {
     fetchCurrentBlogList();
+  }, []);
+
+  const fetchTopTags = async () => {
+    // setIsLoading(true);
+    let response = await apiGetTopTags({ limit: 5 });
+    if(response?.success && response?.tags){
+      // console.log('++++++', response.blogs, '+++++');
+      setTopTags(response.tags);
+      // setIsLoading(false);
+    }
+    else {
+
+    }
+  }
+  useEffect(() => {
+    fetchTopTags();
   }, []);
 
   const handleSelectTagChange = useCallback(selectedOptions => {
@@ -108,16 +125,16 @@ const Blogs = () => {
         {currBlogList && currBlogList.map(
           blog => {
             return (
-              <div className='post-item flex flex-row justify-start p-5 hover:bg-slate-400 rounded-md gap-5'
+              <div className='post-item flex flex-row justify-start p-5 hover:bg-slate-300 rounded-md gap-5 m-2'
               onClick={() => {handleChooseBlogPost(blog?._id);}}>
                 <img src={blog?.thumb} className='gap-0.5 min-w-64 mr-5'/>
                 <div>
                   <h3 className="font-bold text-red-500 text-lg">{blog?.title || 'Title'}</h3>
-                  <h5 className="font-semibold text-md">{blog?.provider_id?.province || 'Location'}</h5>
-                  <span>
-                    <h5 className="font-semibold text-md">Liked by: {blog?.likes?.length || 0}</h5>
-                    <h5 className="font-semibold text-md">Disliked by: {blog?.dislikes?.length || 0}</h5>
-                  </span>
+                  <h5 className="font-semibold text-md"><FaLocationArrow /> {blog?.provider_id?.province || 'Location'}</h5>
+                  {/* <span> */}
+                    <div className="flex flex-row justify-start gap-2"><FaRegThumbsUp /> {blog?.likes?.length || 0} - <FaRegThumbsDown /> {blog?.dislikes?.length || 0}</div>
+                    {/* <h5 className="font-semibold text-md"><</h5> */}
+                  {/* </span> */}
                   <br></br>
                   {/* {blog?.content?.length > 0 
                   &&
@@ -125,7 +142,7 @@ const Blogs = () => {
 
                   {/* <div className='w'> */}
                     {blog?.tags.map(label =>
-                        (<span className='bg-green-700 p-3 mr-3 rounded-full w-1/2'>
+                        (<span className='bg-green-500 p-3 mr-3 rounded-full w-1/2'>
                           {label}
                         </span>)
                     )}
@@ -148,7 +165,7 @@ const Blogs = () => {
 
       <div className='w-1/3 flex flex-col gap-4 justify-items-center justify-start items-center border-l-2 border-main pl-5'>
         <div className="relative flex items-left h-12 rounded-lg focus-within:shadow-lg bg-white overflow-hidden border-2 w-full">
-          <div class="grid place-items-center h-full w-12 text-gray-300">
+          <div class="grid place-items-center h-full w-12 text-gray-200">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
@@ -173,10 +190,15 @@ const Blogs = () => {
             onChangee={handleSelectTagChange}
             values={selectedTags}
           />
-          {selectedTags?.length > 0 && <Button style='px-2 rounded-md text-white bg-blue-500 font-semibold h-fit py-2 w-fit absolute -bottom-8' handleOnclick={multiSearchBySelectedTags}>Select Tags</Button>}
+          {selectedTags?.length > 0 && <Button style='px-2 rounded-md text-white bg-blue-500 font-semibold h-fit py-2 w-fit absolute -bottom-10' handleOnclick={multiSearchBySelectedTags}>Use Select Tags</Button>}
         </div>
 
         <div className="p-2 text-center text-white bg-red-600 text-semibold w-1/2 rounded-md">Top Search:</div>
+        {
+          topTags?.length && topTags.map(tag =>
+            (<div className="p-2 text-center text-white bg-slate-600 text-semibold w-2/3 rounded-md">{tag?.label}</div>)
+          )
+        }
         {/* <div className="p-2 text-center text-white bg-slate-600 text-semibold w-2/3 rounded-md">Nha Hang Gan Toi</div>
         <div className="p-2 text-center text-white bg-slate-600 text-semibold w-2/3 rounded-md">Spa Khuyen Mai</div>
         <div className="p-2 text-center text-white bg-slate-600 text-semibold w-2/3 rounded-md">Gym Gia Tot</div> */}
