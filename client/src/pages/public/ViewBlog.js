@@ -1,12 +1,14 @@
 import React, {useState,useEffect} from 'react'
-import { Button } from '../../components'
+import { Button, MultiSelect } from '../../components'
 import { useSearchParams, useNavigate, createSearchParams } from 'react-router-dom'
 import { apiGetOneBlog, apiGetTopBlogs } from '../../apis/blog'
 import { toast } from 'react-toastify'
 import DOMPurify from 'dompurify';
 import path from 'ultils/path';
-import { FaRegTrashAlt, FaRegThumbsDown, FaRegThumbsUp, FaClock, FaPencilAlt } from 'react-icons/fa'
+import { FaRegTrashAlt, FaRegThumbsDown, FaRegThumbsUp, FaClock, FaPencilAlt, FaBackward, FaHome, FaFacebook } from 'react-icons/fa'
 import {useSelector } from 'react-redux'
+import { FaGithub } from 'react-icons/fa6'
+import ServiceBlogIntroCard from '../../components/Services/ServiceBlogIntroCard'
 
 const ViewBlog = () => {
     const navigate = useNavigate();
@@ -99,31 +101,44 @@ const ViewBlog = () => {
                 className='flex-1 h-[220px] w-[160px] object-cover'
             />
             </div>
-            <Button style='px-6 rounded-md text-white bg-blue-500 font-semibold h-fit py-2' handleOnclick={()=>backToHomepage()}>Back To Homepage</Button>  
+            <Button style='px-6 rounded-md text-white bg-blue-400 font-semibold py-1 flex gap-2 my-5' handleOnclick={()=>backToHomepage()}><FaBackward /><FaHome /></Button>  
             <div className='w-full flex flex-row'>
               <div className='w-2/3'>
                   <h2 className='text-[18px] py-[15px] font-semibold border-b-2 border-main'>Reading {`> ${post?.title}`}</h2>
                   <br></br>
                   <h3 className="font-bold text-3xl text-left">{post?.title || 'Title'}</h3>
                   <br></br>
-                  <br></br>
-                  <span className='flex gap-4'>
-                    <p className="font-semibold text-xl text-left flex gap-4"><span><FaClock /></span> {(new Date(post?.createdAt)).toLocaleDateString("en-US") || 'Date'}</p>
-                    {/* &nbsp;&nbsp;&nbsp;&nbsp; */}
-                    <p className="font-semibold text-xl text-left flex gap-4"><span><FaPencilAlt/></span>: {post?.author || 'Unknown Author'}</p>
+                  <span className='flex gap-4 border-b-2 border-main p-2'>
+                    <p className="font-semibold text-lg text-left flex gap-2"><span><FaClock /></span> {(new Date(post?.createdAt)).toLocaleDateString("en-US") || 'Date'}</p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <p className="font-semibold text-lg text-left flex gap-2"><span><FaPencilAlt/></span>: {post?.author || 'Unknown Author'}</p>
                     {/* <span>I Like This:</span> */}
                     {/* <span className='w-1/3'></span> */}
                   </span>
-                  <br></br>
-                  <span className='flex gap-4'>
-                    <p className="text-xl">React This Post:</p>
+                  {/* <hr></hr> */}
+                  <span className='flex gap-4 mt-4'>
+                    <p className="text-lg">React Post:</p>
                     <p className="font-semibold text-xl text-left flex"><span onClick={() => { setLiked(prev => !prev); triggerReaction("like"); }}><FaRegThumbsUp  color={liked ? 'orange' : 'lightgrey'}/></span>: {post?.likes.length || 0}</p>
                     {/* &nbsp;&nbsp;&nbsp;&nbsp; */}
                     <p className="font-semibold text-xl text-left flex"><span onClick={() => { setDisliked(prev => !prev); triggerReaction("dislike"); }}><FaRegThumbsDown color={disliked ? 'orange' : 'lightgrey'}/></span>: {post?.dislikes.length || 0}</p>
                     {/* <span>I Like This:</span> */}
+                    <span className='flex gap-4'>
+                    <p className="text-lg">Share Post:</p>
+                    <p className="font-semibold text-xl text-left flex"><span onClick={() => { setLiked(prev => !prev); triggerReaction("like"); }}><FaFacebook  color='blue'/></span></p>
+                    {/* &nbsp;&nbsp;&nbsp;&nbsp; */}
+                    <p className="font-semibold text-xl text-left flex"><span onClick={() => { setDisliked(prev => !prev); triggerReaction("dislike"); }}><FaGithub color='violet'/></span></p>
+                    {/* <span>I Like This:</span> */}
                     {/* <span className='w-1/3'></span> */}
                   </span>
-                  <br></br>
+                  </span>
+                  <MultiSelect
+                    title='  '
+                    label='  '
+                    id='assigned_tags'
+                    options={[]}
+                    onChangee={() => {}}
+                    values={'Content'}
+                  />
                   {/* <span className='w-1/2'>
 
                     <span>I Don't Like This</span>
@@ -132,18 +147,27 @@ const ViewBlog = () => {
                   <br></br>
                   {post?.content?.length === 1 
                   &&
-                  <p className='text-lg line-clamp-[10] mb-8 text-left' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(post?.content[0])}}></p>}
+                  <p className='text-lg line-clamp-[10] mb-8 text-left bg-slate-300 p-5' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(post?.content[0])}}></p>}
                       <br></br>
                   <span className="flex justify-center">
-                    <span>Share This Post Via:</span>
+                    {/* <span>Share This Post Via:</span>
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     <span className="flex gap-4">
                       <FaRegTrashAlt color="blue"/>
                       <FaRegTrashAlt color="blue"/>
                       <FaRegTrashAlt color="blue"/>
                       <FaRegTrashAlt color="blue"/>
-                    </span>
+                    </span> */}
                   </span>
+
+                  <h2 className='text-[20px] border-b-2 border-main w-full font-semibold'>Post From</h2>
+                  {post?.provider_id ?
+                  (<ServiceBlogIntroCard 
+                    provider={post?.provider_id}
+                  />) : <p className='text-main text-center'>Provider Details Not Found!</p>
+                  }
+
+                  <h2 className='text-[20px] border-b-2 border-main w-full font-semibold mt-5'>Comments</h2>
               </div>
               <div className='w-1/3 flex flex-col gap-4 justify-items-center justify-start items-center border-l-2 border-main pl-5'>
                 <h2 className='text-[18px] border-b-2 border-main w-full text-center font-semibold'>Other Trending Posts</h2>

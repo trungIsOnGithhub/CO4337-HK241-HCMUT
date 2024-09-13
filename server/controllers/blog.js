@@ -161,7 +161,9 @@ const getBlog = asyncHandler(async(req, res)=>{
     if(!bid) {
         throw new Error("Missing input")
     }
-    const blog = await Blog.findById(bid)
+    const blog = await Blog.findById(bid).populate({
+        path: 'provider_id'
+    });
                 // .populate('likes', excludeField)
                 // .populate('dislikes', excludeField)
    
