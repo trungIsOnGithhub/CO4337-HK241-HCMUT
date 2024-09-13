@@ -4,7 +4,7 @@ import { apiGetAllBlogs, apiGetAllPostTags, apiSearchBlogByParams, apiGetTopTags
 import Button from 'components/Buttons/Button';
 import { HashLoader } from 'react-spinners';
 import path from 'ultils/path';
-import DOMPurify from 'dompurify';
+// import DOMPurify from 'dompurify';
 import { useNavigate, createSearchParams, useSearchParams } from "react-router-dom";
 import { FaCheck, FaRegThumbsUp, FaRegThumbsDown, FaLocationArrow } from 'react-icons/fa';
 import Swal from 'sweetalert2';
@@ -14,7 +14,7 @@ const Blogs = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [tags, setTags] = useState([]);
-  const [selectedSort, setSelectedSort] = useState([]);
+  const [selectedSort, setSelectedSort] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
   const handleSortByChange = () => {};
   const [topTags, setTopTags] = useState([]);
@@ -208,11 +208,13 @@ const Blogs = () => {
         </div>
 
         <div className="p-2 text-center text-white bg-red-500 text-semibold w-1/2 rounded-md">Top Search:</div>
+        <div className="w-2/3 flex flex-wrap gap-4">
         {
           topTags?.length && topTags.map(tag =>
             (<div className="p-2 text-center text-white bg-slate-600 text-semibold w-fit rounded-md">{tag?.label}</div>)
           )
         }
+        </div>
         {/* <div className="p-2 text-center text-white bg-slate-600 text-semibold w-2/3 rounded-md">Nha Hang Gan Toi</div>
         <div className="p-2 text-center text-white bg-slate-600 text-semibold w-2/3 rounded-md">Spa Khuyen Mai</div>
         <div className="p-2 text-center text-white bg-slate-600 text-semibold w-2/3 rounded-md">Gym Gia Tot</div> */}
