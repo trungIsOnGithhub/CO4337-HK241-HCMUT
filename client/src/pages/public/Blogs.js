@@ -14,7 +14,9 @@ const Blogs = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [tags, setTags] = useState([]);
+  const [selectedSort, setSelectedSort] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
+  const handleSortByChange = () => {};
   const [topTags, setTopTags] = useState([]);
   const fetchTags = async() => {
     const response = await apiGetAllPostTags();
@@ -112,15 +114,25 @@ const Blogs = () => {
     </div>
     <div className='w-full flex flex-row'>
       <div className='w-2/3 flex flex-col'>
-        <h2 className='text-[18px] font-semibold py-[15px] border-b-2 border-main'>Trending Blogs</h2>
-        <MultiSelect
-            title='Sorted By'
-            label='Tags Of Post'
-            id='assigned_tags'
-            options={tags}
-            onChangee={handleSelectTagChange}
-            values={selectedTags}
-        />
+        <h2 className='text-xl font-semibold py-[15px] border-b-2 border-main'>Trending Blogs</h2>
+        <div className='w-2/3 p-6 bg-slate-300 m-3 rounded-md flex gap-4'>
+          <MultiSelect
+              title='Sort By'
+              label='Sort By'
+              id='assigned_tags'
+              options={['Date Created', 'Likes', 'Dislikes']}
+              onChangee={handleSelectTagChange}
+              values={selectedSort}
+          />
+          <MultiSelect
+              title='From Province'
+              label='From Province'
+              id='assigned_tags'
+              options={tags}
+              onChangee={handleSelectTagChange}
+              values={selectedTags}
+          />
+        </div>
 
         {currBlogList && currBlogList.map(
           blog => {
@@ -130,9 +142,9 @@ const Blogs = () => {
                 <img src={blog?.thumb} className='gap-0.5 min-w-64 mr-5'/>
                 <div>
                   <h3 className="font-bold text-red-500 text-lg">{blog?.title || 'Title'}</h3>
-                  <h5 className="font-semibold text-md"><FaLocationArrow /> {blog?.provider_id?.province || 'Location'}</h5>
+                  <h5 className="font-semibold text-md flex mb-4"><FaLocationArrow /> {blog?.provider_id?.province || 'Location'}</h5>
                   {/* <span> */}
-                    <div className="flex flex-row justify-start gap-2"><FaRegThumbsUp /> {blog?.likes?.length || 0} - <FaRegThumbsDown /> {blog?.dislikes?.length || 0}</div>
+                    <div className="flex flex-row justify-start gap-2 mb-4"><FaRegThumbsUp /> {blog?.likes?.length || 0}&nbsp;&nbsp;&nbsp;<FaRegThumbsDown /> {blog?.dislikes?.length || 0}</div>
                     {/* <h5 className="font-semibold text-md"><</h5> */}
                   {/* </span> */}
                   <br></br>
@@ -142,7 +154,7 @@ const Blogs = () => {
 
                   {/* <div className='w'> */}
                     {blog?.tags.map(label =>
-                        (<span className='bg-green-500 p-3 mr-3 rounded-full w-1/2'>
+                        (<span className='bg-green-500 p-2 mr-3 rounded-full w-1/2'>
                           {label}
                         </span>)
                     )}
@@ -190,13 +202,15 @@ const Blogs = () => {
             onChangee={handleSelectTagChange}
             values={selectedTags}
           />
-          {selectedTags?.length > 0 && <Button style='px-2 rounded-md text-white bg-blue-500 font-semibold h-fit py-2 w-fit absolute -bottom-10' handleOnclick={multiSearchBySelectedTags}>Use Select Tags</Button>}
+          <div className='flex flex-wrap'>
+            {selectedTags?.length > 0 && <Button style='px-2 rounded-md text-white bg-blue-500 font-semibold h-fit py-2 w-fit absolute -bottom-10' handleOnclick={multiSearchBySelectedTags}>Use Select Tags</Button>}
+          </div>
         </div>
 
-        <div className="p-2 text-center text-white bg-red-600 text-semibold w-1/2 rounded-md">Top Search:</div>
+        <div className="p-2 text-center text-white bg-red-500 text-semibold w-1/2 rounded-md">Top Search:</div>
         {
           topTags?.length && topTags.map(tag =>
-            (<div className="p-2 text-center text-white bg-slate-600 text-semibold w-2/3 rounded-md">{tag?.label}</div>)
+            (<div className="p-2 text-center text-white bg-slate-600 text-semibold w-fit rounded-md">{tag?.label}</div>)
           )
         }
         {/* <div className="p-2 text-center text-white bg-slate-600 text-semibold w-2/3 rounded-md">Nha Hang Gan Toi</div>
