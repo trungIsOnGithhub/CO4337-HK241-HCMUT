@@ -1,6 +1,7 @@
 const Blog = require('../models/blog')
 const PostTag = require('../models/postTag')
-const asyncHandler = require('express-async-handler')
+const asyncHandler = require('express-async-handler');
+const User = require('../models/user');
 
 const createNewBlogPost = asyncHandler(async(req, res)=>{
     console.log('----',req.body,'----');
@@ -89,15 +90,21 @@ const getAllBlogs = asyncHandler(async (req, res)=>{
 
 // LIKE
 const likeBlog = asyncHandler(async(req, res)=>{
-    const {_id} = req.user
-    const {bid} = req.params
+    const {_id, bid } = req.body;
+
     if(!bid) {
         throw new Error("Missing input")
     }
     const blog = await Blog.findById(bid)
+
     const alreadyDisliked = blog?.dislikes?.find(e1 => e1.toString() === _id)
     if(alreadyDisliked) {
-        const response = await Blog.findByIdAndUpdate(bid, {$pull: {dislikes: _id}},{new: true})
+        const response = await Blog.findByIdAndUpdate(bid, {$pull: {dislikes: _id}, $push: {likes: _id}},{new: true}).populate({
+            path: 'provider_id'
+        }).populate({
+            path: 'author'
+        });
+
         return res.status(200).json({
             success: response ? true : false,
             rs: response
@@ -105,33 +112,47 @@ const likeBlog = asyncHandler(async(req, res)=>{
     }
     const alreadyLiked = blog?.likes?.find(e1 => e1.toString() === _id)
     if(alreadyLiked) {
-        const response = await Blog.findByIdAndUpdate(bid, {$pull: {likes: _id}},{new: true})
+        const response = await Blog.findByIdAndUpdate(bid, {$pull: {likes: _id}},{new: true}).populate({
+            path: 'provider_id'
+        }).populate({
+            path: 'author'
+        });
+
         return res.status(200).json({
             success: response ? true : false,
             rs: response
         })
     }
     else{
-        const response = await Blog.findByIdAndUpdate(bid, {$push: {likes: _id}},{new: true})
+        const response = await Blog.findByIdAndUpdate(bid, {$push: {likes: _id}},{new: true}).populate({
+            path: 'provider_id'
+        }).populate({
+            path: 'author'
+        });
+
         return res.status(200).json({
             success: response ? true : false,
             rs: response
         })
     }
-
 })
 
 // DISLIKE
 const dislikeBlog = asyncHandler(async(req, res)=>{
-    const {_id} = req.user
-    const {bid} = req.params
+    const {_id, bid } = req.body;
+
     if(!bid) {
         throw new Error("Missing input")
     }
     const blog = await Blog.findById(bid)
     const alreadyLiked = blog?.likes?.find(e1 => e1.toString() === _id)
     if(alreadyLiked) {
-        const response = await Blog.findByIdAndUpdate(bid, {$pull: {likes: _id}},{new: true})
+        const response = await Blog.findByIdAndUpdate(bid, {$pull: {likes: _id}, $push: {dislikes: _id}},{new: true}).populate({
+            path: 'provider_id'
+        }).populate({
+            path: 'author'
+        });
+
         return res.status(200).json({
             success: response ? true : false,
             rs: response
@@ -139,14 +160,24 @@ const dislikeBlog = asyncHandler(async(req, res)=>{
     }
     const alreadyDisliked = blog?.dislikes?.find(e1 => e1.toString() === _id)
     if(alreadyDisliked) {
-        const response = await Blog.findByIdAndUpdate(bid, {$pull: {dislikes: _id}},{new: true})
+        const response = await Blog.findByIdAndUpdate(bid, {$pull: {dislikes: _id}},{new: true}).populate({
+            path: 'provider_id'
+        }).populate({
+            path: 'author'
+        });
+
         return res.status(200).json({
             success: response ? true : false,
             rs: response
         })
     }
     else{
-        const response = await Blog.findByIdAndUpdate(bid, {$push: {dislikes: _id}},{new: true})
+        const response = await Blog.findByIdAndUpdate(bid, {$push: {dislikes: _id}},{new: true}).populate({
+            path: 'provider_id'
+        }).populate({
+            path: 'author'
+        });
+
         return res.status(200).json({
             success: response ? true : false,
             rs: response
@@ -163,7 +194,11 @@ const getBlog = asyncHandler(async(req, res)=>{
     }
     const blog = await Blog.findById(bid).populate({
         path: 'provider_id'
+    }).populate({
+        path: 'author'
     });
+    const provider_admin = await User.find({provider_id: blog?.provider_id?._id});
+    blog.author = "" + provider_admin?.firstName + " " + provider_admin?.lastName;
                 // .populate('likes', excludeField)
                 // .populate('dislikes', excludeField)
    

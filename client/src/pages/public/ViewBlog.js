@@ -1,7 +1,7 @@
 import React, {useState,useEffect} from 'react'
 import { Button, MultiSelect } from '../../components'
 import { useSearchParams, useNavigate, createSearchParams } from 'react-router-dom'
-import { apiGetOneBlog, apiGetTopBlogs } from '../../apis/blog'
+import { apiGetOneBlog, apiGetTopBlogs, apiLikeBlog, apiDislikeBlog } from '../../apis/blog'
 import { toast } from 'react-toastify'
 import DOMPurify from 'dompurify';
 import path from 'ultils/path';
@@ -9,6 +9,8 @@ import { FaRegTrashAlt, FaRegThumbsDown, FaRegThumbsUp, FaClock, FaPencilAlt, Fa
 import {useSelector } from 'react-redux'
 import { FaGithub } from 'react-icons/fa6'
 import ServiceBlogIntroCard from '../../components/Services/ServiceBlogIntroCard'
+import CommentBlog from '../../components/Vote/CommentBlog'
+import Swal from 'sweetalert2'
 
 const ViewBlog = () => {
     const navigate = useNavigate();
@@ -67,19 +69,27 @@ const ViewBlog = () => {
         })
     }
 
-    const triggerReaction = (reaction) => {
+    const triggerReaction = async (reaction) => {
       if (reaction === 'like') {
-        if (liked) {
+        let response = await apiLikeBlog({_id: current?._id, bid: params?.get('id') });
 
-        } else {
-          
+        if (!response?.success) {
+          Swal.fire('Error Ocurred!!', 'Like This Post Not Success!!', 'error')
+          setLiked(false);
+        }
+        else {
+          setPost(response.rs);
         }
       }
       else if (reaction === 'dislike') {
-        if (disliked) {
+        let response = await apiDislikeBlog({_id: current?._id, bid: params?.get('id') });
 
-        } else {
-          
+        if (!response?.success) {
+          Swal.fire('Error Ocurred!!', 'Dislike This Post Not Success!!', 'error');
+          setDisliked(false);
+        }
+        else {
+          setPost(response.rs);
         }
       }
     }
@@ -90,6 +100,31 @@ const ViewBlog = () => {
         search: createSearchParams({id}).toString()
       })
      }
+
+
+    const handleVoteNow = () => {
+      if(!isLogin){
+          Swal.fire({
+              text: 'Login to vote',
+              cancelButtonText: 'Cancel',
+              confirmButtonText: 'Go login',
+              confirmButtonColor: "#3085d6",
+              cancelButtonColor: "#d33",
+              title: 'Oops!',
+              showCancelButton: true,
+          }).then((rs)=>{
+              if(rs.isConfirmed){
+                  navigate(`/${path.LOGIN}`)
+              }
+          })
+      }
+      else{
+          dispatch(showModal({isShowModal: true, modalChildren: <VoteOption 
+              nameProduct={nameProduct} 
+              handleSubmitVoteOption={handleSubmitVoteOption}/>}))
+      }
+    }
+
 
     return (
         <div className='w-main mb-8'>
@@ -103,7 +138,7 @@ const ViewBlog = () => {
             </div>
             <Button style='px-6 rounded-md text-white bg-blue-400 font-semibold py-1 flex gap-2 my-5' handleOnclick={()=>backToHomepage()}><FaBackward /><FaHome /></Button>  
             <div className='w-full flex flex-row'>
-              <div className='w-2/3'>
+              <div className='w-3/4'>
                   <h2 className='text-[18px] py-[15px] font-semibold border-b-2 border-main'>Reading {`> ${post?.title}`}</h2>
                   <br></br>
                   <h3 className="font-bold text-3xl text-left">{post?.title || 'Title'}</h3>
@@ -111,16 +146,23 @@ const ViewBlog = () => {
                   <span className='flex gap-4 border-b-2 border-main p-2'>
                     <p className="font-semibold text-lg text-left flex gap-2"><span><FaClock /></span> {(new Date(post?.createdAt)).toLocaleDateString("en-US") || 'Date'}</p>
                     &nbsp;&nbsp;&nbsp;&nbsp;
-                    <p className="font-semibold text-lg text-left flex gap-2"><span><FaPencilAlt/></span>: {post?.author || 'Unknown Author'}</p>
+                    <p className="font-semibold text-lg text-left flex gap-2"><span><FaPencilAlt/></span>: {(post?.author?.firstName + post?.author?.lastName) || 'Unknown Author'}</p>
                     {/* <span>I Like This:</span> */}
                     {/* <span className='w-1/3'></span> */}
                   </span>
                   {/* <hr></hr> */}
                   <span className='flex gap-4 mt-4'>
                     <p className="text-lg">React Post:</p>
-                    <p className="font-semibold text-xl text-left flex"><span onClick={() => { setLiked(prev => !prev); triggerReaction("like"); }}><FaRegThumbsUp  color={liked ? 'orange' : 'lightgrey'}/></span>: {post?.likes.length || 0}</p>
+                    <p className="font-semibold text-xl text-left flex"><span onClick={() => {
+                      setLiked(prev => !prev);
+                      setDisliked(false);
+                      triggerReaction("like"); }}>
+                    <FaRegThumbsUp  color={liked ? 'orange' : 'lightgrey'}/></span>: {post?.likes.length || 0}</p>
                     {/* &nbsp;&nbsp;&nbsp;&nbsp; */}
-                    <p className="font-semibold text-xl text-left flex"><span onClick={() => { setDisliked(prev => !prev); triggerReaction("dislike"); }}><FaRegThumbsDown color={disliked ? 'orange' : 'lightgrey'}/></span>: {post?.dislikes.length || 0}</p>
+                    <p className="font-semibold text-xl text-left flex"><span onClick={() => {
+                      setDisliked(prev => !prev);
+                      setLiked(false);
+                      triggerReaction("dislike"); }}><FaRegThumbsDown color={disliked ? 'orange' : 'lightgrey'}/></span>: {post?.dislikes.length || 0}</p>
                     {/* <span>I Like This:</span> */}
                     <span className='flex gap-4'>
                     <p className="text-lg">Share Post:</p>
@@ -147,18 +189,10 @@ const ViewBlog = () => {
                   <br></br>
                   {post?.content?.length === 1 
                   &&
-                  <p className='text-lg line-clamp-[10] mb-8 text-left bg-slate-300 p-5' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(post?.content[0])}}></p>}
+                  <div id='post_content' className='text-lg text-left bg-slate-300 p-8 m-4 rounded-md shadow-md' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(post?.content[0])}}></div>}
                       <br></br>
-                  <span className="flex justify-center">
-                    {/* <span>Share This Post Via:</span>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <span className="flex gap-4">
-                      <FaRegTrashAlt color="blue"/>
-                      <FaRegTrashAlt color="blue"/>
-                      <FaRegTrashAlt color="blue"/>
-                      <FaRegTrashAlt color="blue"/>
-                    </span> */}
-                  </span>
+                <span className="flex justify-center">
+                </span>
 
                   <h2 className='text-[20px] border-b-2 border-main w-full font-semibold'>Post From</h2>
                   {post?.provider_id ?
@@ -168,8 +202,25 @@ const ViewBlog = () => {
                   }
 
                   <h2 className='text-[20px] border-b-2 border-main w-full font-semibold mt-5'>Comments</h2>
+                  <div className='w-full'>
+                  <div className='p-4 flex items-center justify-center text-sm flex-col gap-2'>
+                      <span>Do you review this product?</span>
+                      <Button handleOnclick={handleVoteNow}>Rate now!</Button>
+                  </div>
+                  <div className='flex flex-col gap-4'>
+                      {ratings?.map(el=>(
+                          <Comment 
+                              key = {el._id}
+                              star = {el.star}
+                              updatedAt = {el?.updatedAt}
+                              comment = {el?.comment}
+                              name={`${el?.postedBy?.lastName} ${el?.postedBy?.firstName}`}c
+                          />
+                      ))}
+                  </div>
+                  </div>
               </div>
-              <div className='w-1/3 flex flex-col gap-4 justify-items-center justify-start items-center border-l-2 border-main pl-5'>
+              <div className='w-1/4 flex flex-col gap-4 justify-items-center justify-start items-center border-l-2 border-main pl-5'>
                 <h2 className='text-[18px] border-b-2 border-main w-full text-center font-semibold'>Other Trending Posts</h2>
                 {currBlogList && currBlogList.map(
                   blog => {

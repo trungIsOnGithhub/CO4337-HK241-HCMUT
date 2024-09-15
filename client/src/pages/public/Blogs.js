@@ -139,10 +139,10 @@ const Blogs = () => {
             return (
               <div className='post-item flex flex-row justify-start p-5 hover:bg-slate-300 rounded-md gap-5 m-2'
               onClick={() => {handleChooseBlogPost(blog?._id);}}>
-                <img src={blog?.thumb} className='gap-0.5 min-w-64 mr-5'/>
+                <img src={blog?.thumb} className='gap-0.5 w-1/2 mr-5'/>
                 <div>
-                  <h3 className="font-bold text-red-500 text-lg">{blog?.title || 'Title'}</h3>
-                  <h5 className="font-semibold text-md flex mb-4"><FaLocationArrow /> {blog?.provider_id?.province || 'Location'}</h5>
+                  <h3 className="font-bold text-red-500 text-lg mb-2">{blog?.title || 'Title'}</h3>
+                  <h5 className="font-semibold text-md flex mb-4"><FaLocationArrow />&nbsp;&nbsp;{blog?.provider_id?.province || 'Location'}</h5>
                   {/* <span> */}
                     <div className="flex flex-row justify-start gap-2 mb-4"><FaRegThumbsUp /> {blog?.likes?.length || 0}&nbsp;&nbsp;&nbsp;<FaRegThumbsDown /> {blog?.dislikes?.length || 0}</div>
                     {/* <h5 className="font-semibold text-md"><</h5> */}
@@ -152,13 +152,13 @@ const Blogs = () => {
                   &&
                   <div className='text-sm line-clamp-[10] mb-8' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(blog?.content[0])}}></div>} */}
 
-                  {/* <div className='w'> */}
+                  <div className='flex flex-wrap'>
                     {blog?.tags.map(label =>
-                        (<span className='bg-green-500 p-2 mr-3 rounded-full w-1/2'>
+                        (<div className='bg-green-400 p-2 m-1 rounded-full w-fit'>
                           {label}
-                        </span>)
+                        </div>)
                     )}
-                  {/* </div> */}
+                  </div>
                 </div>
               </div>
             )
