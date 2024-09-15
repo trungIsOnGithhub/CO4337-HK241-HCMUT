@@ -22,7 +22,7 @@ const ServiceInformation = ({totalRatings, ratings, nameProduct, sid, reRender})
     const handleSubmitVoteOption = async({comment, score})=>{
         if(!comment|| !score|| !sid) {
             alert('Missing input. Please rating again!')
-            return
+            return;
         }
         await apiRatingService({star:score, comment, sid, updatedAt:Date.now() })
         dispatch(showModal({isShowModal:false, modalChildren: null}))

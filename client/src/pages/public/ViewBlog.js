@@ -1,24 +1,27 @@
 import React, {useState,useEffect} from 'react'
 import { Button, MultiSelect } from '../../components'
 import { useSearchParams, useNavigate, createSearchParams } from 'react-router-dom'
-import { apiGetOneBlog, apiGetTopBlogs, apiLikeBlog, apiDislikeBlog } from '../../apis/blog'
-import { toast } from 'react-toastify'
+import { apiGetOneBlog, apiGetTopBlogs, apiLikeBlog, apiDislikeBlog, apiAddBlogComment } from '../../apis/blog'
 import DOMPurify from 'dompurify';
 import path from 'ultils/path';
 import { FaRegTrashAlt, FaRegThumbsDown, FaRegThumbsUp, FaClock, FaPencilAlt, FaBackward, FaHome, FaFacebook } from 'react-icons/fa'
-import {useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { FaGithub } from 'react-icons/fa6'
 import ServiceBlogIntroCard from '../../components/Services/ServiceBlogIntroCard'
-import CommentBlog from '../../components/Vote/CommentBlog'
+import CommentBlog from '../../components/Vote/CommentBlog.js'
 import Swal from 'sweetalert2'
+import avatar from 'assets/avatarDefault.png'
 
 const ViewBlog = () => {
+    const dispatch = useDispatch()
     const navigate = useNavigate();
     const [params] = useSearchParams();
     const [post, setPost] = useState(null);
     const [liked, setLiked] = useState(false);
     const [disliked, setDisliked] = useState(false);
     const {current} = useSelector(state => state.user)
+    const {isLogin} = useSelector(state => state.user)
+    const [comment, setComment] = useState('');
       
       // "<h1> Cai Nay La H1</h1>",
       // ["</br>"],
@@ -102,27 +105,21 @@ const ViewBlog = () => {
      }
 
 
-    const handleVoteNow = () => {
-      if(!isLogin){
-          Swal.fire({
-              text: 'Login to vote',
-              cancelButtonText: 'Cancel',
-              confirmButtonText: 'Go login',
-              confirmButtonColor: "#3085d6",
-              cancelButtonColor: "#d33",
-              title: 'Oops!',
-              showCancelButton: true,
-          }).then((rs)=>{
-              if(rs.isConfirmed){
-                  navigate(`/${path.LOGIN}`)
-              }
-          })
-      }
-      else{
-          dispatch(showModal({isShowModal: true, modalChildren: <VoteOption 
-              nameProduct={nameProduct} 
-              handleSubmitVoteOption={handleSubmitVoteOption}/>}))
-      }
+    const submitComment = async(comment)=>{
+        if(!comment) {
+            Swal.fire('Error Ocurred!!', 'Comment Cannot Be Empty!!', 'error')
+            return;
+        }
+        let response = await apiAddBlogComment({comment, bid: params?.get('id'), uid: current?._id, updatedAt:Date.now()});
+
+        if (!response?.success) {
+          Swal.fire('Error Ocurred!!', 'Error Making Comments!!', 'error')
+        }
+        else {
+          setComment('');
+          fetchPostData();
+          Swal.fire('Success', 'Comment Successfully!!', 'success')
+        }
     }
 
 
@@ -204,17 +201,31 @@ const ViewBlog = () => {
                   <h2 className='text-[20px] border-b-2 border-main w-full font-semibold mt-5'>Comments</h2>
                   <div className='w-full'>
                   <div className='p-4 flex items-center justify-center text-sm flex-col gap-2'>
-                      <span>Do you review this product?</span>
-                      <Button handleOnclick={handleVoteNow}>Rate now!</Button>
+                  <div onClick={e=> e.stopPropagation()} className='bg-white w-[700px] p-6 flex flex-row gap-4 items-center justify-center rounded-md border border-gray-500 shadow-md animate-scale-up-center'>
+                    <div className='w-fit m-0 p-4'>
+                      <img src={avatar} alt="avatar" className='w-[50px] h-[50px] object-cover rounded-full'></img>
+                    </div>
+                    <div className='w-4/5 m-0 flex flex-col'>
+                      <textarea 
+                        onChange={e=>setComment(e.target.value)}
+                        value = {comment}
+                        className='form-textarea w-full placeholder:italic placeholder:text-sm placeholder:text-gray-500'
+                        placeholder='Type something ...'
+                      ></textarea>
+                      <Button fullWidth handleOnclick={()=>{submitComment(comment)}}>Submit</Button>
+                    </div>
                   </div>
-                  <div className='flex flex-col gap-4'>
-                      {ratings?.map(el=>(
-                          <Comment 
-                              key = {el._id}
-                              star = {el.star}
+                  </div>
+                  <h2 className='my-5 font-semibold text-xl border-main'>All Comments</h2>
+
+                  <div className='flex flex-col gap-2'>
+                      {post?.comments?.map(el=>(
+                          <CommentBlog
+                              // key = {el._id}
+                              // star = {el.star}
                               updatedAt = {el?.updatedAt}
                               comment = {el?.comment}
-                              name={`${el?.postedBy?.lastName} ${el?.postedBy?.firstName}`}c
+                              name={`${el?.postedBy?.lastName} ${el?.postedBy?.firstName}`}
                           />
                       ))}
                   </div>

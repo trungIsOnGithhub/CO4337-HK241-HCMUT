@@ -79,3 +79,9 @@ export const apiGetTopBlogs = (data) => axios({
     method: 'post',
     data
 })
+
+export const apiAddBlogComment = (data) => axios({
+    url: '/blog/add_comment',
+    method: 'post',
+    data
+})

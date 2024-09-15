@@ -46,7 +46,14 @@ var blogSchema = new mongoose.Schema({
     author:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-    }
+    },
+    comments:[
+        {
+            postedBy: {type: mongoose.Types.ObjectId, ref: 'User'},
+            comment: {type: String},
+            updatedAt: {type: Date}
+        }
+    ],
 },{
     timestamps: true,
     toJSON: {virtuals: true},
