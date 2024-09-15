@@ -7,13 +7,17 @@ import {useDispatch, useSelector } from 'react-redux'
 import { logout } from "store/user/userSlice";
 import { useEffect } from "react";
 // import withBaseComponent from "hocs/withBaseComponent";
-import { showCart } from "store/app/appSlice";
+import { showCart, showMessage } from "store/app/appSlice";
+import { IoChatbubblesSharp } from "react-icons/io5";
+import Message from "components/Message/Message";
 
 const {FaPhoneAlt, MdEmail, FaUser, FaShoppingBag} = icons
 const Header = () => {
     const dispatch = useDispatch()
     const {current} = useSelector(state => state.user)
     const [isShowOptions, setIsShowOptions] = useState(false)
+    const {isShowMessage} = useSelector(state => state.app)
+
     useEffect(() => {
         const handleClickOut = (el) => {
             const profile = document.getElementById('profile')
@@ -55,7 +59,15 @@ const Header = () => {
                     <FaShoppingBag color='red' />
                     <span>{`${current?.cart_product?.length || 0} item(s)`}</span>
                 </div>
-
+                
+                <div onClick={()=> dispatch(showMessage())} className="cursor-pointer flex items-center justify-center gap-2 px-6 border-r relative">
+                    <IoChatbubblesSharp color='red' />
+                    {isShowMessage &&
+                       <div className="absolute top-[120%] left-[-100px] z-[1000]">
+                            <Message />
+                       </div>
+                    }
+                </div>
                 <div
                     onClick={()=> {
                         setIsShowOptions(!isShowOptions)}}

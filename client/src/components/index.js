@@ -63,3 +63,14 @@ export {default as PageItem} from './Pagination/PageItem'
 
 export {default as Booking} from './Booking/Booking'
 export {default as BookingDateTIme} from './Booking/BookingDateTIme'
+
+export {default as Message} from './Message/Message'
+export {default as Chat} from './Message/Chat'
+export {default as ChatContainer} from './Message/ChatContainer'
+export {default as ChatInput} from './Message/ChatInput'
+export {default as Welcome} from './Message/Welcome'
+export {default as Contact} from './Message/Contact'
+export {default as MessageBox} from './Message/MessageBox'
+
+
+

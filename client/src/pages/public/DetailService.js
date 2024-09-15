@@ -115,7 +115,6 @@ const DetailService = ({isQuickView, data}) => {
     const response = await apiGetOneService(sid)
     if(response?.success){
       setProduct(response?.service)
-      console.log(response?.service)
       
       setCurrentImage(response?.service?.thumb)
       setCurrentProduct({
@@ -243,7 +242,6 @@ const DetailService = ({isQuickView, data}) => {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(position => {
             const { latitude, longitude } = position.coords;
-            console.log(latitude, longitude);
             // Call the function to show the route using latitude and longitude
             showRoute(latitude, longitude);
           }, () => {

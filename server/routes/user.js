@@ -23,6 +23,8 @@ router.delete('/:userId', [verifyAccessToken, isAdmin], ctrls.deleteUser)
 router.put('/wishlist/:sid', [verifyAccessToken], ctrls.updateWishlist)
 router.put('/:userId', [verifyAccessToken, isAdmin], ctrls.updateUserByAdmin)
 
+router.get('/getAllContact/:userId', ctrls.getAllContact)
+
 module.exports = router
 
 //CREATE : POST       (body) -- khong bi lo

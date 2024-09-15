@@ -7,7 +7,6 @@ const sendMail = require('../ultils/sendMail')
 const crypto = require('crypto')
 
 const createServiceProvider = asyncHandler(async(req, res)=>{
-    console.log(req.body)
     const { email, password, firstName, lastName, mobile } = req.body
     if(!email || !password || !firstName || !lastName || !mobile){
         return res.status(400).json({

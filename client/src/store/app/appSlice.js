@@ -7,7 +7,10 @@ export const appSlice = createSlice({
         isLoading: false,
         isShowModal: false,
         modalChildren: null,
-        isShowCart: false
+        isShowCart: false,
+        isShowMessage: false,
+        isShowMessageBox: false,
+        currentChat: null
     },
     reducers:{
         showModal: (state,action) => {
@@ -16,6 +19,19 @@ export const appSlice = createSlice({
         },
         showCart: (state) => {
           state.isShowCart = state.isShowCart === false ? true : false;
+        },
+        showMessage: (state) => {
+          state.isShowMessage = state.isShowMessage === false ? true : false;
+        },
+        showMessageBox: (state, action) => {
+          if(action?.payload?.from && action?.payload?.to) {
+            state.isShowMessageBox = state.isShowMessageBox === false ? true : false;
+            state.currentChat = action?.payload?.to
+          }
+          else{
+            state.isShowMessageBox = false;
+            state.currentChat = null
+          }
         }
 
     },
@@ -42,5 +58,5 @@ export const appSlice = createSlice({
       },
 })
 
-export const {showModal, showCart} = appSlice.actions
+export const {showModal, showCart, showMessage, showMessageBox} = appSlice.actions
 export default appSlice.reducer

@@ -204,7 +204,6 @@ const ServiceProviderRegister = () => {
         }
 
         const invalid = validate(payload, setInvalidField);
-        console.log(payload)
         if (invalid === 0) {
             payload.role = 1411;
             setIsLoading(true)

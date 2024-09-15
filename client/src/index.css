@@ -180,3 +180,36 @@
     border-color: white !important;
   }
 
+
+  .message_box{
+    z-index: 1000 !important;
+  }
+  
+
+  .emoji-picker-react {
+    background-color: #1a1635 !important;
+    box-shadow: 0 5px 10px #9a86f3;
+    border-color: #9186f3;
+  }
+  
+  .emoji-picker-react .emoji-scroll-wrapper::-webkit-scrollbar {
+    background-color: #1a1635;
+    width: 5px;
+  }
+  
+  .emoji-picker-react .emoji-scroll-wrapper::-webkit-scrollbar-thumb {
+    background-color: #9a86f3;
+  }
+  
+  .emoji-picker-react .emoji-categories button {
+    filter: contrast(0);
+  }
+  
+  .emoji-picker-react .emoji-search {
+    background-color: transparent;
+    border-color: #9186f3;
+  }
+  
+  .emoji-picker-react .emoji-group:before {
+    background-color: #1a1635;
+  }

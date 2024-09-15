@@ -50,7 +50,6 @@ function decodePolyline(str, precision) {
 }
 
 const Mapbox = ({ userCoords, providerCoords }) => {
-  console.log(userCoords, providerCoords)
 
   
   const mapContainer = useRef(null);

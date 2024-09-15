@@ -2,7 +2,6 @@ import React, { memo, useEffect } from 'react'
 import clsx from 'clsx'
 
 const Select = ({label, options=[], register, errors, id, validate, style, fullWidth, defaultValue,text, value}) => {
-  console.log(value)
   // useEffect(() => {
   //   if (id && value) {
   //     const element = document.getElementById(id);

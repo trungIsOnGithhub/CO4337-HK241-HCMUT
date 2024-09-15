@@ -11,15 +11,11 @@ import {getCategorieService} from 'store/category/asyncAction'
 import {useDispatch, useSelector} from 'react-redux'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Booking, BookingDateTIme, Cart, Modal } from './components';
-import { showCart } from 'store/app/appSlice';
-import Mapbox from './components/Map/Mapbox'; // Add this import
-import MapConvert from 'components/Map/MapConvert';
-import MessageComponent from 'components/MessageComponent';
-
+import { Booking, BookingDateTIme, Cart, Chat, MessageBox, Modal } from './components';
+import { showCart, showMessage } from 'store/app/appSlice';
 function App() {
   const dispatch = useDispatch()
-  const {isShowModal, modalChildren, isShowCart} = useSelector(state => state.app)
+  const {isShowModal, modalChildren, isShowCart, isShowMessage, isShowMessageBox, currentChat} = useSelector(state => state.app)
 
   useEffect(() =>{
     dispatch(getCategories())
@@ -33,7 +29,10 @@ function App() {
         <Cart />
         </div>
       }
+
       {isShowModal && <Modal>{modalChildren}</Modal>}
+
+      {isShowMessageBox && <MessageBox currentChat={currentChat} />}
      <Routes>
       <Route path={path.CHECKOUT_SERVICE} element={<CheckoutService />} />
       <Route path={path.CHECKOUT_PRODUCT} element={<CheckoutProduct />} />
@@ -43,12 +42,14 @@ function App() {
         <Route path={path.DETAIL_SERVICE__CATEGORY__PID__TITLE} element={<DetailService />} />
         <Route path={path.DETAIL_PRODUCT__CATEGORY__PID__TITLE} element={<DetailProduct />} />
         <Route path={path.FAQS} element={<FAQ />} />
-        <Route path={path.OUR_PROVIDERS} element={<OurProviders />} />
+        <Route path={path.OUR_PROVIDERS_CATEGORY} element={<OurProviders />} />
         <Route path={path.SERVICES_CATEGORY} element={<Services />} />
         <Route path={path.PRODUCTS_CATEGORY} element={<Products />} />
         <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
         <Route path={path.BOOKING} element={<Booking />} />
         <Route path={path.BOOKING_DATE_TIME} element={<BookingDateTIme />} />
+
+        <Route path={path.CHAT} element={<Chat />} />
       </Route>
       <Route path={path.ADMIN} element={<AdminLayout />}>
         <Route path={path.DASHBOARD} element={<DashBoard/>}/>

@@ -1,10 +1,8 @@
-const express = require('express');
-const { sendMessage, getMessages } = require('../controllers/message');
-const { protect } = require('../middlewares/auth');
+const { addMessage, getMessages, getLastMessages } = require("../controllers/message");
+const router = require("express").Router();
 
-const router = express.Router();
-
-router.post('/', protect, sendMessage);
-router.get('/:userId', protect, getMessages);
+router.post("/addmsg/", addMessage);
+router.post("/getmsg/", getMessages);
+router.post("/getLastMessages/", getLastMessages);
 
 module.exports = router;

@@ -586,6 +586,16 @@ const removeProductFromCart = asyncHandler(async (req, res) => {
     
 })
 
+const getAllContact = async(req,res,next) => {
+    try{
+        const users = await User.find({ _id: { $ne: req.params.userId } })
+        return res.json(users)
+    }
+    catch(err){
+        next(err)
+    }
+}
+
 module.exports = {
     register,
     login,
@@ -605,5 +615,6 @@ module.exports = {
     createUsers,
     updateWishlist,
     getAllCustomers,
-    removeProductFromCart
+    removeProductFromCart,
+    getAllContact
 }

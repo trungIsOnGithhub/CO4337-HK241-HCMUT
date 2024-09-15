@@ -139,7 +139,9 @@ module.exports = {
   plugins: [require("@tailwindcss/line-clamp"),
             require('@tailwindcss/forms')({
               strategy:'class'
-            })
+            }),
+            require('tailwind-scrollbar')
           ],
   // mode: 'jit',
 }
+
