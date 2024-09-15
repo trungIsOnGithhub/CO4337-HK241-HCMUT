@@ -12,4 +12,5 @@ export {default as Final_Register} from './Final_Register'
 export {default as ResetPassword} from './ResetPassword'
 export {default as DetailCart} from './DetailCart'
 export {default as ServiceProviderRegister} from './ServiceProviderRegister';
+export {default as ViewBlog} from './ViewBlog';
 

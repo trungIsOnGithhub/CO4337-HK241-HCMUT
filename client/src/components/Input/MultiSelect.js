@@ -32,7 +32,7 @@ const colourStyles = {
   }),
 };
 
-const MultiSelect = ({options, id, onChangee, values, title}) => {
+const MultiSelect = ({options, id, onChangee, values, title, disabled = false}) => {
   // const [selectedOption, setSelectedOption] = useState(null);
 
   const handleChange = (aa) => {
@@ -49,6 +49,7 @@ const MultiSelect = ({options, id, onChangee, values, title}) => {
         isMulti
         styles={colourStyles}
         id={id}
+        isDisabled={disabled}
       />
     </div>
   );

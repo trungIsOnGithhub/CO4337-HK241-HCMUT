@@ -30,9 +30,9 @@ const getMonthlyVisitByDateRange = asyncHandler(async(req, res) => {
     }
 
 
-    const providerObjectId = new mongoose.Types.ObjectId(provider_id)
+    // const providerObjectId = new mongoose.Types.ObjectId(provider_id)
 
-    const interactions = await Interaction.find();
+    const interactions = await Interaction.find({provider_id});
 
     const startDateObj = new Date(start_date)
     const endDateObj = new Date(end_date)

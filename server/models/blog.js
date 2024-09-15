@@ -6,13 +6,17 @@ var blogSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    description:{
-        type:String,
+    content:{
+        type:Array,
         required:true
     },
-    category:{
-        type:String,
-        required:true,
+    provider_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Service_Provider',
+    },
+    tags:{
+        type:Array,
+        required:true
     },
     numberView:{
         type:Number,
@@ -30,14 +34,26 @@ var blogSchema = new mongoose.Schema({
             ref: 'User'
         }
     ],
-    image:{
+    thumb:{
         type: String,
-        default: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI'
+        default: 'https://noithatkendesign.vn/storage/app/media/uploaded-files/san-vuon1.jpg'
     },
+    images: [
+        {
+            type: String
+        }
+    ],
     author:{
-        type: String,
-        default: 'Admin'
-    }
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    },
+    comments:[
+        {
+            postedBy: {type: mongoose.Types.ObjectId, ref: 'User'},
+            comment: {type: String},
+            updatedAt: {type: Date}
+        }
+    ],
 },{
     timestamps: true,
     toJSON: {virtuals: true},

@@ -14,7 +14,6 @@ import { minute } from 'ultils/constant'
 import { apiAddService } from 'apis/service'
 import { HashLoader } from 'react-spinners';
 
-
 const AddService = () => {
   const {categories_service} = useSelector(state => state.category)
   const dispatch = useDispatch()
@@ -240,7 +239,7 @@ const AddService = () => {
             options={options}
             onChangee={handleSelectStaffChange}
             values={selectedStaff}
-            />
+          />
           <div className='flex flex-col gap-2 mt-8'>
             <label className='font-semibold' htmlFor='thumb'>Upload Thumb</label>
             <input 

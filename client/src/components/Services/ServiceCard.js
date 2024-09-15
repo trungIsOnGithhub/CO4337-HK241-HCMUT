@@ -17,7 +17,7 @@ const ServiceCard = ({provider}) => {
             <span key={index}>{el}</span>
           ))}</span>
           <span>{`${provider.ward}, ${provider.district}, ${provider.province}`}</span>
-          <button>Go To Detail</button>
+          <button>View Provider Details</button>
         </div>
       </div>
     </div>

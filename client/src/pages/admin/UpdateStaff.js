@@ -12,7 +12,6 @@ const UpdateStaff = ({editStaff, render, setEditStaff}) => {
 
   const {register, formState:{errors}, reset, handleSubmit, watch} = useForm()
 
-
   const [preview, setPreview] = useState({
     avatar: null,
   })

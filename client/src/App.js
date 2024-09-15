@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {Route, Routes} from 'react-router-dom'
 
-import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageEvent} from 'pages/admin'
+import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageEvent, ManagePostDetail, EditPostDetail} from 'pages/admin'
 import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct } from 'pages/public'
 
 import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct} from 'pages/user'
@@ -13,6 +13,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Booking, BookingDateTIme, Cart, Chat, MessageBox, Modal } from './components';
 import { showCart, showMessage } from 'store/app/appSlice';
+import ManagePost from 'pages/admin/ManagePost';
+
 function App() {
   const dispatch = useDispatch()
   const {isShowModal, modalChildren, isShowCart, isShowMessage, isShowMessageBox, currentChat} = useSelector(state => state.app)
@@ -48,8 +50,10 @@ function App() {
         <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
         <Route path={path.BOOKING} element={<Booking />} />
         <Route path={path.BOOKING_DATE_TIME} element={<BookingDateTIme />} />
-
         <Route path={path.CHAT} element={<Chat />} />
+        <Route path={path.VIEW_POST} element={<ViewBlog />} />
+        {/* <Route path={path.DETAIL_CART} element={<DetailCart />} /> */}
+        {/* <Route path={path.ALL} element={<Home />} /> */}
       </Route>
       <Route path={path.ADMIN} element={<AdminLayout />}>
         <Route path={path.DASHBOARD} element={<DashBoard/>}/>
@@ -68,6 +72,12 @@ function App() {
         <Route path={path.ADD_SALE_EVENT} element={<AddSaleEvent/>}/>
         <Route path={path.MANAGE_VOUCHER} element={<ManageVoucher/>}/>
         <Route path={path.MANAGE_SALE_EVENT} element={<ManageEvent/>}/>
+
+        <Route path={path.ADD_POST} element={<AddPost/>}/>
+        <Route path={path.MANAGE_POST} element={<ManagePost/>}/>
+        <Route path={path.MANAGE_POST_DETAIL} element={<ManagePostDetail/>}/>
+        <Route path={path.EDIT_POST_DETAIL} element={<EditPostDetail/>}/>
+
       </Route>
       <Route path={path.USER} element={<UserLayout />}>
         <Route path={path.PERSONAL} element={<Personal />}/>

@@ -15,6 +15,7 @@ const InputForm = ({label, labelClassName, disabled, register, errors, id, valid
                 className={clsx('form-input text-gray-600 my-auto', fullWidth && 'w-full')}
                 defaultValue={defaultValue}
                 readOnly={readOnly}
+                onInput={onInput ? onInput : function(){}}
             />
             {errors[id] && <small className='text-xs text-red-500'>{errors[id]?.message}</small>}
         </div>

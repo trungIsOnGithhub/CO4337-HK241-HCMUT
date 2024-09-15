@@ -42,6 +42,11 @@ const path = {
     ADD_STAFF: 'add_staff',
     ADD_SERVICE: 'add_service',
     STAFF_CALENDAR: 'staff_calendar',
+    ADD_POST: 'add_post',
+    MANAGE_POST: 'manage_post',
+    MANAGE_POST_DETAIL: 'manage_post_detail',
+    EDIT_POST_DETAIL: 'edit_post_detail',
+    VIEW_POST: 'view_post',
 
     ADD_VOUCHER: 'add_voucher',
     ADD_SALE_EVENT: 'add_sale_event',

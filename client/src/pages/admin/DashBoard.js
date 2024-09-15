@@ -5,6 +5,7 @@ import { apiGetDailyRevenueByDateRange, apiGetRevenueStatistic, apiGetUserVisitB
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import Swal from 'sweetalert2'
+import { apiGetMostPurchasedServicesByYear } from 'apis'
 // // import './style.css';
 
 const button_string_style = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 roundedtext-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 text-sm'
@@ -54,58 +55,66 @@ const DashBoard = () => {
     //   />
     // </div>
     <>
-    <div class="flex justify-center mb-8 flex-wrap">
-      <div class="max-w-sm rounded overflow-hidden grow">
-        <div class="px-6 py-4">
-          <p class="font-bold text-xl mb-2 text-center">Total Revenue</p>
-          <p class="font-bold text-blue-700 text-xl text-center">
+    <div className="flex justify-center mb-8 flex-wrap">
+      <div className="max-w-sm rounded overflow-hidden grow">
+        <div className="px-6 py-4">
+          <p className="font-bold text-xl mb-2 text-center">Total Revenue</p>
+          <p className="font-bold text-blue-700 text-xl text-center">
             {totalRevenue}
           </p>
         </div>
       </div>
-      <div class="max-w-sm rounded overflow-hidden grow">
-        <div class="px-6 py-4">
-          <p class="font-bold text-xl mb-2 text-center">This Month Revenue</p>
-          <p class="font-bold text-blue-700 text-xl text-center">
+      <div className="max-w-sm rounded overflow-hidden grow">
+        <div className="px-6 py-4">
+          <p className="font-bold text-xl mb-2 text-center">This Month Revenue</p>
+          <p className="font-bold text-blue-700 text-xl text-center">
             {monthRevenue}
           </p>
         </div>
       </div>
-      <div class="max-w-sm rounded overflow-hidden grow">
-        <div class="px-6 py-4">
-          <p class="font-bold text-xl mb-2 text-center">This Month Orders</p>
-          <p class="font-bold text-blue-700 text-xl text-center">
+      <div className="max-w-sm rounded overflow-hidden grow">
+        <div className="px-6 py-4">
+          <p className="font-bold text-xl mb-2 text-center">This Month Orders</p>
+          <p className="font-bold text-blue-700 text-xl text-center">
             {monthOrders}
           </p>
         </div>
       </div>
-      <div class="max-w-sm rounded overflow-hidden grow">
-        <div class="px-6 py-4">
-          <p class="font-bold text-xl mb-2 text-center">This Month Customers</p>
-          <p class="font-bold text-blue-700 text-xl text-center">
+      <div className="max-w-sm rounded overflow-hidden grow">
+        <div className="px-6 py-4">
+          <p className="font-bold text-xl mb-2 text-center">This Month Customers</p>
+          <p className="font-bold text-blue-700 text-xl text-center">
             {monthCustomer}
           </p>
         </div>
       </div>
-      <div class="max-w-sm rounded overflow-hidden grow">
-        <div class="px-6 py-4">
-          <p class="font-bold text-xl mb-2 text-center">Total Services</p>
-          <p class="font-bold text-blue-700 text-xl text-center">
+      <div className="max-w-sm rounded overflow-hidden grow">
+        <div className="px-6 py-4">
+          <p className="font-bold text-xl mb-2 text-center">Total Services</p>
+          <p className="font-bold text-blue-700 text-xl text-center">
             {totalServices}
           </p>
         </div>
       </div>
-      {/* <div class="max-w-sm rounded overflow-hidden grow">
-        <div class="px-6 py-4">
-          <div class="font-bold text-xl mb-1 text-center">Total dsadsad</div>
-          <p class="font-bold text-blue-700 text-xl text-center">
+      {/* <div className="max-w-sm rounded overflow-hidden grow">
+        <div className="px-6 py-4">
+          <div className="font-bold text-xl mb-1 text-center">Total dsadsad</div>
+          <p className="font-bold text-blue-700 text-xl text-center">
             sdk;alsdk
           </p>
         </div>
       </div> */}
 
     </div>
-    <div class="flex">
+    <div className="flex">
+      <MostPurchasedServicesByYear
+        currentUser={current}
+      />
+      <MostPurchasedServicesByYear
+        currentUser={current}
+      />
+    </div>
+    <div className="flex">
 
       <ApexChart />
       <UserVisitStatChart
@@ -116,6 +125,86 @@ const DashBoard = () => {
   );
 }
 
+const MostPurchasedServicesByYear = ({currentUser}) => {
+  const [dataSeries, setDataSeries] = useState([]);
+  const [currentYear, setCurrentYear] = useState([]);
+
+  const fetchMostPurchasedServicesByYear = useCallback(async () => {
+    let response = await apiGetMostPurchasedServicesByYear({
+      provider_id: currentUser.provider_id,
+      year: (new Date()).getFullYear()
+    });
+
+    if (response.success && response?.services) {
+      console.log('----', response.services, '++++++++');
+      setDataSeries(response.services);
+    }
+    else {
+      Swal.fire({
+        title: 'Error Occured',
+        text: 'Error Occured Fetching Data',
+        icon: 'warning',
+        showCancelButton: true
+      })
+    }
+  }, []);
+  useEffect(() => {
+    fetchMostPurchasedServicesByYear()
+  }, [])
+
+  const state = {
+    series: [44, 55, 13, 43, 22],
+    options: {
+    // theme: {
+    //   monochrome: {
+    //     enabled: true,
+    //   },
+    // },
+    chart: {
+      // height: 220,
+      type: 'pie',
+    },
+    plotOptions: {
+      pie: {
+        dataLabels: {
+          offset: -5,
+        },
+      },
+    },
+    labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
+    dataLabels: {
+      formatter(val, opts) {
+        const name = opts.w.globals.labels[opts.seriesIndex]
+        return [name, val.toFixed(1) + '%']
+      },
+    },
+    legend: {
+      show: false,
+    },
+    // responsive: [{
+    //   breakpoint: 480,
+    //   options: {
+    //     chart: {
+    //       width: 200
+    //     },
+    //     legend: {
+    //       position: 'bottom'
+    //     }
+    //   }
+    // }]
+    },
+  };
+
+  return (
+    <div className="grow" style={{width: '45%'}}>
+      <p className="font-bold text-xl mb-2 text-center">Top Services</p>
+      <div id="chart">
+        <ReactApexChart options={state.options} series={state.series} type='pie' height={300} />
+      </div>
+      {/* <div id="html-dist"></div> */}
+    </div>
+  );
+}
 
 const UserVisitStatChart = ({currentUser}) => {
   const [dataSeries, setDataSeries] = useState([])
@@ -136,7 +225,7 @@ const UserVisitStatChart = ({currentUser}) => {
     else {
       Swal.fire({
         title: 'Error Occured',
-        text: 'Error Occured Reading Data',
+        text: 'Error Occured Fetching Data',
         icon: 'warning',
         showCancelButton: true
       })
@@ -146,69 +235,66 @@ const UserVisitStatChart = ({currentUser}) => {
     fetchUserVisit()
   }, [])
 
-    const state = {
-      series: [{
-        name: "user visit",
-        data: dataSeries
-      }],
-      options: {
-        chart: {
-          type: 'bar',
-          height: 380
-        },
-        xaxis: {
-          type: 'category',
-          // labels: {
-          //   formatter: function(val) {
-          //     return "Q" + dayjs(val).quarter()
-          //   }
-          // },
-          // group: {
-          //   style: {
-          //     fontSize: '10px',
-          //     fontWeight: 700
-          //   },
-          //   groups: [
-          //     { title: '2019', cols: 4 },
-          //     { title: '2020', cols: 4 }
-          //   ]
-          // },
-          borderColor: '#999',
-          labels: {
-            show: true,
-            style: {
-              colors: "white",
-              background: '#00E396'
-            }
-          }
-        },
-        yaxis: {
-          borderColor: '#999',
-          labels: {
-            show: true,
-            style: {
-              colors: "white",
-              background: '#00E396'
-            }
-          }
-        }
-        // tooltip: {
-        //   x: {
-        //     formatter: function(val) {
-        //       return "Q" + dayjs(val).quarter() + " " + dayjs(val).format("YYYY")
-        //     }  
+  const state = {
+    series: [{
+      name: "user visit",
+      data: dataSeries
+    }],
+    options: {
+      chart: {
+        type: 'bar',
+        height: 380
+      },
+      xaxis: {
+        type: 'category',
+        // labels: {
+        //   formatter: function(val) {
+        //     return "Q" + dayjs(val).quarter()
         //   }
         // },
+        // group: {
+        //   style: {
+        //     fontSize: '10px',
+        //     fontWeight: 700
+        //   },
+        //   groups: [
+        //     { title: '2019', cols: 4 },
+        //     { title: '2020', cols: 4 }
+        //   ]
+        // },
+        borderColor: '#999',
+        labels: {
+          show: true,
+          style: {
+            colors: "white",
+            background: '#00E396'
+          }
+        }
       },
-    
-    
-    };
-
-
+      yaxis: {
+        borderColor: '#999',
+        labels: {
+          show: true,
+          style: {
+            colors: "white",
+            background: '#00E396'
+          }
+        }
+      }
+      // tooltip: {
+      //   x: {
+      //     formatter: function(val) {
+      //       return "Q" + dayjs(val).quarter() + " " + dayjs(val).format("YYYY")
+      //     }  
+      //   }
+      // },
+    },
+  
+  };
 
     return (
-      <div class="grow" style={{width: '45%'}}>
-        <p class="font-bold text-xl mb-2 text-center">Monthly Visit</p>
+      <div className="grow" style={{width: '45%'}}>
+        <p className="font-bold text-xl mb-2 text-center">Monthly Visit</p>
         <div id="chart">
           <ReactApexChart options={state.options} series={state.series} type="bar" height={400} />
         </div>
@@ -366,10 +452,10 @@ function ApexChart() {
 
 
     return (
-      <div class="grow" style={{width: '55%'}}>
-        <p class="font-bold text-xl mb-2 text-center">Recent Revenue</p>
+      <div className="grow" style={{width: '55%'}}>
+        <p className="font-bold text-xl mb-2 text-center">Recent Revenue</p>
         <div id="chart">
-          {/* <div class="toolbar flex gap-3 ml-4">
+          {/* <div className="toolbar flex gap-3 ml-4">
             <button id="one_month" style={{border: '1px solid white', padding: '3px', borderRadius: '5px'}}
                 onClick={()=>updateData('one_month')} className={ (state.selection==='one_month' ? 'active' : '') }>
               1M

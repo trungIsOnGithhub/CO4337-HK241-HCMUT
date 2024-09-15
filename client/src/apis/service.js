@@ -44,3 +44,9 @@ export const apiRatingService = (data) => axios({
     method: 'put',
     data
 })
+
+export const apiGetMostPurchasedServicesByYear = (data) => axios({
+    url: '/service/most_purchased',
+    method: 'post',
+    data
+})

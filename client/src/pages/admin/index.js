@@ -23,3 +23,7 @@ export {default as ManageVoucher} from './ManageVoucher'
 export {default as ManageEvent} from './ManageEvent'
 
 
+export {default as ManagePost} from './ManagePost'
+export {default as AddPost} from './AddPost'
+export {default as ManagePostDetail} from './ManagePostDetail'
+export {default as EditPostDetail} from './EditPostDetail'
