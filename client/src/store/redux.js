@@ -3,9 +3,9 @@ import appSlice from './app/appSlice';
 import productSlice from './product/productSlice';
 import userSlice from './user/userSlice';
 import categorySlice from './category/categorySlice';
+import blogCategorySlice from './blogCategory/blogCategorySlice';
 import storage from 'redux-persist/lib/storage';
 import {persistReducer, persistStore,FLUSH,REHYDRATE,PAUSE,PERSIST,PURGE,REGISTER} from 'redux-persist';
-
 
 const commonConfig = {
   storage
@@ -29,6 +29,7 @@ export const store = configureStore({
     product: persistReducer(productConfig, productSlice),
     user: persistReducer(userConfig,userSlice),
     category: categorySlice,
+    blogCategory: blogCategorySlice
   },
   middleware: (getDefaultMiddleware) =>
   getDefaultMiddleware({

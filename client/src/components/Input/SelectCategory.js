@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react'
 import clsx from 'clsx'
 import Select from 'react-select'
 
-const SelectCategory = ({label, options, register, errors, id, validate, style, fullWidth, text, values, onChangee}) => {
+const SelectCategory = ({label, options, register, errors, id, validate, style, fullWidth, text, values, onChangee, defaultValue}) => {
   // Tạo một hàm handleChange để xử lý thay đổi giá trị của select
 
   const handleChange = (aa) => {
@@ -33,7 +33,7 @@ const SelectCategory = ({label, options, register, errors, id, validate, style, 
   return (
     <div className={clsx('flex flex-col gap-3 z-50', style)}>
       {label && <label htmlFor={id}>{label}</label>}
-      <Select 
+      <Select
         value={values ? options.find(el => el.label === values) : null}
         onChange={(e)=>handleChange(e)}
         options={options}
