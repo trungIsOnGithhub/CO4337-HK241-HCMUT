@@ -1,4 +1,5 @@
 const mongoose = require('mongoose'); // Erase if already required
+// const blogCommentSchema = require('./blogComment');
 
 // Declare the Schema of the Mongo model
 var blogSchema = new mongoose.Schema({
@@ -46,14 +47,7 @@ var blogSchema = new mongoose.Schema({
     author:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-    },
-    comments:[
-        {
-            postedBy: {type: mongoose.Types.ObjectId, ref: 'User'},
-            comment: {type: String},
-            updatedAt: {type: Date}
-        }
-    ],
+    }
 },{
     timestamps: true,
     toJSON: {virtuals: true},

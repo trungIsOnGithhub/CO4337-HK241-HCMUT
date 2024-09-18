@@ -112,7 +112,15 @@ const ViewBlog = () => {
         }
         let response = await apiAddBlogComment({comment, bid: params?.get('id'), uid: current?._id, updatedAt:Date.now()});
 
-        if (!response?.success) {
+        console.log('+++++++++++++++', response);
+
+        if (response?.msg === 'Unauthorized') {
+          Swal.fire('Unauthorized', 'Please Login To Write Comments!!', 'error');
+          navigate({
+            pathname: `/${path.LOGIN}`
+          });
+        }
+        else if (!response?.success) {
           Swal.fire('Error Ocurred!!', 'Error Making Comments!!', 'error')
         }
         else {
@@ -199,17 +207,17 @@ const ViewBlog = () => {
                   }
 
                   <h2 className='text-[20px] border-b-2 border-main w-full font-semibold mt-5'>Comments</h2>
-                  <div className='w-full'>
+                  {/* <div className='w-full'> */}
                   <div className='p-4 flex items-center justify-center text-sm flex-col gap-2'>
-                  <div onClick={e=> e.stopPropagation()} className='bg-white w-[700px] p-6 flex flex-row gap-4 items-center justify-center rounded-md border border-gray-500 shadow-md animate-scale-up-center'>
-                    <div className='w-fit m-0 p-4'>
-                      <img src={avatar} alt="avatar" className='w-[50px] h-[50px] object-cover rounded-full'></img>
-                    </div>
+                  <div onClick={e=> e.stopPropagation()} className='bg-white w-3/4 p-2 flex flex-row gap-4 items-center justify-center rounded-md border border-gray-500 shadow-md animate-scale-up-center'>
+                    {/* <div className='w-fit m-0 p-4'> */}
+                      <img src={avatar} alt="avatar" className='w-[80px] h-[80px] object-cover rounded-full'></img>
+                    {/* </div> */}
                     <div className='w-4/5 m-0 flex flex-col'>
                       <textarea 
                         onChange={e=>setComment(e.target.value)}
                         value = {comment}
-                        className='form-textarea w-full placeholder:italic placeholder:text-sm placeholder:text-gray-500'
+                        className='form-textarea w-full placeholder:italic placeholder:text-sm placeholder:text-gray-500 min-h-20'
                         placeholder='Type something ...'
                       ></textarea>
                       <Button fullWidth handleOnclick={()=>{submitComment(comment)}}>Submit</Button>
@@ -219,17 +227,18 @@ const ViewBlog = () => {
                   <h2 className='my-5 font-semibold text-xl border-main'>All Comments</h2>
 
                   <div className='flex flex-col gap-2'>
-                      {post?.comments?.map(el=>(
+                      {[{}, {}].map(el=>(
                           <CommentBlog
                               // key = {el._id}
                               // star = {el.star}
                               updatedAt = {el?.updatedAt}
                               comment = {el?.comment}
                               name={`${el?.postedBy?.lastName} ${el?.postedBy?.firstName}`}
+                              replies={[{replies: [{}, {}]},{replies: [{}]}]}
                           />
                       ))}
                   </div>
-                  </div>
+                  {/* </div> */}
               </div>
               <div className='w-1/4 flex flex-col gap-4 justify-items-center justify-start items-center border-l-2 border-main pl-5'>
                 <h2 className='text-[18px] border-b-2 border-main w-full text-center font-semibold'>Other Trending Posts</h2>

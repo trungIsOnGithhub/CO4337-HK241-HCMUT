@@ -340,30 +340,6 @@ const getTopTags = asyncHandler(async(req, res)=>{
     })
 })
 
-const addBlogComments = asyncHandler(async(req, res)=>{
-    // console.log('=========',req.body,'=========');
-    let { comment, uid, updatedAt, bid } = req.body
-
-    console.log('----->', req.body);
-
-    if (!comment || !uid || !bid) {
-        throw new Error('Missing input');
-    }
-
-    const response = await Blog.findByIdAndUpdate(bid, { $push: { comments: {comment, postedBy: uid, updatedAt} } }, {new: true}).populate({
-        path: 'comments',
-        populate: {
-            path: 'postedBy',
-            select: 'firstName lastName avatar',
-        }
-    });
-
-    return res.status(200).json({
-        success: response ? true : false,
-        comments: response ? response : "Cannot Get Post Tags!"
-    })
-})
-
 module.exports = {
     updateBlog,
     getAllBlogs,
@@ -377,6 +353,5 @@ module.exports = {
     createNewPostTag,
     getBlogsBySearchTerm,
     getTopBlogs,
-    getTopTags,
-    addBlogComments
+    getTopTags
 }
