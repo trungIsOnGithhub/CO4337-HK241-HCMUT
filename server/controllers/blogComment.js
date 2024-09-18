@@ -1,5 +1,6 @@
-const BlogComment = require('../models/blogComment')
-const asyncHandler = require('express-async-handler')
+const mongoose = require('mongoose');
+const BlogComment = require('../models/blogComment');
+const asyncHandler = require('express-async-handler');
 
 // const createBrand = asyncHandler(async(req, res)=>{
 //     const response = await Brand.create(req.body)
@@ -13,39 +14,28 @@ const asyncHandler = require('express-async-handler')
 const getAllCommentsForBlog = asyncHandler(async(req, res)=>{
     const {blogCommentId} = req.body;
 
+    console.log('-----+++++++++++++++', req.body);
+
     if (!blogCommentId) {
         throw new Error("Missing Input");
     }
 
-    const bcs = await BlogComment.aggregate([
-        {
-            $match: {
-                blog: blogCommentId
-            }
-        },
-        {
-            $graphLookup: {
-                from: 'blogcomments',
-                startWith: '$replies',
-                connectFromField: 'replies',
-                connectToField: '_id',
-                as: 'AllRecursiveReplies'
-            }
-        }
-    ]);
+    const bcs = await BlogComment.find();
+
+    console.log('-----+++++++++++++++', bcs);
 
     return res.status(200).json({
         success: bcs ? true : false,
-        blogComments: bcs ? bcs : "Cannot get all blog comments"
+        bcs: bcs ? bcs : "Cannot get all blog comments"
     })
 })
 
 const createBlogComment = asyncHandler(async(req, res)=>{
-    let { comment, uid, updatedAt, bid } = req.body
+    let { comment, postedBy, updatedAt, blog } = req.body
 
     console.log('----->', req.body);
 
-    if (!uid) {
+    if (!postedBy) {
         return res.status(401).json({
             success: false,
             msg: "Unauthorized",
@@ -53,11 +43,11 @@ const createBlogComment = asyncHandler(async(req, res)=>{
         })
     }
 
-    if (!comment|| !bid || updatedAt) {
+    if (!comment|| !blog || !updatedAt) {
         throw new Error("Missing Input");
     }
 
-    const response = await BlogComment.Create(req.body);
+    const response = await BlogComment.create(req.body);
     // .findByIdAndUpdate(bid, { $push: { comments: {comment, postedBy: uid, updatedAt} } }, {new: true}).populate({
     //     path: 'comments',
     //     populate: {

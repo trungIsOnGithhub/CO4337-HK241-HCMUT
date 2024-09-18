@@ -1,13 +1,27 @@
-import React, { memo,useState } from 'react'
+import React, { memo,useCallback,useState } from 'react'
+import { useSelector } from 'react-redux';
 import avatar from 'assets/avatarDefault.png'
 import moment from 'moment'
 import { FaRegThumbsDown, FaRegThumbsUp, FaReply } from 'react-icons/fa'
-import {Button} from '../Buttons/Button'
+import Button from '../Buttons/Button'
+import { apiReplyBlogComment } from 'apis/blogComment'
+import Swal from 'sweetalert2'
 
-const CommentBlog = ({image = avatar, name = 'Anonymous', updatedAt, comment, replies}) => {
+const CommentBlog = ({image = avatar, name = 'Anonymous', updatedAt, comment, replies, bid}) => {
     const [liked, setLiked] = useState(false);
     const [disliked, setDisliked] = useState(false);
     const [isEditReply, setIsEditReply] = useState(false);
+    const [replyComment, setReplyComment] = useState('');
+    const {current} = useSelector(state => state.user);
+
+    const handleReplyComment = useCallback(async () => {
+        let response = await apiReplyBlogComment({ bid, uid: current?._id, updatedAt:Date.now() });
+
+        if (!response?.bcs) {
+            Swal.fire('Error Ocurred!!', 'Cannot Create Reply Comment!!', 'error');
+            // return;
+        }
+    }, [])
 
     return (
         <div className='flex gap-4 mr-4'>
@@ -41,7 +55,10 @@ const CommentBlog = ({image = avatar, name = 'Anonymous', updatedAt, comment, re
                                 //   triggerReaction("dislike");
                                 }}
                             >
-                                <FaReply/>
+                                <FaReply
+                                    onClick={() => {setIsEditReply(prev => !prev)}}
+                                    className='hover:bg-sky-600 cursor-pointer'
+                                />
                             </span>
                         </p>
                         <p className="font-semibold text-sm text-left flex"><span onClick={() => {
@@ -63,25 +80,26 @@ const CommentBlog = ({image = avatar, name = 'Anonymous', updatedAt, comment, re
                         </p>
                     </span>
 
+                    {replies?.length > 0 && <span className='font-semibold py-1 '>Replies</span> }
+
                     {isEditReply &&
                     <div className='w-4/5 m-0 flex flex-col'>
                         <textarea 
-                            onChange={e=>setComment(e.target.value)}
-                            value = {comment}
+                            onChange={e=>setReplyComment(e.target.value)}
+                            value = {replyComment}
                             className='form-textarea w-full placeholder:italic placeholder:text-sm placeholder:text-gray-500 min-h-20'
                             placeholder='Type something ...'
                         ></textarea>
-                        <Button fullWidth handleOnclick={()=>{submitComment(comment)}}>Submit</Button>
+                        <Button fullWidth handleOnclick={()=>{handleReplyComment(replyComment)}}>Submit</Button>
                     </div>}
-
-                    {replies?.length > 0 && <span className='font-semibold py-1 '>Replies</span> }
-                    {replies?.map(function(el) {
+                    {replies.length > 0 && replies.map(function(el) {
                             return (<div className='ml-5'>
                                 <CommentBlog
                                     updatedAt = {el?.updatedAt}
                                     comment = {el?.comment}
                                     name={`${el?.postedBy?.lastName} ${el?.postedBy?.firstName}`}
                                     replies={el?.replies || []}
+                                    bid={bid}
                                 />
                             </div>)
                     })}

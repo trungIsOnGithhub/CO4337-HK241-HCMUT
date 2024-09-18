@@ -6,13 +6,13 @@ export const apiCreateNewBlogComment = (data) => axios({
 })
 
 export const apiReplyBlogComment = (data) => axios({
-    url: '/coupon/reply_comments/',
+    url: '/blog/reply_comments',
     method: 'post',
     data
 })
 
 export const apiGetAllBlogComment = (data) => axios({
-    url: '/coupon/get_comments/',
+    url: '/blog/get_comments',
     method: 'post',
     data
 })
