@@ -38,7 +38,6 @@ const Blogs = () => {
     setIsLoading(true);
     let response = await apiGetAllBlogs({ title: searchTerm,  limit: process.env.REACT_APP_LIMIT });
     if(response?.success && response?.blogs){
-      console.log('++++++', response.blogs, '+++++');
       setCurrBlogList(response.blogs);
       setIsLoading(false);
     }
@@ -54,7 +53,6 @@ const Blogs = () => {
     // setIsLoading(true);
     let response = await apiGetTopTags({ limit: 5 });
     if(response?.success && response?.tags){
-      // console.log('++++++', response.blogs, '+++++');
       setTopTags(response.tags);
       // setIsLoading(false);
     }
@@ -67,7 +65,6 @@ const Blogs = () => {
   }, []);
 
   const handleSelectTagChange = useCallback(selectedOptions => {
-    console.log(selectedOptions);
     setSelectedTags(selectedOptions);
   }, []);
 

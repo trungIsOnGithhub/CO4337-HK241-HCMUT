@@ -136,7 +136,6 @@ const MostPurchasedServicesByYear = ({currentUser}) => {
     });
 
     if (response.success && response?.services) {
-      console.log('----', response.services, '++++++++');
       setDataSeries(response.services);
     }
     else {

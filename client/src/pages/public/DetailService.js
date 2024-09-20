@@ -230,28 +230,33 @@ const DetailService = ({isQuickView, data}) => {
     
   };
   const handleGetDirections = () => {
-    Swal.fire({
-      title: 'Chia sẻ vị trí',
-      text: "Bạn có muốn chia sẻ vị trí hiện tại của mình để xem đường đi?",
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Chia sẻ',
-      cancelButtonText: 'Không'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(position => {
-            const { latitude, longitude } = position.coords;
-            // Call the function to show the route using latitude and longitude
-            showRoute(latitude, longitude);
-          }, () => {
-            Swal.fire('Không thể lấy vị trí của bạn.');
-          });
-        } else {
-          Swal.fire('Geolocation không khả dụng.');
+    if(!showMap){
+      Swal.fire({
+        title: 'Chia sẻ vị trí',
+        text: "Bạn có muốn chia sẻ vị trí hiện tại của mình để xem đường đi?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Chia sẻ',
+        cancelButtonText: 'Không'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          if ("geolocation" in navigator) {
+              navigator.geolocation.getCurrentPosition(position => {
+              const { latitude, longitude } = position.coords;
+              // Call the function to show the route using latitude and longitude
+              showRoute(latitude, longitude);
+            }, () => {
+              Swal.fire('Không thể lấy vị trí của bạn.');
+            });
+          } else {
+            Swal.fire('Geolocation không khả dụng.');
+          }
         }
-      }
-    });
+      });
+    }
+    else{
+      setShowMap(false)
+    }
   };
 
   return (
@@ -295,7 +300,6 @@ const DetailService = ({isQuickView, data}) => {
             ))}
           </div>
           <ul className='text-sm text-gray-500 list-square pl-4'>
-            {JSON.stringify(currentProduct?.description)}
             {currentProduct?.description?.length > 1 
               &&
             currentProduct?.description?.map(el=>(

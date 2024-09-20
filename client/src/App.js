@@ -1,8 +1,8 @@
 import React, {useEffect} from 'react';
 import {Route, Routes} from 'react-router-dom'
 
-import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageEvent, ManagePostDetail, EditPostDetail} from 'pages/admin'
-import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct } from 'pages/public'
+import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageEvent, ManagePostDetail, EditPostDetail, AddPost} from 'pages/admin'
+import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct, ViewBlog, DetailProvider } from 'pages/public'
 
 import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct} from 'pages/user'
 import path from './ultils/path'
@@ -44,7 +44,9 @@ function App() {
         <Route path={path.DETAIL_SERVICE__CATEGORY__PID__TITLE} element={<DetailService />} />
         <Route path={path.DETAIL_PRODUCT__CATEGORY__PID__TITLE} element={<DetailProduct />} />
         <Route path={path.FAQS} element={<FAQ />} />
+        
         <Route path={path.OUR_PROVIDERS_CATEGORY} element={<OurProviders />} />
+        <Route path={path.DETAIL_PROVIDER_ID} element={<DetailProvider />} />
         <Route path={path.SERVICES_CATEGORY} element={<Services />} />
         <Route path={path.PRODUCTS_CATEGORY} element={<Products />} />
         <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />

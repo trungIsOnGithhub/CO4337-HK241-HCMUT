@@ -25,7 +25,6 @@ const ManagePostDetail = ({ dispatch, navigate }) => {
 
   const fetchPostData = async () => {
     const response = await apiGetOneBlog(params?.get('id'));
-    console.log(response,'----');
     if (response?.success) {
       setPost(response?.blog);
     } else {
@@ -102,7 +101,7 @@ const ManagePostDetail = ({ dispatch, navigate }) => {
               <span><strong className='text-gray-700'>Last Modified:</strong> {moment(post?.createdAt, 'HH:mm').format('hh:mm A')} {moment(post?.createdAt).format('MMMM Do YYYY')}</span>
             </div>
             <div>
-              <Button style='px-6 rounded-md text-white bg-blue-500 font-semibold h-fit py-2 w-fit' handleOnclick={() => {console.log('jkhhkjkjk');handleOnClickEdit(post?._id)}}>Edit this Post</Button>
+              <Button style='px-6 rounded-md text-white bg-blue-500 font-semibold h-fit py-2 w-fit' handleOnclick={() => {handleOnClickEdit(post?._id)}}>Edit this Post</Button>
             </div>
             {/* <div className='flex items-center gap-2'>
               <FiDollarSign className='text-xl text-green-400' />

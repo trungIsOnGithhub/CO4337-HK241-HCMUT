@@ -54,7 +54,7 @@ const Booking = () => {
   
   const fetchProviderData = async () => {
     if (service?.provider_id) {
-      const response = await apiGetServiceProviderById(service?.provider_id);
+      const response = await apiGetServiceProviderById(service?.provider_id?._id);
       if (response?.success) {
         setProvider(response?.payload);
       }
@@ -92,7 +92,6 @@ const Booking = () => {
         
           const openingTime = parseTime(provider?.time[openingTimeKey]);
           const closingTime = parseTime(provider?.time[closingTimeKey]);
-        
           return { openingTime, closingTime };
         };
   

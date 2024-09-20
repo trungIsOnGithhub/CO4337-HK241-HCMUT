@@ -28,7 +28,6 @@ const ManagePost = ({ dispatch, navigate }) => {
         return;
       }
       const sortedPosts = await apiGetAllBlogs({ ...params, provider_id: current?.provider_id,  limit: process.env.REACT_APP_LIMIT });
-      console.log('das--------',sortedPosts);
       setPosts(sortedPosts?.blogs);
       setCounts(sortedPosts?.blogs.length);
     // }

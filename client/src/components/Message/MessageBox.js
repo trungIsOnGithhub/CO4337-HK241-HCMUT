@@ -15,7 +15,6 @@ import styled from "styled-components";
 import { GoDotFill } from "react-icons/go";
 
 const MessageBox = ({currentChat}) => {
-  console.log(currentChat)
   const dispatch = useDispatch()
   const socket = useRef()
   const scrollRef = useRef()

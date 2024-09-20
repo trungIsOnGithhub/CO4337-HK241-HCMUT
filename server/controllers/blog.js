@@ -4,7 +4,6 @@ const asyncHandler = require('express-async-handler');
 const User = require('../models/user');
 
 const createNewBlogPost = asyncHandler(async(req, res)=>{
-    console.log('----',req.body,'----');
     const {title, content} = req.body
     if(!title || !content){
         throw new Error ("Missing input")
@@ -65,7 +64,7 @@ const getAllBlogTags = asyncHandler(async (req,res) => {
 });
 
 const getAllBlogs = asyncHandler(async (req, res)=>{
-    console.log(req.body);
+
     const { provider_id, title } = req.body;
     // if(!provider_id){
     //     throw new Error ("Missing input")
@@ -232,7 +231,7 @@ const uploadImage = asyncHandler(async(req, res)=>{
 })
 
 const createNewPostTag = asyncHandler(async(req, res)=>{
-    console.log('=========',req.body,'=========');
+
     const {label, created_by} = req.body
     if(!label || !created_by){
         throw new Error ("Missing input")
@@ -248,7 +247,6 @@ const createNewPostTag = asyncHandler(async(req, res)=>{
 const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
     let { searchTerm, selectedTags } = req.query;
 
-    // console.log(req.query)
 
     if (!searchTerm) {
         searchTerm = '';
@@ -282,7 +280,7 @@ const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
     }
 
     const qr = { ...queryFinish }
-    console.log(qr)
+
     let queryCommand = Blog.find({}).populate({
         path: 'provider_id',
         select: 'bussinessName province',
@@ -290,7 +288,6 @@ const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
 
     let blogs = await queryCommand;
 
-    // console.log(blogs)
     blogs = blogs.filter(blog => {
         for (const tag of selectedTags) {
             if (blog?.tags.includes(tag)) {
@@ -307,7 +304,6 @@ const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
 })
 
 const getTopBlogs = asyncHandler(async(req, res)=>{
-    // console.log('=========',req.body,'=========');
     let { limit } = req.body
     if(!limit){
         limit = 5;
@@ -327,7 +323,6 @@ const getTopBlogs = asyncHandler(async(req, res)=>{
 })
 
 const getTopTags = asyncHandler(async(req, res)=>{
-    // console.log('=========',req.body,'=========');
     let { limit } = req.body
     if(!limit){
         limit = 5;
@@ -341,10 +336,7 @@ const getTopTags = asyncHandler(async(req, res)=>{
 })
 
 const addBlogComments = asyncHandler(async(req, res)=>{
-    // console.log('=========',req.body,'=========');
     let { comment, uid, updatedAt, bid } = req.body
-
-    console.log('----->', req.body);
 
     if (!comment || !uid || !bid) {
         throw new Error('Missing input');

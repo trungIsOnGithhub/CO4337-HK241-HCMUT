@@ -110,7 +110,6 @@ const Services = ({dispatch}) => {
             <Service 
               key={el._id} 
               serviceData={el}
-              pid= {el._id}
               normal={true}
             />
           ))}

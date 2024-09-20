@@ -32,7 +32,6 @@ const ViewBlog = () => {
       // setIsLoading(true);
       let response = await apiGetTopBlogs({ limit: 5 });
       if(response?.success && response?.blogs){
-        console.log('++++++', response.blogs, '+++++');
         setCurrBlogList(response.blogs);
         // setIsLoading(false);
       }
@@ -46,7 +45,7 @@ const ViewBlog = () => {
   
     const fetchPostData = async () => {
       const response = await apiGetOneBlog(params?.get('id'));
-      console.log(response,'----');
+      
       if (response?.success) {
         setPost(response?.blog);
         if (response?.blog?.likes?.includes(current?._id)) {

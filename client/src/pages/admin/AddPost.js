@@ -24,7 +24,6 @@ const AddPost = () => {
   const [selectedTags, setSelectedTags] = useState([]);
   const fetchTags = async() => {
     const response = await apiGetAllPostTags();
-    console.log('HHEEHE', response,'HEHHEHEH')
     if(response?.success){
       const tagOptions = response?.tags.map((tag) => ({
         label: tag.label,
@@ -96,9 +95,6 @@ const AddPost = () => {
 
 
   const handleCreateBlogPost = async(data) => {
-    // const invalid = validate(payload, setInvalidField)
-    // console.log('---->' + invalid);
-    // if(!invalid){
       const finalPayload = {...data,...payload};
       finalPayload.provider_id = current?.provider_id;
       if(selectedTags?.length > 0){
@@ -110,7 +106,6 @@ const AddPost = () => {
       // finalPayload.description = 'kdlsakdl;askdlsakdl;'
       const formData = new FormData()
       for(let i of Object.entries(finalPayload)){
-        console.log(i[0] + '-------' + i[1]);
         formData.append(i[0],i[1])
       }
       if(finalPayload.thumb) formData.append('thumb', finalPayload.thumb[0])
@@ -119,10 +114,8 @@ const AddPost = () => {
       }
 
       setIsLoading(true)
-      console.log(':==========', formData)
 
       const response = await apiCreateBlog(finalPayload)
-      console.log(response);
 
       setIsLoading(false)
       if(response && response.success){
@@ -158,7 +151,6 @@ const AddPost = () => {
 
     let response = await apiCreateNewPostTag({ label:newTagLabel, created_by: current?.provider_id });
 
-    console.log('=================', response);
     if (response && response.success) {
       Swal.fire('Sucessful!!', 'Create new Post Tag Sucessfully!!', 'success');
       setAddNewTagMenu(false);
@@ -176,7 +168,7 @@ const AddPost = () => {
         <span>Create a New Blog Post</span>
       </h1>
       <div className='p-4 '>
-        <form onSubmit={() => {handleCreateBlogPost(); console.log('---')}}>
+        <form onSubmit={() => {handleCreateBlogPost();}}>
           <InputForm
             label = 'Post Title'
             register={register}
@@ -333,7 +325,7 @@ const AddPost = () => {
           }
 
           <div className='mt-8'>
-            <Button handleOnclick={() => {handleCreateBlogPost(); console.log('---')}}>
+            <Button handleOnclick={() => {handleCreateBlogPost();}}>
               Create a new Post
             </Button>
           </div>

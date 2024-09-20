@@ -18,6 +18,7 @@ router.post('/', [verifyAccessToken, isAdmin],uploader.fields([
 
     
 router.get('/public', ctrls.getAllProduct)
+router.get('/public/:provider_id', ctrls.getAllProductByProviderId)
 router.put('/ratings', [verifyAccessToken], ctrls.ratings)
 
 

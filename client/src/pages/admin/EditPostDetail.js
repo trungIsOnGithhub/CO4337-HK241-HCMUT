@@ -18,9 +18,7 @@ const EditPostDetail = () => {
   const [params] = useSearchParams();
   const [currBlog, setCurrBlog] = useState(null);
   const fetchCurrentBlogPost = async () => {
-    // console.log('====={{{{{', id);
     const response = await apiGetOneBlog(params?.get('id'));
-    console.log('====={{{{{', response?.blog);
     setCurrBlog(response?.blog);
     setSelectedTags(response?.blog?.tags);
     setBlogContent(response?.blog?.content?.join(''));
@@ -36,7 +34,6 @@ const EditPostDetail = () => {
   const [selectedTags, setSelectedTags] = useState([]);
   const fetchTags = async() => {
     const response = await apiGetAllPostTags();
-    console.log('HHEEHE', response,'HEHHEHEH')
     if(response?.success){
       const tagOptions = response?.tags.map((tag) => ({
         label: tag.label,
@@ -100,9 +97,6 @@ const EditPostDetail = () => {
 
 
   const handleEditBlogPost = async(data) => {
-    // const invalid = validate(payload, setInvalidField)
-    // console.log('---->' + invalid);
-    // if(!invalid){
       const finalPayload = {...data,...payload};
       finalPayload.provider_id = current?.provider_id;
       if(selectedTags?.length > 0){
@@ -114,7 +108,6 @@ const EditPostDetail = () => {
       // finalPayload.description = 'kdlsakdl;askdlsakdl;'
       const formData = new FormData()
       for(let i of Object.entries(finalPayload)){
-        console.log(i[0] + '-------' + i[1]);
         formData.append(i[0],i[1])
       }
       if(finalPayload.thumb) formData.append('thumb', finalPayload.thumb[0])
@@ -123,9 +116,7 @@ const EditPostDetail = () => {
       }
 
       setIsLoading(true);
-      console.log(':==========', formData);
       const response = await apiUpdateBlog(finalPayload, params?.get('id'))
-      console.log(response);
 
       setIsLoading(false)
       if(response.success){
@@ -154,7 +145,7 @@ const EditPostDetail = () => {
         <span>Update a Blog Post</span>
       </h1>
       <div className='p-4 '>
-        <form onSubmit={() => {handleEditBlogPost(); console.log('---')}}>
+        <form onSubmit={() => {handleEditBlogPost();}}>
           <InputForm
             label = 'Post Title'
             register={register}
@@ -226,7 +217,7 @@ const EditPostDetail = () => {
           }
 
           <div className='mt-8'>
-            <Button handleOnclick={() => {handleEditBlogPost(); console.log('---')}}>
+            <Button handleOnclick={() => {handleEditBlogPost();}}>
               Update a Post
             </Button>
           </div>

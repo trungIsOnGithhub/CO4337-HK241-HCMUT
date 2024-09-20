@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import * as apis from '../../apis'
 export const getCategorieService = createAsyncThunk('category/categories_service',async(data, {rejectWithValue})=>{
     const response = await apis.apiGetCategorieService()
-    console.log('---+++>' + response);
+
     // if(response.success){
     //     return response.serviceCategories
     // }

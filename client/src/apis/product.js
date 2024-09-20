@@ -11,6 +11,12 @@ export const apiGetProductByAdmin = (params) => axios({
     params,
 })
 
+export const apiGetProductByProviderId  = (prid, params) => axios({
+    url: '/product/public/' + prid,
+    method: 'get',
+    params,
+})
+
 
 export const apiGetOneProduct = (pid) => axios({
     url: '/product/'+pid,

@@ -83,12 +83,56 @@ const createServiceProvider = asyncHandler(async(req, res)=>{
     })
 })
 
-const getAllServiceProvider = asyncHandler(async(req, res)=>{
-    const response = await ServiceProvider.find().select('-createdAt -updatedAt')
-    return res.status(200).json({
-        success: response ? true : false,
-        AllServiceProviders: response ? response : "Cannot get all coupons"
-    })
+const getAllServiceProvider = asyncHandler(async(req, res) => {
+    const queries = { ...req.query };
+
+    // Loại bỏ các trường đặc biệt ra khỏi query
+    const excludeFields = ['limit', 'sort', 'page', 'fields'];
+    excludeFields.forEach((el) => delete queries[el]);
+
+    // Format lại các toán tử cho đúng cú pháp của mongoose
+    let queryString = JSON.stringify(queries);
+    queryString = queryString.replace(
+        /\b(gte|gt|lt|lte)\b/g,
+        (matchedEl) => `$${matchedEl}`
+    );
+
+    // chuyen tu chuoi json sang object
+    const formatedQueries = JSON.parse(queryString);
+    
+    let queryCommand = ServiceProvider.find(formatedQueries).select('-createdAt -updatedAt');
+    
+    try {
+        // sorting
+        if (req.query.sort) {
+            const sortBy = req.query.sort.split(',').join(' ');
+            queryCommand.sort(sortBy);
+        } else {
+            // Sort by createdAt in descending order if no sort query is provided
+            queryCommand.sort('-createdAt');
+        }
+
+        //pagination
+        const page = +req.query.page || 1;
+        const limit = +req.query.limit || process.env.LIMIT_PRODUCT;
+        const skip = (page - 1) * limit;
+        queryCommand.skip(skip).limit(limit);
+
+        const response = await queryCommand;
+        const counts = await ServiceProvider.countDocuments(formatedQueries);
+        
+        return res.status(200).json({
+            success: true,
+            counts: counts,
+            AllServiceProviders: response ? response : "Cannot get all coupons",
+        });
+        
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            error: 'Cannot get all service providers',
+        });
+    }
 })
 
 const updateServiceProvider = asyncHandler(async(req, res)=>{

@@ -36,6 +36,7 @@ router.put('/:sid', [verifyAccessToken, isAdmin],uploader.fields([
         maxCount: 1
     }]), ctrls.updateServiceByAdmin)
 router.get('/public', ctrls.getAllServicesPublic)
+router.get('/public/:provider_id', ctrls.getAllServicesByProviderId)
 router.get('/:sid', ctrls.getOneService)
 router.post('/most_purchased', ctrls.getMostPurchasedService);
 module.exports = router

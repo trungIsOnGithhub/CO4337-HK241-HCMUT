@@ -109,7 +109,6 @@ const Products = ({dispatch}) => {
             <Product 
               key={el._id} 
               productData={el}
-              pid= {el._id}
               normal={true}
             />
           ))}

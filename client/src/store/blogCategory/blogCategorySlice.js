@@ -10,7 +10,6 @@ export const blogCategorySlice = createSlice({
     },
     extraReducers: (builder) => {
         // Bắt đầu thực hiện action login (Promise pending)
-        console.log('jdsakldasask=================')
         builder.addCase(actions.getCategorieService.pending, (state) => {
           // Bật trạng thái loading
           state.isLoading = true;

@@ -39,7 +39,7 @@ const BookingDateTIme = () => {
   };
 
   const fetchProviderData = async () => {
-    const response = await apiGetServiceProviderById(service?.provider_id);
+    const response = await apiGetServiceProviderById(service?.provider_id?._id);
     if (response?.success) {
       setProvider(response?.payload);
     }

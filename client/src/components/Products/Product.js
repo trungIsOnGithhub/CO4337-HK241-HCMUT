@@ -5,22 +5,24 @@ import label_trend from 'assets/label_trending.png'
 import {renderStarfromNumber} from 'ultils/helper'
 import {SelectOption} from 'components'
 import icons from 'ultils/icon'
-import withBaseComponent from 'hocs/withBaseComponent'
 import { showModal } from 'store/app/appSlice'
 import { DetailProduct } from 'pages/public'
 import { apiUpdateCartProduct, apiUpdateWishlist } from 'apis'
 import { toast } from 'react-toastify'
 import { getCurrent } from 'store/user/asyncAction'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Swal from 'sweetalert2'
 import path from 'ultils/path'
-import { createSearchParams } from 'react-router-dom'
+import { createSearchParams, useLocation, useNavigate } from 'react-router-dom'
 import clsx from 'clsx'
 const {FaEye, FaHeart, FaCartPlus, BsCartCheckFill} = icons
 
-const Product = ({productData, isNew, normal, navigate, dispatch, location, isNotBorder}) => {
+const Product = ({productData, isNew, normal, isNotBorder}) => {
   const [isShowOption, setIsShowOption] = useState(false)
   const {current} = useSelector(state => state.user)
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const location = useLocation()
 
   const handleClickOptions = async (flag) => {
     if(flag === 'Cart'){
@@ -122,4 +124,4 @@ const Product = ({productData, isNew, normal, navigate, dispatch, location, isNo
   )
 }
 
-export default withBaseComponent(memo(Product))
+export default memo(Product)

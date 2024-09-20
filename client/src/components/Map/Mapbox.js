@@ -49,7 +49,7 @@ function decodePolyline(str, precision) {
   return coordinates;
 }
 
-const Mapbox = ({ userCoords, providerCoords }) => {
+const Mapbox = ({ userCoords, providerCoords, small }) => {
 
   
   const mapContainer = useRef(null);
@@ -309,8 +309,8 @@ const Mapbox = ({ userCoords, providerCoords }) => {
             value={startLocation}
             onChange={(e) => handleLocationInput(e, true)}
             style={{
-              width: '250px',
-              padding: '6px',
+              width: small ? '150px' : '250px',
+              padding: small ? '2px' : '6px',
               border: '1px solid #3887be',
               borderRadius: '4px'
             }}
@@ -334,8 +334,8 @@ const Mapbox = ({ userCoords, providerCoords }) => {
             value={destination}
             onChange={(e) => handleLocationInput(e, false)}
             style={{
-              width: '250px',
-              padding: '6px',
+              width: small ? '150px' : '250px',
+              padding: small ? '2px' : '6px',
               border: '1px solid #f30',
               borderRadius: '4px'
             }}
@@ -366,7 +366,7 @@ const Mapbox = ({ userCoords, providerCoords }) => {
           bottom: '20px',
           left: '20px',
           backgroundColor: 'white',
-          padding: '10px',
+          padding: small? '4px' : '10px',
           borderRadius: '5px',
           boxShadow: '0 2px 4px rgba(0,0,0,0.3)',
           zIndex: 1000
