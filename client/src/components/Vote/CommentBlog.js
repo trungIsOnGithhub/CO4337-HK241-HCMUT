@@ -4,7 +4,7 @@ import avatar from 'assets/avatarDefault.png'
 import moment from 'moment'
 import { FaRegThumbsDown, FaRegThumbsUp, FaReply } from 'react-icons/fa'
 import Button from '../Buttons/Button'
-import { apiReplyBlogComment } from 'apis/blogComment'
+import { apiReplyBlogComment } from 'apis/blogComments'
 import Swal from 'sweetalert2'
 
 const CommentBlog = ({image = avatar, name = 'Anonymous', updatedAt, comment, replies, bid}) => {

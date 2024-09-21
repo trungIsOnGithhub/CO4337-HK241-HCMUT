@@ -8,16 +8,26 @@ import path from 'ultils/path';
 import { useNavigate, createSearchParams, useSearchParams } from "react-router-dom";
 import { FaCheck, FaRegThumbsUp, FaRegThumbsDown, FaLocationArrow } from 'react-icons/fa';
 import Swal from 'sweetalert2';
+import { tinh_thanhpho } from 'tinh_thanhpho';
 
 const Blogs = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
   const [tags, setTags] = useState([]);
-  const [selectedSort, setSelectedSort] = useState('');
+  const [selectedSort, setSelectedSort] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [provinceFilter, setProvinceFilter] = useState([]);
   const handleSortByChange = () => {};
   const [topTags, setTopTags] = useState([]);
+
+  const provinces = Object.entries(tinh_thanhpho).map(pair => {
+    return {
+      label: pair[1].name,
+      value: pair[1].name
+    }
+  });
+
   const fetchTags = async() => {
     const response = await apiGetAllPostTags();
     if(response?.success){
@@ -36,7 +46,7 @@ const Blogs = () => {
   const [currBlogList, setCurrBlogList] = useState([]);
   const fetchCurrentBlogList = async (search, selectedTags) => {
     setIsLoading(true);
-    let response = await apiGetAllBlogs({ title: searchTerm,  limit: process.env.REACT_APP_LIMIT });
+    let response = await apiGetAllBlogs({ title: searchTerm,  limit: process.env.REACT_APP_LIMIT, sortBy: selectedSort, provinces: provinceFilter });
     if(response?.success && response?.blogs){
       console.log('++++++', response.blogs, '+++++');
       setCurrBlogList(response.blogs);
@@ -48,7 +58,7 @@ const Blogs = () => {
   }
   useEffect(() => {
     fetchCurrentBlogList();
-  }, []);
+  }, [selectedSort,provinceFilter]);
 
   const fetchTopTags = async () => {
     // setIsLoading(true);
@@ -66,6 +76,14 @@ const Blogs = () => {
     fetchTopTags();
   }, []);
 
+  const handleSelectSortByChange = useCallback(selectedOptions => {
+    console.log(selectedOptions);
+    setSelectedSort(selectedOptions);
+  }, []);
+  const handleSelectProvinceFilterChange = useCallback(selectedOptions => {
+    console.log(selectedOptions);
+    setProvinceFilter(selectedOptions);
+  }, []);
   const handleSelectTagChange = useCallback(selectedOptions => {
     console.log(selectedOptions);
     setSelectedTags(selectedOptions);
@@ -120,17 +138,17 @@ const Blogs = () => {
               title='Sort By'
               label='Sort By'
               id='assigned_tags'
-              options={['Date Created', 'Likes', 'Dislikes']}
-              onChangee={handleSelectTagChange}
+              options={[ {label:'Date Created',value:1}, {label:'Like',value:2}, {label:'Dislikes',value:3}]}
+              onChangee={handleSelectSortByChange}
               values={selectedSort}
           />
           <MultiSelect
               title='From Province'
               label='From Province'
               id='assigned_tags'
-              options={tags}
-              onChangee={handleSelectTagChange}
-              values={selectedTags}
+              options={provinces}
+              onChangee={handleSelectProvinceFilterChange}
+              values={provinceFilter}
           />
         </div>
 

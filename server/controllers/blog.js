@@ -66,7 +66,7 @@ const getAllBlogTags = asyncHandler(async (req,res) => {
 
 const getAllBlogs = asyncHandler(async (req, res)=>{
     console.log(req.body);
-    const { provider_id, title } = req.body;
+    const { provider_id, title, sortBy, provinces } = req.body;
     // if(!provider_id){
     //     throw new Error ("Missing input")
     // }
@@ -77,10 +77,59 @@ const getAllBlogs = asyncHandler(async (req, res)=>{
     if (title) {
         searchFilter.title = title;
     }
-    const response = await Blog.find(searchFilter).populate({
+    let response = await Blog.find(searchFilter).populate({
         path: 'provider_id',
         select: 'bussinessName province',
     });
+
+    if (sortBy?.length) {
+        console.log("NOTTTTT HERE");
+        if (sortBy[0] === 1) {
+            response.sort((b1,b2) => {
+                if (b1.createdAt > b2.createdAt) {
+                    return -1;
+                }
+                else if (b1.createdAt < b2.createdAt) {
+                    return 1;
+                }
+                return 0;
+            });
+        }
+        else if (sortBy[0] === 2) {
+            response.sort((b1,b2) => {
+                if (b1.likes < b2.likes) {
+                    return -1;
+                }
+                else if (b1.likes > b2.likes) {
+                    return 1;
+                }
+                return 0;
+            });
+        }
+        else if (sortBy[0] === 3) {
+            response.sort((b1,b2) => {
+                if (b1.dislikes > b2.dislikes) {
+                    return -1;
+                }
+                else if (b1.dislikes <   b2.dislikes) {
+                    return 1;
+                }
+                return 0;
+            });
+        }
+    }
+
+    if (provinces?.length) {
+        console.log("NOTTTTT HERE 222222222");
+        response = response.filter(blog => {
+            for (let province of provinces) {
+                if (blog?.provider_id?.province?.indexOf(province) >= 0) {
+                    return true;
+                }
+            }
+            return false;
+        });
+    }
 
     return res.status(200).json({
         success: response ? true : false,

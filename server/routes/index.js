@@ -17,6 +17,7 @@ const ServiceProviderRouter = require('./ServiceProvider');
 const revenueRouter = require('./revenue')
 const interactionRouter = require('./interaction')
 
+const blogCommentsRouter = require('./blogComments')
 const messageRouter = require('./message')
 
 const {notFound,errorHandler} = require('../middlewares/errorHandler')
@@ -42,6 +43,7 @@ const initRoutes = (app) => {
     app.use('/api/interaction', interactionRouter)
 
     app.use('/api/message', messageRouter)
+    app.use('/api/blog_comment', blogCommentsRouter)
 
     app.use(notFound)
     app.use(errorHandler)

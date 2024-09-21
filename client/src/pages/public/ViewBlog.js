@@ -2,7 +2,7 @@ import React, {useState,useEffect} from 'react'
 import { Button, MultiSelect } from '../../components'
 import { useSearchParams, useNavigate, createSearchParams } from 'react-router-dom'
 import { apiGetOneBlog, apiGetTopBlogs, apiLikeBlog, apiDislikeBlog } from '../../apis/blog'
-import { apiCreateNewBlogComment, apiGetAllBlogComment } from '../../apis/blogComment'
+import { apiCreateNewBlogComment, apiGetAllBlogComment } from '../../apis/blogComments'
 import DOMPurify from 'dompurify';
 import path from 'ultils/path';
 import { FaRegTrashAlt, FaRegThumbsDown, FaRegThumbsUp, FaClock, FaPencilAlt, FaBackward, FaHome, FaFacebook } from 'react-icons/fa'
