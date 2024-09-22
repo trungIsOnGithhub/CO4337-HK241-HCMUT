@@ -16,9 +16,9 @@ const ServiceBlogIntroCard = ({provider}) => {
           <span className='flex h-4'>{renderStarfromNumber(4, 14)?.map((el,index)=>(
             <span key={index}>{el}</span>
           ))}</span>
-          <span className='line-clamp-1 text-lg'>{`${provider.ward}, ${provider.district}, ${provider.province}`}</span>
+          <span className='line-clamp-1 text-lg'>{`${provider.province}`}</span>
           <span className='line-clamp-1 text-md'>Joined Date: {`${new Date(provider?.createdAt).toLocaleDateString('en-US')}`}</span>
-          <a href="#">View Provider Details</a>
+          <a className='text-teal-600 underline mt-1' href={`/detail_provider/${provider._id}`}>View Provider Details</a>
         </div>
       </div>
     </div>

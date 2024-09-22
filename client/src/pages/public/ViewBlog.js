@@ -1,7 +1,8 @@
 import React, {useState,useEffect} from 'react'
 import { Button, MultiSelect } from '../../components'
 import { useSearchParams, useNavigate, createSearchParams } from 'react-router-dom'
-import { apiGetOneBlog, apiGetTopBlogs, apiLikeBlog, apiDislikeBlog, apiAddBlogComment } from '../../apis/blog'
+import { apiGetOneBlog, apiGetTopBlogs, apiLikeBlog, apiDislikeBlog } from '../../apis/blog'
+import { apiCreateNewBlogComment, apiGetAllBlogComment } from '../../apis/blogComments'
 import DOMPurify from 'dompurify';
 import path from 'ultils/path';
 import { FaRegTrashAlt, FaRegThumbsDown, FaRegThumbsUp, FaClock, FaPencilAlt, FaBackward, FaHome, FaFacebook } from 'react-icons/fa'
@@ -13,7 +14,7 @@ import Swal from 'sweetalert2'
 import avatar from 'assets/avatarDefault.png'
 
 const ViewBlog = () => {
-    const dispatch = useDispatch()
+    // const dispatch = useDispatch()
     const navigate = useNavigate();
     const [params] = useSearchParams();
     const [post, setPost] = useState(null);
@@ -22,13 +23,14 @@ const ViewBlog = () => {
     const {current} = useSelector(state => state.user)
     const {isLogin} = useSelector(state => state.user)
     const [comment, setComment] = useState('');
+    const [commentList, setCommentList] = useState([]);
       
       // "<h1> Cai Nay La H1</h1>",
       // ["</br>"],
       // "<p>Fresh Herb and skillful practioner will bring you best experience</p>",
       // "<strong> Cai Nay La Strong</strong>"
     const [currBlogList, setCurrBlogList] = useState([]);
-    const fetchCurrentBlogList = async (search, selectedTags) => {
+    const fetchCurrentBlogList = async () => {
       // setIsLoading(true);
       let response = await apiGetTopBlogs({ limit: 5 });
       if(response?.success && response?.blogs){
@@ -41,6 +43,22 @@ const ViewBlog = () => {
     }
     useEffect(() => {
       fetchCurrentBlogList();
+    }, []);
+
+    const fetchCurrentBlogCommentList = async () => {
+      // setIsLoading(true);
+      let response = await apiGetAllBlogComment({ blogCommentId: params?.get('id'), limit: 5 });
+      if(response?.success && response?.bcs){
+        console.log('++++++', response.bcs, '+++++');
+        setCommentList(response.bcs);
+        // setIsLoading(false);
+      }
+      else {
+  
+      }
+    }
+    useEffect(() => {
+      fetchCurrentBlogCommentList();
     }, []);
   
     const fetchPostData = async () => {
@@ -105,11 +123,29 @@ const ViewBlog = () => {
 
 
     const submitComment = async(comment)=>{
-        if(!comment) {
+        if (!comment) {
             Swal.fire('Error Ocurred!!', 'Comment Cannot Be Empty!!', 'error')
             return;
         }
-        let response = await apiAddBlogComment({comment, bid: params?.get('id'), uid: current?._id, updatedAt:Date.now()});
+        if (!isLogin) {
+          Swal.fire('Unauthorized', 'Please Login To Write Comments!!', 'error');
+          navigate({
+            pathname: `/${path.LOGIN}`
+          });
+          return;
+        }
+        // comment, uid, updatedAt, bid
+        let response = await apiCreateNewBlogComment({comment, blog: params?.get('id'), postedBy: current?._id, updatedAt:Date.now()});
+
+        console.log('+++++++++++++++', response);
+
+        if (response?.msg === 'Unauthorized') {
+          Swal.fire('Unauthorized', 'Please Login To Write Comments!!', 'error');
+          navigate({
+            pathname: `/${path.LOGIN}`
+          });
+          return;
+        }
 
         if (!response?.success) {
           Swal.fire('Error Ocurred!!', 'Error Making Comments!!', 'error')
@@ -198,17 +234,17 @@ const ViewBlog = () => {
                   }
 
                   <h2 className='text-[20px] border-b-2 border-main w-full font-semibold mt-5'>Comments</h2>
-                  <div className='w-full'>
+                  {/* <div className='w-full'> */}
                   <div className='p-4 flex items-center justify-center text-sm flex-col gap-2'>
-                  <div onClick={e=> e.stopPropagation()} className='bg-white w-[700px] p-6 flex flex-row gap-4 items-center justify-center rounded-md border border-gray-500 shadow-md animate-scale-up-center'>
-                    <div className='w-fit m-0 p-4'>
-                      <img src={avatar} alt="avatar" className='w-[50px] h-[50px] object-cover rounded-full'></img>
-                    </div>
+                  <div onClick={e=> e.stopPropagation()} className='bg-white w-3/4 p-2 flex flex-row gap-4 items-center justify-center rounded-md border border-gray-500 shadow-md animate-scale-up-center'>
+                    {/* <div className='w-fit m-0 p-4'> */}
+                      <img src={avatar} alt="avatar" className='w-[80px] h-[80px] object-cover rounded-full'></img>
+                    {/* </div> */}
                     <div className='w-4/5 m-0 flex flex-col'>
                       <textarea 
                         onChange={e=>setComment(e.target.value)}
                         value = {comment}
-                        className='form-textarea w-full placeholder:italic placeholder:text-sm placeholder:text-gray-500'
+                        className='form-textarea w-full placeholder:italic placeholder:text-sm placeholder:text-gray-500 min-h-20'
                         placeholder='Type something ...'
                       ></textarea>
                       <Button fullWidth handleOnclick={()=>{submitComment(comment)}}>Submit</Button>
@@ -218,21 +254,23 @@ const ViewBlog = () => {
                   <h2 className='my-5 font-semibold text-xl border-main'>All Comments</h2>
 
                   <div className='flex flex-col gap-2'>
-                      {post?.comments?.map(el=>(
+                      {commentList?.map(el=>(
                           <CommentBlog
                               // key = {el._id}
                               // star = {el.star}
                               updatedAt = {el?.updatedAt}
                               comment = {el?.comment}
                               name={`${el?.postedBy?.lastName} ${el?.postedBy?.firstName}`}
+                              replies={[{replies: [{}, {}]},{replies: [{}]}]}
+                              bid={params?.get('id')}
                           />
                       ))}
                   </div>
-                  </div>
+                  {/* </div> */}
               </div>
               <div className='w-1/4 flex flex-col gap-4 justify-items-center justify-start items-center border-l-2 border-main pl-5'>
                 <h2 className='text-[18px] border-b-2 border-main w-full text-center font-semibold'>Other Trending Posts</h2>
-                {currBlogList && currBlogList.map(
+                {currBlogList?.map(
                   blog => {
                     return (
                       <div className='post-item flex flex-col justify-start p-2 hover:bg-slate-300 rounded-md gap-4'
