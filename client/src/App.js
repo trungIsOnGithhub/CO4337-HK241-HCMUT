@@ -4,7 +4,7 @@ import {Route, Routes} from 'react-router-dom'
 import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageEvent, ManagePostDetail, EditPostDetail, AddPost} from 'pages/admin'
 import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct, ViewBlog, DetailProvider } from 'pages/public'
 
-import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct} from 'pages/user'
+import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct, MyCalendar} from 'pages/user'
 import path from './ultils/path'
 import {getCategories} from 'store/app/asyncAction'
 import {getCategorieService} from 'store/category/asyncAction'
@@ -87,6 +87,7 @@ function App() {
         <Route path={path.HISTORY} element={<History/>}/>
         <Route path={path.WISHLIST} element={<WishList/>}/>
         <Route path={path.MY_SERVICE_PROVIDER} element={<MyServiceProvider/>}/>
+        <Route path={path.MY_CALENDAR} element={MyCalendar}/>
       </Route>
       <Route path={path.FINAL_REGISTER} element={<Final_Register />} />
       <Route path={path.SERVICE_PROVIDER_REGISTER} element={<ServiceProviderRegister />} />

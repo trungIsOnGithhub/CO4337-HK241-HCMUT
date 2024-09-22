@@ -24,7 +24,7 @@ const UserSideBar = () => {
     }
   }
   return (
-    <div className='bg-white h-full py-4 w-[250px] flex-none'>
+    <div className='bg-white h-full py-4 w-[250px] flex-none border-r border-gray-500'>
         <div className='w-full flex flex-col items-center justify-center py-4'>
             <img src={current?.avatar || avatarDefault} alt='logo' className='w-16 h-16 object-cover'></img>
             <span>{`${current?.lastName} ${current?.firstName}`}</span>

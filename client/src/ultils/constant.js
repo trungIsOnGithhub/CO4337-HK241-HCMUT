@@ -8,6 +8,7 @@ import { TbBrandBooking } from "react-icons/tb";
 import { MdPostAdd } from "react-icons/md";
 import { CiDiscount1 } from "react-icons/ci";
 import { IoIosSettings } from "react-icons/io";
+import { FaCalendarAlt } from 'react-icons/fa';
 export const navigation = [
     {
         id: 1,
@@ -406,6 +407,14 @@ export const userSidebar = [
         path: `/${path.USER}/${path.MY_SERVICE_PROVIDER}`,
         icon: <RiBillLine size={20}/>,
         visibleForRole: [1411],
+    },
+    {
+        id: 6,
+        type: 'single',
+        text: 'My Calendar',
+        path: `/${path.USER}/${path.MY_CALENDAR}`,
+        icon: <FaCalendarAlt size={20}/>,
+        visibleForRole: [202],
     },
 ]
 

@@ -1,7 +1,7 @@
 import React,{Fragment, memo, useState} from "react";
 import logo from "assets/logo_black.png"
 import icons from 'ultils/icon'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import path from 'ultils/path'
 import {useDispatch, useSelector } from 'react-redux'
 import { logout } from "store/user/userSlice";
@@ -10,9 +10,11 @@ import { useEffect } from "react";
 import { showCart, showMessage } from "store/app/appSlice";
 import { IoChatbubblesSharp } from "react-icons/io5";
 import Message from "components/Message/Message";
+import { FaCalendarAlt } from "react-icons/fa";
 
 const {FaPhoneAlt, MdEmail, FaUser, FaShoppingBag} = icons
 const Header = () => {
+    const navigate = useNavigate()
     const dispatch = useDispatch()
     const {current} = useSelector(state => state.user)
     const [isShowOptions, setIsShowOptions] = useState(false)
@@ -68,6 +70,11 @@ const Header = () => {
                        </div>
                     }
                 </div>
+
+                <div onClick={()=> navigate(`/${path.USER}/${path.MY_CALENDAR}`)} className="cursor-pointer flex items-center justify-center gap-2 px-6 border-r relative">
+                    <FaCalendarAlt color='red' />
+                </div>
+
                 <div
                     onClick={()=> {
                         setIsShowOptions(!isShowOptions)}}

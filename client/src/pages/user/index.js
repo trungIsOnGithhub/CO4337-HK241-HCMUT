@@ -5,4 +5,5 @@ export {default as WishList} from './WishList'
 export {default as CheckoutService} from './CheckoutService'
 export {default as CheckoutProduct} from './CheckoutProduct'
 export {default as MyServiceProvider} from './MyServiceProvider'
+export {default as MyCalendar} from './Calendar'
 
