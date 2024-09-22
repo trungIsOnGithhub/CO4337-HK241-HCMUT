@@ -237,7 +237,7 @@ const Booking = () => {
     <div className='w-main'>
       <div className='w-main flex gap-2 h-fit my-5'>
         <div className='border border-gray-400 flex-7 flex-col pl-3 pr-3 rounded-md'>
-          <div className='mb-4'><span className='font-semibold text-3xl'>Choose Staff</span></div>
+          <div className='mb-4 pt-2'><span className='font-semibold text-3xl'>Choose Staff</span></div>
           {staffs?.map((el, index) => (
             <div key={index} className='border border-gray-300 px-2 py-2 rounded-md my-2'>
               <div className='flex justify-between'>
@@ -268,7 +268,7 @@ const Booking = () => {
         </div>
         <div className='flex-3 flex-col'>
           <div className='border border-gray-400 h-fit pb-5 rounded-md'>
-            <div className='mb-4 border-b-2 border-gray-200 px-3 pb-4 flex justify-center'><span className='font-semibold text-3xl'>Booking Details</span></div>
+            <div className='mb-4 border-b-2 border-gray-200 px-3 pb-4 flex justify-center'><span className='font-semibold text-3xl pt-2'>Booking Details</span></div>
             <div className='px-3 flex flex-col gap-2'>
               <div className='flex gap-2'>
                 <span className='text-gray-700 font-bold'>Service Name:</span>

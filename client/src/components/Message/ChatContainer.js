@@ -12,6 +12,7 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
     const [messages, setMessages] = useState([])
     const [arrivalMessage, setArrivalMessage] = useState(null)
     const [openQuestionsMenu, setOpenQuestionsMenu] = useState(false)
+    const [givenQuestionsHint, setGivenQuestionsHint] = useState(true)
     const scrollRef = useRef()
 
     const messagesEndRef = useRef(null)
@@ -82,32 +83,50 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
                 </div>
             </div>
         </div>
-        {
+        {/* {
             currentChat?.provider_id?.bussinessName &&
-            <div className='flex justify-center'>
-                <div className="text-green-900 bg-lime-600 h-fit w-fit rounded-md p-2 text-sm text-center hover:bg-slate-500"
-                    onClick={() => {console.log('{{{{{{{{}}}}}}}');setOpenQuestionsMenu(true)}}
+            <div className='flex justify-center h-fit'>
+                <div className="text-green-900 bg-lime-600 w-fit rounded-md p-2 text-sm text-center hover:bg-slate-500 mt-2"
+                    onClick={() => {setOpenQuestionsMenu(true)}}
                 >
                     You Can Use Given Questions In Chat With Service Provider <FaQuestion className='inline mb-1'/>
                 </div>
             </div>
-        }
+        } */}
         {
-            currentChat?.provider_id?.bussinessName && openQuestionsMenu &&
-            <div className='absolute top-10 bg-slate-500 min-w-60 p-5 flex flex-col justify-center rounded-md'>
-                <h4 className='text-center font-semibold text-lg'>Given Questions</h4>
+            currentChat?.provider_id?.bussinessName && givenQuestionsHint &&
+            <div className='p-5 flex flex-col justify-start items-center text-slate-400 h-16'>
+                <h4 className='text-center text-slate-400 font-semibold text-lg'>Suggested Questions</h4>
                 {
-                    currentChat.provider_id.chatGivenQuestions?.map(question => {
+                    currentChat.provider_id.chatGivenQuestions?.slice(0,3).map(question => {
                         return (
-                            <div class="p-2 bg-linme-500 rounded-md flex justify-center border m-4 p-4 hover:bg-blue-500"
-                                onClick={() => {setMessages(prev => [...prev, question])}}
+                            <div class="p-2 hover:bg-blue-600 rounded-md flex justify-center m-1 p-2 w-fit"
+                                onClick={() => {setMessages(prev => [...prev, {message:question, fromSelf:true}])}}
                             >
                                 { question }
                             </div>
                         );
                     })
                 }
-                <button className='btn bg-red-500 py-2 px-4' onClick={() => {setOpenQuestionsMenu(false);}}>Close This Menu</button>
+                <a href="#" onClick={() => {setOpenQuestionsMenu(true);}} className='underline mt-1'>View All Given Questions</a>
+            </div>
+        }
+        {
+            currentChat?.provider_id?.bussinessName && openQuestionsMenu &&
+            <div className='absolute top-30 left-1/4 bg-slate-500 w-1/2 px-2 py-8 flex flex-col justify-center rounded-md'>
+                <h4 className='text-center font-semibold text-lg'>Given Questions</h4>
+                {
+                    currentChat.provider_id.chatGivenQuestions?.map(question => {
+                        return (
+                            <div class="p-2 bg-linme-500 rounded-md flex justify-center border m-4 p-4 hover:bg-blue-500"
+                                onClick={() => {setMessages(prev => [...prev, {message:question, fromSelf:true}])}}
+                            >
+                                { question }
+                            </div>
+                        );
+                    })
+                }
+                <button className='btn bg-red-500 py-2 px-4 w-fit m-auto rounded-md mt-3' onClick={() => {setOpenQuestionsMenu(false);}}>Close This Menu</button>
             </div>
         }
         <div className='chat-messages'>
@@ -129,7 +148,7 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
         </div>
         {/* <ProviderOnlyInformationBar/> */}
 
-        <ChatInput handleSendMsg={handleSendMsg}/>
+        <ChatInput handleSendMsg={handleSendMsg} onClick={() => {setGivenQuestionsHint(false)}}/>
     </Container>
   )
 }

@@ -28,7 +28,6 @@ const path = {
     //chat
     CHAT: 'chat',
 
-
     //Admin
     ADMIN: 'admin',
     DASHBOARD: 'dashboard',
@@ -53,6 +52,7 @@ const path = {
     ADD_SALE_EVENT: 'add_sale_event',
     MANAGE_VOUCHER: 'manage_voucher',
     MANAGE_SALE_EVENT: 'manage_sale_event',
+    MANAGE_CHAT: 'manage_chat',
 
     SETTING: 'setting',
     //User
