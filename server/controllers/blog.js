@@ -120,12 +120,16 @@ const getAllBlogs = asyncHandler(async (req, res)=>{
     }
 
     if (provinces?.length) {
-        console.log("NOTTTTT HERE 222222222");
         response = response.filter(blog => {
             for (let province of provinces) {
-                if (blog?.provider_id?.province?.indexOf(province) >= 0) {
-                    return true;
-                }
+                // let province_words_tokens = province.split(' ');
+                
+                // for (let token of province_words_tokens) {
+                    if (blog?.provider_id?.province?.indexOf(province) >= 0
+                        || province.indexOf(blog?.provider_id?.province || '~') >= 0) { // ~ = random  string to make it fail
+                        return true;
+                    }
+                // }
             }
             return false;
         });

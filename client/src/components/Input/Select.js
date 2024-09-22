@@ -22,7 +22,7 @@ const Select = ({label, options=[], register, errors, id, validate, style, fullW
         >
         <option value=''>{text||`----CHOOSE----`}</option>
         {options?.map(el => (
-          <option key={el.code} value={el.code}>{el.value}</option>
+          <option key={el.code} value={el.code}>{el?.label || el.value}</option>
         ))}
       </select>
       {errors[id] && <small className='text-xs text-red-500'>{errors[id]?.message}</small>}

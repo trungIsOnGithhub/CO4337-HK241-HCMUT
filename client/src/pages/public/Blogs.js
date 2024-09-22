@@ -1,5 +1,5 @@
 import React, {useState, useCallback, useEffect } from 'react'
-import { MultiSelect } from 'components';
+import { MultiSelect, Select } from 'components';
 import { apiGetAllBlogs, apiGetAllPostTags, apiSearchBlogByParams, apiGetTopTags } from 'apis/blog';
 import Button from 'components/Buttons/Button';
 import { HashLoader } from 'react-spinners';
@@ -134,10 +134,12 @@ const Blogs = () => {
       <div className='w-2/3 flex flex-col'>
         <h2 className='text-xl font-semibold py-[15px] border-b-2 border-main'>Trending Blogs</h2>
         <div className='w-2/3 p-6 bg-slate-300 m-3 rounded-md flex gap-4'>
-          <MultiSelect
+          <Select
               title='Sort By'
               label='Sort By'
-              id='assigned_tags'
+              id='sort_by'
+              errors={{}}
+              register={(a,b)=>{}}
               options={[ {label:'Date Created',value:1}, {label:'Like',value:2}, {label:'Dislikes',value:3}]}
               onChangee={handleSelectSortByChange}
               values={selectedSort}
@@ -145,7 +147,7 @@ const Blogs = () => {
           <MultiSelect
               title='From Province'
               label='From Province'
-              id='assigned_tags'
+              id='from_province'
               options={provinces}
               onChangee={handleSelectProvinceFilterChange}
               values={provinceFilter}
