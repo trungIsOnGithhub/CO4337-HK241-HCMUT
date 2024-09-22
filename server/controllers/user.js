@@ -588,13 +588,27 @@ const removeProductFromCart = asyncHandler(async (req, res) => {
 
 const getAllContact = async(req,res,next) => {
     try{
-        const users = await User.find({ _id: { $ne: req.params.userId } })
+        const users = await User.find({ _id: { $ne: req.params.userId } }).populate('provider_id').exec();
         return res.json(users)
     }
     catch(err){
         next(err)
     }
 }
+
+const addContact = asyncHandler(async (req, res) => {
+    const {uid, ucid} = req.body;
+    if (!uid || !ucid) {
+        throw new Error('Missing Input!');
+    }
+    const user = await User.findByIdAndUpdate(uid, { $push: { chat_users: ucid } }, {new: true});
+
+    return res.status(200).json({
+        success: user ? true : false,
+        mes: user ? 'Contact added successfully' : "Something went wrong",
+        contact: user
+    })
+});
 
 module.exports = {
     register,
@@ -616,5 +630,6 @@ module.exports = {
     updateWishlist,
     getAllCustomers,
     removeProductFromCart,
-    getAllContact
+    getAllContact,
+    addContact
 }

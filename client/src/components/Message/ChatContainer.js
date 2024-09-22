@@ -6,11 +6,12 @@ import axios from 'axios'
 import {v4 as uuidv4} from 'uuid'
 import { apiAddMessage, apigetAllMessageFromSenderToReceiver } from 'apis/message'
 import defaultAvatar from '../../assets/avatarDefault.png'
+import { FaQuestion } from 'react-icons/fa'
 
 const ChatContainer = ({currentChat, currentUser, socket}) => {
-
     const [messages, setMessages] = useState([])
     const [arrivalMessage, setArrivalMessage] = useState(null)
+    const [openQuestionsMenu, setOpenQuestionsMenu] = useState(false)
     const scrollRef = useRef()
 
     const messagesEndRef = useRef(null)
@@ -24,7 +25,7 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
                 })
                 setMessages(response)
             }
-            fetchMessages()
+            fetchMessages();
         }
     }, [currentChat]);
     
@@ -62,8 +63,7 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
         messagesEndRef.current?.scrollIntoView({behaviour: "smooth"})
     }, [messages]);
 
-  return (
-    
+  return ( 
     <Container ref={messagesEndRef}>
         <div className='chat-header'>
             <div className='user-details'>
@@ -74,12 +74,45 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
                     <h3>
                         {`${currentChat?.firstName} ${currentChat?.lastName}`}
                     </h3>
+                    { currentChat?.provider_id?.bussinessName &&
+                        <h4 className="p-1 bg-lime-600 rounded-md">
+                            { currentChat?.provider_id?.bussinessName }
+                        </h4>
+                    }  
                 </div>
             </div>
         </div>
+        {
+            currentChat?.provider_id?.bussinessName &&
+            <div className='flex justify-center'>
+                <div className="text-green-900 bg-lime-600 h-fit w-fit rounded-md p-2 text-sm text-center hover:bg-slate-500"
+                    onClick={() => {console.log('{{{{{{{{}}}}}}}');setOpenQuestionsMenu(true)}}
+                >
+                    You Can Use Given Questions In Chat With Service Provider <FaQuestion className='inline mb-1'/>
+                </div>
+            </div>
+        }
+        {
+            currentChat?.provider_id?.bussinessName && openQuestionsMenu &&
+            <div className='absolute top-10 bg-slate-500 min-w-60 p-5 flex flex-col justify-center rounded-md'>
+                <h4 className='text-center font-semibold text-lg'>Given Questions</h4>
+                {
+                    currentChat.provider_id.chatGivenQuestions?.map(question => {
+                        return (
+                            <div class="p-2 bg-linme-500 rounded-md flex justify-center border m-4 p-4 hover:bg-blue-500"
+                                onClick={() => {setMessages(prev => [...prev, question])}}
+                            >
+                                { question }
+                            </div>
+                        );
+                    })
+                }
+                <button className='btn bg-red-500 py-2 px-4' onClick={() => {setOpenQuestionsMenu(false);}}>Close This Menu</button>
+            </div>
+        }
         <div className='chat-messages'>
             {
-                messages?.map((message)=> {
+                messages?.map((message) => {
                     return (
                         <div  ref={scrollRef} key={uuidv4()}>
                             <div className={`message ${message.fromSelf ? "sended" : "recieved"}`}>
@@ -94,6 +127,8 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
                 })
             }
         </div>
+        {/* <ProviderOnlyInformationBar/> */}
+
         <ChatInput handleSendMsg={handleSendMsg}/>
     </Container>
   )

@@ -1,17 +1,18 @@
-import { apiGetProductByProviderId, apiGetServiceByProviderId, apiGetServiceProviderById } from 'apis'
+import { apiGetProductByProviderId, apiGetServiceByProviderId, apiGetServiceProviderById, apiAddContactToCurrentUser } from 'apis'
 import React, { useEffect, useState } from 'react'
 import { useParams, useSearchParams, createSearchParams, useNavigate } from 'react-router-dom'
 import defaultProvider from '../../assets/defaultProvider.jpg'
 import clsx from 'clsx'
 import path from 'ultils/path';
 import { apiGetAllBlogs } from 'apis/blog';
-import { BookingFromProvider, Pagination, Product, Service } from 'components'
+import { BookingFromProvider, Pagination, Product, Service, Button } from 'components'
 import Masonry from 'react-masonry-css'
 import { FaLocationDot } from 'react-icons/fa6'
 import Mapbox from 'components/Map/Mapbox'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
 import { FaRegThumbsUp, FaRegThumbsDown, FaLocationArrow, FaExternalLinkAlt } from 'react-icons/fa';
+import { useSelector } from 'react-redux'
 
 const breakpointColumnsObj = {
   default: 4,
@@ -22,6 +23,7 @@ const breakpointColumnsObj = {
 
 const DetailProvider = () => {
     const navigate = useNavigate();
+    const {current} = useSelector(state => state.user)
 
     const {prid} = useParams()
     const [providerData, setProviderData] = useState(null)
@@ -204,6 +206,21 @@ const DetailProvider = () => {
       fetchCurrentBlogList();
     }, []);
 
+    const switchToChatWithProvider = async () => {
+      let response = await apiAddContactToCurrentUser({uid: current?._id, ucid: providerData.owner});
+      if (response?.success && response.contact) {
+        // navigate({
+        //   pathname: `/${path.CHAT}`,
+        //   state: {
+        //     currenRedirectedChatUserId: providerData.owner
+        //   }
+        // });
+        navigate(`/${path.CHAT}`,{ state: { currenRedirectedChatUserId: providerData.owner } })
+      }
+      else {
+        Swal.fire('Oops!', 'Cannot Create Chat With This Provider!', 'error');
+      }
+    }
 
   return (
     <div>
@@ -223,6 +240,7 @@ const DetailProvider = () => {
         <span onClick={()=>{setVariable('blog')}} className={clsx('text-gray-800 font-semibold text-xl cursor-pointer capitalize', variable === 'blog' && 'text-main')}>Blog</span>
         <span onClick={()=>{setVariable('find-us')}} className={clsx('text-gray-800 font-semibold text-xl cursor-pointer capitalize', variable === 'find-us' && 'text-main')}>Find us</span>
         <span onClick={()=>{setVariable('faq')}} className={clsx('text-gray-800 font-semibold text-xl cursor-pointer capitalize', variable === 'faq' && 'text-main')}>FAQ</span>
+        <span onClick={()=>{setVariable('chat')}} className={clsx('text-gray-800 font-semibold text-xl cursor-pointer capitalize', variable === 'faq' && 'text-main')}>Chat</span>
       </div>
 
       {
@@ -372,7 +390,7 @@ const DetailProvider = () => {
         <div className='mx-auto mt-8 flex flex-col w-50 p-5'>
           <div className='w-full'>
             <h2 className='text-lg font-bold'>Top Blogs Post From Provider</h2>
-            <span className='text-left'><FaExternalLinkAlt onClick={() => {handleViewBlogListOnMainPage()}}/>&nbsp;&nbsp;<p className='text-md font-semibold'>View In Blog Pages</p></span>
+            <span className='flex justify-end'><p className='text-md font-semibold'><FaExternalLinkAlt onClick={() => {handleViewBlogListOnMainPage()}}/>&nbsp;&nbsp;View In Blog Pages</p></span>
           </div>
           {currBlogList && currBlogList.map(
             blog => {
@@ -419,6 +437,37 @@ const DetailProvider = () => {
           <div className='w-full h-[200px]'>
           </div>
         </>
+      }
+
+      {
+        variable === 'chat' &&
+        <div className='w-main flex justify-center'>
+          <div className='w-50 flex flex-col px-8'>
+            <h5>Opening Times:</h5>
+            {/* <div className="flex flex">. */}
+              {providerData?.time &&
+                // Object.entries(providerData.time).map(pair => {
+                //   return (<div>
+                //     {pair[0] + '' + pair[1]}
+                //   </div>)
+                // })
+                ['monday', 'tuesday', 'wednesday', 'thursday', 'firday', 'saturday', 'sunday'].map(dow => {
+                  return (
+                    <div className='flex flex-row gap-4'>
+                    {providerData.time[`start${dow}`] && providerData.time[`end${dow}`] && <h6>{dow}</h6>}
+                    {providerData.time[`start${dow}`] && <p className='border p-2'>Open: {providerData.time[`start${dow}`]}</p>}
+                    {providerData.time[`end${dow}`] && <p className='border p-2'>Close: {providerData.time[`end${dow}`]}</p>}
+                  </div>  
+                  );
+                })}
+            {/* </div> */}
+          </div>
+          <div className='w-50 flex flex-col justify-center align-items-center'>
+            <p className='text-md text-center'>Address: {providerData?.address}</p>
+            <p className='text-md text-center'>Province: {providerData?.province}</p>
+            <Button handleOnclick={() => {switchToChatWithProvider()}}>Chat With Provider</Button>
+          </div>
+        </div>
       }
     </div>
   )

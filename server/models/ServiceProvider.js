@@ -31,7 +31,14 @@ var ProviderServiceSchema = new mongoose.Schema({
     longitude: {
         type: Number,
         required: true,
-    }
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    },
+    chatGivenQuestions: [{
+        type: String
+    }]
 },{
     timestamps: true
 });

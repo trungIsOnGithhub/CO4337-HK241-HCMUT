@@ -80,6 +80,10 @@ var userSchema = new mongoose.Schema({
         enum : [1411,202],
         default: 202,
     },
+    chat_users: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    }]
 },{
     timestamps: true
 });
