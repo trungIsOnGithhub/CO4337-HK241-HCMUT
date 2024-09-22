@@ -1,15 +1,17 @@
 import { apiGetProductByProviderId, apiGetServiceByProviderId, apiGetServiceProviderById } from 'apis'
 import React, { useEffect, useState } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
+import { useParams, useSearchParams, createSearchParams, useNavigate } from 'react-router-dom'
 import defaultProvider from '../../assets/defaultProvider.jpg'
 import clsx from 'clsx'
+import path from 'ultils/path';
+import { apiGetAllBlogs } from 'apis/blog';
 import { BookingFromProvider, Pagination, Product, Service } from 'components'
 import Masonry from 'react-masonry-css'
 import { FaLocationDot } from 'react-icons/fa6'
 import Mapbox from 'components/Map/Mapbox'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
-
+import { FaRegThumbsUp, FaRegThumbsDown, FaLocationArrow, FaExternalLinkAlt } from 'react-icons/fa';
 
 const breakpointColumnsObj = {
   default: 4,
@@ -19,6 +21,8 @@ const breakpointColumnsObj = {
 };
 
 const DetailProvider = () => {
+    const navigate = useNavigate();
+
     const {prid} = useParams()
     const [providerData, setProviderData] = useState(null)
     const [showMap, setShowMap] = useState(false);
@@ -174,6 +178,32 @@ const DetailProvider = () => {
         setShowMap(false)
       }
     };
+
+    const handleChooseBlogPost = (id) => { 
+      navigate({
+        pathname: `/${path.VIEW_POST}`,
+        search: createSearchParams({id}).toString()
+      })
+     }
+    const handleViewBlogListOnMainPage = () => {
+      navigate(`/${path.BLOGS}`,{ state: { searchKey: providerData?.bussinessName } })
+    }
+    const [currBlogList, setCurrBlogList] = useState([]);
+    const fetchCurrentBlogList = async (search, selectedTags) => {
+      // setIsLoading(true);
+      let response = await apiGetAllBlogs({ title: '',  limit: process.env.REACT_APP_LIMIT, sortBy:[2], provider_id: providerData?.id });
+      if(response?.success && response?.blogs){
+        setCurrBlogList(response.blogs);
+        // setIsLoading(false);
+      }
+      else {
+
+      }
+    }
+    useEffect(() => {
+      fetchCurrentBlogList();
+    }, []);
+
 
   return (
     <div>
@@ -336,6 +366,47 @@ const DetailProvider = () => {
         </div>
         </>
       }
+
+      {
+        variable === 'blog' &&
+        <div className='mx-auto mt-8 flex flex-col w-50 p-5'>
+          <div className='w-full'>
+            <h2 className='text-lg font-bold'>Top Blogs Post From Provider</h2>
+            <span className='text-left'><FaExternalLinkAlt onClick={() => {handleViewBlogListOnMainPage()}}/>&nbsp;&nbsp;<p className='text-md font-semibold'>View In Blog Pages</p></span>
+          </div>
+          {currBlogList && currBlogList.map(
+            blog => {
+              return (
+                <div className='post-item flex flex-row justify-start p-5 hover:bg-slate-300 rounded-md gap-5 m-2'
+                onClick={() => {handleChooseBlogPost(blog?._id);}}>
+                  <img src={blog?.thumb} className='gap-0.5 w-1/2 max-h-60 mr-5'/>
+                  <div>
+                    <h3 className="font-bold text-red-500 text-lg mb-2">{blog?.title || 'Title'}</h3>
+                    <h5 className="font-semibold text-md flex mb-4"><FaLocationArrow />&nbsp;&nbsp;{blog?.provider_id?.province || 'Location'}</h5>
+                    {/* <span> */}
+                      <div className="flex flex-row justify-start gap-2 mb-4"><FaRegThumbsUp /> {blog?.likes?.length || 0}&nbsp;&nbsp;&nbsp;<FaRegThumbsDown /> {blog?.dislikes?.length || 0}</div>
+                      {/* <h5 className="font-semibold text-md"><</h5> */}
+                    {/* </span> */}
+                    <br></br>
+                    {/* {blog?.content?.length > 0 
+                    &&
+                    <div className='text-sm line-clamp-[10] mb-8' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(blog?.content[0])}}></div>} */}
+
+                    <div className='flex flex-wrap'>
+                      {blog?.tags.map(label =>
+                          (<div className='bg-green-400 p-2 m-1 rounded-full w-fit'>
+                            {label}
+                          </div>)
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )
+            }
+          )}
+        </div>
+      }
+
       {
         variable === 'find-us' &&
         <>
