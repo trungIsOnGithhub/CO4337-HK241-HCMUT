@@ -75,11 +75,9 @@ const Blogs = () => {
   }, []);
 
   const handleSelectSortByChange = useCallback(selectedOptions => {
-    console.log(selectedOptions);
     setSelectedSort(selectedOptions);
   }, []);
   const handleSelectProvinceFilterChange = useCallback(selectedOptions => {
-    console.log(selectedOptions);
     setProvinceFilter(selectedOptions);
   }, []);
   const handleSelectTagChange = useCallback(selectedOptions => {

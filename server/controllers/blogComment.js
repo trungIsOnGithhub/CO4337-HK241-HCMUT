@@ -14,15 +14,11 @@ const asyncHandler = require('express-async-handler');
 const getAllCommentsForBlog = asyncHandler(async(req, res)=>{
     const {blogCommentId} = req.body;
 
-    console.log('-----+++++++++++++++', req.body);
-
     if (!blogCommentId) {
         throw new Error("Missing Input");
     }
 
     const bcs = await BlogComment.find();
-
-    console.log('-----+++++++++++++++', bcs);
 
     return res.status(200).json({
         success: bcs ? true : false,
@@ -33,7 +29,6 @@ const getAllCommentsForBlog = asyncHandler(async(req, res)=>{
 const createBlogComment = asyncHandler(async(req, res)=>{
     let { comment, postedBy, updatedAt, blog } = req.body
 
-    console.log('----->', req.body);
 
     if (!postedBy) {
         return res.status(401).json({
@@ -64,8 +59,6 @@ const createBlogComment = asyncHandler(async(req, res)=>{
 
 const replyBlogComment = asyncHandler(async(req, res)=>{
     let { comment, uid, updatedAt, bid, repliedCommentId } = req.body
-
-    console.log('----->', req.body);
 
     if (!uid) {
         return res.status(401).json({

@@ -9,6 +9,7 @@ import { MdPostAdd } from "react-icons/md";
 import { CiDiscount1 } from "react-icons/ci";
 import { IoIosSettings } from "react-icons/io";
 import { FaCalendarAlt } from 'react-icons/fa';
+import { MdHistory } from "react-icons/md";
 export const navigation = [
     {
         id: 1,
@@ -389,7 +390,7 @@ export const userSidebar = [
         type: 'single',
         text: 'History',
         path: `/${path.USER}/${path.HISTORY}`,
-        icon: <MdGroups size={20}/>,
+        icon: <MdHistory size={20}/>,
         visibleForRole: [202],
     },
     {

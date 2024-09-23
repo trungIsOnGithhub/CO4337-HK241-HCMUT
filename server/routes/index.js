@@ -20,8 +20,9 @@ const interactionRouter = require('./interaction')
 const blogCommentsRouter = require('./blogComments')
 const messageRouter = require('./message')
 
+const bookingRouter = require('./booking')
+
 const {notFound,errorHandler} = require('../middlewares/errorHandler')
-const ServiceProvider = require('../models/ServiceProvider')
 
 const initRoutes = (app) => {
     app.use('/api/user', userRouter)
@@ -44,6 +45,8 @@ const initRoutes = (app) => {
 
     app.use('/api/message', messageRouter)
     app.use('/api/blog_comment', blogCommentsRouter)
+
+    app.use('/api/booking', bookingRouter)
 
     app.use(notFound)
     app.use(errorHandler)

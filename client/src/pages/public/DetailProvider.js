@@ -56,7 +56,6 @@ const DetailProvider = () => {
           }
           if(variable === 'product'){
             const response = await apiGetProductByProviderId(prid)
-            console.log(response)
             setProduct(response?.products)
             setTotalProduct(response?.counts)
             setFindUs(false)

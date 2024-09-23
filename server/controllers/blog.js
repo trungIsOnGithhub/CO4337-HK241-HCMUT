@@ -64,7 +64,6 @@ const getAllBlogTags = asyncHandler(async (req,res) => {
 });
 
 const getAllBlogs = asyncHandler(async (req, res)=>{
-    console.log(req.body);
     const { provider_id, title, sortBy, provinces } = req.body;
     // if(!provider_id){
     //     throw new Error ("Missing input")
@@ -82,7 +81,6 @@ const getAllBlogs = asyncHandler(async (req, res)=>{
     });
 
     if (sortBy?.length) {
-        console.log("NOTTTTT HERE");
         if (sortBy[0] === 1) {
             response.sort((b1,b2) => {
                 if (b1.createdAt > b2.createdAt) {

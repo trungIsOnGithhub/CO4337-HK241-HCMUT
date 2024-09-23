@@ -49,7 +49,6 @@ const ViewBlog = () => {
       // setIsLoading(true);
       let response = await apiGetAllBlogComment({ blogCommentId: params?.get('id'), limit: 5 });
       if(response?.success && response?.bcs){
-        console.log('++++++', response.bcs, '+++++');
         setCommentList(response.bcs);
         // setIsLoading(false);
       }
@@ -136,8 +135,6 @@ const ViewBlog = () => {
         }
         // comment, uid, updatedAt, bid
         let response = await apiCreateNewBlogComment({comment, blog: params?.get('id'), postedBy: current?._id, updatedAt:Date.now()});
-
-        console.log('+++++++++++++++', response);
 
         if (response?.msg === 'Unauthorized') {
           Swal.fire('Unauthorized', 'Please Login To Write Comments!!', 'error');
