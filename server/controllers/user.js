@@ -598,6 +598,7 @@ const getAllContact = async(req,res,next) => {
 
 const addContact = asyncHandler(async (req, res) => {
     const {uid, ucid} = req.body;
+
     if (!uid || !ucid) {
         throw new Error('Missing Input!');
     }

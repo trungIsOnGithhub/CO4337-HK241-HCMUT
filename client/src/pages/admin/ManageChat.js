@@ -12,9 +12,23 @@ import { FaPlus } from 'react-icons/fa';
 const ManageChat = () => {
     const { current } = useSelector(state => state.user);
     const dispatch = useDispatch();
-    const { register, formState: { errors }, reset, handleSubmit, watch } = useForm();
+    const { register, formState: { errors }, reset, handleSubmit } = useForm();
     const [preview, setPreview] = useState({ avatar: null });
     const [isLoading, setIsLoading] = useState(false);
+    const [numberQnA, setNumberQnA] = useState(1);
+    const [allQnADataInput, setAllQnADataInput] = useState([
+        {question: '', answer: ''}
+    ]);
+
+    const handleQnAFormChange = (index, inputEvent) => {
+        const newQnAData = [...allQnADataInput];
+        if (!newQnAData[index]) {
+            newQnAData[index] = {question: '', answer: ''}
+        }
+        newQnAData[index][inputEvent.target.name] = inputEvent.target.value;
+        console.log(newQnAData, "==================");
+        setAllQnADataInput(newQnAData);
+    };
 
     useEffect(() => {
         dispatch(getCurrent());
@@ -24,10 +38,6 @@ const ManageChat = () => {
         const base64Avatar = await getBase64(file);
         setPreview({ avatar: base64Avatar });
     };
-
-    useEffect(() => {
-        handlePreviewAvatar(watch('avatar')[0]);
-    }, [watch('avatar')]);
 
     const handleAddStaff = async (data) => {
         data.provider_id = current.provider_id;
@@ -57,41 +67,51 @@ const ManageChat = () => {
                 <span>Manage Chat</span>
             </h1>
             <div className='flex justify-end'>
-                <Button className="mt-2">
+                <Button 
+                    className="mt-2"
+                    handleOnclick={() => {setNumberQnA(prevNum => prevNum+1); }}
+                >
                     <FaPlus
                         class="inline mr-2 mb-1"
-                        onClick={() => {}}
                     />Add New Given Q&A
                 </Button>
             </div>
             <div className='p-4 '>
-                <form onSubmit={handleSubmit(handleAddStaff)}>
-                    <div className='w-full my-6 flex gap-4'>
-                        <InputForm 
-                            label='Given Question'
-                            register={register}
-                            errors={errors}
-                            id='email'
-                            validate={{}} 
-                            style='flex-auto'
-                            placeholder='Commonly Asked Question About Your Service...'
-                        />
-                        <InputForm 
-                            label='Prompt Answer(Optional)'
-                            register={register}
-                            errors={errors}
-                            id='mobile'
-                            validate={{}} 
-                            style='flex-auto'
-                            placeholder='Prepared Answer For The Given Question...'
-                        />
-                    </div>
+                <form onSubmit={handleSubmit}>
+                    {
+                        Array(numberQnA).fill(0).map((_, index) => (
+                            <div className='w-full my-6 flex gap-4' key={index}>
+                                <InputForm 
+                                    label='Given Question'
+                                    register={register}
+                                    errors={errors}
+                                    id='question'
+                                    validate={{}} 
+                                    style='flex-auto'
+                                    placeholder='Commonly Asked Question About Your Service...'
+                                    onChange={event => handleQnAFormChange(index, event)}
+                                    value={allQnADataInput[index]? allQnADataInput[index]['question'] : ''}
+                                />
+                                <InputForm 
+                                    label='Prompt Answer(Optional)'
+                                    register={register}
+                                    errors={errors}
+                                    id='answer'
+                                    validate={{}}
+                                    style='flex-auto'
+                                    placeholder='Prepared Answer For The Given Question...'
+                                    onChange={event => handleQnAFormChange(index, event)}
+                                    value={allQnADataInput[index]? allQnADataInput[index]['answer'] : ''}
+                                />
+                            </div>
+                        ))
+                    }
 
-                    {preview.avatar && (
+                    {/* {preview.avatar && (
                         <div className='my-4'>
                             <img src={preview.avatar} alt='avatar' className='w-[200px] object-contain' />
                         </div>
-                    )}
+                    )} */}
                     <div className='mt-8'>
                         <Button type='submit'>
                             Save Changes

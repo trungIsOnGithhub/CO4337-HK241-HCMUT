@@ -46,6 +46,7 @@ const DetailProvider = () => {
         const fetchProviderData = async() => {
           const response = await apiGetServiceProviderById(prid)
           if(response?.success){
+            console.log('++++++++', response.payload);
             setProviderData(response?.payload)
           }
         }
@@ -206,19 +207,35 @@ const DetailProvider = () => {
       fetchCurrentBlogList();
     }, []);
 
-    const switchToChatWithProvider = async () => {
-      let response = await apiAddContactToCurrentUser({uid: current?._id, ucid: providerData.owner});
-      if (response?.success && response.contact) {
-        // navigate({
-        //   pathname: `/${path.CHAT}`,
-        //   state: {
-        //     currenRedirectedChatUserId: providerData.owner
-        //   }
-        // });
-        navigate(`/${path.CHAT}`,{ state: { currenRedirectedChatUserId: providerData.owner } })
+    const switchToChatWithProvider = async (event) => {
+      if (!current?.chat_users?.includes(providerData.owner)) {
+        let openSwalResult = await Swal.fire({
+          title: 'Do You Want To Add This Provider To Your Contact?',
+          showDenyButton: true,
+          // showCancelButton: true,
+          confirmButtonText: 'Yes',
+          // denyButtonText: 'No',
+          customClass: {
+            cancelButton: 'order-1 right-gap',
+            confirmButton: 'order-2',
+            // denyButton: 'order-3',
+          },
+        });
+
+        if (openSwalResult.isConfirmed) {
+          console.log('+++++++++++', {uid: current?._id, ucid: providerData.owner})
+          let response = await apiAddContactToCurrentUser({uid: current?._id, ucid: providerData.owner});
+          if (response?.success && response.contact) {
+            console.log('||||||||||||||||||', providerData.owner)
+            navigate(`/${path.CHAT}`,{ state: { currenRedirectedChatUserId: providerData.owner } });
+          }
+        } 
+        // else {
+
+        // }
       }
       else {
-        Swal.fire('Oops!', 'Cannot Create Chat With This Provider!', 'error');
+        navigate(`/${path.CHAT}`,{ state: { currenRedirectedChatUserId: providerData.owner } })
       }
     }
 
@@ -465,7 +482,7 @@ const DetailProvider = () => {
           <div className='w-50 flex flex-col justify-center align-items-center'>
             <p className='text-md text-center'>Address: {providerData?.address}</p>
             <p className='text-md text-center'>Province: {providerData?.province}</p>
-            <Button handleOnclick={() => {switchToChatWithProvider()}}>Chat With Provider</Button>
+            <Button handleOnclick={switchToChatWithProvider}>Chat With Provider</Button>
           </div>
         </div>
       }

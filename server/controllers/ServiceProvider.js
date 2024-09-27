@@ -156,6 +156,7 @@ const updateServiceProvider = asyncHandler(async(req, res)=>{
 const getServiceProvider = asyncHandler(async(req, res)=>{
     const spid = req.params.spid;
     const sp = await ServiceProvider.findById(spid)
+    //.populate('owner')
 
     return res.status(200).json({
         success: sp ? true : false,
