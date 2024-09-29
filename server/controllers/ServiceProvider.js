@@ -184,6 +184,18 @@ const addServiceProviderQuestion = asyncHandler(async(req, res)=>{
         qna: response ? response : "Cannot delete service provider"
     })
 })
+const getServiceProviderByOwnerId = asyncHandler(async(req, res)=>{
+    const {owner} = req.body;
+    if(!owner){
+        throw new Error('Missing input')
+    }
+    console.log(req.body);
+    const response = await ServiceProvider.findOne({});
+    return res.status(200).json({
+        success: response ? true : false,
+        provider: response ? response : "Cannot get service provider"
+    })
+})
 
 module.exports = {
     createServiceProvider,
@@ -191,5 +203,6 @@ module.exports = {
     updateServiceProvider,
     deleteServiceProvider,
     getServiceProvider,
-    addServiceProviderQuestion
+    addServiceProviderQuestion,
+    getServiceProviderByOwnerId
 }

@@ -13,6 +13,7 @@ import { IoMdSend } from "react-icons/io";
 import Picker from "emoji-picker-react";
 import styled from "styled-components";
 import { GoDotFill } from "react-icons/go";
+import { apiGetProviderByOwnerId } from 'apis'
 
 const MessageBox = ({currentChat}) => {
   const dispatch = useDispatch()
@@ -24,6 +25,20 @@ const MessageBox = ({currentChat}) => {
 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false)
   const [msg, setMsg] = useState("")
+  const [currentChatProvider, setCurrentChatProvider] = useState(null);
+
+  const [openQuestionsMenu, setOpenQuestionsMenu] = useState(false);
+
+  useEffect(() => {
+    const fetchCurrentChatProvider = async() => {
+      let response = await apiGetProviderByOwnerId({owner:currentChat?.id});
+      console.log("------", response);
+      if (response?.sucess && response?.provider) {
+        setCurrentChatProvider(response.provider)
+      }
+    }
+    fetchCurrentChatProvider()
+  }, []);
 
   const handleEmojiPickerHideShow = () => { 
     setShowEmojiPicker(!showEmojiPicker)
@@ -37,6 +52,8 @@ const MessageBox = ({currentChat}) => {
 
   useEffect(() => {
     if(currentChat){
+        console.log('================');
+        console.log(currentChat);
         const fetchMessages = async() => {
             const response = await apigetAllMessageFromSenderToReceiver({
                 from: current._id,
@@ -102,7 +119,7 @@ const MessageBox = ({currentChat}) => {
 }
 
   return (
-    <div className='fixed bottom-0 right-0 mb-4 mr-8 z-50 w-[300px] h-[400px] bg-slate-200 border border-gray-400 rounded-md overflow-hidden shadow-lg flex flex-col'>
+    <div className='fixed bottom-0 right-0 mb-4 mr-8 z-50 w-[300px] h-[400px] bg-slate-200 border border-gray-400 rounded-md overflow-hidden shadow-lg flex flex-col z-1000'>
       <div className='flex justify-between px-4 py-2 border-b border-gray-400 items-center'>
         <div className='flex gap-4 justify-start'>
           <div className='avatar'>
@@ -119,6 +136,56 @@ const MessageBox = ({currentChat}) => {
           <FaXmark />
         </span>
       </div>
+            {
+              // currentChatProvider?.bussinessName &&
+              <div className='p-2 flex flex-col justify-start items-center text-slate-400 h-fit w-fit absolute top-4 sticky top-0 opacity-75 mx-auto rounded-md border-2 border-blue-500'>
+                  <h4 className='text-center text-slate-400 font-semibold text-sm'>Suggested Questions</h4>
+                  {
+                      currentChatProvider?.chatGivenQuestions?.slice(0,3).map(qna => {
+                          return (
+                              <div class="p-2 hover:bg-blue-600 rounded-md flex justify-center m-1 p-2 w-fit text-sm"
+                                  onClick={() => {
+                                      const newMessages = [...messages, {message:qna.question, fromSelf:true}];
+                                      if (qna.answer) {
+                                          newMessages.push({message:qna.answer, fromSelf:false});
+                                      }
+                                      setMessages(newMessages);
+                                  }}
+                              >
+                                  {  qna.question }
+                              </div>
+                          );
+                      })
+                  }
+                 
+                  <a href="#" onClick={() => {setOpenQuestionsMenu(true);}} className='underline mt-1 text-sm'>View All Suggested Questions</a>
+              </div>
+          }
+   {
+                        openQuestionsMenu &&
+                        <div className='bg-slate-400 w-full px-2 py-6 flex flex-col justify-center rounded-md z-99 sticky top-0 left-1/4'>
+                            <h4 className='text-center font-semibold text-sm'>Given Questions</h4>
+                            {
+                                    currentChatProvider?.chatGivenQuestions?.map(qna => {
+                                    return (
+                                        <div class="p-2 bg-linme-500 rounded-md flex justify-center border m-4 p-4 hover:bg-blue-500"
+                                            onClick={() => {
+                                                const newMessages = [...messages, {message:qna.question, fromSelf:true}];
+                                                if (qna.answer) {
+                                                    newMessages.push({message:qna.answer, fromSelf:false});
+                                                }
+                                                setMessages(newMessages);
+                                                setOpenQuestionsMenu(false);
+                                            }}
+                                        >
+                                            { qna.question }
+                                        </div>
+                                    );
+                                })
+                            }
+                            <button className='btn bg-red-500 py-2 px-4 w-fit m-auto rounded-md mt-3 text-sm' onClick={() => {setOpenQuestionsMenu(false);}}>Close This Menu</button>
+                        </div>
+                    }
       <div className='flex-1 overflow-y-auto px-4 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-white'>
         {
           messages?.map((message)=> {

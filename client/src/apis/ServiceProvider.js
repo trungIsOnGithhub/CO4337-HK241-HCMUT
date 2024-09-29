@@ -27,3 +27,8 @@ export const apiAddServiceProvidersGivenQnA = (data) => axios({
     method: 'post',
     data
 })
+export const apiGetProviderByOwnerId = (data) => axios({
+    url: `/service_provider/owner`,
+    method: 'post',
+    data
+})
