@@ -38,8 +38,7 @@ var ProviderServiceSchema = new mongoose.Schema({
     },
     chatGivenQuestions: [{
         question: {
-            type: String,
-            required: true
+            type: String
         },
         answer: {
             type: String,

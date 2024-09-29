@@ -19,6 +19,7 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
 
     useEffect(() => {
         if(currentChat){
+            console.log('//////////////////////////', currentChat);
             const fetchMessages = async() => {
                 const response = await apigetAllMessageFromSenderToReceiver({
                     from: currentUser._id,
@@ -83,6 +84,7 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
                 </div>
             </div>
         </div>
+        <div className='h-fit overflow-scroll'>
         {/* {
             currentChat?.provider_id?.bussinessName &&
             <div className='flex justify-center h-fit'>
@@ -95,10 +97,10 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
         } */}
         {
             currentChat?.provider_id?.bussinessName && givenQuestionsHint &&
-            <div className='p-5 flex flex-col justify-start items-center text-slate-400 h-16'>
+            <div className='p-5 flex flex-col justify-start items-center text-slate-400 h-16 bg-opacity-0'>
                 <h4 className='text-center text-slate-400 font-semibold text-lg'>Suggested Questions</h4>
                 {
-                    currentChat.provider_id.chatGivenQuestions?.slice(0,3).map(qna => {
+                    currentChat?.provider_id?.chatGivenQuestions?.slice(0,3).map(qna => {
                         return (
                             <div class="p-2 hover:bg-blue-600 rounded-md flex justify-center m-1 p-2 w-fit"
                                 onClick={() => {
@@ -117,17 +119,24 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
                 <a href="#" onClick={() => {setOpenQuestionsMenu(true);}} className='underline mt-1'>View All Given Questions</a>
             </div>
         }
+        <p>djsjdiajdoiajos</p>
         {
             currentChat?.provider_id?.bussinessName && openQuestionsMenu &&
-            <div className='absolute top-30 left-1/4 bg-slate-500 w-1/2 px-2 py-8 flex flex-col justify-center rounded-md'>
+            <div className='absolute top-30 left-1/4 bg-slate-500 w-1/3 px-2 py-6 flex flex-col justify-center rounded-md z-99'>
                 <h4 className='text-center font-semibold text-lg'>Given Questions</h4>
                 {
-                    currentChat.provider_id.chatGivenQuestions?.map(question => {
+                    currentChat?.provider_id?.chatGivenQuestions?.map(qna => {
                         return (
                             <div class="p-2 bg-linme-500 rounded-md flex justify-center border m-4 p-4 hover:bg-blue-500"
-                                onClick={() => {setMessages(prev => [...prev, {message:question, fromSelf:true}])}}
+                                onClick={() => {
+                                    const newMessages = [...messages, {message:qna.question, fromSelf:true}];
+                                    if (qna.answer) {
+                                        newMessages.push({message:qna.answer, fromSelf:false});
+                                    }
+                                    setMessages(newMessages);
+                                }}
                             >
-                                { question }
+                                { qna.question }
                             </div>
                         );
                     })
@@ -151,6 +160,7 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
                     )
                 })
             }
+        </div>
         </div>
         {/* <ProviderOnlyInformationBar/> */}
 
