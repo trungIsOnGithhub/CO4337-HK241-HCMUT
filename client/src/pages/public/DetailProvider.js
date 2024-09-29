@@ -13,6 +13,7 @@ import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
 import { FaRegThumbsUp, FaRegThumbsDown, FaLocationArrow, FaExternalLinkAlt } from 'react-icons/fa';
 import { useSelector } from 'react-redux'
+import avatarDefault from 'assets/avatarDefault.png'
 
 const breakpointColumnsObj = {
   default: 4,
@@ -459,8 +460,8 @@ const DetailProvider = () => {
       {
         variable === 'chat' &&
         <div className='w-main flex justify-center'>
-          <div className='w-50 flex flex-col px-8'>
-            <h5>Opening Times:</h5>
+          <div className='w-50 flex flex-col px-8 border-2 py-4 my-8 rounded-md'>
+            <h5 className="text-center p-2 bg-red-400 m-2">Opening Times:</h5>
             {/* <div className="flex flex">. */}
               {providerData?.time &&
                 // Object.entries(providerData.time).map(pair => {
@@ -470,19 +471,23 @@ const DetailProvider = () => {
                 // })
                 ['monday', 'tuesday', 'wednesday', 'thursday', 'firday', 'saturday', 'sunday'].map(dow => {
                   return (
-                    <div className='flex flex-row gap-4'>
-                    {providerData.time[`start${dow}`] && providerData.time[`end${dow}`] && <h6>{dow}</h6>}
-                    {providerData.time[`start${dow}`] && <p className='border p-2'>Open: {providerData.time[`start${dow}`]}</p>}
-                    {providerData.time[`end${dow}`] && <p className='border p-2'>Close: {providerData.time[`end${dow}`]}</p>}
-                  </div>  
+                    <div className='flex flex-row gap-6 mt-2'>
+                      {providerData.time[`start${dow}`] && providerData.time[`end${dow}`] && <h6 className='pt-2 font-semibold'>{dow.charAt(0).toUpperCase() + dow.slice(1)}</h6>}
+                      {providerData.time[`start${dow}`] && <p className='border p-2'>Open: {providerData.time[`start${dow}`]}</p>}
+                      {providerData.time[`end${dow}`] && <p className='border p-2'>Close: {providerData.time[`end${dow}`]}</p>}
+                    </div>  
                   );
                 })}
             {/* </div> */}
           </div>
-          <div className='w-50 flex flex-col justify-center align-items-center'>
+          <div className='w-50 flex flex-col justify-center items-center content-start border-2 p-4 my-8 rounded-md'>
+            <div className='w-full flex flex-col items-center justify-center py-4'>
+              <img src={providerData?.owner?.avatar || avatarDefault} alt='logo' className='w-16 h-16 object-cover'></img>
+              <span className='font-semibold'>Owner: {`${providerData?.owner?.lastName} ${providerData?.owner?.firstName}`}</span>
+            </div>
             <p className='text-md text-center'>Address: {providerData?.address}</p>
             <p className='text-md text-center'>Province: {providerData?.province}</p>
-            <Button handleOnclick={switchToChatWithProvider}>Chat With Provider</Button>
+            <Button handleOnclick={switchToChatWithProvider}>Chat With This Provider</Button>
           </div>
         </div>
       }

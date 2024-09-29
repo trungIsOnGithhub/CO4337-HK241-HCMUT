@@ -37,7 +37,13 @@ var ProviderServiceSchema = new mongoose.Schema({
         ref: 'User',
     },
     chatGivenQuestions: [{
-        type: String
+        question: {
+            type: String,
+            required: true
+        },
+        answer: {
+            type: String,
+        }
     }]
 },{
     timestamps: true

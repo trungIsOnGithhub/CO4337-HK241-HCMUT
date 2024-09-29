@@ -6,5 +6,6 @@ router.post('/', ctrls.createServiceProvider)
 router.get('/', ctrls.getAllServiceProvider)
 router.put('/:spid', ctrls.updateServiceProvider)
 router.get('/:spid', ctrls.getServiceProvider)
+router.post('/qna', ctrls.addServiceProviderQuestion)
 
 module.exports = router

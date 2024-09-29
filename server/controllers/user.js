@@ -31,9 +31,7 @@ const mongoose = require('mongoose');
 // })
 
 const register = asyncHandler(async(req, res) => {
-
-    const {email, password, firstName, lastName, mobile, role} = req.body
-
+    const {email, password, firstName, lastName, mobile, role} = req.body;
 
     if(req.body?.role && req.body.role !== 202 && req.body.role !== 1411) {
         return res.status(400).json({
@@ -152,7 +150,7 @@ const getOneUser = asyncHandler(async(req, res)=>{
             path: 'staff',
             select: 'firstName lastName'
         },
-    })
+    }).populate('provider_id')
 
     return res.status(200).json({
         success: user? true : false,

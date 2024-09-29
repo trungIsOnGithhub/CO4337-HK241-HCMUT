@@ -98,12 +98,18 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
             <div className='p-5 flex flex-col justify-start items-center text-slate-400 h-16'>
                 <h4 className='text-center text-slate-400 font-semibold text-lg'>Suggested Questions</h4>
                 {
-                    currentChat.provider_id.chatGivenQuestions?.slice(0,3).map(question => {
+                    currentChat.provider_id.chatGivenQuestions?.slice(0,3).map(qna => {
                         return (
                             <div class="p-2 hover:bg-blue-600 rounded-md flex justify-center m-1 p-2 w-fit"
-                                onClick={() => {setMessages(prev => [...prev, {message:question, fromSelf:true}])}}
+                                onClick={() => {
+                                    const newMessages = [...messages, {message:qna.question, fromSelf:true}];
+                                    if (qna.answer) {
+                                        newMessages.push({message:qna.answer, fromSelf:false});
+                                    }
+                                    setMessages(newMessages);
+                                }}
                             >
-                                { question }
+                                {  qna.question }
                             </div>
                         );
                     })
