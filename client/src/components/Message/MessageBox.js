@@ -32,8 +32,9 @@ const MessageBox = ({currentChat}) => {
   useEffect(() => {
     const fetchCurrentChatProvider = async() => {
       let response = await apiGetProviderByOwnerId({owner:currentChat?.id});
-      console.log("------", response);
-      if (response?.sucess && response?.provider) {
+      console.log("------", response.provider.chatGivenQuestions);
+      if (response?.success && response?.provider) {
+        // console.log('[[[[[[[[[[');
         setCurrentChatProvider(response.provider)
       }
     }
@@ -141,7 +142,7 @@ const MessageBox = ({currentChat}) => {
               <div className='p-2 flex flex-col justify-start items-center text-slate-400 h-fit w-fit absolute top-4 sticky top-0 opacity-75 mx-auto rounded-md border-2 border-blue-500'>
                   <h4 className='text-center text-slate-400 font-semibold text-sm'>Suggested Questions</h4>
                   {
-                      currentChatProvider?.chatGivenQuestions?.slice(0,3).map(qna => {
+                      currentChatProvider?.chatGivenQuestions?.slice(0,1).map(qna => {
                           return (
                               <div class="p-2 hover:bg-blue-600 rounded-md flex justify-center m-1 p-2 w-fit text-sm"
                                   onClick={() => {
@@ -168,7 +169,7 @@ const MessageBox = ({currentChat}) => {
                             {
                                     currentChatProvider?.chatGivenQuestions?.map(qna => {
                                     return (
-                                        <div class="p-2 bg-linme-500 rounded-md flex justify-center border m-4 p-4 hover:bg-blue-500"
+                                        <div class="p-2 bg-lime-500 rounded-md flex justify-center border m-4 p-4 hover:bg-blue-500"
                                             onClick={() => {
                                                 const newMessages = [...messages, {message:qna.question, fromSelf:true}];
                                                 if (qna.answer) {
