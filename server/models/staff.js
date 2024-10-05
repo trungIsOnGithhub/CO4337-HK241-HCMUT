@@ -34,6 +34,9 @@ var staffSchema = new mongoose.Schema({
         duration: Number,
         date: String,
         time: String,
+    },
+    shifts: {
+        type: Object
     }
 },{
     timestamps: true

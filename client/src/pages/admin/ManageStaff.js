@@ -23,6 +23,7 @@ const ManageProduct = () => {
   const [editStaff, setEditStaff] = useState(null)
   const [update, setUpdate] = useState(false)
   const [manageStaffShift, setManageStaffShift] = useState(false)
+  const [currentStaffId, setCurrentStaffId] = useState("");
 
   const handleDeleteStaff = async(pid) => {
     Swal.fire({
@@ -89,7 +90,7 @@ const ManageProduct = () => {
       </div>}
       {manageStaffShift &&  
       <div className='absolute inset-0 bg-zinc-900 h-[200%] z-50 flex-auto'>
-        <ManageStaffShift editStaff={editStaff} render={render} setManageStaffShift={setManageStaffShift}/>
+        <ManageStaffShift staffId={currentStaffId} setManageStaffShift={setManageStaffShift}/>
       </div>}
       <div className='h-[69px] w-full'>
       </div>
@@ -137,7 +138,7 @@ const ManageProduct = () => {
                 size={24}/></span>
                 <span onClick={() => handleDeleteStaff(el._id)} 
                 className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>
-                <span onClick={() => setManageStaffShift(true)} 
+                <span onClick={() => { setManageStaffShift(true); setCurrentStaffId(el?._id) } } 
                 className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5 pb-0.5'>
                   <FaCalendarCheck size={"20"}/>
                 </span>
