@@ -4,10 +4,10 @@ import React, { memo, useCallback, useEffect, useState} from 'react'
 // import { useDispatch, useSelector } from 'react-redux'
 // import { toast } from 'react-toastify'
 // import { validate, getBase64 } from 'ultils/helper'
-import {apiGetOneStaff, apiModifyStaff} from 'apis/staff'
+import {apiGetOneStaff, apiModifyStaff, apiUpdateStaffShift} from 'apis/staff'
 import { showModal } from 'store/app/appSlice'
 import Swal from 'sweetalert2'
-import { FaRegWindowClose } from "react-icons/fa";
+import { FaRegWindowClose, FaCalendarPlus } from "react-icons/fa";
 
 const ManageStaffShift = ({setManageStaffShift, staffId}) => {
   // const dispatch = useDispatch()
@@ -38,8 +38,8 @@ const ManageStaffShift = ({setManageStaffShift, staffId}) => {
     fetchStaffData();
   }, [staffId]);
 
-  const handleDeleteShift = (dow, index) => {
-    Swal.fire({
+  const handleDeleteShift = async (dow, index) => {
+    let swalResult = Swal.fire({
       title: "Confirm Shift Deletion",
       text: 'Delete This Staff Shift May Affect Customer Order That Is Waiting!',
       icon: 'warning',
@@ -47,23 +47,33 @@ const ManageStaffShift = ({setManageStaffShift, staffId}) => {
       showCancelButton: true,
       confirmButtonText: 'Delete',
       cancelButtonText: 'Not now',                
-    }).then(result =>{
-      if (result.isConfirmed) {
-        let response = await apiDeleteStaffShift({staffId,dow})
-        const newShft = {...currentStaffShifts};
+    });
 
-        newShft[dow].splice(index, 1);
-    
+    if (swalResult.isConfirmed) {
+      const newShft = {...currentStaffShifts};
+      newShft[dow].splice(index, 1);
+
+      let response = await apiUpdateStaffShift({staffId,newShft});
+
+      if (response.success && response.staff) {
         setCurrentStaffShifts(newShft);
+        return;
       }
-    })
+      Swal.fire('Error Ocurred!!', 'Cannot Update Staff Shift!!', 'error');
+    }
   }
-  const handleAddShift = (dow, shiftStart, shiftEnd) => {
+  const handleAddShift = async (dow, shiftStart, shiftEnd) => {
     const newShft = {...currentStaffShifts};
 
     newShft[dow].push({start:shiftStart, end:shiftEnd});
 
-    setCurrentStaffShifts(newShft);
+    let response = await apiUpdateStaffShift({staffId,newShft});
+
+    if (response.success && response.staff) {
+      setCurrentStaffShifts(newShft);
+      return;
+    }
+    Swal.fire('Error Ocurred!!', 'Cannot Update Staff Shift!!', 'error');
   }
   // { "monday": [{"start":"10:32","end":"11:33"},{"start":"06:00","end":"20:20"}], sunday:  {"start":"06:32","end":"08:33"} }
   return (
@@ -72,17 +82,47 @@ const ManageStaffShift = ({setManageStaffShift, staffId}) => {
           <span>Manage Staff Shifts</span>
           <span className='text-main text-lg hover:underline cursor-pointer' onClick={()=>setManageStaffShift(false)}>Cancel</span>
         </h1>
-          <div className='p-4 flex gap-5 flex-wrap'>
+
+      <table className='table-auto p-0 w-full px-4'>
+        <thead className='font-bold bg-blue-500 text-[13px] text-white'>
+          <tr className='border border-gray-500'>
+            <th className='text-center py-2'>Avatar</th>            
+            <th className='text-center py-2'>Email Address</th>
+            <th className='text-center py-2'>First Name</th>
+            <th className='text-center py-2'>Last Name</th>
+            <th className='text-center py-2'>Phone</th>
+          </tr>
+        </thead>
+
+        <tbody>
+            <tr key={currentStaff._id} className='border border-gray-500'>
+              <td className='text-center py-2 flex justify-center'><img src={currentStaff.avatar} alt='thumb' className='w-12 h-12 object-cover'></img></td>
+              <td className='text-center py-2'>{currentStaff.email}</td>
+              <td className='text-center py-2'>{currentStaff.firstName}</td>
+              <td className='text-center py-2'>{currentStaff.lastName}</td>
+              <td className='text-center py-2'>{currentStaff.mobile}</td>
+            </tr>
+        </tbody>
+      </table>
+
+      <h4 className='text-center font-bold pt-4'>Shift Schedules</h4>
+
+          <div className='p-4 flex flex-col justify-center items-center gap-5'>
           { ["monday", "tuesday", "wednesday", "thursday", "friday", "sunday"]
             .map((dow, index) => {
               return <div className='w-fit p-2 m-6 border-2 rounded-md'>
-                <h3 className='pb-1 font-semibold text-center'>{ dow.charAt(0).toUpperCase() + dow.slice(1) }</h3>
+                <span className='flex justify-center items-center'>
+                  <h3 className='pb-1 font-semibold text-center mr-5'>{ dow.charAt(0).toUpperCase() + dow.slice(1) }</h3>
+                  { (newShiftFormIndex !== index) && <Button
+                    handleOnclick={() => {setNewShiftFormIndex(index)}}
+                  ><FaCalendarPlus /></Button> }
+                </span>
                 {/* <h2>{JSON.stringify(Object.values(currentStaffShifts["monday"]))}</h2> */}
-                <div>
+                <div className='flex gap-5 flex-wrap'>
                   {currentStaffShifts && currentStaffShifts[dow] &&
                     Object.values(currentStaffShifts[dow]).map((timeslot,index) => {
                       return (
-                        <span key={index}>
+                        <span key={index} className='bg-slate-500 px-2 pt-1 pb-0 rounded-md m-2'>
                           <span className='flex gap-1 justify-center mb-3'>
                             <p className='border-2 p-1 rounded-md'>{ timeslot.start || "no data" }</p>
                             <p className='pt-2'>to</p>
@@ -128,9 +168,6 @@ const ManageStaffShift = ({setManageStaffShift, staffId}) => {
                     >Close</Button>
                   </div>
                 }
-                { (newShiftFormIndex !== index) && <Button
-                  handleOnclick={() => {setNewShiftFormIndex(index)}}
-                >Add Timeslot</Button> }
               </div>
           })}
 
