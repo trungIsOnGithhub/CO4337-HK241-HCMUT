@@ -53,10 +53,11 @@ const ManageStaffShift = ({setManageStaffShift, staffId}) => {
       const newShft = {...currentStaffShifts};
       newShft[dow].splice(index, 1);
 
-      let response = await apiUpdateStaffShift({staffId,newShft});
+      let response = await apiUpdateStaffShift({staffId, newShifts:newShft});
 
       if (response.success && response.staff) {
         setCurrentStaffShifts(newShft);
+        Swal.fire('Success', 'Modified Staff Shift Successfully!', 'success');
         return;
       }
       Swal.fire('Error Ocurred!!', 'Cannot Update Staff Shift!!', 'error');
@@ -65,12 +66,23 @@ const ManageStaffShift = ({setManageStaffShift, staffId}) => {
   const handleAddShift = async (dow, shiftStart, shiftEnd) => {
     const newShft = {...currentStaffShifts};
 
+    if (!newShft[dow]?.length) {
+      newShft[dow] = [];
+    }
     newShft[dow].push({start:shiftStart, end:shiftEnd});
 
-    let response = await apiUpdateStaffShift({staffId,newShft});
+    if (!staffId?.length) {
+      Swal.fire('Error Ocurred!!', 'Cannot Update Staff Shift!!', 'error');
+      return;
+    }
+
+    let response = await apiUpdateStaffShift({staffId,newShifts:newShft});
 
     if (response.success && response.staff) {
       setCurrentStaffShifts(newShft);
+      Swal.fire('Success', 'Modified Staff Shift Successfully!', 'success');
+      setNewShiftStart("00:00");
+      setNewShiftEnd("00:00");
       return;
     }
     Swal.fire('Error Ocurred!!', 'Cannot Update Staff Shift!!', 'error');
@@ -83,7 +95,7 @@ const ManageStaffShift = ({setManageStaffShift, staffId}) => {
           <span className='text-main text-lg hover:underline cursor-pointer' onClick={()=>setManageStaffShift(false)}>Cancel</span>
         </h1>
 
-      <table className='table-auto p-0 w-full px-4'>
+      {currentStaff && <table className='table-auto p-0 w-full px-4'>
         <thead className='font-bold bg-blue-500 text-[13px] text-white'>
           <tr className='border border-gray-500'>
             <th className='text-center py-2'>Avatar</th>            
@@ -103,7 +115,7 @@ const ManageStaffShift = ({setManageStaffShift, staffId}) => {
               <td className='text-center py-2'>{currentStaff.mobile}</td>
             </tr>
         </tbody>
-      </table>
+      </table>}
 
       <h4 className='text-center font-bold pt-4'>Shift Schedules</h4>
 
@@ -137,8 +149,7 @@ const ManageStaffShift = ({setManageStaffShift, staffId}) => {
                 </div>
                 {
                   (newShiftFormIndex === index) && 
-                  <div className='flex flex-col gap-3 items-center justify-center'>
-                    <label htmlFor="startShift">Start:</label>
+                  <div className='flex gap-3 items-center justify-center mt-4'>
                     <input
                       name="startShift"
                       type="time" 
@@ -149,7 +160,6 @@ const ManageStaffShift = ({setManageStaffShift, staffId}) => {
                       className="form-input text-gray-600 my-auto"
                       onChange={(event) => {setNewShiftStart(event.target.value)}}
                     />
-                    <label htmlFor="endShift">End</label>
                     <input
                       name="endShift"
                       type="time"

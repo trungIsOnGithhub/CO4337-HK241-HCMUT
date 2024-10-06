@@ -28,7 +28,7 @@ export const apiUpdateStaffWork = (data) => axios({
     data
 })
 export const apiUpdateStaffShift = (data) => axios({
-    url: '/staff/delete_shift',
-    method: 'put',
+    url: '/staff/update_shift',
+    method: 'post',
     data
 })
