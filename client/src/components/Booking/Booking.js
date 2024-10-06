@@ -32,6 +32,38 @@ const Booking = () => {
 
   const currentUser = useSelector(state => state.user.current);
 
+  const daysOfWeek = [
+    'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'
+  ];
+  const getNextAvailableDayInShift = (shifts) => {
+    if (!shifts)
+      return [];
+    const nowDate = new Date();
+    const nowhhMM = nowDate.getHours() + ":" + nowDate.getMinutes();
+    const currentWeekDayIndex = nowDate.getDay();
+
+    console.log('??????????', currentWeekDayIndex, '????', nowDate);
+    
+    for (let i=0;i<7;++i) {
+      const realIndex = (currentWeekDayIndex + i) % 7;
+      // console.log("-------------", daysOfWeek[realIndex]);
+
+      if (shifts[daysOfWeek[realIndex]]?.length) {
+        // console.log("-------------", daysOfWeek[realIndex]);
+        const filterSuitableTimeSlot = shifts[daysOfWeek[realIndex]].filter(ts => {
+          console.log('||||||||', ts?.start, nowhhMM);
+          return ts?.start && (nowhhMM.localeCompare(ts?.start) < 0 || realIndex != currentWeekDayIndex);
+        });
+
+        if (filterSuitableTimeSlot?.length) {
+          return [daysOfWeek[realIndex], filterSuitableTimeSlot];
+        }
+      }
+    }
+
+    return [];
+  };
+
   useEffect(() => {
     dispatch(getCurrent());
   }, [dispatch]);
@@ -66,6 +98,14 @@ const Booking = () => {
   }, [params]);
 
   useEffect(() => {
+    console.log(";;;;;", service?.assigned_staff);
+    const tempStaffs = service?.assigned_staff?.map(staff => {
+      staff.nextAvailableDay = getNextAvailableDayInShift(staff?.shifts);
+      return staff;
+    })
+
+    console.log("======", tempStaffs);
+
     setStaffs(service?.assigned_staff);
     fetchProviderData();
   }, [service]);
@@ -247,14 +287,23 @@ const Booking = () => {
                 </div>
                 <Button style='px-6 rounded-md text-white bg-blue-500 font-semibold h-fit py-2 w-fit' handleOnclick={()=>handleBookDateTime(el)}>Choose</Button>
               </div>
+
               <div className='flex gap-1 items-center'>
-                <span>Available</span>
-                <div className='w-fit h-fit bg-green-500 px-1 rounded-md text-white'>Today</div>
+                <span>Next Available:</span>
+                {
+                  el?.nextAvailableDay[0] &&
+                  <div className='w-fit h-fit bg-green-500 px-2 rounded-md text-white'>{el.nextAvailableDay[0]}</div>
+                }
+                {
+                  el?.nextAvailableDay[1]?.map(shift => {
+                    return (<div className='w-fit h-fit bg-green-700 px-2 rounded-md text-white'>{shift?.start} - {shift?.end}</div>);
+                  })
+                }
               </div>
               <div className='flex flex-wrap gap-2 my-3'>
-              {timeOptions.length <= 0 ?
-                  <h5 className='text-red-500'>Service is not available today</h5>
-                  :
+              {!el?.nextAvailableDay &&
+                  <h5 className='text-red-500'>Cannot Find Service Available Timeslot</h5>}
+              {timeOptions.length > 0 &&
                 timeOptions.map((time, idx) => (
                 (!el.work || !isWorkingTime(time, el.work)) && (
                   <div className={clsx('px-3 py-1 border border-gray-400 rounded-md hover:bg-blue-400 cursor-pointer', (selectedStaff.time===time && selectedStaff.staff===el) && 'bg-blue-400')} key={idx} onClick={() =>{handleOnClick(time,el)}}>
@@ -263,6 +312,7 @@ const Booking = () => {
                 )
               ))}
               </div>
+
             </div>
           ))}
         </div>

@@ -263,7 +263,7 @@ const getOneService = asyncHandler(async(req, res)=>{
 
     const service = await Service.findById(sid).populate({
         path: 'assigned_staff',
-        select: 'firstName lastName avatar mobile email work',
+        select: 'firstName lastName avatar mobile email work shifts',
     }).populate({
         path: 'rating',
         populate: {
@@ -274,8 +274,6 @@ const getOneService = asyncHandler(async(req, res)=>{
         path: 'provider_id',
         select: 'bussinessName address province latitude longitude'
     })
-
-
     
     return res.status(200).json({
         success: service ? true : false,
