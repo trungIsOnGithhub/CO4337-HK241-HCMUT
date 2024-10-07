@@ -111,12 +111,13 @@ const login = asyncHandler(async(req, res)=>{
                 success: false,
                 mes: "Account is blocked"
             })}
-        const {password, role, refresh_token, ...userData} = response.toObject()
+
+        const {password, role, refresh_token, ...userData} = response.toObject();
         const accessToken = generateAccessToken(response._id, role)
         const refreshToken = generateRefreshToken(response._id)
 
-        //Luu refresh token vao database
-        await User.findByIdAndUpdate(response._id, {refresh_token: refreshToken}, {new: true})
+        //Luu refresh token vao database memory --> tang toc do
+        // await User.findByIdAndUpdate(response._id, {refresh_token: refreshToken}, {new: true})
 
         //Luu refresh token vao cookie
         res.cookie('refreshToken', refreshToken, {httpOnly: true, maxAge: 7*24*60*60*1000})
