@@ -30,7 +30,7 @@ const createService = asyncHandler(async(req, res)=>{
             path: 'assigned_staff'
         });
 
-        const esClient = esDBModule.initializeElasticClient();
+        const esClient = esDBModule.esDBModule.initializeElasticClient();
         const response = esDBModule.addToElasticDB(esClient, esIndexNameList.SERVICES ,newServiceFull);
     }
 
@@ -279,12 +279,13 @@ const searchAllServicesPublic = asyncHandler(async (req, res) => {
     const excludeFields = ['limit', 'sort', 'page', 'fields'];
     excludeFields.forEach((el) => delete queries[el]);
 
-    const esClient = initializeElasticClient();
+    const esClient = esDBModule.initializeElasticClient();
 
     // if (!elastic_query) {
-        const sortBy = queries.sort.split(',');
-        console.log(sortBy, "----------");
+        // const sortBy = queries.sort?.split(',');
+        // console.log(sortBy, "----------");
         const { nameQuery, categoryQuery } = queries;
+        console.log('-------', queries, '---------')
 
         const queryObject = {
             track_scores: true,
@@ -310,13 +311,13 @@ const searchAllServicesPublic = asyncHandler(async (req, res) => {
             return record._source
         });
 
-        if (hitsRecord?.length > 0) {
+        // if (hitsRecord?.length > 0) {
             return res.status(200).json({
-                success: true,
+                success: hitsRecord?.length > 0,
                 counts: hitsRecord.length,
                 services: hitsRecord,
             });  
-        }
+        // }
     // }
 
     // // Format lại các toán tử cho đúng cú pháp của mongoose
