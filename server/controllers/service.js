@@ -5,11 +5,10 @@ const asyncHandler = require("express-async-handler")
 const slugify = require('slugify')
 const makeSku = require('uniqid')
 const Order = require('../models/order')
+const esDBModule = require('../services/es');
 
 const createService = asyncHandler(async(req, res)=>{
     const {name, price, description, category, assigned_staff, hour, minute, provider_id} = req.body
-
-
 
     const thumb = req.files?.thumb[0]?.path
     const image = req.files?.images?.map(el => el.path)
@@ -175,8 +174,15 @@ const updateServiceByAdmin = asyncHandler(async(req, res)=>{
 
 // get all staffs
 const getAllServicesPublic = asyncHandler(async (req, res) => {
-    const queries = { ...req.query };
+    let { elastic_query } = req.params;
 
+    const esClient = initializeElasticClient();
+
+    if (elastic_query && esDBModule.isHealthStatusOKElasticDB(esClient)) {
+        
+    }
+
+    const queries = { ...req.query };
     // Loại bỏ các trường đặc biệt ra khỏi query
     const excludeFields = ['limit', 'sort', 'page', 'fields'];
     excludeFields.forEach((el) => delete queries[el]);
