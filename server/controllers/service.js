@@ -6,9 +6,11 @@ const slugify = require('slugify')
 const makeSku = require('uniqid')
 const Order = require('../models/order')
 const esDBModule = require('../services/es');
+const esIndexNameList = require('../services/constant');
+const esDBModule = require('../services/es');
 
 const createService = asyncHandler(async(req, res)=>{
-    const {name, price, description, category, assigned_staff, hour, minute, provider_id} = req.body
+    const {name, price, description, category, assigned_staff, hour, minute, provider_id,  elastic_query} = req.body
 
     const thumb = req.files?.thumb[0]?.path
     const image = req.files?.images?.map(el => el.path)
@@ -20,6 +22,20 @@ const createService = asyncHandler(async(req, res)=>{
     if(thumb) req.body.thumb = thumb
     if(image) req.body.image = image
     const newService = await Service.create(req.body)
+
+    if (!elastic_query && newService) {
+        const newServiceFull = await Service.findById(newService._id)
+        .populate({
+            path: 'provider_id'
+        }).populate({
+            path: 'assigned_staff'
+        });
+
+        const esClient = esDBModule.initializeElasticClient();
+
+        const response = esDBModule.addToElasticDB(esClient, esIndexNameList.SERVICES ,newServiceFull);
+    }
+
     return res.status(200).json({
         success: newService ? true : false,
         mes: newService ? 'Created successfully' : "Cannot create new service"
@@ -176,16 +192,50 @@ const updateServiceByAdmin = asyncHandler(async(req, res)=>{
 const getAllServicesPublic = asyncHandler(async (req, res) => {
     let { elastic_query } = req.params;
 
-    const esClient = initializeElasticClient();
-
-    if (elastic_query && esDBModule.isHealthStatusOKElasticDB(esClient)) {
-        
-    }
-
     const queries = { ...req.query };
     // Loại bỏ các trường đặc biệt ra khỏi query
     const excludeFields = ['limit', 'sort', 'page', 'fields'];
     excludeFields.forEach((el) => delete queries[el]);
+
+    const esClient = initializeElasticClient();
+
+    if (!elastic_query) {
+        const sortBy = queries.sort.split(',');
+        console.log(sortBy, "----------");
+        const { nameQuery, categoryQuery } = queries;
+
+        const queryObject = {
+            track_scores: true,
+            query: {
+                bool: {
+                    must: [
+                        {
+                            match: { name: nameQuery }
+                        }
+                    ],
+                    filter: [
+                        {
+                            term: { category: categoryQuery }
+                        }
+                    ]
+                }
+            }
+        }
+
+        const queryResult = await esDBModule.queryElasticDB(esClient, esIndexNameList.SERVICES, queryObject);
+
+        const hitsRecord = queryResult?.hits?.hits?.map(record => {
+            return record._source
+        });
+
+        if (hitsRecord?.length > 0) {
+            return res.status(200).json({
+                success: true,
+                counts: hitsRecord.length,
+                services: hitsRecord,
+            });  
+        }
+    }
 
     // Format lại các toán tử cho đúng cú pháp của mongoose
     let queryString = JSON.stringify(queries);

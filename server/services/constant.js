@@ -1,1 +1,3 @@
-export const BLOG_INDEX_NAME = process.env.ELASTIC_BLOG_INDEX_NAME
+module.exports = {
+    SERVICES: "services"
+}
