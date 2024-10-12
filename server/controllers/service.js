@@ -5,7 +5,6 @@ const asyncHandler = require("express-async-handler")
 const slugify = require('slugify')
 const makeSku = require('uniqid')
 const Order = require('../models/order')
-const esDBModule = require('../services/es');
 const esIndexNameList = require('../services/constant');
 const esDBModule = require('../services/es');
 
@@ -32,7 +31,6 @@ const createService = asyncHandler(async(req, res)=>{
         });
 
         const esClient = esDBModule.initializeElasticClient();
-
         const response = esDBModule.addToElasticDB(esClient, esIndexNameList.SERVICES ,newServiceFull);
     }
 
@@ -190,52 +188,10 @@ const updateServiceByAdmin = asyncHandler(async(req, res)=>{
 
 // get all staffs
 const getAllServicesPublic = asyncHandler(async (req, res) => {
-    let { elastic_query } = req.params;
-
     const queries = { ...req.query };
     // Loại bỏ các trường đặc biệt ra khỏi query
     const excludeFields = ['limit', 'sort', 'page', 'fields'];
     excludeFields.forEach((el) => delete queries[el]);
-
-    const esClient = initializeElasticClient();
-
-    if (!elastic_query) {
-        const sortBy = queries.sort.split(',');
-        console.log(sortBy, "----------");
-        const { nameQuery, categoryQuery } = queries;
-
-        const queryObject = {
-            track_scores: true,
-            query: {
-                bool: {
-                    must: [
-                        {
-                            match: { name: nameQuery }
-                        }
-                    ],
-                    filter: [
-                        {
-                            term: { category: categoryQuery }
-                        }
-                    ]
-                }
-            }
-        }
-
-        const queryResult = await esDBModule.queryElasticDB(esClient, esIndexNameList.SERVICES, queryObject);
-
-        const hitsRecord = queryResult?.hits?.hits?.map(record => {
-            return record._source
-        });
-
-        if (hitsRecord?.length > 0) {
-            return res.status(200).json({
-                success: true,
-                counts: hitsRecord.length,
-                services: hitsRecord,
-            });  
-        }
-    }
 
     // Format lại các toán tử cho đúng cú pháp của mongoose
     let queryString = JSON.stringify(queries);
@@ -314,6 +270,133 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
     }
 })
 
+
+const searchAllServicesPublic = asyncHandler(async (req, res) => {
+    let { elastic_query } = req.params;
+
+    const queries = { ...req.query };
+    // Loại bỏ các trường đặc biệt ra khỏi query
+    const excludeFields = ['limit', 'sort', 'page', 'fields'];
+    excludeFields.forEach((el) => delete queries[el]);
+
+    const esClient = initializeElasticClient();
+
+    // if (!elastic_query) {
+        const sortBy = queries.sort.split(',');
+        console.log(sortBy, "----------");
+        const { nameQuery, categoryQuery } = queries;
+
+        const queryObject = {
+            track_scores: true,
+            query: {
+                bool: {
+                    must: [
+                        {
+                            match: { name: nameQuery }
+                        }
+                    ],
+                    filter: [
+                        {
+                            term: { category: categoryQuery }
+                        }
+                    ]
+                }
+            }
+        }
+
+        const queryResult = await esDBModule.queryElasticDB(esClient, esIndexNameList.SERVICES, queryObject);
+
+        const hitsRecord = queryResult?.hits?.hits?.map(record => {
+            return record._source
+        });
+
+        if (hitsRecord?.length > 0) {
+            return res.status(200).json({
+                success: true,
+                counts: hitsRecord.length,
+                services: hitsRecord,
+            });  
+        }
+    // }
+
+    // // Format lại các toán tử cho đúng cú pháp của mongoose
+    // let queryString = JSON.stringify(queries);
+    // queryString = queryString.replace(
+    //     /\b(gte|gt|lt|lte)\b/g,
+    //     (matchedEl) => `$${matchedEl}`
+    // );
+
+    // // chuyen tu chuoi json sang object
+    // const formatedQueries = JSON.parse(queryString);
+    // //Filtering
+    // let categoryFinish = {}
+    // if (queries?.name) formatedQueries.name = { $regex: queries.title, $options: 'i' };
+    // if (queries?.category){
+    //     delete formatedQueries.category
+    //     const categoryArray = queries.category?.split(',')
+    //     const categoryQuery = categoryArray.map(el => ({
+    //         category: {$regex: el, $options: 'i' }
+    //     }))
+    //     categoryFinish = {$or: categoryQuery}
+    // }
+
+    // let queryFinish = {}
+    // if(queries?.q){
+    //     delete formatedQueries.q
+    //     queryFinish = {
+    //         $or: [
+    //             {name: {$regex: queries.q, $options: 'i' }},
+    //             {category: {$regex: queries.q, $options: 'i' }},
+    //         ]
+    //     }
+    // }
+    // const qr = {...formatedQueries, ...queryFinish, ...categoryFinish}
+    // let queryCommand =  Service.find(qr).populate({
+    //     path: 'assigned_staff',
+    //     select: 'firstName lastName avatar',
+    // })
+    // try {
+    //     // sorting
+    //     if(req.query.sort){
+    //         const sortBy = req.query.sort.split(',').join(' ')
+    //         queryCommand.sort(sortBy)
+    //     }
+
+    //     //filtering
+    //     if(req.query.fields){
+    //         const fields = req.query.fields.split(',').join(' ')
+    //         queryCommand.select(fields)
+    //     }
+
+    //     //pagination
+    //     //limit: so object lay ve 1 lan goi API
+    //     //skip: n, nghia la bo qua n cai dau tien
+    //     //+2 -> 2
+    //     //+dgfbcxx -> NaN
+    //     const page = +req.query.page || 1
+    //     const limit = +req.query.limit || process.env.LIMIT_PRODUCT
+    //     const skip = (page-1)*limit
+    //     queryCommand.skip(skip).limit(limit)
+
+
+    //     const services = await queryCommand
+    //     const counts = await Service.countDocuments(qr);
+    //     return res.status(200).json({
+    //         success: true,
+    //         counts: counts,
+    //         services: services,
+    //         });
+        
+    // } catch (error) {
+    //     // Xử lý lỗi nếu có
+    //     return res.status(500).json({
+    //     success: false,
+    //     error: 'Cannot get services',
+    //     });
+    // }
+})
+
+
 const getOneService = asyncHandler(async(req, res)=>{
     const {sid} = req.params
 
@@ -331,8 +414,6 @@ const getOneService = asyncHandler(async(req, res)=>{
         select: 'bussinessName address province latitude longitude'
     })
 
-
-    
     return res.status(200).json({
         success: service ? true : false,
         service: service ? service : "Cannot find product"
@@ -548,5 +629,6 @@ module.exports = {
     addVariantService,
     ratingService,
     getMostPurchasedService,
-    getAllServicesByProviderId
+    getAllServicesByProviderId,
+    searchAllServicesPublic
 }

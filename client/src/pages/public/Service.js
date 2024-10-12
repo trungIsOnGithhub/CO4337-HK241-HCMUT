@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useCallback} from 'react'
 import { useParams, useSearchParams, createSearchParams, useNavigate} from 'react-router-dom'
 import { Breadcrumb, Service, SearchItemService, InputSelect, Pagination} from '../../components'
-import { apiGetServicePublic } from '../../apis'
+import { apiSearchServicePublic } from '../../apis'
 import Masonry from 'react-masonry-css'
 import { sorts } from '../../ultils/constant'
 import clsx from 'clsx'
@@ -26,11 +26,12 @@ const Services = ({dispatch}) => {
   const {isShowModal} = useSelector(state => state.app)
 
 
-  const fetchServiceCategories = async (queries) =>{
+  const fetchServiceCategories = async (queries) => {
     if(category && category !== 'services'){
       queries.category = category
     }
-    const response = await apiGetServicePublic(queries)
+    console.log('Elastic Pre Query', queries, 'Elastic Pre Query');
+    const response = await apiSearchServicePublic(queries)
     if(response.success) setServices(response)
     dispatch(getCurrent())
   }
@@ -70,14 +71,14 @@ const Services = ({dispatch}) => {
   useEffect(() => {
     if(sort){
       navigate({
-      pathname: `/service/${category}`,
-      search: createSearchParams({
-        sort
-      }).toString()
-      }) 
+        pathname: `/service/${category}`,
+        search: createSearchParams({
+          sort
+        }).toString()
+      })
     }   
   }, [sort])
-  
+
   return (
     <div className='w-full'>
       <div className='h-[81px] flex items-center justify-center bg-gray-100'>
