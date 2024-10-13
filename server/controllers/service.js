@@ -284,26 +284,58 @@ const searchAllServicesPublic = asyncHandler(async (req, res) => {
     // if (!elastic_query) {
         // const sortBy = queries.sort?.split(',');
         // console.log(sortBy, "----------");
-        const { nameQuery, categoryQuery } = queries;
+        const { name, category, sort } = queries;
         console.log('-------', queries, '---------')
 
         const queryObject = {
             track_scores: true,
-            query: {
-                bool: {
-                    must: [
-                        {
-                            match: { name: nameQuery }
-                        }
-                    ],
-                    filter: [
-                        {
-                            term: { category: categoryQuery }
-                        }
-                    ]
+            query: {},
+            sort: []
+        }
+
+        if (name) {
+            if (!queryObject.query.bool) {
+                queryObject.query.bool = {};
+            }
+
+            queryObject.query.bool.must = [
+                {
+                    match: { name }
                 }
+            ];
+        }
+        if (category) {
+            if (!queryObject.query.bool) {
+                queryObject.query.bool = {};
+            }
+
+            let categoryArray = category.split(',');
+
+            queryObject.query.bool.should = categoryArray.map(cate => {
+                return { term: { category: cate } }
+            });
+        }
+        if (!name && !category) {
+            queryObject.query = {
+                match_all: {}
             }
         }
+
+        console.log('====', sort);
+        if (sort) {
+            console.log('====', queryObject?.sort);
+            if (sort?.indexOf('-') >= 0) {
+                const fieldName = sort.slice(1);//get field name
+
+                queryObject.sort.push({ [fieldName]: { order: 'desc' } });
+            }
+            else {
+                console.log(queryObject, "]]]]]]]]]]]]]]]]]]]]]]]");
+                queryObject.sort.push({ [sort]: { order: 'asc' } });
+            }
+        }
+        
+        console.log('Elastic Query: ', queryObject?.sort, '-------------')
 
         const queryResult = await esDBModule.queryElasticDB(esClient, esIndexNameList.SERVICES, queryObject);
 
