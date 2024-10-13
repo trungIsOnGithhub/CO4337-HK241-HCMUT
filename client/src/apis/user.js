@@ -79,3 +79,9 @@ export const apiGetAllContact = (userId) => axios({
     url: `/user/getAllContact/${userId}`,
     method: 'get',
 })
+
+export const apiAddContactToCurrentUser = (data) => axios({
+    url: `/user/add_contact`,
+    method: 'post',
+    data
+})

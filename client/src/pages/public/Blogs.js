@@ -5,12 +5,20 @@ import Button from 'components/Buttons/Button';
 import { HashLoader } from 'react-spinners';
 import path from 'ultils/path';
 // import DOMPurify from 'dompurify';
-import { useNavigate, createSearchParams, useSearchParams } from "react-router-dom";
+import { useNavigate, createSearchParams, useLocation } from "react-router-dom";
 import { FaCheck, FaRegThumbsUp, FaRegThumbsDown, FaLocationArrow } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import { tinh_thanhpho } from 'tinh_thanhpho';
 
 const Blogs = () => {
+  const location = useLocation();
+  useEffect(() => {
+    console.log('=========', location?.state);
+    if (location?.state?.searchKey) {
+      setSearchTerm(location.state.searchKey);
+    }
+  }, []);
+
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -204,7 +212,8 @@ const Blogs = () => {
           type="text"
           id="search"
           placeholder="Find Title, Service Provider......"
-          onInput={(e) => {setSearchTerm(e.target.value)}}/>
+          onInput={(e) => {setSearchTerm(e.target.value)}}
+          value={searchTerm}/>
         </div>
         {searchTerm?.length > 0 && <Button style='px-2 rounded-md text-white bg-blue-500 font-semibold h-fit py-2 w-fit' handleOnclick={multiSearchByTerm}>Search Keyword</Button>}
 

@@ -6,25 +6,32 @@ import axios from 'axios'
 import {v4 as uuidv4} from 'uuid'
 import { apiAddMessage, apigetAllMessageFromSenderToReceiver } from 'apis/message'
 import defaultAvatar from '../../assets/avatarDefault.png'
+import { FaQuestion } from 'react-icons/fa'
 
 const ChatContainer = ({currentChat, currentUser, socket}) => {
-
     const [messages, setMessages] = useState([])
     const [arrivalMessage, setArrivalMessage] = useState(null)
+    const [openQuestionsMenu, setOpenQuestionsMenu] = useState(false)
+    const [givenQuestionsHint, setGivenQuestionsHint] = useState(true)
+    const [firstTimeChat, setFirstTimeChat] = useState(true);
     const scrollRef = useRef()
 
     const messagesEndRef = useRef(null)
 
     useEffect(() => {
         if(currentChat){
+            console.log('//////////////////////////', currentChat);
             const fetchMessages = async() => {
                 const response = await apigetAllMessageFromSenderToReceiver({
                     from: currentUser._id,
                     to: currentChat._id
                 })
-                setMessages(response)
+                if (response?.length) {
+                    setFirstTimeChat(false)
+                    setMessages(response);
+                }
             }
-            fetchMessages()
+            fetchMessages();
         }
     }, [currentChat]);
     
@@ -53,7 +60,9 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
     }, []);
 
     useEffect(() => {
-        arrivalMessage && setMessages((prev) => [...prev, arrivalMessage])
+        if(arrivalMessage) {
+            setMessages((prev) => [...prev, arrivalMessage])
+        }
     }, [arrivalMessage]);
 
 
@@ -62,8 +71,7 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
         messagesEndRef.current?.scrollIntoView({behaviour: "smooth"})
     }, [messages]);
 
-  return (
-    
+  return ( 
     <Container ref={messagesEndRef}>
         <div className='chat-header'>
             <div className='user-details'>
@@ -74,27 +82,100 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
                     <h3>
                         {`${currentChat?.firstName} ${currentChat?.lastName}`}
                     </h3>
+                    { currentChat?.provider_id?.bussinessName &&
+                        <h4 className="p-1 bg-lime-600 rounded-md">
+                            { currentChat?.provider_id?.bussinessName }
+                        </h4>
+                    }  
                 </div>
             </div>
         </div>
-        <div className='chat-messages'>
+
+        <div className='h-full overflow-y-auto relative'>
+            {/* {
+                currentChat?.provider_id?.bussinessName &&
+                <div className='flex justify-center h-fit'>
+                    <div className="text-green-900 bg-lime-600 w-fit rounded-md p-2 text-sm text-center hover:bg-slate-500 mt-2"
+                        onClick={() => {setOpenQuestionsMenu(true)}}
+                    >
+                        You Can Use Given Questions In Chat With Service Provider <FaQuestion className='inline mb-1'/>
+                    </div>
+                </div>
+            } */}
             {
-                messages?.map((message)=> {
-                    return (
-                        <div  ref={scrollRef} key={uuidv4()}>
-                            <div className={`message ${message.fromSelf ? "sended" : "recieved"}`}>
-                                <div className='content'>
-                                    <p>
-                                        {message.message}
-                                    </p>
+                currentChat?.provider_id?.bussinessName && givenQuestionsHint &&
+                <div className='p-2 flex flex-col justify-start items-center text-slate-400 h-fit w-fit absolute top-4 sticky top-0 opacity-75 bg-black mx-auto rounded-md border-2 border-blue-500'>
+                    <h4 className='text-center text-slate-400 font-semibold text-lg'>Suggested Questions</h4>
+                    {
+                        firstTimeChat &&
+                        currentChat?.provider_id?.chatGivenQuestions?.slice(0,3).map(qna => {
+                            return (
+                                <div class="p-2 hover:bg-blue-600 rounded-md flex justify-center m-1 p-2 w-fit"
+                                    onClick={() => {
+                                        const newMessages = [...messages, {message:qna.question, fromSelf:true}];
+                                        if (qna.answer) {
+                                            newMessages.push({message:qna.answer, fromSelf:false});
+                                        }
+                                        setMessages(newMessages);
+                                    }}
+                                >
+                                    {  qna.question }
+                                </div>
+                            );
+                        })
+                    }
+                    <a href="#" onClick={() => {setOpenQuestionsMenu(true);}} className='underline mt-1'>View All Suggested Questions</a>
+                </div>
+            }
+
+            {
+                currentChat?.provider_id?.bussinessName && openQuestionsMenu &&
+                <div className='bg-slate-400 w-1/2 px-2 py-6 flex flex-col justify-center rounded-md z-99 sticky top-0 left-1/4'>
+                    <h4 className='text-center font-semibold text-lg'>Given Questions</h4>
+                    {
+                        currentChat?.provider_id?.chatGivenQuestions?.map(qna => {
+                            return (
+                                <div class="p-2 bg-linme-500 rounded-md flex justify-center border m-4 p-4 hover:bg-blue-500"
+                                    onClick={() => {
+                                        const newMessages = [...messages, {message:qna.question, fromSelf:true}];
+                                        if (qna.answer) {
+                                            newMessages.push({message:qna.answer, fromSelf:false});
+                                        }
+                                        setMessages(newMessages);
+                                        setOpenQuestionsMenu(false);
+                                    }}
+                                >
+                                    { qna.question }
+                                </div>
+                            );
+                        })
+                    }
+                    <button className='btn bg-red-500 py-2 px-4 w-fit m-auto rounded-md mt-3' onClick={() => {setOpenQuestionsMenu(false);}}>Close This Menu</button>
+                </div>
+            }
+            <div className='chat-messages'>
+                {
+                    messages?.map((message) => {
+                        return (
+                            <div  ref={scrollRef} key={uuidv4()}>
+                                <div className={`message ${message.fromSelf ? "sended" : "recieved"}`}>
+                                    <div className='content'>
+                                        <p>
+                                            {message.message}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )
-                })
-            }
+                        )
+                    })
+                }
+            </div>
         </div>
-        <ChatInput handleSendMsg={handleSendMsg}/>
+        {/* <ProviderOnlyInformationBar/> */}
+        
+        {/* <div className="h-1/4"> */}
+            <ChatInput handleSendMsg={handleSendMsg} onClick={() => {setGivenQuestionsHint(false)}}/>
+        {/* </div> */}
     </Container>
   )
 }

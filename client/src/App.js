@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
-import {Route, Routes} from 'react-router-dom'
+import {Route, Routes, useLocation} from 'react-router-dom'
 
-import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageEvent, ManagePostDetail, EditPostDetail, AddPost} from 'pages/admin'
+import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageEvent, ManagePostDetail, EditPostDetail, AddPost, ManageChat } from 'pages/admin'
 import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct, ViewBlog, DetailProvider } from 'pages/public'
 
 import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct, Calendarr} from 'pages/user'
@@ -16,7 +16,7 @@ import { showCart, showMessage } from 'store/app/appSlice';
 import ManagePost from 'pages/admin/ManagePost';
 
 function App() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const {isShowModal, modalChildren, isShowCart, isShowMessage, isShowMessageBox, currentChat} = useSelector(state => state.app)
 
   useEffect(() =>{
@@ -34,7 +34,7 @@ function App() {
 
       {isShowModal && <Modal>{modalChildren}</Modal>}
 
-      {isShowMessageBox && <MessageBox currentChat={currentChat} />}
+      {isShowMessageBox && (window.location.pathname.indexOf(path.CHAT) < 0) && <MessageBox currentChat={currentChat} />}
      <Routes>
       <Route path={path.CHECKOUT_SERVICE} element={<CheckoutService />} />
       <Route path={path.CHECKOUT_PRODUCT} element={<CheckoutProduct />} />
@@ -79,6 +79,7 @@ function App() {
         <Route path={path.MANAGE_POST} element={<ManagePost/>}/>
         <Route path={path.MANAGE_POST_DETAIL} element={<ManagePostDetail/>}/>
         <Route path={path.EDIT_POST_DETAIL} element={<EditPostDetail/>}/>
+        <Route path={path.MANAGE_CHAT} element={<ManageChat/>}/>
 
       </Route>
       <Route path={path.USER} element={<UserLayout />}>

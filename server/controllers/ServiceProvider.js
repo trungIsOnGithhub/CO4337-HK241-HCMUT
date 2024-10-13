@@ -155,7 +155,7 @@ const updateServiceProvider = asyncHandler(async(req, res)=>{
 
 const getServiceProvider = asyncHandler(async(req, res)=>{
     const spid = req.params.spid;
-    const sp = await ServiceProvider.findById(spid)
+    const sp = await ServiceProvider.findById(spid).populate('owner')
 
     return res.status(200).json({
         success: sp ? true : false,
@@ -172,10 +172,37 @@ const deleteServiceProvider = asyncHandler(async(req, res)=>{
     })
 })
 
+const addServiceProviderQuestion = asyncHandler(async(req, res)=>{
+    const {qna, provider_id} = req.body;
+    if(!qna && !provider_id){
+        throw new Error('Missing input')
+    }
+    console.log(req.body);
+    const response = await ServiceProvider.findByIdAndUpdate(provider_id, {chatGivenQuestions:qna}, {new:true});
+    return res.status(200).json({
+        success: response ? true : false,
+        qna: response ? response : "Cannot delete service provider"
+    })
+})
+const getServiceProviderByOwnerId = asyncHandler(async(req, res)=>{
+    const {owner} = req.body;
+    if(!owner){
+        throw new Error('Missing input')
+    }
+    console.log(req.body);
+    const response = await ServiceProvider.findOne({});
+    return res.status(200).json({
+        success: response ? true : false,
+        provider: response ? response : "Cannot get service provider"
+    })
+})
+
 module.exports = {
     createServiceProvider,
     getAllServiceProvider,
     updateServiceProvider,
     deleteServiceProvider,
     getServiceProvider,
+    addServiceProviderQuestion,
+    getServiceProviderByOwnerId
 }

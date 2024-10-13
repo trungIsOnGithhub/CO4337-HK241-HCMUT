@@ -24,6 +24,7 @@ router.put('/wishlist/:sid', [verifyAccessToken], ctrls.updateWishlist)
 router.put('/:userId', [verifyAccessToken, isAdmin], ctrls.updateUserByAdmin)
 
 router.get('/getAllContact/:userId', ctrls.getAllContact)
+router.post('/add_contact', ctrls.addContact)
 
 module.exports = router
 

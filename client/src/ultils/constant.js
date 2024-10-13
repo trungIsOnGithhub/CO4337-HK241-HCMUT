@@ -339,6 +339,13 @@ export const adminSidebar = [
     {
         id: 11,
         type: 'single',
+        text: 'Manage Chat',
+        path: `/${path.ADMIN}/${path.MANAGE_CHAT}`,
+        icon: <RiBillLine size={20}/>
+    },
+    {
+        id: 12,
+        type: 'single',
         text: 'Setting',
         path: `/${path.ADMIN}/${path.SETTING}`,
         icon: <IoIosSettings size={20}/>
