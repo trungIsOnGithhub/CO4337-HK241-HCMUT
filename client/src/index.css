@@ -213,3 +213,16 @@
   .emoji-picker-react .emoji-group:before {
     background-color: #1a1635;
   }
+
+
+  @layer utilities {
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      @apply appearance-none;
+    }
+  
+    input[type="number"] {
+      @apply appearance-none;
+    }
+  }
+

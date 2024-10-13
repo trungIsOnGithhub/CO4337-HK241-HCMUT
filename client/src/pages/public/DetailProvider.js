@@ -1,14 +1,15 @@
-import { apiGetProductByProviderId, apiGetServiceByProviderId, apiGetServiceProviderById } from 'apis'
+import { apiGetAllFlashSaleEventsByProviderId, apiGetProductByProviderId, apiGetServiceByProviderId, apiGetServiceProviderById } from 'apis'
 import React, { useEffect, useState } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import defaultProvider from '../../assets/defaultProvider.jpg'
 import clsx from 'clsx'
-import { BookingFromProvider, Pagination, Product, Service } from 'components'
+import { BookingFromProvider, FlashSaleItem, Pagination, Product, Service } from 'components'
 import Masonry from 'react-masonry-css'
 import { FaLocationDot } from 'react-icons/fa6'
 import Mapbox from 'components/Map/Mapbox'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
+import { FaCircleChevronLeft, FaCircleChevronRight } from "react-icons/fa6";
 
 
 const breakpointColumnsObj = {
@@ -34,7 +35,10 @@ const DetailProvider = () => {
     const [totalProduct, setTotalProduct] = useState(0)
 
     const [params, setParams] = useSearchParams();
-    const [findUs, setFindUs] = useState(false)
+    const [findUs, setFindUs] = useState(false);
+    
+    const [flashSale, setFlashSale] = useState([])
+    const [currentFlashSaleIndex, setCurrentFlashSaleIndex] = useState(0); // Thêm state để theo dõi chỉ số hiện tại
 
     useEffect(() => {
         const fetchProviderData = async() => {
@@ -53,6 +57,11 @@ const DetailProvider = () => {
             setService(response?.services)
             setTotalService(response?.counts)
             setFindUs(false)
+
+            const allFlashSale = await apiGetAllFlashSaleEventsByProviderId(prid)
+            if(allFlashSale?.success){
+              setFlashSale(allFlashSale?.allFlashSale)
+            }
           }
           if(variable === 'product'){
             const response = await apiGetProductByProviderId(prid)
@@ -174,6 +183,7 @@ const DetailProvider = () => {
       }
     };
 
+
   return (
     <div>
       <div className='w-main h-[120px] flex justify-between items-center'>
@@ -201,6 +211,33 @@ const DetailProvider = () => {
           <div>sort/filter</div>
           <div>search</div>
         </div>
+        {flashSale?.length > 0 && 
+        <div className='w-main mx-auto mt-8 flex justify-between items-center'>
+          <button 
+            onClick={() => setCurrentFlashSaleIndex(Math.max(currentFlashSaleIndex - 1, 0))} 
+            disabled={currentFlashSaleIndex === 0} // Vô hiệu hóa nút nếu đã ở đầu
+          >
+            <span className='cursor-pointer text-gray-300 text-[28px] font-medium hover:text-gray-500'><FaCircleChevronLeft /></span>
+          </button>
+          
+          <div className='flex flex-1 gap-3 overflow-hidden px-2'>
+            {
+              flashSale?.slice(currentFlashSaleIndex, currentFlashSaleIndex + 3).map((el) => ( // Hiển thị 3 flash sale tại một thời điểm
+                <div className='w-[33%]' key={el._id}>
+                  <FlashSaleItem flashsaleData={el}/> 
+                </div>
+              ))
+            }
+          </div>
+          
+          <button 
+            onClick={() => setCurrentFlashSaleIndex(Math.min(currentFlashSaleIndex + 1, flashSale.length - 3))} 
+            disabled={currentFlashSaleIndex >= flashSale.length - 3} // Vô hiệu hóa nút nếu đã ở cuối
+          >
+            <span className='cursor-pointer text-gray-300 text-[28px] font-medium hover:text-gray-500'><FaCircleChevronRight /></span>
+          </button>
+        </div>
+        }
         <div className='w-main mt-8 mx-auto'>
           <span className='text-gray-400 font-semibold text-lg capitalize'>
             {+totalService > 0 ? +totalService === 1 ? `${totalService} result` : `${totalService} results` : 'No result'}
@@ -269,6 +306,33 @@ const DetailProvider = () => {
       {
         variable === 'book' &&
         <>
+        {flashSale?.length > 0 && 
+        <div className='w-main mx-auto mt-8 flex justify-between items-center'>
+          <button 
+            onClick={() => setCurrentFlashSaleIndex(Math.max(currentFlashSaleIndex - 1, 0))} 
+            disabled={currentFlashSaleIndex === 0} // Vô hiệu hóa nút nếu đã ở đầu
+          >
+            <span className='cursor-pointer text-gray-300 text-[28px] font-medium hover:text-gray-500'><FaCircleChevronLeft /></span>
+          </button>
+          
+          <div className='flex flex-1 gap-3 overflow-hidden px-2'>
+            {
+              flashSale?.slice(currentFlashSaleIndex, currentFlashSaleIndex + 3).map((el) => ( // Hiển thị 3 flash sale tại một thời điểm
+                <div className='w-[33%]' key={el._id}>
+                  <FlashSaleItem flashsaleData={el}/> 
+                </div>
+              ))
+            }
+          </div>
+          
+          <button 
+            onClick={() => setCurrentFlashSaleIndex(Math.min(currentFlashSaleIndex + 1, flashSale.length - 3))} 
+            disabled={currentFlashSaleIndex >= flashSale.length - 3} // Vô hiệu hóa nút nếu đã ở cuối
+          >
+            <span className='cursor-pointer text-gray-300 text-[28px] font-medium hover:text-gray-500'><FaCircleChevronRight /></span>
+          </button>
+        </div>
+        }
         <div className='w-main mx-auto mt-8 flex justify-between'>
           <div className='w-[55%] flex flex-col gap-8'>
           {service?.map((el, index) => 

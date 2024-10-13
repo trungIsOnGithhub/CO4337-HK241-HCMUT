@@ -37,13 +37,15 @@ const getUserBookingsById = asyncHandler(async (req, res) => {
         const start = new Date(`${formattedDate}T${bookingInfo.time}:00`); // Tạo đối tượng Date
         const localStart = new Date(start.getTime() - (start.getTimezoneOffset() * 60000)); // Chuyển đổi sang múi giờ địa phương
         const localEnd = new Date(localStart.getTime() + (bookingInfo?.service?.duration * 60000)); // Tính toán thời gian kết thúc
-        
+        const bookingId = booking?._id;
 
         return {
             localStart: localStart, // Thời gian bắt đầu theo múi giờ địa phương
             localEnd: localEnd,     // Thời gian kết thúc theo múi giờ địa phương
             serviceName: service.name, // Tên dịch vụ
             status: booking.status, // Trạng thái đặt chỗ
+            bookingId : bookingId,
+            emailsSync : booking?.emails || []
         };
     }).filter(Boolean); // Lọc bỏ các phần tử null
 

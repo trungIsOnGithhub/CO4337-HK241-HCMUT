@@ -76,4 +76,6 @@ export {default as MessageBox} from './Message/MessageBox'
 
 export {default as Provider} from './Provider/Provider'
 
+export {default as FlashSaleItem} from './FlashSale/FlashSaleItem'
+
 

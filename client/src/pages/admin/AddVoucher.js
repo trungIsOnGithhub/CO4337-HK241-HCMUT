@@ -10,6 +10,8 @@ import { apiCreateNewCoupon, apiGetServiceByAdmin } from 'apis';
 import { Slider } from '@mui/material';
 import moment from 'moment'
 import { useSelector } from 'react-redux';
+import { BiSolidCoupon } from "react-icons/bi";
+import { toast } from 'react-toastify';
 
 const AddVoucher = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -39,12 +41,12 @@ const AddVoucher = () => {
       //Call API to create a new coupon
       const response = await apiCreateNewCoupon(couponData);
       if (response?.success) {
-        alert('Voucher created successfully!');
+        toast.success('Voucher created successfully!');
         reset(); // Reset the form fields
         setSelectedService([])
         setExprdate(null)
       } else {
-        alert('Failed to create voucher.');
+        toast.error('Failed to create voucher.');
       }
     } catch (error) {
       alert('An error occurred. Please try again.');
@@ -436,9 +438,10 @@ const AddVoucher = () => {
             </div>
           )}
 
-          <div className='mt-8'>
-            <Button type='submit'>
+          <div className='mt-8 w-fit mx-auto'>
+            <Button type='submit' style={'w-fit flex gap-1 items-center bg-main px-4 py-2 rounded-md text-white shadow-md'}>
               Create a new voucher
+              <span><BiSolidCoupon size={24}/></span>
             </Button>
           </div>
         </form>

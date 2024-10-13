@@ -320,11 +320,36 @@ const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
     })
 })
 
+const updateEmailByBookingId = asyncHandler(async(req,res) => {
+    const {bookingId, email} = req.body;
+
+    // Tìm kiếm đơn hàng theo bookingId
+    const order = await Order.findById(bookingId);
+    if (!order) {
+        return res.status(404).json({
+            success: false,
+            error: 'Order not found'
+        });
+    }
+
+    // Kiểm tra xem email đã tồn tại trong danh sách emails chưa
+    if (!order.emails.includes(email)) {
+        order.emails.push(email);
+        await order.save();
+    
+        return res.status(200).json({
+            success: true,
+            order: order
+        });
+    }
+})
+
 module.exports = {
     createNewOrder,
     updateStatus,
     getUserOrder,
     getOrdersByAdmin,
     getOrdersForStaffCalendar,
-    getOneOrderByAdmin
+    getOneOrderByAdmin,
+    updateEmailByBookingId
 }
