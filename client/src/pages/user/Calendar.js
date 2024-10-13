@@ -7,12 +7,15 @@ import googleCalendar from '../../assets/google_calendar_icon.png'
 import { Button } from 'components';
 import { FaGoogle, FaSignOutAlt } from "react-icons/fa";
 import { FaSync } from "react-icons/fa";
+import { useSession, useSupabaseClient, useSessionContext } from '@supabase/auth-helpers-react';
 
 const Calendar = () => {
   const { current } = useSelector(state => state.user);
   const [calendar, setCalendar] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const session = useSession();
+  const supabase = useSupabaseClient(); //Khởi tạo supabase Client
 
   useEffect(() => {
     const fetchCalendarByUserId = async () => {
