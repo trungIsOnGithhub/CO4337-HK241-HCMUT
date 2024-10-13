@@ -294,14 +294,9 @@ const Booking = () => {
                   el?.nextAvailableDay[0] &&
                   <div className='w-fit h-fit bg-green-500 px-2 rounded-md text-white'>{el.nextAvailableDay[0]}</div>
                 }
-                {
-                  el?.nextAvailableDay[1]?.map(shift => {
-                    return (<div className='w-fit h-fit bg-green-700 px-2 rounded-md text-white'>{shift?.start} - {shift?.end}</div>);
-                  })
-                }
               </div>
               <div className='flex flex-wrap gap-2 my-3'>
-              {!el?.nextAvailableDay &&
+              {/* {!el?.nextAvailableDay &&
                   <h5 className='text-red-500'>Cannot Find Service Available Timeslot</h5>}
               {timeOptions.length > 0 &&
                 timeOptions.map((time, idx) => (
@@ -310,7 +305,12 @@ const Booking = () => {
                     {parseInt(time.split(':')[0]) >= 12 ? `${time} pm` : `${time} am`}
                   </div>
                 )
-              ))}
+              ))} */}
+                {
+                  el?.nextAvailableDay[1]?.map(shift => {
+                    return (<div className='w-fit h-fit bg-slate-600 px-2 py-1 rounded-md text-white'>{shift?.start} - {shift?.end}</div>);
+                  })
+                }
               </div>
 
             </div>
