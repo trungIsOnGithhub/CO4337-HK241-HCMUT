@@ -9,6 +9,7 @@ import { FaGoogle, FaSignOutAlt } from "react-icons/fa";
 import { FaSync } from "react-icons/fa";
 import { useSession, useSupabaseClient, useSessionContext } from '@supabase/auth-helpers-react';
 
+
 const Calendar = () => {
   const { current } = useSelector(state => state.user);
   const [calendar, setCalendar] = useState([]);

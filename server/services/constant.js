@@ -1,3 +1,3 @@
-module.exports = {
-    SERVICES: "services"
-}
+// module.exports = {
+//     SERVICES: "services"
+// }
