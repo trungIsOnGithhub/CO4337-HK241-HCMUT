@@ -5,7 +5,7 @@ import defaultProvider from '../../assets/defaultProvider.jpg'
 import clsx from 'clsx'
 import path from 'ultils/path';
 import { apiGetAllBlogs } from 'apis/blog';
-import { BookingFromProvider, Pagination, Product, Service, Button } from 'components'
+import { BookingFromProvider, Pagination, Product, Service, Button, FlashSaleItem } from 'components'
 import Masonry from 'react-masonry-css'
 import { FaLocationDot } from 'react-icons/fa6'
 import Mapbox from 'components/Map/Mapbox'

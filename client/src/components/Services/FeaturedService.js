@@ -19,12 +19,12 @@ const FeaturedProduct = () => {
     <div className='w-main mb-8'>
         <h3 className='text-[15px] font-semibold py-[15px] border-b-2 border-main'>FEATURED SERVICE PROVIDERS</h3>
         <div className='flex flex-wrap mt-[15px] mx-[-10px] mb-20'>
-            {product?.map(el => (
-                <ServiceCard 
+            {product?.map(el => {
+                console.log('.....', el);
+                return (<ServiceCard 
                     provider={el}
-                />
-
-            ))}
+                />);
+            })}
         </div>
         <div className='grid grid-cols-4 grid-rows-2 gap-4'>
 

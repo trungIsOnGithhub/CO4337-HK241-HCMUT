@@ -26,7 +26,7 @@ const BestSeller = () => {
     const fetchProduct =  async() =>{
         const response = await apiGetServicePublic()
         // {sort:'-sold'}
-        console.log('-------', response.services?.map(payload => payload?.sv), '--------');
+        // console.log('-------', response.services?.map(payload => payload?.sv), '--------');
         if(response?.success){
             setBestSeller(response.services?.map(payload => payload?.sv))
             setProduct(response.services?.map(payload => payload?.sv))

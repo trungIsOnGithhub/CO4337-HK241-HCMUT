@@ -7,7 +7,7 @@ import { createSearchParams } from "react-router-dom";
 
 const {MdArrowForwardIos} = icons
 const Home = ({navigate}) => {
-    const {newProducts} = useSelector(state => state.product)
+    const newProducts = useSelector(state => {console.log(state.product?.newProducts?.map(payload => payload?.sv));return state.product?.newProducts?.map(payload => payload?.sv) || []; })
     const {categories} = useSelector(state => state.app)
     const {isLogin, current} = useSelector(state => state.user)
 
