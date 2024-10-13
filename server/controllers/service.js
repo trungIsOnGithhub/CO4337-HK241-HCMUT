@@ -272,7 +272,7 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
 
 
 const searchAllServicesPublic = asyncHandler(async (req, res) => {
-    let { elastic_query } = req.params;
+    // let { elastic_query } = req.params;
 
     const queries = { ...req.query };
     // Loại bỏ các trường đặc biệt ra khỏi query
@@ -284,8 +284,9 @@ const searchAllServicesPublic = asyncHandler(async (req, res) => {
     // if (!elastic_query) {
         // const sortBy = queries.sort?.split(',');
         // console.log(sortBy, "----------");
-        const { name, category, sort } = queries;
-        console.log('-------', queries, '---------')
+        const { name, category } = queries;
+        const { sort } = req.query;
+        console.log('-------', req.query, '---------')
 
         const queryObject = {
             track_scores: true,
