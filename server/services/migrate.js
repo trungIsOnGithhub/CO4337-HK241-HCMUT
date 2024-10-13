@@ -15,7 +15,7 @@ async function migrateServiceDataFromMongoDBToElasticDB() {
     if (esClient.indices.exists({ index: esDBConstant.SERVICES })) {
         // for (const idx in allServices) {
         //     // elastic db does not allowed exiternal _id
-        //     const newObjectToAdd = { ...allServices[idx]._doc };
+        //     const newObjectToAdd = { ...allServices[idx].toObject() };
         //     newObjectToAdd.mongo_id = "" + newObjectToAdd._id;
         //     delete newObjectToAdd._id;
         //     delete newObjectToAdd._v;

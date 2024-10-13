@@ -105,18 +105,22 @@ const login = asyncHandler(async(req, res)=>{
     
     const response = await User.findOne({email})
     if(response && await response.isCorrectPassword(password)){
-        const {isBlocked} = response.toObject()
-        if(isBlocked){
+        const objectResponse = response.toObject();
+        const {isBlocked} = objectResponse;
+
+        if (isBlocked) {
             return res.status(400).json({
                 success: false,
                 mes: "Account is blocked"
             })}
-        const {password, role, refresh_token, ...userData} = response.toObject()
+        const {password, role, refresh_token, ...userData} = objectResponse;
+
         const accessToken = generateAccessToken(response._id, role)
         const refreshToken = generateRefreshToken(response._id)
 
         //Luu refresh token vao database
-        await User.findByIdAndUpdate(response._id, {refresh_token: refreshToken}, {new: true})
+        // await User.findByIdAndUpdate(response._id, {refresh_token: refreshToken}, {new: true});
+        
 
         //Luu refresh token vao cookie
         res.cookie('refreshToken', refreshToken, {httpOnly: true, maxAge: 7*24*60*60*1000})
@@ -163,13 +167,22 @@ const getOneUser = asyncHandler(async(req, res)=>{
 const refreshAccessToken = asyncHandler(async(req, res) => {
     const cookie = req.cookies
     if(!cookie && !cookie.refreshToken){
-        throw new Error("No refresh token in cookie")
+        return res.status(400).json({
+            success: false,
+            newAccessToken: "",
+            msg: "Bad Request" 
+        })
     }
-    const rs = await jwt.verify(cookie.refreshToken, process.env.JWT_SECRET) // Neu co loi se quang ngay tai day
-    const response = await User.findOne({_id: rs._id, refresh_token: cookie.refreshToken})
+    const rs = await jwt.verify(cookie.refreshToken, process.env.JWT_SECRET);
+
+    let response = null;
+    if (rs._id) {
+        response = await User.findOne({_id: rs._id, refresh_token: cookie.refreshToken})
+    }
+
     return res.status(200).json({
         success: response ? true : false,
-        newAccessToken: response ? generateAccessToken(response._id, response.role) : "Refressh token not matched" 
+        newAccessToken: response ? generateAccessToken(response._id, response.role) : "Refresh token not matched" 
     })
 })
 
