@@ -166,7 +166,7 @@ const Services = ({dispatch}) => {
           <span className='font-semibold text-sm p-5'>Search By:</span>
           {/* <div className='w-full'> */}
           <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} />
-          <span className='font-semibold text-sm p-5'>Near Me:</span>
+          <span className='font-semibold text-sm p-5'>Near Me Search:</span>
           <input className='ml-3 p-5' onInput={() => {handleGetDirections()}} type="checkbox"/>
           { nearMeOption && 
             <>

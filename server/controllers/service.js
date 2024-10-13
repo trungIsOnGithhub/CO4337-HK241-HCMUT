@@ -250,13 +250,14 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
             };
 
             maxDistance = parseFloat(maxDistance);
+            const maxDistanceInMeter = maxDistance * 1000.0;
             if (!isNaN(maxDistance)) {
                 console.log('<<<<<<-->', maxDistance);
                 aggregations.push({
                     $geoNear: {
                         "near": nearbyFilterObj,
                         "distanceField": "clientDistance",
-                        "maxDistance": maxDistance,
+                        "maxDistance": maxDistanceInMeter,
                         "spherical": true
                     }
                 });
