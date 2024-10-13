@@ -18,9 +18,11 @@ import { createSearchParams } from 'react-router-dom'
 import clsx from 'clsx'
 const {FaEye, FaHeart, FaCartPlus, BsCartCheckFill} = icons
 
-const Service = ({serviceData, isNew, normal, navigate, dispatch, location, isNotBorder, fullWidth = false}) => {
+const Service = ({serviceData, isNew, normal, navigate, dispatch, location, isNotBorder, fullWidth = false, clientDistance = null}) => {
   const [isShowOption, setIsShowOption] = useState(false)
   const {current} = useSelector(state => state.user)
+
+  // const SERVICE_DISTANCE_LIMIT_METER = 9999999999;
 
   const handleClickOptions = async (flag) => {
     if(flag === 'Cart'){
@@ -127,6 +129,13 @@ const Service = ({serviceData, isNew, normal, navigate, dispatch, location, isNo
               width: '100%'
             }}
           >{`${serviceData?.category}`}</span>
+          { clientDistance && !isNaN(clientDistance) && <span
+            style={{
+              textAlign: 'center',
+              color: 'red',
+              width: '100%'
+            }}
+          >{`${Math.floor(clientDistance/1000.0)}km from current location!`}</span>}
         </div>
       </div>
     </div>

@@ -184,7 +184,7 @@ export const sorts = [
         id:7,
         value: '-createdAt',
         text: 'Date, new to old'
-    },
+    }, 
 ]
 
 export const voteOptions = [
