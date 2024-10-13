@@ -37,6 +37,9 @@ const Services = ({dispatch}) => {
   })
 
   const fetchServiceCategories = async (queries) =>{
+    if (sort) {
+      queries.sort = sort;
+    }
     if(category && category !== 'services'){
       queries.category = category
     }
