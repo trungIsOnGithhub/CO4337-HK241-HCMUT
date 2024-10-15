@@ -2,24 +2,102 @@ const { Client } = require('@elastic/elasticsearch');
 const { match } = require('assert');
 const { kMaxLength } = require('buffer');
 const fs = require('fs');
+const ELASTIC_INDEX_NAME_MAP = require('./constant');
+const { queryObjects } = require('v8');
 // const { constrainedMemory } = require('process');
 
+{
+    "query": {
+        "match" : {
+            "title" : "in action"
+        }
+    },
+    "size": 2,
+    "from": 0,
+    "_source": [ "title", "summary", "publish_date" ]
+}
+
 function initializeElasticClient() {
-    const certFileContent = fs.readFileSync('/home/pc/Downloads/elasticsearch-8.14.3-linux-x86_64/elasticsearch-8.14.3/config/certs/http_ca.crt');
+    // SECURITY OFF
+    // const certFileContent = fs.readFileSync('/home/pc/Downloads/elasticsearch-8.14.3-linux-x86_64/elasticsearch-8.14.3/config/certs/http_ca.crt');
 
     const esClient = new Client({
-        node: 'https://localhost:9200',
+        node: 'http://localhost:9200',
         auth: {
             username: 'elastic',
             password: 'G*LrJcq-FWS_wlzdf0Zk'
-        },
-        tls: {
-            ca: certFileContent,
-            rejectUnauthorized: false
         }
+        // tls: {
+        //     ca: certFileContent,
+        //     rejectUnauthorized: false
+        // }
     });
 
     return esClient;
+}
+
+async function setUpElasticConnection() {
+    const esClient = initializeElasticClient();
+
+    if (! (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.SERVICES })) ) {
+        const response = await esClient.indices.create({
+            index: ELASTIC_INDEX_NAME_MAP.SERVICES,
+            settings: {
+              number_of_shards: 1, // default only 1 shard
+            },
+            mappings: {
+              properties: {
+                field1: {
+                  type: "text",
+                },
+              },
+            },
+        });
+        console.log('CREATE SERVICES RESPONSE', response);
+    }
+
+    // if (! (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.BLOGS })) ) {
+    //     const response = await esClient.indices.create({
+    //         index: ELASTIC_INDEX_NAME_MAP.BLOGS,
+    //         settings: {
+    //           number_of_shards: 1, // default only 1 shard
+    //         },
+    //         mappings: {
+    //           properties: {
+    //             field1: {
+    //               type: "text",
+    //             },
+    //           },
+    //         },
+    //     });
+    //     console.log('CREATE BLOGS RESPONSE', response);
+    // }
+}
+
+async function resetElasticConnection() {
+    const esClient = initializeElasticClient();
+
+    const deleteResponse1 = await esClient.indices.delete({ index: ELASTIC_INDEX_NAME_MAP.SERVICES });
+    console.log('DELETE SERVICES RESPONSE', deleteResponse1);
+
+    // const deleteResponse2 = await esClient.indices.delete({ index: ELASTIC_INDEX_NAME_MAP.BLOGS });
+    // console.log('DELETE BLOGS RESPONS', deleteResponse2);
+}
+
+async function fullTextSearch(searchTerm, advanced) {
+    const esClient = initializeElasticClient();
+
+    const queryObject = {}
+
+    if (advanced) {
+
+    }
+
+    const elasticResponse = await esClient.search(queryObject);
+
+    console.log(elasticResponse?.hits);
+
+    return elasticResponse;
 }
 
 const addToElasticDB = async function(esClient, indexName, dataPayload) {
