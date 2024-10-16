@@ -3,18 +3,8 @@ const { match } = require('assert');
 const { kMaxLength } = require('buffer');
 const fs = require('fs');
 const ELASTIC_INDEX_NAME_MAP = require('./constant');
-const { queryObjects } = require('v8');
 // const { constrainedMemory } = require('process');
 
-// {
-//     "query": {
-//         "match" : {
-//             "title" : "in action"
-//         }
-//     },
-
-
-// }
 function getRandomInRange(from, to, fixed) {
     return (Math.random() * (to - from) + from).toFixed(fixed) * 1;
 }
@@ -121,15 +111,16 @@ async function fullTextSearchAdvanced(searchTerm, fieldNameArrayToMatch,
         //       },
         //     },
         //   },
+        track_scores: true,
         query: {
             bool: {
                 must: [
-                // {
-                //     multi_match: {
-                //         query: searchTerm,
-                //         fields: fieldNameArrayToMatch
-                //     }
-                // },
+                {
+                    multi_match: {
+                        query: searchTerm,
+                        fields: fieldNameArrayToMatch
+                    }
+                },
                 {
                     geo_distance: {
                         distance: geoFilter.distanceText, // example: '200km', '188m'...
@@ -147,10 +138,23 @@ async function fullTextSearchAdvanced(searchTerm, fieldNameArrayToMatch,
         size: limit,
         from: offset,
         // _source: fieldNameArrayToGet
+        sort:[
+            {
+                _geo_distance:{
+                    locations: {
+                        lat: geoFilter.clientLat,
+                        lon: geoFilter.clientLon
+                    },
+                    unit:"km",
+                    // distance_type:"plane",
+                    order:"desc"
+                }
+            },
+        ]
     };
 
     // if (elasticSortScheme?.length) {
-    //     queryObject.sort = elasticSortScheme;
+    //     queryObject.sort += elasticSortScheme;
     //     queryObject.track_score = true;
     // }
 
@@ -292,37 +296,48 @@ const test = async function(init, reset) {
     // });
     // console.log('---->', response1 ,'------');
 
+    // await addToElasticDB(indexName, {id: "37uikk655iic90w1i90e88839", name: "Tu van tao kieu toc", province:"Ba Ria - Vung Tau", providername:"HEHE Baber", category:"Baber Shop",
+    // locations: {
+    //     lat: 46,
+    //     lon: 45
+    // }});
+    // await addToElasticDB(indexName, {id: "37uikk655iic90w1i90ei9939", name: "Tu van tao kieu toc", province:"Ba Ria - Vung Tau", providername:"HEHE Baber", category:"Baber Shop",
+    // locations: {
+    //     lat: 45,
+    //     lon: 46
+    // }});
 
-    // const qAllTest = await queryElasticDB(indexName, {
-    //     query: {
-    //         // bool: {
-    //         //     must: [
-    //         //         {
-    //         //             match: { f1: "vũng tàu" }
-    //         //         }
-    //         //     ],
-    //         //     filter: {
-    //         //         term: { id: "1" }
-    //         //     }
-    //         // }
-    //         match_all: {}
-    //     }
-    //     // sort: [
-    //     //     { f2: { order: 'desc' } }
-    //     // ]
-    // });
+    const qAllTest = await queryElasticDB(indexName, {
+        query: {
+            // bool: {
+            //     must: [
+            //         {
+            //             match: { f1: "vũng tàu" }
+            //         }
+            //     ],
+            //     filter: {
+            //         term: { id: "1" }
+            //     }
+            // }
+            match_all: {}
+        }
+        // sort: [
+        //     { f2: { order: 'desc' } }
+        // ]
+    });
     // console.log("TEST ALL DOC QUERY", qAllTest?.hits,"TEST ALL DOC QUERY");
-    // console.log("TEST ALL DOC QUERY INNER", qAllTest?.hits?.hits,"TEST ALL DOC QUERY INNER");
-    // console.log("*****************************************");
+    console.log("TEST ALL DOC QUERY INNER", qAllTest?.hits?.hits,"TEST ALL DOC QUERY INNER");
+    console.log("*****************************************");
 
-    const q1 = await fullTextSearchAdvanced("binh duong", ["name", "category", "providername", "province"], ["id", "name", "providername", "pin"], 10, 0, [],
+    const q1 = await fullTextSearchAdvanced("vung tau", ["name", "category", "providername", "province"], ["id", "name", "providername", "pin"], 10, 0, [],
         { distanceText: "2000km", clientLat: 45, clientLon: 45 });
 
     // searchTerm, fieldNameArrayToMatch, fieldNameArrayToGet, limit, offset, elasticSortScheme, geoFilter
     const hitsRecord = q1?.hits?.hits?.map(record => {
         return {
             score: record._score,
-            source: JSON.stringify(record._source)
+            source: JSON.stringify(record._source),
+            sort: JSON.stringify(record.sort)
         };
     });
     console.log('++++++++++++++', q1?.hits , '=======================');
