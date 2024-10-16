@@ -41,7 +41,7 @@ function initializeElasticClient() {
 async function setUpElasticConnection() {
     const esClient = initializeElasticClient();
 
-    if (! (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.SERVICES })) ) {
+    // if (! (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.SERVICES })) ) {
         const response = await esClient.indices.create({
             index: ELASTIC_INDEX_NAME_MAP.SERVICES,
             // settings: {
@@ -64,18 +64,14 @@ async function setUpElasticConnection() {
                 province: {
                     type: "text"
                 },
-                pin : {
-                    properties : {
-                        locations : {
-                            type : "geo_point"
-                        }
-                    }
+                locations : {
+                    type : "geo_point"
                 }
               },
             },
         });
         console.log('CREATE SERVICES RESPONSE', response);
-    }
+    // }
 
     // if (! (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.BLOGS })) ) {
     //     const response = await esClient.indices.create({
@@ -111,45 +107,45 @@ async function fullTextSearchAdvanced(searchTerm, fieldNameArrayToMatch,
 
     const queryObject = {
         index: ELASTIC_INDEX_NAME_MAP.SERVICES,
-        query: {
-            geo_bounding_box: {
-              "pin.location": {
-                top_left: {
-                  lat: 42,
-                  lon: -72,
-                },
-                bottom_right: {
-                  lat: 40,
-                  lon: -74,
-                },
-              },
-            },
-          },
         // query: {
-        //     bool: {
-        //         must: [
-        //         {
-        //             multi_match: {
-        //                 query: searchTerm,
-        //                 fields: fieldNameArrayToMatch
-        //             }
+        //     geo_bounding_box: {
+        //       locations: {
+        //         top_left: {
+        //           lat: 42,
+        //           lon: -72,
         //         },
-        //         {
-        //             geo_distance: {
-        //                 distance: geoFilter.distanceText, // example: '200km', '188m'...
-        //                 "pin.location": {
-        //                     lat: geoFilter.clientLat,
-        //                     lon: geoFilter.clientLon
-        //                 }
-        //             }
-        //         }
-        //     ]
-        //     // }
-        //     // filter: {
-        //     }
-        // },
-        // size: limit,
-        // from: offset,
+        //         bottom_right: {
+        //           lat: 40,
+        //           lon: -74,
+        //         },
+        //       },
+        //     },
+        //   },
+        query: {
+            bool: {
+                must: [
+                // {
+                //     multi_match: {
+                //         query: searchTerm,
+                //         fields: fieldNameArrayToMatch
+                //     }
+                // },
+                {
+                    geo_distance: {
+                        distance: geoFilter.distanceText, // example: '200km', '188m'...
+                        locations: {
+                            lat: geoFilter.clientLat,
+                            lon: geoFilter.clientLon
+                        }
+                    }
+                }
+            ]
+            // }
+            // filter: {
+            }
+        },
+        size: limit,
+        from: offset,
         // _source: fieldNameArrayToGet
     };
 
@@ -241,36 +237,37 @@ const test = async function(init, reset) {
         // console.log("create index response: ", response);
         await setUpElasticConnection();
     
-        await addToElasticDB(indexName, {id: "dhu91udoawi9d180i2019iss", name: "Cat Toc 1", province:"Ho Chi Minh", providername:"Abcd' Hair Salon", category:"Baber Shop", pin: {
-        location: {
+        await addToElasticDB(indexName, {id: "dhu91udoawi9d180i2019iss", name: "Cat Toc 1", province:"Ho Chi Minh", providername:"Abcd' Hair Salon", category:"Baber Shop",
+        locations: {
             lat: getRandomInRange(-90, 90, 1),
             lon: getRandomInRange(-90, 90, 1)
-        }}});
-        await addToElasticDB(indexName, {id: "djaoisd919e09wdasihd7119", name: "Massage Thao Moc", province:"tp vung tau", providername:"Abcd' Hair Salon", category:"Healthcare",  pin: {
-            location: {
+        }});
+        await addToElasticDB(indexName, {id: "djaoisd919e09wdasihd7119", name: "Massage Thao Moc", province:"tp vung tau", providername:"Abcd' Hair Salon", category:"Healthcare", 
+            locations: {
                 lat: getRandomInRange(-90, 90, 1),
                 lon: getRandomInRange(-90, 90, 1)
-            }}});
-        await addToElasticDB(indexName, {id: "37uissiQiic90w1i90ei1839", name: "Kham Tong Quat ", province:"Binh Duong", providername:"Abcd' Hair Salon", category:"Baber Shop", pin: {
-            location: {
+            }});
+        await addToElasticDB(indexName, {id: "37uissiQiic90w1i90ei1839", name: "Kham Tong Quat ", province:"Binh Duong", providername:"Abcd' Hair Salon", category:"Baber Shop",
+            locations: {
                 lat: getRandomInRange(-90, 90, 1),
                 lon: getRandomInRange(-90, 90, 1)
-            }}});
-        await addToElasticDB(indexName, {id: "37uissioiic9dai90ei18839", name: "Tu Van Suc Khoe ", province:"Binh Duong", providername:"Abcd' Hair Salon", category:"Healthcare", pin: {
-            location: {
+            }});
+        await addToElasticDB(indexName, {id: "37uissioiic9dai90ei18839", name: "Tu Van Suc Khoe ", province:"Binh Duong", providername:"Abcd' Hair Salon", category:"Healthcare",
+            locations: {
                 lat: getRandomInRange(-90, 90, 1),
                 lon: getRandomInRange(-90, 90, 1)
-            }}});
-        await addToElasticDB(indexName, {id: "37uiss655iic90w1i90ei1839", name: "Vat ly tri Lieu", province:"Vung Tau", providername:"Y Hoc Co Truyen 86", category:"Healthcare",  pin: {
-            location: {
+            }});
+        await addToElasticDB(indexName, {id: "37uiss655iic90w1i90ei1839", name: "Vat ly tri Lieu", province:"Vung Tau", providername:"Y Hoc Co Truyen 86", category:"Healthcare", 
+            locations: {
                 lat: getRandomInRange(-90, 90, 1),
                 lon: getRandomInRange(-90, 90, 1)
-            }}});
-        await addToElasticDB(indexName, {id: "37uikk655iic90w1i90ei1839", name: "Tu van tao kieu toc", province:"Ba Ria - Vung Tau", providername:"HEHE Baber", category:"Baber Shop", pin: {
-            location: {
+            }});
+        await addToElasticDB(indexName, {id: "37uikk655iic90w1i90ei1839", name: "Tu van tao kieu toc", province:"Ba Ria - Vung Tau", providername:"HEHE Baber", category:"Baber Shop",
+            locations: {
                 lat: getRandomInRange(-90, 90, 1),
                 lon: getRandomInRange(-90, 90, 1)
-            }}});
+            }});
+        return;
     }
     if (reset) {
         resetElasticConnection();
@@ -318,7 +315,7 @@ const test = async function(init, reset) {
     // console.log("TEST ALL DOC QUERY INNER", qAllTest?.hits?.hits,"TEST ALL DOC QUERY INNER");
     // console.log("*****************************************");
 
-    const q1 = await fullTextSearchAdvanced("binh duong", ["name", "category", "providername", "province"], ["id", "name", "providername", "pin"], 1, 1, [],
+    const q1 = await fullTextSearchAdvanced("binh duong", ["name", "category", "providername", "province"], ["id", "name", "providername", "pin"], 10, 0, [],
         { distanceText: "2000km", clientLat: 45, clientLon: 45 });
 
     // searchTerm, fieldNameArrayToMatch, fieldNameArrayToGet, limit, offset, elasticSortScheme, geoFilter
@@ -340,25 +337,31 @@ const test = async function(init, reset) {
 // test(true, false);
 test(false, false);
 
-(async function() { const esClient = initializeElasticClient();
-const response7 = await esClient.search({
-    index: "testidx",
-    query: {
-      geo_bounding_box: {
-        location: {
-          top_left: {
-            lat: 42,
-            lon: -72,
-          },
-          bottom_right: {
-            lat: 40,
-            lon: -74,
-          },
-        },
-      },
-    },
-  });
-  console.log(response7); });
+// initializeElasticClient().indices.get({
+//     index: ELASTIC_INDEX_NAME_MAP.SERVICES,
+// }).then((res) => {
+//     console.log("------", JSON.stringify(res));
+// })
+
+// (async function() { const esClient = initializeElasticClient();
+// const response7 = await esClient.search({
+//     index: "testidx",
+//     query: {
+//       geo_bounding_box: {
+//         location: {
+//           top_left: {
+//             lat: 42,
+//             lon: -72,
+//           },
+//           bottom_right: {
+//             lat: 40,
+//             lon: -74,
+//           },
+//         },
+//       },
+//     },
+//   });
+//   console.log(response7); });
 
 // module.exports = {
 //     initializeElasticClient,
