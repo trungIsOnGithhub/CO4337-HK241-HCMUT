@@ -12,9 +12,8 @@ const { queryObjects } = require('v8');
             "title" : "in action"
         }
     },
-    "size": 2,
-    "from": 0,
-    "_source": [ "title", "summary", "publish_date" ]
+
+
 }
 
 function initializeElasticClient() {
@@ -47,9 +46,21 @@ async function setUpElasticConnection() {
             },
             mappings: {
               properties: {
-                field1: {
-                  type: "text",
+                id: {
+                    type: "text"
                 },
+                name: {
+                    type: "text"
+                },
+                category: {
+                    type: "text"
+                },
+                providername: {
+                    type: "text"
+                },
+                province: {
+                    type: "text"
+                }
               },
             },
         });
@@ -84,13 +95,24 @@ async function resetElasticConnection() {
     // console.log('DELETE BLOGS RESPONS', deleteResponse2);
 }
 
-async function fullTextSearch(searchTerm, advanced) {
+async function fullTextSearch(searchTerm, fieldNameArrayToMatch,
+        fieldNameArrayToGet, limit, offset, elasticSortScheme) {
     const esClient = initializeElasticClient();
 
-    const queryObject = {}
+    const queryObject = {
+        query: {
+            multi_match: searchTerm,
+            fields: fieldNameArrayToMatch
+        },
+        size: limit,
+        from: offset,
+        _source: fieldNameArrayToGet,
+        sort: []
+    };
 
-    if (advanced) {
-
+    if (elasticSortScheme?.length) {
+        queryObject.sort = elasticSortScheme;
+        queryObject.track_score = true;
     }
 
     const elasticResponse = await esClient.search(queryObject);
@@ -137,7 +159,7 @@ const queryElasticDB = async function(esClient, indexName, queryOptionsObject) {
 
 const test = async function() {
     // const esClient = initializeElasticClient();
-    const indexName = "sampleindex3";
+    const indexName = ELASTIC_INDEX_NAME_MAP.SERVICES;
     // const oldIndexName = "sampleindex";
     // if (!esClient?.indices?.exists({ index: indexName })) {
     //     console.log('Index Not Found, Inserted Data To Make It Available.');
@@ -168,9 +190,12 @@ const test = async function() {
     // });
     // console.log("create index response: ", response);
 
-    // await addToElasticDB(indexName, {id: "1", f1:"bà rịa-vũng tàu", f2:68, f3:false});
-    // await addToElasticDB(indexName, {id: "2", f1:"thành phố vũng tàu", f2:69, f3:true});
-    // await addToElasticDB(indexName, {id: "1", f1:"thành phố vũng tàu", f2:86, f3:false});
+    await addToElasticDB(indexName, {id: "dhu91udoawi9d180i2019iss", name: "Cat Toc 1", province:"Ho Chi Minh", providername:"Abcd' Hair Salon", category:"Baber Shop"});
+    await addToElasticDB(indexName, {id: "djaoisd919e09wdasihd7119", name: "Massage Thao Moc", province:"tp vung tau", providername:"Abcd' Hair Salon", category:"Healthcare"});
+    await addToElasticDB(indexName, {id: "37uissioiic90w1i90ei1839", name: "Tu Van Suc Khoe ", province:"Binh Duong", providername:"Abcd' Hair Salon", category:"Baber Shop"});
+    await addToElasticDB(indexName, {id: "37uissioiic9dai90ei18839", name: "Tu Van Suc Khoe ", province:"Binh Duong", providername:"Abcd' Hair Salon", category:"Healthcare"});
+    await addToElasticDB(indexName, {id: "37uiss655iic90w1i90ei1839", name: "Vat ly tri Lieu", province:"Vung Tau", providername:"Y Hoc Co Truyen 86", category:"Healthcare"});
+    await addToElasticDB(indexName, {id: "37uikk655iic90w1i90ei1839", name: "Tu van tao kieu toc", province:"Ba Ria - Vung Tau", providername:"HEHE Baber", category:"Baber Shop"});
    
     //  }
     // else {
@@ -189,24 +214,28 @@ const test = async function() {
     //     text: "bà rịa-vũng tàu",
     // });
     // console.log('---->', response1 ,'------');
-    const q1 = await queryElasticDB(indexName, {
-        track_scores: true,
+    const qAllTest = await queryElasticDB(indexName, {
         query: {
-            bool: {
-                must: [
-                    {
-                        match: { f1: "vũng tàu" }
-                    }
-                ],
-                filter: {
-                    term: { id: "1" }
-                }
-            }
+            // bool: {
+            //     must: [
+            //         {
+            //             match: { f1: "vũng tàu" }
+            //         }
+            //     ],
+            //     filter: {
+            //         term: { id: "1" }
+            //     }
+            // }
+            match_all: {}
         },
-        sort: [
-            { f2: { order: 'desc' } }
-        ]
+        // sort: [
+        //     { f2: { order: 'desc' } }
+        // ]
     });
+    console.log("TEST ALL DOC QUERY", qAllTest?.hits,"TEST ALL DOC QUERY");
+    console.log("*****************************************");
+
+    const q1 = fullTextSearch("binh duong", [], [], 1, 1);
     const hitsRecord = q1?.hits?.hits?.map(record => {
         return {
             score: record._score,
