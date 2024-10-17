@@ -54,6 +54,9 @@ async function setUpElasticConnection() {
                 province: {
                     type: "text"
                 },
+                // price: {
+                //     type: "float"
+                // },
                 locations : {
                     type : "geo_point"
                 }
@@ -92,7 +95,8 @@ async function resetElasticConnection() {
 }
 
 async function fullTextSearchAdvanced(searchTerm, fieldNameArrayToMatch,
-                fieldNameArrayToGet, limit, offset, elasticSortScheme, geoFilter) {
+                fieldNameArrayToGet, limit, offset, elasticSortScheme,
+                geoFilter, geoSort) {
     const esClient = initializeElasticClient();
 
     const queryObject = {
@@ -137,22 +141,23 @@ async function fullTextSearchAdvanced(searchTerm, fieldNameArrayToMatch,
         },
         size: limit,
         from: offset,
-        // _source: fieldNameArrayToGet
-        sort:[
-            {
-                _geo_distance:{
-                    locations: {
-                        lat: geoFilter.clientLat,
-                        lon: geoFilter.clientLon
-                    },
-                    unit:"km",
-                    // distance_type:"plane",
-                    order:"desc"
-                }
-            },
-        ]
+        _source: fieldNameArrayToGet,
+        sort:[]
     };
 
+    if (geoSort?.unit && geoSort?.order) {
+        queryObject.sort.push(            {
+            _geo_distance:{
+                locations: {
+                    lat: geoFilter.clientLat,
+                    lon: geoFilter.clientLon
+                },
+                unit: geoSort.unit,
+                // distance_type:"plane",
+                order: geoSort.order
+            }
+        });
+    }
     // if (elasticSortScheme?.length) {
     //     queryObject.sort += elasticSortScheme;
     //     queryObject.track_score = true;
@@ -329,8 +334,12 @@ const test = async function(init, reset) {
     console.log("TEST ALL DOC QUERY INNER", qAllTest?.hits?.hits,"TEST ALL DOC QUERY INNER");
     console.log("*****************************************");
 
-    const q1 = await fullTextSearchAdvanced("vung tau", ["name", "category", "providername", "province"], ["id", "name", "providername", "pin"], 10, 0, [],
-        { distanceText: "2000km", clientLat: 45, clientLon: 45 });
+    const q1 = await fullTextSearchAdvanced("vung tau",
+        ["name", "category", "providername", "province"],
+        ["id", "name", "providername", "pin"], 10, 0,
+        ["name", "category"],
+        { distanceText: "2000km", clientLat: 45, clientLon: 45 },
+        { unit: "km", order: "desc" });
 
     // searchTerm, fieldNameArrayToMatch, fieldNameArrayToGet, limit, offset, elasticSortScheme, geoFilter
     const hitsRecord = q1?.hits?.hits?.map(record => {
