@@ -159,8 +159,8 @@ async function fullTextSearchAdvanced(searchTerm, fieldNameArrayToMatch,
         });
     }
     if (elasticSortScheme?.length) {
-         queryObject.sort += elasticSortScheme;
-         queryObject.track_score = true;
+        queryObject.sort = [...queryObject.sort, ...elasticSortScheme];
+        // queryObject.track_score = true;
     }
 
     console.log("QUERY OBJECT: ",JSON.stringify(queryObject));
@@ -255,7 +255,7 @@ const test = async function(init, reset) {
             locations: {
                 lat: getRandomInRange(-90, 90, 1),
                 lon: getRandomInRange(-90, 90, 1)
-            }, price: 9999	.888});
+            }, price: 9999.888});
         await addToElasticDB(indexName, {id: "37uissiQiic90w1i90ei1839", name: "Kham Tong Quat ", province:"Binh Duong", providername:"Abcd' Hair Salon", category:"Baber Shop",
             locations: {
                 lat: getRandomInRange(-90, 90, 1),
@@ -276,6 +276,16 @@ const test = async function(init, reset) {
                 lat: getRandomInRange(-90, 90, 1),
                 lon: getRandomInRange(-90, 90, 1)
             }, price: 6688.888});
+        await addToElasticDB(indexName, {id: "37uikk655iic90w1i90e88839", name: "Tu van tao kieu toc", province:"Ba Ria - Vung Tau", providername:"HEHE Baber", category:"Baber Shop",
+        locations: {
+            lat: 46,
+            lon: 45
+        }, price: 8899.888});
+        await addToElasticDB(indexName, {id: "37uikk655iic90w1i90ei9939", name: "Tu van tao kieu toc", province:"Ba Ria - Vung Tau", providername:"HEHE Baber", category:"Baber Shop",
+        locations: {
+            lat: 45,
+            lon: 46
+        }, price: 889.888});
         return;
     }
     if (reset) {
@@ -300,17 +310,6 @@ const test = async function(init, reset) {
     //     text: "bà rịa-vũng tàu",
     // });
     // console.log('---->', response1 ,'------');
-
-    // await addToElasticDB(indexName, {id: "37uikk655iic90w1i90e88839", name: "Tu van tao kieu toc", province:"Ba Ria - Vung Tau", providername:"HEHE Baber", category:"Baber Shop",
-    // locations: {
-    //     lat: 46,
-    //     lon: 45
-    // }});
-    // await addToElasticDB(indexName, {id: "37uikk655iic90w1i90ei9939", name: "Tu van tao kieu toc", province:"Ba Ria - Vung Tau", providername:"HEHE Baber", category:"Baber Shop",
-    // locations: {
-    //     lat: 45,
-    //     lon: 46
-    // }});
 
     const qAllTest = await queryElasticDB(indexName, {
         query: {
@@ -357,9 +356,9 @@ const test = async function(init, reset) {
     // }
 };
 
-// test(false, true);
+test(false, true);
 test(true, false);
-// test(false, false);
+test(false, false);
 
 // initializeElasticClient().indices.get({
 //     index: ELASTIC_INDEX_NAME_MAP.SERVICES,
