@@ -65,10 +65,16 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
         })
     }
 
+    let categoriesIncluded = [];
+    if (categories?.length) {
+        categoriesIncluded = categories.split(',');
+    }
+
     const geoLocationQueryOption = { distanceText,  clientLat, clientLon };
 
-    const columnNamesToMatch = ["name", "category", "providername", "province"];
+    const columnNamesToMatch = ["name", "providername", "province"];
     const columnNamesToGet = ["id", "name", "providername", "pin"];
+
     let services = [];
     // const services = await esDBModule.fullTextSearchAdvanced(
     //     searchTerm,
@@ -77,8 +83,20 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
     //     limit, offset,
     //     sortOption,
     //     geoLocationQueryOption,
-    //     geoSortOption
+    //     geoSortOption,
+    //     categories
     // )?.hits?.hits;
+
+    console.log("Query Input Parameter: ", JSON.stringify({
+        searchTerm,
+        columnNamesToMatch,
+        columnNamesToGet,
+        limit, offset,
+        sortOption,
+        geoLocationQueryOption,
+        geoSortOption,
+        categories       
+    }));
 
     return res.status(200).json({
         success: services ? true : false,

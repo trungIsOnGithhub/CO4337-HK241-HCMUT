@@ -93,7 +93,7 @@ async function resetElasticConnection(indexToDelete) {
 
 async function fullTextSearchAdvanced(searchTerm, fieldNameArrayToMatch,
                 fieldNameArrayToGet, limit, offset, elasticSortScheme,
-                geoFilter, geoSort) {
+                geoFilter, geoSort, categoriesIncluded) {
     const esClient = initializeElasticClient();
 
     const queryObject = {
@@ -118,10 +118,9 @@ async function fullTextSearchAdvanced(searchTerm, fieldNameArrayToMatch,
                     }
                 }
             ]
-            // }
-            // filter: {
             }
         },
+        filter: [],
         size: limit,
         from: offset,
         _source: fieldNameArrayToGet,
@@ -143,6 +142,12 @@ async function fullTextSearchAdvanced(searchTerm, fieldNameArrayToMatch,
     }
     if (elasticSortScheme?.length) {
         queryObject.sort = [...queryObject.sort, ...elasticSortScheme];
+    }
+
+    if (categories?.length) {
+        queryObject.filter.push({
+            term: { category: categories }
+        });
     }
 
     console.log("QUERY OBJECT: ",JSON.stringify(queryObject));
