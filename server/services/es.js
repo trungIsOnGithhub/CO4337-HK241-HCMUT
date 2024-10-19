@@ -31,7 +31,7 @@ function initializeElasticClient() {
 async function setUpElasticConnection() {
     const esClient = initializeElasticClient();
 
-    // if (! (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.SERVICES })) ) {
+    if (! (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.SERVICES })) ) {
         const response = await esClient.indices.create({
             index: ELASTIC_INDEX_NAME_MAP.SERVICES,
             // settings: {
@@ -64,34 +64,31 @@ async function setUpElasticConnection() {
             },
         });
         console.log('CREATE SERVICES RESPONSE', response);
-    // }
+    }
 
-    // if (! (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.BLOGS })) ) {
-    //     const response = await esClient.indices.create({
-    //         index: ELASTIC_INDEX_NAME_MAP.BLOGS,
-    //         settings: {
-    //           number_of_shards: 1, // default only 1 shard
-    //         },
-    //         mappings: {
-    //           properties: {
-    //             field1: {
-    //               type: "text",
-    //             },
-    //           },
-    //         },
-    //     });
-    //     console.log('CREATE BLOGS RESPONSE', response);
-    // }
+    if (! (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.BLOGS })) ) {
+        const response = await esClient.indices.create({
+            index: ELASTIC_INDEX_NAME_MAP.BLOGS,
+            settings: {
+              number_of_shards: 1, // default only 1 shard
+            },
+            mappings: {
+              properties: {
+                field1: {
+                  type: "text",
+                },
+              },
+            },
+        });
+        console.log('CREATE BLOGS RESPONSE', response);
+    }
 }
 
-async function resetElasticConnection() {
+async function resetElasticConnection(indexToDelete) {
     const esClient = initializeElasticClient();
 
-    const deleteResponse1 = await esClient.indices.delete({ index: ELASTIC_INDEX_NAME_MAP.SERVICES });
-    console.log('DELETE SERVICES RESPONSE', deleteResponse1);
-
-    // const deleteResponse2 = await esClient.indices.delete({ index: ELASTIC_INDEX_NAME_MAP.BLOGS });
-    // console.log('DELETE BLOGS RESPONS', deleteResponse2);
+    const deleteResponse1 = await esClient.indices.delete({ index: indexToDelete });
+    console.log(`DELETE ${indexToDelete} RESPONSE1`, deleteResponse1);
 }
 
 async function fullTextSearchAdvanced(searchTerm, fieldNameArrayToMatch,
@@ -101,20 +98,6 @@ async function fullTextSearchAdvanced(searchTerm, fieldNameArrayToMatch,
 
     const queryObject = {
         index: ELASTIC_INDEX_NAME_MAP.SERVICES,
-        // query: {
-        //     geo_bounding_box: {
-        //       locations: {
-        //         top_left: {
-        //           lat: 42,
-        //           lon: -72,
-        //         },
-        //         bottom_right: {
-        //           lat: 40,
-        //           lon: -74,
-        //         },
-        //       },
-        //     },
-        //   },
         track_scores: true,
         query: {
             bool: {
@@ -160,7 +143,6 @@ async function fullTextSearchAdvanced(searchTerm, fieldNameArrayToMatch,
     }
     if (elasticSortScheme?.length) {
         queryObject.sort = [...queryObject.sort, ...elasticSortScheme];
-        // queryObject.track_score = true;
     }
 
     console.log("QUERY OBJECT: ",JSON.stringify(queryObject));
@@ -190,7 +172,7 @@ const addToElasticDB = async function(indexName, dataPayload) {
 
 const isHealthStatusOKElasticDB = async function(esClient) {
     const response = await esClient.cluster.health({
-        timeout: "5s",
+        timeout: ELASTIC_INDEX_NAME_MAP.HEALTH_STATUS_TIMEOUT,
     });
     return (response?.status === "green" || response?.status === "yellow")
 }
@@ -210,86 +192,87 @@ const queryElasticDB = async function(indexName, queryOptionsObject) {
     });
 };
 
-const test = async function(init, reset) {
+const multiFunc = async function(init, reset) {
     // const esClient = initializeElasticClient();
     const indexName = ELASTIC_INDEX_NAME_MAP.SERVICES;
     if (init) {
-        console.log("INDEX NAME: " + indexName);
-        // const oldIndexName = "sampleindex";
-        // if (!esClient?.indices?.exists({ index: indexName })) {
-        //     console.log('Index Not Found, Inserted Data To Make It Available.');
+        // console.log("INDEX NAME: " + indexName);
+        // // const oldIndexName = "sampleindex";
+        // // if (!esClient?.indices?.exists({ index: indexName })) {
+        // //     console.log('Index Not Found, Inserted Data To Make It Available.');
     
-        //     const stats = await esClient?.indices?.stats({ index: indexName });
-        //     const indexPStat = stats?.indices[indexName]?.primaries;
+        // //     const stats = await esClient?.indices?.stats({ index: indexName });
+        // //     const indexPStat = stats?.indices[indexName]?.primaries;
     
-        //     if (indexPStat?.docs?.count > 3) {
-        //         await esClient.indices.delete({ index: indexName });
-        //         console.log('Overcount on Index Document, Deleted Index');
-        //         return;
-        //     }
-        // const responseDel = await esClient.indices.delete({ index: indexName });
-        // console.log("delete index response: ", responseDel);
-        // const response = await esClient.indices.create({
-        //     index: indexName,
-        //     settings: {
-        //       analysis: {
-        //         analyzer: {
-        //           default: {
-        //             type: "custom",
-        //             tokenizer: "standard",
-        //             filter: ["lowercase", "asciifolding"],
-        //           },
-        //         },
-        //       },
-        //     },
-        // });
-        // console.log("create index response: ", response);
+        // //     if (indexPStat?.docs?.count > 3) {
+        // //         await esClient.indices.delete({ index: indexName });
+        // //         console.log('Overcount on Index Document, Deleted Index');
+        // //         return;
+        // //     }
+        // // const responseDel = await esClient.indices.delete({ index: indexName });
+        // // console.log("delete index response: ", responseDel);
+        // // const response = await esClient.indices.create({
+        // //     index: indexName,
+        // //     settings: {
+        // //       analysis: {
+        // //         analyzer: {
+        // //           default: {
+        // //             type: "custom",
+        // //             tokenizer: "standard",
+        // //             filter: ["lowercase", "asciifolding"],
+        // //           },
+        // //         },
+        // //       },
+        // //     },
+        // // });
+        // // console.log("create index response: ", response);
         await setUpElasticConnection();
     
-        await addToElasticDB(indexName, {id: "dhu91udoawi9d180i2019iss", name: "Cat Toc 1", province:"Ho Chi Minh", providername:"Abcd' Hair Salon", category:"Baber Shop",
-        locations: {
-            lat: getRandomInRange(-90, 90, 1),
-            lon: getRandomInRange(-90, 90, 1)
-        }, price: 6666.888});
-        await addToElasticDB(indexName, {id: "djaoisd919e09wdasihd7119", name: "Massage Thao Moc", province:"tp vung tau", providername:"Abcd' Hair Salon", category:"Healthcare", 
-            locations: {
-                lat: getRandomInRange(-90, 90, 1),
-                lon: getRandomInRange(-90, 90, 1)
-            }, price: 9999.888});
-        await addToElasticDB(indexName, {id: "37uissiQiic90w1i90ei1839", name: "Kham Tong Quat ", province:"Binh Duong", providername:"Abcd' Hair Salon", category:"Baber Shop",
-            locations: {
-                lat: getRandomInRange(-90, 90, 1),
-                lon: getRandomInRange(-90, 90, 1)
-            }, price: 8888.888});
-        await addToElasticDB(indexName, {id: "37uissioiic9dai90ei18839", name: "Tu Van Suc Khoe ", province:"Binh Duong", providername:"Abcd' Hair Salon", category:"Healthcare",
-            locations: {
-                lat: getRandomInRange(-90, 90, 1),
-                lon: getRandomInRange(-90, 90, 1)
-            }, price: 6666.888});
-        await addToElasticDB(indexName, {id: "37uiss655iic90w1i90ei1839", name: "Vat ly tri Lieu", province:"Vung Tau", providername:"Y Hoc Co Truyen 86", category:"Healthcare", 
-            locations: {
-                lat: getRandomInRange(-90, 90, 1),
-                lon: getRandomInRange(-90, 90, 1)
-            }, price: 6699.888});
-        await addToElasticDB(indexName, {id: "37uikk655iic90w1i90ei1839", name: "Tu van tao kieu toc", province:"Ba Ria - Vung Tau", providername:"HEHE Baber", category:"Baber Shop",
-            locations: {
-                lat: getRandomInRange(-90, 90, 1),
-                lon: getRandomInRange(-90, 90, 1)
-            }, price: 6688.888});
-        await addToElasticDB(indexName, {id: "37uikk655iic90w1i90e88839", name: "Tu van tao kieu toc", province:"Ba Ria - Vung Tau", providername:"HEHE Baber", category:"Baber Shop",
-        locations: {
-            lat: 46,
-            lon: 45
-        }, price: 8899.888});
-        await addToElasticDB(indexName, {id: "37uikk655iic90w1i90ei9939", name: "Tu van tao kieu toc", province:"Ba Ria - Vung Tau", providername:"HEHE Baber", category:"Baber Shop",
-        locations: {
-            lat: 45,
-            lon: 46
-        }, price: 889.888});
+        // await addToElasticDB(indexName, {id: "dhu91udoawi9d180i2019iss", name: "Cat Toc 1", province:"Ho Chi Minh", providername:"Abcd' Hair Salon", category:"Baber Shop",
+        // locations: {
+        //     lat: getRandomInRange(-90, 90, 1),
+        //     lon: getRandomInRange(-90, 90, 1)
+        // }, price: 6666.888});
+        // await addToElasticDB(indexName, {id: "djaoisd919e09wdasihd7119", name: "Massage Thao Moc", province:"tp vung tau", providername:"Abcd' Hair Salon", category:"Healthcare", 
+        //     locations: {
+        //         lat: getRandomInRange(-90, 90, 1),
+        //         lon: getRandomInRange(-90, 90, 1)
+        //     }, price: 9999.888});
+        // await addToElasticDB(indexName, {id: "37uissiQiic90w1i90ei1839", name: "Kham Tong Quat ", province:"Binh Duong", providername:"Abcd' Hair Salon", category:"Baber Shop",
+        //     locations: {
+        //         lat: getRandomInRange(-90, 90, 1),
+        //         lon: getRandomInRange(-90, 90, 1)
+        //     }, price: 8888.888});
+        // await addToElasticDB(indexName, {id: "37uissioiic9dai90ei18839", name: "Tu Van Suc Khoe ", province:"Binh Duong", providername:"Abcd' Hair Salon", category:"Healthcare",
+        //     locations: {
+        //         lat: getRandomInRange(-90, 90, 1),
+        //         lon: getRandomInRange(-90, 90, 1)
+        //     }, price: 6666.888});
+        // await addToElasticDB(indexName, {id: "37uiss655iic90w1i90ei1839", name: "Vat ly tri Lieu", province:"Vung Tau", providername:"Y Hoc Co Truyen 86", category:"Healthcare", 
+        //     locations: {
+        //         lat: getRandomInRange(-90, 90, 1),
+        //         lon: getRandomInRange(-90, 90, 1)
+        //     }, price: 6699.888});
+        // await addToElasticDB(indexName, {id: "37uikk655iic90w1i90ei1839", name: "Tu van tao kieu toc", province:"Ba Ria - Vung Tau", providername:"HEHE Baber", category:"Baber Shop",
+        //     locations: {
+        //         lat: getRandomInRange(-90, 90, 1),
+        //         lon: getRandomInRange(-90, 90, 1)
+        //     }, price: 6688.888});
+        // await addToElasticDB(indexName, {id: "37uikk655iic90w1i90e88839", name: "Tu van tao kieu toc", province:"Ba Ria - Vung Tau", providername:"HEHE Baber", category:"Baber Shop",
+        // locations: {
+        //     lat: 46,
+        //     lon: 45
+        // }, price: 8899.888});
+        // await addToElasticDB(indexName, {id: "37uikk655iic90w1i90ei9939", name: "Tu van tao kieu toc", province:"Ba Ria - Vung Tau", providername:"HEHE Baber", category:"Baber Shop",
+        // locations: {
+        //     lat: 45,
+        //     lon: 46
+        // }, price: 889.888});
         return;
     }
     if (reset) {
-        resetElasticConnection();
+        resetElasticConnection(ELASTIC_INDEX_NAME_MAP.SERVICES);
+        resetElasticConnection(ELASTIC_INDEX_NAME_MAP.BLOGS);
         return;
     }
    
@@ -356,9 +339,9 @@ const test = async function(init, reset) {
     // }
 };
 
-test(false, true);
-test(true, false);
-test(false, false);
+// multiFunc(false, true);
+multiFunc(true, false);
+// multiFunc(false, false);
 
 // initializeElasticClient().indices.get({
 //     index: ELASTIC_INDEX_NAME_MAP.SERVICES,
@@ -386,9 +369,11 @@ test(false, false);
 //   });
 //   console.log(response7); });
 
-// module.exports = {
-//     initializeElasticClient,
-//     addToElasticDB,
-//     queryElasticDB,
-//     isHealthStatusOKElasticDB
-// }
+module.exports = {
+    queryElasticDB,
+    addToElasticDB,
+    fullTextSearchAdvanced,
+    isHealthStatusOKElasticDB,
+    multiFunc,
+    initializeElasticClient
+}

@@ -40,6 +40,32 @@ const createService = asyncHandler(async(req, res)=>{
     })
 })
 
+const searchServiceAdvanced = asyncHandler(async (req, res) => {
+    let { searchTerm, limit, offset, sortBy, } = req.body;
+
+    let sortOption = [];
+    let geoSortOption = null;
+    if (sortBy === "price") { sortOption.push({price : {order : "asc"}}); }
+    if (sortBy.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
+
+    const columnNamesToMatch = ["name", "category", "providername", "province"];
+    const columnNamesToGet = ["id", "name", "providername", "pin"];
+
+    const services = await esDBModule.fullTextSearchAdvanced(
+        searchTerm,
+        columnNamesToMatch,
+        columnNamesToGet, limit, offset,
+        sortOption,
+        { distanceText: "2000km", clientLat: 45, clientLon: 45 },
+        geoSortOption
+    );
+
+    return res.status(200).json({
+        success: services ? true : false,
+        searched: services ? 'Created successfully' : "Cannot create new service"
+    })
+});
+
 // get all staffs
 const getAllServicesByAdmin = asyncHandler(async (req, res) => {
     const {_id} = req.user
@@ -664,5 +690,6 @@ module.exports = {
     ratingService,
     getMostPurchasedService,
     getAllServicesByProviderId,
-    searchAllServicesPublic
+    searchAllServicesPublic,
+    searchServiceAdvanced
 }
