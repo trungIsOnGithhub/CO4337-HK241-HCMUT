@@ -46,7 +46,7 @@ async function migrateServiceDataFromMongoDBToElasticDB() {
             delete newObjectToAdd.assigned_staff;
             delete newObjectToAdd.bookingQuantity;
             delete newObjectToAdd.totalRatings;
-            delete newObjectToAdd.ratings;
+            delete newObjectToAdd.rating;
             // newObjectToAdd.
             // elastic db does not allowed exiternal _id
             await esDBModule.addToElasticDB(esDBConstant.SERVICES, newObjectToAdd);

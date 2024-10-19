@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useCallback} from 'react'
 import { useParams, useSearchParams, createSearchParams, useNavigate} from 'react-router-dom'
 import { Breadcrumb, Service, SearchItemService, InputSelect, Pagination} from '../../components'
-import { apiSearchServicePublic } from '../../apis'
+import { apiSearchServiceAdvanced, apiSearchServicePublic } from '../../apis'
 import Masonry from 'react-masonry-css'
 import { sorts } from '../../ultils/constant'
 import clsx from 'clsx'
@@ -26,19 +26,34 @@ const Services = ({dispatch}) => {
   const {isShowModal} = useSelector(state => state.app)
 
 
-  const fetchServiceCategories = async (queries) => {
-    if(category && category !== 'services'){
-      queries.category = category
+  const fetchServiceCategories = async (queries, advancedQuery, useAdvanced) => {
+    let response = [];
+
+    if (useAdvanced) {
+      if(category && category !== 'services'){
+        advancedQuery.categories = category;
+      }
+
+      console.log('Elastic Pre Query', queries, 'Elastic Pre Query');
+      response = await apiSearchServiceAdvanced(advancedQuery);
+
+      console.log("RESPONSE SERVICES ADVANCED:", response.services);
     }
-    console.log('Elastic Pre Query', queries, 'Elastic Pre Query');
-    const response = await apiSearchServicePublic(queries)
-    if(response.success) setServices(response)
+    else {
+      if(category && category !== 'services'){
+        queries.category = category;
+      }
+      response = await apiSearchServicePublic(queries)
+    }
+
+    if(response.success) setServices(response.services);
     dispatch(getCurrent())
   }
 
   useEffect(() => {
     window.scrollTo(0,0)
-    const queries = Object.fromEntries([...params])
+    const queries = Object.fromEntries([...params]);
+
     let priceQuery =  {}
     if(queries.to && queries.from){
       priceQuery = {$and: [
@@ -54,7 +69,17 @@ const Services = ({dispatch}) => {
     delete queries.from
     delete queries.to
     const q = {...priceQuery, ...queries}
-    fetchServiceCategories(q)
+    console.log(`PRE FETCH ${JSON.stringify(q)}`);
+
+    const advancedQuery = {
+      searchTerm: "",
+      limit: 10 , offset: 0,
+      sortBy: queries?.sort,
+      clientLat: 45, clientLon: 45,
+      distanceText: "2000km"
+    };
+
+    fetchServiceCategories(q, advancedQuery, true);
   }, [params])
   
   const changeActive = useCallback((name)=>{

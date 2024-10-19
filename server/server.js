@@ -5,7 +5,7 @@ const initRoutes = require('./routes');
 const cookieParser = require('cookie-parser');
 const cors =  require('cors');
 const socket = require("socket.io");
-const { initializeElasticClient } = require('./services/es');
+// const { initializeElasticClient } = require('./services/es');
 
 const app = express();
 app.use(cors({
@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 // services init
 dbConnect();
-initializeElasticClient();
+// initializeElasticClient();
 // services init
 initRoutes(app);
 

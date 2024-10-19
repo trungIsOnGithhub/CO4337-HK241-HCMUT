@@ -6,7 +6,7 @@ const slugify = require('slugify')
 const makeSku = require('uniqid')
 const Order = require('../models/order')
 const esIndexNameList = require('../services/constant');
-const esDBModule = require('../services/es');
+// const esDBModule = require('../services/es');
 
 const createService = asyncHandler(async(req, res)=>{
     const {name, price, description, category, assigned_staff, hour, minute, provider_id,  elastic_query} = req.body
@@ -22,17 +22,17 @@ const createService = asyncHandler(async(req, res)=>{
     if(image) req.body.image = image
     const newService = await Service.create(req.body)
 
-    if (!elastic_query && newService) {
-        const newServiceFull = await Service.findById(newService._id)
-        .populate({
-            path: 'provider_id'
-        }).populate({
-            path: 'assigned_staff'
-        });
+    // if (!elastic_query && newService) {
+    //     const newServiceFull = await Service.findById(newService._id)
+    //     .populate({
+    //         path: 'provider_id'
+    //     }).populate({
+    //         path: 'assigned_staff'
+    //     });
 
-        const esClient = esDBModule.esDBModule.initializeElasticClient();
-        const response = esDBModule.addToElasticDB(esClient, esIndexNameList.SERVICES ,newServiceFull);
-    }
+    //     const esClient = esDBModule.esDBModule.initializeElasticClient();
+    //     const response = esDBModule.addToElasticDB(esClient, esIndexNameList.SERVICES ,newServiceFull);
+    // }
 
     return res.status(200).json({
         success: newService ? true : false,
@@ -41,28 +41,48 @@ const createService = asyncHandler(async(req, res)=>{
 })
 
 const searchServiceAdvanced = asyncHandler(async (req, res) => {
-    let { searchTerm, limit, offset, sortBy, } = req.body;
+    console.log("INCOMING REQUESTS:", req.body);
+
+    let { searchTerm, limit, offset, categories, sortBy,
+        clientLat, clientLon, distanceText } = req.body;
 
     let sortOption = [];
     let geoSortOption = null;
-    if (sortBy === "price") { sortOption.push({price : {order : "asc"}}); }
-    if (sortBy.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
+    if (sortBy?.indexOf("-price") > -1) {
+        sortOption.push({price : {order : "desc"}});
+    }
+    else if (sortBy?.indexOf("price") > -1) {
+        sortOption.push({price : {order : "asc"}});
+    }
+
+    if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
+
+    if (!(distanceText?.match(/[1-9][0-9]*km/g)?.length === 1)) {
+        return res.status(400).json({
+            success: false,
+            searched: [],
+            msg: "Bad Request"
+        })
+    }
+
+    const geoLocationQueryOption = { distanceText,  clientLat, clientLon };
 
     const columnNamesToMatch = ["name", "category", "providername", "province"];
     const columnNamesToGet = ["id", "name", "providername", "pin"];
-
-    const services = await esDBModule.fullTextSearchAdvanced(
-        searchTerm,
-        columnNamesToMatch,
-        columnNamesToGet, limit, offset,
-        sortOption,
-        { distanceText: "2000km", clientLat: 45, clientLon: 45 },
-        geoSortOption
-    );
+    let services = [];
+    // const services = await esDBModule.fullTextSearchAdvanced(
+    //     searchTerm,
+    //     columnNamesToMatch,
+    //     columnNamesToGet,
+    //     limit, offset,
+    //     sortOption,
+    //     geoLocationQueryOption,
+    //     geoSortOption
+    // )?.hits?.hits;
 
     return res.status(200).json({
         success: services ? true : false,
-        searched: services ? 'Created successfully' : "Cannot create new service"
+        services: services
     })
 });
 

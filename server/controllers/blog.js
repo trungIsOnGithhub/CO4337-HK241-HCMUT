@@ -63,6 +63,13 @@ const getAllBlogTags = asyncHandler(async (req,res) => {
     }) 
 });
 
+const searchBlogsAdvanced = asyncHandler(async (req, res)=>{
+    return res.status(200).json({
+        success: response ? true : false,
+        blogs: []
+    });
+});
+
 const getAllBlogs = asyncHandler(async (req, res)=>{
     const { provider_id, title, sortBy, provinces } = req.body;
     // if(!provider_id){
@@ -399,5 +406,6 @@ module.exports = {
     createNewPostTag,
     getBlogsBySearchTerm,
     getTopBlogs,
-    getTopTags
+    getTopTags,
+    searchBlogsAdvanced
 }

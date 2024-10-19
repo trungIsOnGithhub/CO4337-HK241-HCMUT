@@ -40,6 +40,7 @@ router.get('/public_search', ctrls.searchAllServicesPublic)
 router.get('/public/:provider_id', ctrls.getAllServicesByProviderId)
 router.get('/:sid', ctrls.getOneService)
 router.post('/most_purchased', ctrls.getMostPurchasedService);
+router.post('/advanced_search', ctrls.searchServiceAdvanced);
 module.exports = router
 
 

@@ -61,3 +61,9 @@ export const apiSearchServicePublic = (params) => axios({
     method: 'get',
     params
 })
+
+export const apiSearchServiceAdvanced = (data) => axios({
+    url: '/service/advanced_search',
+    method: 'post',
+    data
+})
