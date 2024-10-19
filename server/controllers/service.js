@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 const Service = require('../models/service')
 const User = require('../models/user')
 const asyncHandler = require("express-async-handler")
-const slugify = require('slugify')
+// const slugify = require('slugify')
 const makeSku = require('uniqid')
 const Order = require('../models/order')
 const esIndexNameList = require('../services/constant');
-// const esDBModule = require('../services/es');
+const esDBModule = require('../services/es');
 
 const createService = asyncHandler(async(req, res)=>{
     const {name, price, description, category, assigned_staff, hour, minute, provider_id,  elastic_query} = req.body
@@ -46,6 +46,16 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
     let { searchTerm, limit, offset, categories, sortBy,
         clientLat, clientLon, distanceText } = req.body;
 
+    if ( (typeof(offset) != "number") ||
+        !limit || offset < 0 || limit > 20)
+    {
+        return res.status(400).json({
+            success: false,
+            searched: [],
+            msg: "Bad Request"
+        });
+    }
+
     let sortOption = [];
     let geoSortOption = null;
     if (sortBy?.indexOf("-price") > -1) {
@@ -57,37 +67,24 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
 
     if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
 
-    if (!(distanceText?.match(/[1-9][0-9]*km/g)?.length === 1)) {
-        return res.status(400).json({
-            success: false,
-            searched: [],
-            msg: "Bad Request"
-        })
-    }
-
     let categoriesIncluded = [];
     if (categories?.length) {
         categoriesIncluded = categories.split(',');
     }
 
-    const geoLocationQueryOption = { distanceText,  clientLat, clientLon };
+    let geoLocationQueryOption = null;
+    if ( clientLat <= 180 && clientLon <= 180 &&
+        clientLat >= -90 && clientLon >= -90 &&
+        (distanceText?.match(/[1-9][0-9]*km/g)?.length === 1) )
+    {
+        geoLocationQueryOption = { distanceText,  clientLat, clientLon };
+    }
 
     const columnNamesToMatch = ["name", "providername", "province"];
-    const columnNamesToGet = ["id", "name", "providername", "pin"];
+    const columnNamesToGet = ["id", "name", "providername", "category"];
 
     let services = [];
-    // const services = await esDBModule.fullTextSearchAdvanced(
-    //     searchTerm,
-    //     columnNamesToMatch,
-    //     columnNamesToGet,
-    //     limit, offset,
-    //     sortOption,
-    //     geoLocationQueryOption,
-    //     geoSortOption,
-    //     categories
-    // )?.hits?.hits;
-
-    console.log("Query Input Parameter: ", JSON.stringify({
+    services = await esDBModule.fullTextSearchAdvanced(
         searchTerm,
         columnNamesToMatch,
         columnNamesToGet,
@@ -95,13 +92,17 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
         sortOption,
         geoLocationQueryOption,
         geoSortOption,
-        categories       
-    }));
+        categoriesIncluded
+    );
+    services = services?.hits;
+
+    console.log("Query Input Parameter: ", services);
+    console.log("REAL DATA RETURNED: ", services);
 
     return res.status(200).json({
         success: services ? true : false,
         services: services
-    })
+    });
 });
 
 // get all staffs
@@ -362,12 +363,6 @@ const searchAllServicesPublic = asyncHandler(async (req, res) => {
             if (!queryObject.query.bool) {
                 queryObject.query.bool = {};
             }
-
-            queryObject.query.bool.must = [
-                {
-                    match: { name }
-                }
-            ];
         }
         if (category) {
             if (!queryObject.query.bool) {

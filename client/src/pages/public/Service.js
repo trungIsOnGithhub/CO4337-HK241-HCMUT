@@ -16,6 +16,8 @@ const breakpointColumnsObj = {
   500: 1
 };
 
+const REACT_APP_PAGINATION_LIMIT_DEFAULT = 10;
+
 const Services = ({dispatch}) => {
   const navigate = useNavigate()
   const [services, setServices] = useState(null)
@@ -34,10 +36,10 @@ const Services = ({dispatch}) => {
         advancedQuery.categories = category;
       }
 
-      console.log('Elastic Pre Query', queries, 'Elastic Pre Query');
+      console.log('Elastic Pre Query', advancedQuery, 'Elastic Pre Query');
       response = await apiSearchServiceAdvanced(advancedQuery);
 
-      console.log("RESPONSE SERVICES ADVANCED:", response.services);
+      console.log("-----------------RESPONSE SERVICES ADVANCED:", response.services);
     }
     else {
       if(category && category !== 'services'){
@@ -46,7 +48,7 @@ const Services = ({dispatch}) => {
       response = await apiSearchServicePublic(queries)
     }
 
-    if(response.success) setServices(response.services);
+    if(response.success) setServices(response?.services?.hits || []);
     dispatch(getCurrent())
   }
 
@@ -72,11 +74,11 @@ const Services = ({dispatch}) => {
     console.log(`PRE FETCH ${JSON.stringify(q)}`);
 
     const advancedQuery = {
-      searchTerm: "",
+      searchTerm: "Herbal",
       limit: 10 , offset: 0,
       sortBy: queries?.sort,
-      clientLat: 45, clientLon: 45,
-      distanceText: "2000km"
+      // clientLat: 45, clientLon: 45,
+      // distanceText: "2000km",
     };
 
     fetchServiceCategories(q, advancedQuery, true);
@@ -132,12 +134,13 @@ const Services = ({dispatch}) => {
           breakpointCols={breakpointColumnsObj}
           className="my-masonry-grid flex mx-[-10px]"
           columnClassName="my-masonry-grid_column">
-          {services?.services?.map(el => (
-            <Service 
-              key={el._id} 
-              serviceData={el}
-              normal={true}
-            />
+          {services?.map(el => (
+            // <Service 
+            //   key={el._id} 
+            //   serviceData={el}
+            //   normal={true}
+            // />
+            <h1>{`---->${el?._source.name}`}</h1>
           ))}
         </Masonry>
       </div>

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose'); // Erase if already required
-const bcrypt = require('bcrypt');
-const crypto = require('crypto');
+// const bcrypt = require('bcrypt');
+// const crypto = require('crypto');
 
 // Declare the Schema of the Mongo model
 var serviceSchema = new mongoose.Schema({
@@ -66,7 +66,7 @@ var serviceSchema = new mongoose.Schema({
     bookingQuantity:{
         type:Number,
         default:0
-    },
+    }
 },{
     timestamps: true
 });

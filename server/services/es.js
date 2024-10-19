@@ -100,32 +100,51 @@ async function fullTextSearchAdvanced(searchTerm, fieldNameArrayToMatch,
         index: ELASTIC_INDEX_NAME_MAP.SERVICES,
         track_scores: true,
         query: {
-            bool: {
-                must: [
-                {
-                    multi_match: {
-                        query: searchTerm,
-                        fields: fieldNameArrayToMatch
-                    }
-                },
-                {
-                    geo_distance: {
-                        distance: geoFilter.distanceText, // example: '200km', '188m'...
-                        locations: {
-                            lat: geoFilter.clientLat,
-                            lon: geoFilter.clientLon
-                        }
-                    }
-                }
-            ]
-            }
+            bool: {},
+            match_all: {}
         },
-        filter: [],
         size: limit,
         from: offset,
         _source: fieldNameArrayToGet,
         sort:[]
     };
+
+    if (searchTerm?.length) {
+        if (!queryObject.query.bool.must) queryObject.query.bool.must = [];
+
+        queryObject.query.bool.must.push({
+            multi_match: {
+                query: searchTerm,
+                fields: fieldNameArrayToMatch
+            }
+        });
+
+        delete queryObject.query.match_all;
+    }
+
+    // if (!queryObject.query.bool?.must?.length) {
+    //     delete queryObject.query.bool;
+    // }
+
+    if (geoFilter?.distanceText && geoFilter?.clientLat && geoFilter?.clientLon) {
+        if (!queryObject.query.bool.must) queryObject.query.bool.must = [];
+
+        queryObject.query.bool.must.push({
+            geo_distance: {
+                distance: geoFilter.distanceText,// example: '200km', '188m'...
+                locations: {
+                    lat: geoFilter.clientLat,
+                    lon: geoFilter.clientLon
+                }
+            }
+        });
+
+        delete queryObject.query.match_all;
+    }
+
+    if (!queryObject.query.bool?.must?.length) {
+        delete queryObject.query.bool;
+    }
 
     if (geoSort?.unit && geoSort?.order) {
         queryObject.sort.push(            {
@@ -144,17 +163,18 @@ async function fullTextSearchAdvanced(searchTerm, fieldNameArrayToMatch,
         queryObject.sort = [...queryObject.sort, ...elasticSortScheme];
     }
 
-    if (categories?.length) {
-        queryObject.filter.push({
-            term: { category: categories }
-        });
+    if (categoriesIncluded?.length && queryObject?.query) {
+        queryObject.query.filter = {
+            bool: {
+                should: categoriesIncluded.map(categoryLabel => { return { term: { catergory: categoryLabel } }; })
+            }
+        };
     }
 
-    console.log("QUERY OBJECT: ",JSON.stringify(queryObject));
+    console.log("QUERY OBJECT: ",JSON.stringify(queryObject), "END QUERY OBJECT");
     console.log("============================================");
 
     const elasticResponse = await esClient.search(queryObject);
-
     console.log(elasticResponse?.hits);
 
     return elasticResponse;
@@ -276,8 +296,13 @@ const multiFunc = async function(init, reset) {
         return;
     }
     if (reset) {
-        resetElasticConnection(ELASTIC_INDEX_NAME_MAP.SERVICES);
-        resetElasticConnection(ELASTIC_INDEX_NAME_MAP.BLOGS);
+        const esClient = initializeElasticClient();
+        if (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.SERVICES })) {
+            resetElasticConnection(ELASTIC_INDEX_NAME_MAP.SERVICES);
+        }
+        if (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.BLOGS })) {
+            resetElasticConnection(ELASTIC_INDEX_NAME_MAP.BLOGS);
+        }
         return;
     }
    
@@ -323,10 +348,10 @@ const multiFunc = async function(init, reset) {
 
     const q1 = await fullTextSearchAdvanced("vung tau",
         ["name", "category", "providername", "province"],
-        ["id", "name", "providername", "pin"], 10, 0,
+        ["id", "name", "providername", "category"], 10, 0,
 		[ {price : {order : "asc"}} ],
         { distanceText: "2000km", clientLat: 45, clientLon: 45 },
-        { unit: "km", order: "desc" });
+        { unit: "km", order: "desc" }, []);
 
     // searchTerm, fieldNameArrayToMatch, fieldNameArrayToGet, limit, offset, elasticSortScheme, geoFilter
     const hitsRecord = q1?.hits?.hits?.map(record => {
@@ -344,9 +369,12 @@ const multiFunc = async function(init, reset) {
     // }
 };
 
-// multiFunc(false, true);
-multiFunc(true, false);
-// multiFunc(false, false);
+
+(async function () {
+    //await multiFunc(false, true);
+    await multiFunc(true, false);
+    // await multiFunc(false, false);
+})();
 
 // initializeElasticClient().indices.get({
 //     index: ELASTIC_INDEX_NAME_MAP.SERVICES,
