@@ -76,13 +76,13 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
     let geoLocationQueryOption = null;
     if ( clientLat <= 180 && clientLon <= 180 &&
         clientLat >= -90 && clientLon >= -90 &&
-        (distanceText?.match(/[1-9][0-9]*km/g)?.length === 1) )
+        /[1-9][0-9]*(km|m)/.test(distanceText) )
     {
         geoLocationQueryOption = { distanceText,  clientLat, clientLon };
     }
 
     const columnNamesToMatch = ["name", "providername", "province"];
-    const columnNamesToGet = ["id", "name", "providername", "category", "price"];
+    const columnNamesToGet = ["id", "name", "providername", "category", "price", "thumb"];
 
     let services = [];
     services = await esDBModule.fullTextSearchAdvanced(
@@ -97,8 +97,8 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
     );
     services = services?.hits;
 
-    console.log("Query Input Parameter: ", services);
-    console.log("REAL DATA RETURNED: ", services);
+    // console.log("Query Input Parameter: ", services);
+    // console.log("REAL DATA RETURNED: ", services);
 
     return res.status(200).json({
         success: services ? true : false,

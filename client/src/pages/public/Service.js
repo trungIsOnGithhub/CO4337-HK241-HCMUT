@@ -19,46 +19,61 @@ const breakpointColumnsObj = {
   500: 1
 };
 
-const REACT_APP_PAGINATION_LIMIT_DEFAULT = 10;
-
+const REACT_APP_PAGINATION_LIMIT_DEFAULT = 8;
 const Services = ({dispatch}) => {
   const navigate = useNavigate()
   const [services, setServices] = useState(null)
   const [active, setActive] = useState(null)
-  const [params] = useSearchParams()
-  const [sort, setSort] = useState('')
-  const [nearMeOption, setNearMeOption] = useState(false)
-  const {category} = useParams()
+  const [params, setParams] = useSearchParams();
+  const [sort, setSort] = useState('');
+  const [totalServiceCount, setTotalServiceCount] = useState(0);
+  const [nearMeOption, setNearMeOption] = useState(false);
+  const {category} = useParams();
   const {isShowModal} = useSelector(state => state.app)
   const {current} = useSelector((state) => state.user);
 
+  const [useAdvanced, setUseAdvanced] = useState(true);
   const [searchFilter, setSearchFilter] = useState({
     term: '',
     province: '',
-    maxDistance: ''
+    maxDistance: '',
+    unit: 'km'
   })
+  const [clientLat, setClientLat] = useState(9999);
+  const [clientLon, setClientLon] = useState(9999);
+  // const prevSearchTermRef = useRef(searchFilter.term);
+  const isClientLocationValid = (clientLat, clientLon, distanceText, unit) => {
+    return clientLat >= -90 && clientLon >= -90 && clientLat <= 180 && clientLon <= 180
+            && /^-?\d+$/.test(distanceText) && (unit === 'km' || unit === 'm');
+  }
 
-  const fetchServiceCategories = async (queries, advancedQuery, useAdvanced) => {
+  const fetchServiceCategories = async (queries, advancedQuery) => {
     let response = [];
 
     if (useAdvanced) {
-      if(category && category !== 'services'){
-        advancedQuery.categories = category;
+      const categoriesChosen = params.get("category");
+      if(categoriesChosen && categoriesChosen !== 'services'){
+        advancedQuery.categories = categoriesChosen;
       }
 
       console.log('Elastic Pre Query', advancedQuery, 'Elastic Pre Query');
       response = await apiSearchServiceAdvanced(advancedQuery);
 
       console.log("-----------------RESPONSE SERVICES ADVANCED:", response.services);
+
+      if(response.success) setServices(response?.services?.hits || []);
+
+      setTotalServiceCount(response?.services?.total?.value)
     } 
     else {
       if(category && category !== 'services'){
         queries.category = category;
       }
-      response = await apiSearchServicePublic(queries)
+      response = await apiSearchServicePublic(queries);
+
+      if(response.success) setServices(response?.services || []);
     }
 
-    if(response.success) setServices(response?.services?.hits || []);
     dispatch(getCurrent())
   }
 
@@ -82,18 +97,74 @@ const Services = ({dispatch}) => {
     delete queries.to
     const q = {...priceQuery, ...queries}
   
-    console.log(`PRE FETCH === ${JSON.stringify(q)}`);
+    console.log(`PRE FETCH === ${JSON.stringify(searchFilter)}`);
+    // console.log("YYAY", params.get('page'), "udias");
 
-    const advancedQuery = {
+    let advancedQuery = {
       searchTerm: searchFilter.term,
-      limit: 10 , offset: 0,
-      sortBy: queries?.sort,
+      limit: REACT_APP_PAGINATION_LIMIT_DEFAULT , offset: 0,
+      sortBy: sort,
       // clientLat: 45, clientLon: 45,
       // distanceText: "2000km",
     };
 
-    fetchServiceCategories(q, advancedQuery, true);
-  }, [sort, searchFilter])
+    if (isClientLocationValid(clientLat, clientLon, searchFilter.maxDistance, searchFilter.unit)) {
+      advancedQuery = {
+        ...advancedQuery,
+        clientLat, clientLon,
+        distanceText: searchFilter.maxDistance + searchFilter.unit
+      }
+    }
+
+    queries.page = 1;
+    setParams(queries);
+
+    fetchServiceCategories(q, advancedQuery);
+  }, [sort, searchFilter]);
+
+  // for page changing
+  useEffect(() => {
+    window.scrollTo(0,0)
+    const queries = Object.fromEntries([...params]);
+
+    let priceQuery =  {}
+    if(queries.to && queries.from){
+      priceQuery = {$and: [
+        {price: {gte: queries.from}},
+        {price: {lte: queries.to}},
+      ]}
+      delete queries.price
+    }
+    else{
+      if(queries.from) queries.price = {gte:queries.from}
+      if(queries.to) queries.price = {gte:queries.to}
+    }
+    delete queries.from
+    delete queries.to
+    const q = {...priceQuery, ...queries}
+
+    console.log(`PRE FETCH === ${JSON.stringify(q)}`);
+    // console.log("YYAY", params.get('page'), "udias");
+
+    let advancedQuery = {
+      searchTerm: searchFilter.term,
+      limit: REACT_APP_PAGINATION_LIMIT_DEFAULT , offset: params.get('page')-1,
+      sortBy: queries?.sort
+    };
+
+    if (isClientLocationValid(clientLat, clientLon, searchFilter.maxDistance, searchFilter.unit)) {
+      advancedQuery = {
+        ...advancedQuery,
+        clientLat, clientLon,
+        distanceText: searchFilter.maxDistance + searchFilter.unit
+      }
+    }
+
+    // queries.page = params.get('page')-1;
+    // setParams(queries);
+
+    fetchServiceCategories(q, advancedQuery);
+  }, [params]);
   
   const changeActive = useCallback((name)=>{
     if(name===active) setActive(null)
@@ -106,22 +177,22 @@ const Services = ({dispatch}) => {
     setSort(value)
   },[sort])
 
-  useEffect(() => {
-    if(sort){
-      navigate({
-        pathname: `/service/${category}`,
-        search: createSearchParams({
-          sort
-        }).toString()
-      })
-    }   
-  }, [sort]);
+  // useEffect(() => {
+  //   if(sort){
+  //     navigate({
+  //       pathname: `/service/${category}`,
+  //       search: createSearchParams({
+  //         sort
+  //       }).toString()
+  //     })
+  //   }   
+  // }, [sort]);
 
   useEffect(() => {
     console.log('Search Filter: ', searchFilter, '++++');
   }, [searchFilter])
 
-    const handleGetDirections = () => {
+  const handleGetDirections = () => {
     Swal.fire({
       title: 'Chia sẻ vị trí',
       text: "Bạn có muốn chia sẻ vị trí hiện tại của mình để xem đường đi?",
@@ -134,13 +205,16 @@ const Services = ({dispatch}) => {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(async (position) => {
             const { latitude, longitude } = position.coords;
-            console.log(latitude, longitude);
+            // console.log(latitude, longitude);
             await apiModifyUser({ lastGeoLocation: {
               type: "Point",
               coordinates: [longitude, latitude]
             } }, current._id);
             // Call the function to show the route using latitude and longitude
             // showRoute(latitude, longitude);
+            setClientLat(latitude);
+            setClientLon(longitude);
+
             setNearMeOption(prev => !prev);
           }, () => {
             Swal.fire('Không thể lấy vị trí của bạn.');
@@ -148,6 +222,9 @@ const Services = ({dispatch}) => {
         } else {
           Swal.fire('Geolocation không khả dụng.');
         }
+      }
+      else {
+
       }
     });
   };
@@ -180,8 +257,25 @@ const Services = ({dispatch}) => {
           {/* <div className='w-full'> */}
           <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} />
           <span className='font-semibold text-sm p-5'>Near Me Search:</span>
-          <input className='ml-3 p-5' onInput={() => {handleGetDirections()}} type="checkbox"/>
-          { nearMeOption && 
+          <input className='ml-3 p-5' onInput={(event) => {
+            if (event.target.checked) {
+              // console.log("....", typeof event.target.value);
+              handleGetDirections();
+            }
+            else {
+              setNearMeOption(false);
+              setClientLat(9999.99);
+              setClientLon(9999.99);
+              setSearchFilter(prev => {
+                return {
+                  ...prev,
+                  maxDistance: '',
+                  unit: 'km'
+                };
+              })
+            }
+          }} type="checkbox"/>
+          { nearMeOption &&
             <>
               <span className='font-semibold text-sm p-3'>Province:</span>
               <InputSelect
@@ -191,7 +285,18 @@ const Services = ({dispatch}) => {
               />
             </>
           }
-          { nearMeOption && <InputField nameKey='maxDistance' value={searchFilter.maxDistance} setValue={setSearchFilter} placeholder={"Maximum Distance(optional)"} /> }
+          { nearMeOption &&
+            (
+              <>
+                <InputField nameKey='maxDistance' value={searchFilter.maxDistance}
+                      setValue={setSearchFilter} placeholder={"Maximum Distance(optional)"} />
+                <select id="unit" value={searchFilter.unit || "km"} onChange={(event) => { setSearchFilter(prev => { return {...prev, unit: event.target.value || "km"}; }) }}>
+                  <option value="km">km</option>
+                  <option value="m">m</option>
+                </select>
+              </>
+            )
+          }
           {/* </div> */}
         </div>
       <div className={clsx('mt-8 w-main m-auto', isShowModal ? 'hidden' : '')}>
@@ -199,18 +304,30 @@ const Services = ({dispatch}) => {
           breakpointCols={breakpointColumnsObj}
           className="my-masonry-grid flex mx-[-10px]"
           columnClassName="my-masonry-grid_column">
-          {services?.map(el => (
-            // <Service 
-            //   key={el._id} 
-            //   serviceData={el}
-            //   normal={true}
-            // />
-            <h1>{`---->${el?._source.name} - ${el?._source.price}`}</h1>
-          ))}
+          {
+          // useAdvanced ?
+            services?.map(el => (
+              <Service 
+                key={el?._source.id} 
+                serviceData={el._source}
+                normal={true}
+              />
+            // <h1>{`---->${el?._source.name} - ${el?._source.price}`}</h1>
+            ))
+            // :
+            // (services?.map(el => (
+            //   <Service 
+            //     key={el.id} 
+            //     serviceData={el}
+            //     normal={true}
+            //   />
+            //   // <h1>{`---->${el?._source.name} - ${el?._source.price}`}</h1>
+            // )))
+          }
           <h1 className='py-5'>----------------------</h1>
           {/* {services?.services?.map(el => (
             <Service 
-              key={el.sv._id} 
+              key={el.sv._id}   
               serviceData={el.sv}
               pid= {el.sv._id}
               normal={true}
@@ -220,9 +337,9 @@ const Services = ({dispatch}) => {
         </Masonry>
       </div>
       <div className='w-main m-auto my-4 flex justify-end'>
-       {services&&
-       <Pagination 
-       totalCount={services?.counts}/>}
+      {
+        services?.length && <Pagination totalCount={totalServiceCount}/>
+      }
       </div>
       <div className='w-full h-[200px]'>
       </div>

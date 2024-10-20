@@ -48,9 +48,6 @@ async function setUpElasticConnection() {
                 category: {
                     type: "text"
                 },
-                providername: {
-                    type: "text"
-                },
                 province: {
                     type: "text"
                 },
@@ -59,6 +56,9 @@ async function setUpElasticConnection() {
                 },
                 locations : {
                     type : "geo_point"
+                },
+                totalRatings: {
+                    type: "integer"
                 }
               },
             },
@@ -166,11 +166,10 @@ async function fullTextSearchAdvanced(searchTerm, fieldNameArrayToMatch,
     }
 
     if (categoriesIncluded?.length && queryObject?.query) {
-        queryObject.query.filter = {
-            bool: {
-                should: categoriesIncluded.map(categoryLabel => { return { term: { catergory: categoryLabel } }; })
-            }
-        };
+    if (!queryObject.query.bool) queryObject.query.bool = {};
+        queryObject.query.bool.filter = categoriesIncluded.map(categoryLabel => { return { term: { catergory: categoryLabel } }; });
+
+        delete queryObject.query.match_all;
     }
 
     console.log("QUERY OBJECT: ",JSON.stringify(queryObject), "END QUERY OBJECT");
@@ -371,13 +370,12 @@ const multiFunc = async function(init, reset) {
 //     // }
 };
 
-
+(async function () {
 // COMMENT THIS WHEN RUN MIGRATE OR ANY OTHE FILE INCLUDED THIS
-// (async function () {
-//     await multiFunc(false, true);
-//     await multiFunc(true, false);
-//     await multiFunc(false, false);
-// })();
+    // await multiFunc(false, true);
+    await multiFunc(true, false);
+    // await multiFunc(false, false);
+})();
 
 // initializeElasticClient().indices.get({
 //     index: ELASTIC_INDEX_NAME_MAP.SERVICES,
