@@ -10,3 +10,8 @@ export const apiGetAllFlashSaleEventsByProviderId = (providerId) => axios({
     url: '/flashsale/getFlashSalesByProviderId/'+ providerId,
     method: 'get',
 })
+
+export const apiGetAllFlashSaleByAdmin = () => axios({
+    url: '/flashsale/getAllFlashSalesByAdmin/',
+    method: 'get',
+})

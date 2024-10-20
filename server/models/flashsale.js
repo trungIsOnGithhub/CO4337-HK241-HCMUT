@@ -2,6 +2,11 @@ const mongoose = require('mongoose'); // Erase if already required
 
 // Declare the Schema of the Mongo model
 var flashsaleSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        defaultValue: 'Flash Sale Event'
+    },
     discount_type: {
         type: String,
         enum: ['percentage', 'fixed'], // Ensure only these types are allowed

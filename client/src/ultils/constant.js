@@ -329,7 +329,7 @@ export const adminSidebar = [
                 path: `/${path.ADMIN}/${path.MANAGE_VOUCHER}`
             },
             {
-                text: 'Manage Event',
+                text: 'Manage Sale Event',
                 path: `/${path.ADMIN}/${path.MANAGE_SALE_EVENT}`
             },
 

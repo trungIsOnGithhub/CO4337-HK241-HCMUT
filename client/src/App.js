@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {Route, Routes, useLocation} from 'react-router-dom'
 
-import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageEvent, ManagePostDetail, EditPostDetail, AddPost, ManageChat } from 'pages/admin'
+import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageSaleEvent, ManagePostDetail, EditPostDetail, AddPost, ManageChat } from 'pages/admin'
 import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct, ViewBlog, DetailProvider } from 'pages/public'
 
 import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct, Calendarr} from 'pages/user'
@@ -73,7 +73,7 @@ function App() {
         <Route path={path.ADD_VOUCHER} element={<AddVoucher/>}/>
         <Route path={path.ADD_SALE_EVENT} element={<AddSaleEvent/>}/>
         <Route path={path.MANAGE_VOUCHER} element={<ManageVoucher/>}/>
-        <Route path={path.MANAGE_SALE_EVENT} element={<ManageEvent/>}/>
+        <Route path={path.MANAGE_SALE_EVENT} element={<ManageSaleEvent/>}/>
 
         <Route path={path.ADD_POST} element={<AddPost/>}/>
         <Route path={path.MANAGE_POST} element={<ManagePost/>}/>

@@ -48,6 +48,8 @@ const DetailProvider = () => {
     const [flashSale, setFlashSale] = useState([])
     const [currentFlashSaleIndex, setCurrentFlashSaleIndex] = useState(0); // Thêm state để theo dõi chỉ số hiện tại
 
+    console.log(flashSale)
+
     useEffect(() => {
         const fetchProviderData = async() => {
           const response = await apiGetServiceProviderById(prid)
@@ -286,7 +288,7 @@ const DetailProvider = () => {
             <span className='cursor-pointer text-gray-300 text-[28px] font-medium hover:text-gray-500'><FaCircleChevronLeft /></span>
           </button>
           
-          <div className='flex flex-1 gap-3 overflow-hidden px-2'>
+          <div className='flex flex-1 gap-3 px-2'>
             {
               flashSale?.slice(currentFlashSaleIndex, currentFlashSaleIndex + 3).map((el) => ( // Hiển thị 3 flash sale tại một thời điểm
                 <div className='w-[33%]' key={el._id}>
@@ -381,7 +383,7 @@ const DetailProvider = () => {
             <span className='cursor-pointer text-gray-300 text-[28px] font-medium hover:text-gray-500'><FaCircleChevronLeft /></span>
           </button>
           
-          <div className='flex flex-1 gap-3 overflow-hidden px-2'>
+          <div className='flex flex-1 gap-3 px-2'>
             {
               flashSale?.slice(currentFlashSaleIndex, currentFlashSaleIndex + 3).map((el) => ( // Hiển thị 3 flash sale tại một thời điểm
                 <div className='w-[33%]' key={el._id}>

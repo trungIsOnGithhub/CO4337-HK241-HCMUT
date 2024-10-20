@@ -78,4 +78,4 @@ export {default as Provider} from './Provider/Provider'
 
 export {default as FlashSaleItem} from './FlashSale/FlashSaleItem'
 
-
+export {default as InputFormm} from './InputForm/InputForm'

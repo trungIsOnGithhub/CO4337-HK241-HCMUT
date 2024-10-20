@@ -12,7 +12,7 @@ const InputForm = ({label, labelClassName, disabled, register, errors, id, valid
                 {...register(id, validate)}
                 disabled={disabled}
                 placeholder={placeholder}
-                className={clsx('form-input text-gray-600 my-auto', fullWidth && 'w-full')}
+                className={clsx('text-gray-600 my-auto outline-none rounded-md border ', fullWidth && 'w-full')}
                 defaultValue={defaultValue}
                 readOnly={readOnly}
                 onInput={onInput ? onInput : function(){}}

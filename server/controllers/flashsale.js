@@ -1,5 +1,6 @@
 const FlashSale = require('../models/flashsale');
 const asyncHandler = require('express-async-handler');
+const User = require('../models/user')
 
 // Handler to create a new coupon
 const createNewFlashSaleEvent = asyncHandler(async (req, res) => {
@@ -85,9 +86,11 @@ const getFlashSaleEventByProviderId = asyncHandler(async (req, res) => {
                 let promotionApplicationDate = el?.promotionApplicationDate;
                 let usageLimit = el?.usageLimit;
                 let usageCount = el?.usageCount?.find(itemm => itemm?.id.equals(serviceId))?.value;
+                let type = el?.discount_type;
+                let value = item?.value
 
                 allFlashSale.push({
-                    serviceName, serviceFlashSalePrice, serviceOriginalPrice, serviceThumb, serviceDescription, serviceId, duration, startTime, promotionApplicationDate, usageLimit, usageCount
+                    serviceName, serviceFlashSalePrice, serviceOriginalPrice, serviceThumb, serviceDescription, serviceId, duration, startTime, promotionApplicationDate, usageLimit, usageCount, type, value
                 })
             })
         }
@@ -108,8 +111,11 @@ const getFlashSaleEventByProviderId = asyncHandler(async (req, res) => {
                         return itemm?.value
                     }
                 });
+                let type = el?.discount_type;
+                let value = item?.value
+
                 allFlashSale.push({
-                    serviceName, serviceFlashSalePrice, serviceOriginalPrice, serviceThumb, serviceDescription, serviceId, duration, startTime, promotionApplicationDate, usageLimit, usageCount
+                    serviceName, serviceFlashSalePrice, serviceOriginalPrice, serviceThumb, serviceDescription, serviceId, duration, startTime, promotionApplicationDate, usageLimit, usageCount, type, value
                 })
             })
         }
@@ -120,99 +126,29 @@ const getFlashSaleEventByProviderId = asyncHandler(async (req, res) => {
     })
 });
 
-// const getCouponsByServiceId = asyncHandler(async (req, res) => {
-//     const { serviceId } = req.params; // Lấy serviceId từ tham số của request
 
-//     if (!serviceId) {
-//         return res.status(400).json({ message: 'Service ID is required.' });
-//     }
+const getAllFlashSalesByAdmin = asyncHandler(async (req, res) => { 
+    const {_id} = req.user
+    const {provider_id} = await User.findById({_id}).select('provider_id')
+    console.log(provider_id)
 
-//     // Tìm tất cả các mã giảm giá mà thuộc tính services chứa serviceId
-//     const coupons = await Coupon.find({
-//         services: serviceId
-//     });
+    let queryCommand =  FlashSale.find({
+        providerId: provider_id
+    })
+    try {
+        const flashsales = await queryCommand
+        return res.status(200).json({
+            success: true,
+            flashsales: flashsales,
+            });
+        
+    } catch (error) {
+        // Xử lý lỗi nếu có
+        return res.status(500).json({
+        success: false,
+        error: 'Cannot get flashsales',
+        });
+    }
+})
 
-//     if (coupons.length === 0) {
-//         return res.status(404).json({ message: 'No coupons found for the given service ID.' });
-//     }
-
-//     return res.status(200).json({ success: true, coupons });
-// });
-
-// const validateAndUseCoupon = asyncHandler(async (req, res) => {
-//     const { couponCode, userId } = req.body;
-//     const coupon = await Coupon.findOne({ code: couponCode });
-
-//     if (!coupon) {
-//         return res.status(404).json({ success: false, message: 'Coupon not found' });
-//     }
-
-//     if (coupon.expirationDate < new Date()) {
-//         return res.status(400).json({ success: false, message: 'Coupon has expired' });
-//     }
-
-//     if (!coupon.noUsageLimit && coupon.usageCount >= coupon.usageLimit) {
-//         return res.status(400).json({ success: false, message: 'Coupon usage limit reached' });
-//     }
-
-//     const userUsage = coupon.usedBy.find(usage => usage.user.toString() === userId);
-
-//     if (!coupon.noLimitPerUser && userUsage && userUsage.usageCount >= coupon.limitPerUser) {
-//         return res.status(400).json({ success: false, message: 'User has reached the usage limit for this coupon' });
-//     }
-
-//     // Không cập nhật thông tin sử dụng coupon ở đây
-//     // Chỉ trả về thông tin coupon hợp lệ
-
-//     return res.status(200).json({ 
-//         success: true, 
-//         message: 'Coupon is valid and can be applied',
-//         coupon: coupon
-//     });
-// });
-
-// const updateCouponUsage = asyncHandler(async (req, res) => {
-//     const { couponCode, userId } = req.body;
-
-//     const coupon = await Coupon.findOne({ code: couponCode });
-
-//     if (!coupon) {
-//         return res.status(404).json({ success: false, message: 'Coupon not found' });
-//     }
-
-//     const userUsageIndex = coupon.usedBy.findIndex(usage => usage.user.toString() === userId);
-
-//     if (userUsageIndex !== -1) {
-//         // Người dùng đã sử dụng coupon này trước đó
-//         coupon.usedBy[userUsageIndex].usageCount += 1;
-//     } else {
-//         // Người dùng chưa từng sử dụng coupon này
-//         coupon.usedBy.push({ user: userId, usageCount: 1 });
-//         coupon.usageCount += 1; // Chỉ tăng tổng số lần sử dụng khi có người dùng mới
-//     }
-
-//     await coupon.save();
-
-//     return res.status(200).json({ success: true, message: 'Coupon usage updated successfully' });
-// });
-
-// const getCouponsByProviderId = asyncHandler(async (req, res) => {
-//     const { providerId } = req.params; // Lấy providerId từ tham số của request
-
-//     if (!providerId) {
-//         return res.status(400).json({ message: 'Provider ID is required.' });
-//     }
-
-//     // Tìm tất cả các mã giảm giá mà thuộc tính providerId trùng với providerId
-//     // và populate trường services với thông tin name từ bảng Service
-//     const coupons = await Coupon.find({ providerId })
-//         .populate('services', 'name'); // Populate trường services với thông tin name
-
-//     if (coupons.length === 0) {
-//         return res.status(404).json({ message: 'No coupons found for the given provider ID.' });
-//     }
-
-//     return res.status(200).json({ success: true, coupons });
-// });
-
-module.exports = {createNewFlashSaleEvent, getFlashSaleEventByProviderId };
+module.exports = {createNewFlashSaleEvent, getFlashSaleEventByProviderId, getAllFlashSalesByAdmin};
