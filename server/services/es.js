@@ -115,7 +115,9 @@ async function fullTextSearchAdvanced(searchTerm, fieldNameArrayToMatch,
         queryObject.query.bool.must.push({
             multi_match: {
                 query: searchTerm,
-                fields: fieldNameArrayToMatch
+                fields: fieldNameArrayToMatch,
+                fuzziness : "AUTO",
+                prefix_length : 2
             }
         });
 
@@ -189,11 +191,11 @@ const addToElasticDB = async function(indexName, dataPayload) {
         throw new Error("ES Client not found!");
     }
 
-//     return await esClient.index({
-//         index: indexName,
-//         body: dataPayload
-//     })
-// }
+    return await esClient.index({
+        index: indexName,
+        body: dataPayload
+    })
+}
 
 const isHealthStatusOKElasticDB = async function(esClient) {
     const response = await esClient.cluster.health({
@@ -211,11 +213,11 @@ const queryElasticDB = async function(indexName, queryOptionsObject) {
         throw new Error("ES Client not found!");
     }
 
-//     return await esClient.search({
-//         index: indexName,
-//         ...queryOptionsObject
-//     });
-// };
+    return await esClient.search({
+        index: indexName,
+        ...queryOptionsObject
+    });
+};
 
 const multiFunc = async function(init, reset) {
     // const esClient = initializeElasticClient();
@@ -367,14 +369,15 @@ const multiFunc = async function(init, reset) {
 //     // if (q1?.id) {
 //     //     const q2 = await deleteEs(indexName, q1?.id);
 //     // }
-// };
+};
 
 
-(async function () {
-    await multiFunc(false, true);
-    await multiFunc(true, false);
-    await multiFunc(false, false);
-})();
+// COMMENT THIS WHEN RUN MIGRATE OR ANY OTHE FILE INCLUDED THIS
+// (async function () {
+//     await multiFunc(false, true);
+//     await multiFunc(true, false);
+//     await multiFunc(false, false);
+// })();
 
 // initializeElasticClient().indices.get({
 //     index: ELASTIC_INDEX_NAME_MAP.SERVICES,
@@ -409,4 +412,4 @@ module.exports = {
     isHealthStatusOKElasticDB,
     multiFunc,
     initializeElasticClient
-}
+};

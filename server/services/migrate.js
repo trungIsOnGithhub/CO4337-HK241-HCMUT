@@ -50,12 +50,13 @@ async function migrateServiceDataFromMongoDBToElasticDB() {
             delete newObjectToAdd.rating;
             // newObjectToAdd.
             // elastic db does not allowed exiternal _id
-            await esDBModule.addToElasticDB(esDBConstant.SERVICES, newObjectToAdd);
+            // await esDBModule.addToElasticDB(esDBConstant.SERVICES, newObjectToAdd);
             console.log("============", newObjectToAdd);
         }
 
-        const allServiceAdded = await esDBModule.queryElasticDB(esDBConstant.SERVICES, {query:{match:{ name: {query: 'Traditional Herbal Hair Wash'} }}});
-        console.log("CHECKKK AFTER ADD:  ", allServiceAdded?.hits?.hits);
+        // {query:{match:{ name: {query: 'Traditional Herbal Hair Wash'} }}}
+        const allServiceAdded = await esDBModule.queryElasticDB(esDBConstant.SERVICES, {query:{match_all:{}}});
+        console.log("CHECKKK AFTER ADD:  ", allServiceAdded?.hits?.hits, "DONE CHECK");
     }
     else {
         throw new Error("Cannot find ES Index!!");

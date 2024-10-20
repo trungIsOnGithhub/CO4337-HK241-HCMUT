@@ -50,7 +50,7 @@ const Services = ({dispatch}) => {
       response = await apiSearchServiceAdvanced(advancedQuery);
 
       console.log("-----------------RESPONSE SERVICES ADVANCED:", response.services);
-    }
+    } 
     else {
       if(category && category !== 'services'){
         queries.category = category;
@@ -81,10 +81,11 @@ const Services = ({dispatch}) => {
     delete queries.from
     delete queries.to
     const q = {...priceQuery, ...queries}
-    console.log(`PRE FETCH ${JSON.stringify(q)}`);
+  
+    console.log(`PRE FETCH === ${JSON.stringify(q)}`);
 
     const advancedQuery = {
-      searchTerm: "Herbal",
+      searchTerm: searchFilter.term,
       limit: 10 , offset: 0,
       sortBy: queries?.sort,
       // clientLat: 45, clientLon: 45,
@@ -92,7 +93,7 @@ const Services = ({dispatch}) => {
     };
 
     fetchServiceCategories(q, advancedQuery, true);
-  }, [params])
+  }, [sort, searchFilter])
   
   const changeActive = useCallback((name)=>{
     if(name===active) setActive(null)
@@ -204,10 +205,10 @@ const Services = ({dispatch}) => {
             //   serviceData={el}
             //   normal={true}
             // />
-            <h1>{`---->${el?._source.name}`}</h1>
+            <h1>{`---->${el?._source.name} - ${el?._source.price}`}</h1>
           ))}
           <h1 className='py-5'>----------------------</h1>
-          {services?.services?.map(el => (
+          {/* {services?.services?.map(el => (
             <Service 
               key={el.sv._id} 
               serviceData={el.sv}
@@ -215,7 +216,7 @@ const Services = ({dispatch}) => {
               normal={true}
               clientDistance={el?.clientDistance}
             />
-          )) || "Your Search Result Here..."}
+          )) || "Your Search Result Here..."} */}
         </Masonry>
       </div>
       <div className='w-main m-auto my-4 flex justify-end'>
