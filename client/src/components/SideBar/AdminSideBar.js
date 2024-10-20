@@ -3,6 +3,7 @@ import logo from 'assets/logo_digital_new_250x.png'
 import { adminSidebar } from 'ultils/constant'
 import { NavLink, Link} from 'react-router-dom'
 import clsx from 'clsx'
+import logoWeb from '../../assets/logoWeb.png'
 import icons from 'ultils/icon'
 
 const activeStyle = 'px-4 py-2 flex items-center gap-2 text-gray-200 bg-gray-500'
@@ -20,10 +21,10 @@ const AdminSideBar = () => {
     }
   }
   return (
-    <div className='bg-zinc-800 z-30 h-full py-4 '>
-        <Link to={'/'} className='flex items-center p-4 gap-2'>
-            <span className='font-semibold text-3xl text-red-600'>Admin</span>
-            <span className='font-semibold italic text-3xl text-white'>Workspace</span>
+    <div className='bg-[#00143c] z-30 min-h-full py-4 '>
+        <Link ta={'/'} className='flex items-center py-2 px-4 gap-1 justify-center'>
+            <img src={logoWeb} className='w-12 h-12'/>
+            <span className='font-semibold text-4xl text-white mb-1'>Biz<span className='text-blue-500'>Serv</span></span>
         </Link>
         <div>
           {adminSidebar.map(el =>(
@@ -36,7 +37,7 @@ const AdminSideBar = () => {
                 <span>{el?.text}</span>
               </NavLink>}
               {el?.type === 'parent' &&
-              <div onClick={() => handleShowTab(+el.id)} className='flex flex-col text-gray-200 '>
+              <div onClick={() => handleShowTab(+el.id)} className='flex flex-col text-white opacity-85 '>
                 <div className='px-4 py-2 flex items-center justify-between hover:bg-gray-400 cursor-pointer'> 
                   <div className='flex items-center gap-2'>
                   <span>{el?.icon}</span>

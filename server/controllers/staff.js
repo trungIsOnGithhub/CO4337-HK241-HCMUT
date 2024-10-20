@@ -148,11 +148,39 @@ const updateStaffWork = asyncHandler(async(req, res)=>{
     }
 })
 
+const deleteStaffShift = asyncHandler(async(req, res)=>{
+    const {service, provider, staff, duration, time, date} = req.body?.info[0];
+    if (!service || !provider || !staff || !time || !date || !duration) {
+        throw new Error("Missing input");
+    } else {
+        const response = await Staff.findByIdAndUpdate(staff, {$push: {work: {service, provider, time, date, duration}}}, {new: true});
+        return res.status(200).json({
+            success: response ? true : false,
+            mes: response ? 'Updated staff' : "Something went wrong"
+        });
+    }
+})
+
+const updateStaffShift = asyncHandler(async(req, res)=>{
+    const {staffId, newShifts} = req.body;
+
+    if (!staffId || !newShifts) {
+        throw new Error("Missing input");
+    }
+
+    const response = await Staff.findByIdAndUpdate(staffId, {$set: {shifts: newShifts}}, {new: true});
+    return res.status(200).json({
+        success: response ? true : false,
+        staff: response
+    });
+})
+
 module.exports = {
     addStaff,
     getAllStaffsByAdmin,
     updateStaffByAdmin,
     deleteStaffByAdmin,
     getOneStaff,
-    updateStaffWork
+    updateStaffWork,
+    updateStaffShift
 }

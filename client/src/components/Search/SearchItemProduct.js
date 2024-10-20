@@ -77,10 +77,10 @@ const SearchItemProduct = ({name, activeClick, changeActiveFilter, type='checkbo
   
   
   const fetchHighestPrice = async() =>{
-    const response = await apiGetProduct({sort:'-price', limit:1})
-    if(response.success){
-      setBestPrice(response.products[0]?.price)
-    }
+    // const response = await apiGetProduct({sort:'-price', limit:1})
+    // if(response.success){
+    //   setBestPrice(response.products[0]?.price)
+    // }
   }
 
 

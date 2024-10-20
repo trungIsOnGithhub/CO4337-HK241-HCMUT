@@ -1,6 +1,7 @@
 import React ,{useState, useEffect, useCallback, memo, useRef}from 'react'
 import {createSearchParams, useLocation, useNavigate, useParams} from 'react-router-dom'
 import { apiGetOneProduct, apiGetProduct } from '../../apis/product'
+import { apiModifyUser } from '../../apis/user'
 import { apiGetOneService, apiGetServicePublic } from '../../apis/service'
 import {Breadcrumb, Button, SelectQuantity, ServiceExtra, ServiceInformation, CustomSliderService} from '../../components'
 import Slider from "react-slick";
@@ -10,7 +11,7 @@ import DOMPurify from 'dompurify';
 import clsx from 'clsx';
 import { useDispatch, useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
-import { apiRecordInteraction } from 'apis';
+import { apiRecordInteraction, apiUpdateUser } from 'apis';
 import path from 'ultils/path';
 import withBaseComponent from 'hocs/withBaseComponent';
 import { FaLocationDot } from "react-icons/fa6";

@@ -31,10 +31,36 @@ var ProviderServiceSchema = new mongoose.Schema({
     longitude: {
         type: Number,
         required: true,
-    }
+    },
+    geolocation: {
+        type:
+        {
+            type: String, // Don't do `{ location: { type: String } }`
+            enum: ['Point'], // 'location.type' must be 'Point'
+            required: true
+        },
+        coordinates:
+        {
+            type: [Number],
+            required: true
+        }
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    },
+    chatGivenQuestions: [{
+        question: {
+            type: String
+        },
+        answer: {
+            type: String,
+        }
+    }]
 },{
     timestamps: true
 });
 
 //Export the model
+ProviderServiceSchema.index({ geolocation: '2dsphere' });
 module.exports = mongoose.model('Service_Provider', ProviderServiceSchema);

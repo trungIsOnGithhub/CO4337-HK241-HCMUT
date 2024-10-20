@@ -1,13 +1,16 @@
 import React, {useEffect, useState, useCallback} from 'react'
-import { useParams, useSearchParams, createSearchParams, useNavigate} from 'react-router-dom'
-import { Breadcrumb, Service, SearchItemService, InputSelect, Pagination} from '../../components'
+import { useParams, useSearchParams, createSearchParams, useNavigate } from 'react-router-dom'
 import { apiSearchServiceAdvanced, apiSearchServicePublic } from '../../apis'
+import { Breadcrumb, Service, SearchItemService, InputSelect, Pagination, InputField} from '../../components'
 import Masonry from 'react-masonry-css'
 import { sorts } from '../../ultils/constant'
 import clsx from 'clsx'
 import { useSelector } from 'react-redux'
 import withBaseComponent from 'hocs/withBaseComponent'
 import { getCurrent } from 'store/user/asyncAction'
+import { tinh_thanhpho } from 'tinh_thanhpho'
+import { apiModifyUser } from '../../apis/user'
+import Swal from "sweetalert2";
 
 const breakpointColumnsObj = {
   default: 4,
@@ -24,9 +27,16 @@ const Services = ({dispatch}) => {
   const [active, setActive] = useState(null)
   const [params] = useSearchParams()
   const [sort, setSort] = useState('')
+  const [nearMeOption, setNearMeOption] = useState(false)
   const {category} = useParams()
   const {isShowModal} = useSelector(state => state.app)
+  const {current} = useSelector((state) => state.user);
 
+  const [searchFilter, setSearchFilter] = useState({
+    term: '',
+    province: '',
+    maxDistance: ''
+  })
 
   const fetchServiceCategories = async (queries, advancedQuery, useAdvanced) => {
     let response = [];
@@ -104,7 +114,42 @@ const Services = ({dispatch}) => {
         }).toString()
       })
     }   
-  }, [sort])
+  }, [sort]);
+
+  useEffect(() => {
+    console.log('Search Filter: ', searchFilter, '++++');
+  }, [searchFilter])
+
+    const handleGetDirections = () => {
+    Swal.fire({
+      title: 'Chia sẻ vị trí',
+      text: "Bạn có muốn chia sẻ vị trí hiện tại của mình để xem đường đi?",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Chia sẻ',
+      cancelButtonText: 'Không'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(async (position) => {
+            const { latitude, longitude } = position.coords;
+            console.log(latitude, longitude);
+            await apiModifyUser({ lastGeoLocation: {
+              type: "Point",
+              coordinates: [longitude, latitude]
+            } }, current._id);
+            // Call the function to show the route using latitude and longitude
+            // showRoute(latitude, longitude);
+            setNearMeOption(prev => !prev);
+          }, () => {
+            Swal.fire('Không thể lấy vị trí của bạn.');
+          });
+        } else {
+          Swal.fire('Geolocation không khả dụng.');
+        }
+      }
+    });
+  };
 
   return (
     <div className='w-full'>
@@ -114,21 +159,40 @@ const Services = ({dispatch}) => {
           <Breadcrumb category={category} />
         </div>
       </div>
-      <div className='w-main border p-4 flex justify-between m-auto mt-8'>
-        <div className='w-4/5 flex-auto flex flex-col gap-3'>
+      <div className='w-main border p-4 flex justify-start m-auto mt-8'>
+        <div className='flex-auto flex flex-col gap-3'>
           <span className='font-semibold text-sm'>Filter by:</span>
           <div className='flex items-center gap-4'>
           <SearchItemService name='price' activeClick={active} changeActiveFilter={changeActive} type='input'/>
           <SearchItemService name='category' activeClick={active} changeActiveFilter={changeActive}/>
           </div>
         </div>
-        <div className='w-1/5 flex flex-col gap-3'>
+        <div className='flex flex-col gap-3'>
           <span className='font-semibold text-sm'>Sort by:</span>
           <div className='w-full'> 
             <InputSelect value={sort} options={sorts} changeValue={changeValue} />
           </div>
         </div>
       </div>
+      <div className='w-main border p-4 flex justify-start m-auto mt-8'>
+          <span className='font-semibold text-sm p-5'>Search By:</span>
+          {/* <div className='w-full'> */}
+          <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} />
+          <span className='font-semibold text-sm p-5'>Near Me Search:</span>
+          <input className='ml-3 p-5' onInput={() => {handleGetDirections()}} type="checkbox"/>
+          { nearMeOption && 
+            <>
+              <span className='font-semibold text-sm p-3'>Province:</span>
+              <InputSelect
+                value={searchFilter?.province}
+                options={Object.entries(tinh_thanhpho).map(ele => { return {id:ele[0], text:ele[1]?.name, value:ele[0]}})}
+                changeValue={(value) => {console.log(value); setSearchFilter(function(prev) {return {...prev, province: value};}) }}
+              />
+            </>
+          }
+          { nearMeOption && <InputField nameKey='maxDistance' value={searchFilter.maxDistance} setValue={setSearchFilter} placeholder={"Maximum Distance(optional)"} /> }
+          {/* </div> */}
+        </div>
       <div className={clsx('mt-8 w-main m-auto', isShowModal ? 'hidden' : '')}>
         <Masonry
           breakpointCols={breakpointColumnsObj}
@@ -142,6 +206,16 @@ const Services = ({dispatch}) => {
             // />
             <h1>{`---->${el?._source.name}`}</h1>
           ))}
+          <h1 className='py-5'>----------------------</h1>
+          {services?.services?.map(el => (
+            <Service 
+              key={el.sv._id} 
+              serviceData={el.sv}
+              pid= {el.sv._id}
+              normal={true}
+              clientDistance={el?.clientDistance}
+            />
+          )) || "Your Search Result Here..."}
         </Masonry>
       </div>
       <div className='w-main m-auto my-4 flex justify-end'>

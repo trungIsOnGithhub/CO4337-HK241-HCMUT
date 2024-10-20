@@ -27,3 +27,9 @@ export const apiGetOrdersForStaffCalendar = (data) => axios({
     method: 'post',
     data
 })
+
+export const apiUpdateEmailByBookingId = (data) => axios({
+    url: '/order/update_email',
+    method: 'put',
+    data
+})

@@ -246,7 +246,7 @@ const getOneOrderByAdmin = asyncHandler(async(req, res)=>{
 
 const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
     const { provider_id, assigned_staff_ids, service_ids } = req.body;
-
+    console.log('======', req.body);
 
     if (!provider_id || typeof(service_ids.length) !== 'number' || typeof(assigned_staff_ids.length) !== 'number') {
         return res.status(400).json({
@@ -257,8 +257,8 @@ const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
 
     // const service_obj_ids = service_ids.map(objIdStr => new mongoose.Types.ObjectId(objIdStr))
 
-    const providerObjectId = new mongoose.Types.ObjectId(provider_id)
-
+    // const providerObjectId = new mongoose.Types.ObjectId(provider_id)
+    // console.log('======||', providerObjectId);
     let orders = await Order.aggregate([
         {
             $match: {
@@ -320,11 +320,36 @@ const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
     })
 })
 
+const updateEmailByBookingId = asyncHandler(async(req,res) => {
+    const {bookingId, email} = req.body;
+
+    // Tìm kiếm đơn hàng theo bookingId
+    const order = await Order.findById(bookingId);
+    if (!order) {
+        return res.status(404).json({
+            success: false,
+            error: 'Order not found'
+        });
+    }
+
+    // Kiểm tra xem email đã tồn tại trong danh sách emails chưa
+    if (!order.emails.includes(email)) {
+        order.emails.push(email);
+        await order.save();
+    
+        return res.status(200).json({
+            success: true,
+            order: order
+        });
+    }
+})
+
 module.exports = {
     createNewOrder,
     updateStatus,
     getUserOrder,
     getOrdersByAdmin,
     getOrdersForStaffCalendar,
-    getOneOrderByAdmin
+    getOneOrderByAdmin,
+    updateEmailByBookingId
 }

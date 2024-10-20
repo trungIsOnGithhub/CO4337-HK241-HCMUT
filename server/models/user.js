@@ -80,6 +80,21 @@ var userSchema = new mongoose.Schema({
         enum : [1411,202],
         default: 202,
     },
+    lastGeoLocation: {
+        type:
+        {
+            type: String, // Don't do `{ location: { type: String } }`
+            enum: ['Point'], // 'location.type' must be 'Point'
+        },
+        coordinates:
+        {
+            type: [Number],
+        }
+    },
+    chat_users: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    }]
 },{
     timestamps: true
 });

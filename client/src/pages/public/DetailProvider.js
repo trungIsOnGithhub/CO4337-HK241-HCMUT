@@ -1,15 +1,21 @@
-import { apiGetProductByProviderId, apiGetServiceByProviderId, apiGetServiceProviderById } from 'apis'
+import { apiGetAllFlashSaleEventsByProviderId, apiGetProductByProviderId, apiGetServiceByProviderId, apiGetServiceProviderById, apiAddContactToCurrentUser } from 'apis'
 import React, { useEffect, useState } from 'react'
-import { useParams, useSearchParams } from 'react-router-dom'
+import { useParams, useSearchParams, createSearchParams, useNavigate } from 'react-router-dom'
 import defaultProvider from '../../assets/defaultProvider.jpg'
 import clsx from 'clsx'
-import { BookingFromProvider, Pagination, Product, Service } from 'components'
+import path from 'ultils/path';
+import { apiGetAllBlogs } from 'apis/blog';
+import { BookingFromProvider, Pagination, Product, Service, Button, FlashSaleItem } from 'components'
 import Masonry from 'react-masonry-css'
 import { FaLocationDot } from 'react-icons/fa6'
 import Mapbox from 'components/Map/Mapbox'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
+import { FaCircleChevronLeft, FaCircleChevronRight } from "react-icons/fa6";
 
+import { FaRegThumbsUp, FaRegThumbsDown, FaLocationArrow, FaExternalLinkAlt } from 'react-icons/fa';
+import { useSelector } from 'react-redux'
+import avatarDefault from 'assets/avatarDefault.png'
 
 const breakpointColumnsObj = {
   default: 4,
@@ -19,6 +25,9 @@ const breakpointColumnsObj = {
 };
 
 const DetailProvider = () => {
+    const navigate = useNavigate();
+    const {current} = useSelector(state => state.user)
+
     const {prid} = useParams()
     const [providerData, setProviderData] = useState(null)
     const [showMap, setShowMap] = useState(false);
@@ -34,12 +43,18 @@ const DetailProvider = () => {
     const [totalProduct, setTotalProduct] = useState(0)
 
     const [params, setParams] = useSearchParams();
-    const [findUs, setFindUs] = useState(false)
+    const [findUs, setFindUs] = useState(false);
+    
+    const [flashSale, setFlashSale] = useState([])
+    const [currentFlashSaleIndex, setCurrentFlashSaleIndex] = useState(0); // Thêm state để theo dõi chỉ số hiện tại
+
+    console.log(flashSale)
 
     useEffect(() => {
         const fetchProviderData = async() => {
           const response = await apiGetServiceProviderById(prid)
           if(response?.success){
+            console.log('++++++++', response.payload);
             setProviderData(response?.payload)
           }
         }
@@ -53,6 +68,11 @@ const DetailProvider = () => {
             setService(response?.services)
             setTotalService(response?.counts)
             setFindUs(false)
+
+            const allFlashSale = await apiGetAllFlashSaleEventsByProviderId(prid)
+            if(allFlashSale?.success){
+              setFlashSale(allFlashSale?.allFlashSale)
+            }
           }
           if(variable === 'product'){
             const response = await apiGetProductByProviderId(prid)
@@ -174,6 +194,63 @@ const DetailProvider = () => {
       }
     };
 
+    const handleChooseBlogPost = (id) => { 
+      navigate({
+        pathname: `/${path.VIEW_POST}`,
+        search: createSearchParams({id}).toString()
+      })
+     }
+    const handleViewBlogListOnMainPage = () => {
+      navigate(`/${path.BLOGS}`,{ state: { searchKey: providerData?.bussinessName } })
+    }
+    const [currBlogList, setCurrBlogList] = useState([]);
+    const fetchCurrentBlogList = async (search, selectedTags) => {
+      // setIsLoading(true);
+      let response = await apiGetAllBlogs({ title: '',  limit: process.env.REACT_APP_LIMIT, sortBy:[2], provider_id: providerData?.id });
+      if(response?.success && response?.blogs){
+        setCurrBlogList(response.blogs);
+        // setIsLoading(false);
+      }
+      else {
+
+      }
+    }
+    useEffect(() => {
+      fetchCurrentBlogList();
+    }, []);
+
+    const switchToChatWithProvider = async (event) => {
+      if (!current?.chat_users?.includes(providerData.owner)) {
+        let openSwalResult = await Swal.fire({
+          title: 'Do You Want To Add This Provider To Your Contact?',
+          showDenyButton: true,
+          // showCancelButton: true,
+          confirmButtonText: 'Yes',
+          // denyButtonText: 'No',
+          customClass: {
+            cancelButton: 'order-1 right-gap',
+            confirmButton: 'order-2',
+            // denyButton: 'order-3',
+          },
+        });
+
+        if (openSwalResult.isConfirmed) {
+          console.log('+++++++++++', {uid: current?._id, ucid: providerData.owner})
+          let response = await apiAddContactToCurrentUser({uid: current?._id, ucid: providerData.owner});
+          if (response?.success && response.contact) {
+            console.log('||||||||||||||||||', providerData.owner)
+            navigate(`/${path.CHAT}`,{ state: { currenRedirectedChatUserId: providerData.owner } });
+          }
+        } 
+        // else {
+
+        // }
+      }
+      else {
+        navigate(`/${path.CHAT}`,{ state: { currenRedirectedChatUserId: providerData.owner } })
+      }
+    }
+
   return (
     <div>
       <div className='w-main h-[120px] flex justify-between items-center'>
@@ -192,6 +269,7 @@ const DetailProvider = () => {
         <span onClick={()=>{setVariable('blog')}} className={clsx('text-gray-800 font-semibold text-xl cursor-pointer capitalize', variable === 'blog' && 'text-main')}>Blog</span>
         <span onClick={()=>{setVariable('find-us')}} className={clsx('text-gray-800 font-semibold text-xl cursor-pointer capitalize', variable === 'find-us' && 'text-main')}>Find us</span>
         <span onClick={()=>{setVariable('faq')}} className={clsx('text-gray-800 font-semibold text-xl cursor-pointer capitalize', variable === 'faq' && 'text-main')}>FAQ</span>
+        <span onClick={()=>{setVariable('chat')}} className={clsx('text-gray-800 font-semibold text-xl cursor-pointer capitalize', variable === 'faq' && 'text-main')}>Chat</span>
       </div>
 
       {
@@ -201,6 +279,33 @@ const DetailProvider = () => {
           <div>sort/filter</div>
           <div>search</div>
         </div>
+        {flashSale?.length > 0 && 
+        <div className='w-main mx-auto mt-8 flex justify-between items-center'>
+          <button 
+            onClick={() => setCurrentFlashSaleIndex(Math.max(currentFlashSaleIndex - 1, 0))} 
+            disabled={currentFlashSaleIndex === 0} // Vô hiệu hóa nút nếu đã ở đầu
+          >
+            <span className='cursor-pointer text-gray-300 text-[28px] font-medium hover:text-gray-500'><FaCircleChevronLeft /></span>
+          </button>
+          
+          <div className='flex flex-1 gap-3 px-2'>
+            {
+              flashSale?.slice(currentFlashSaleIndex, currentFlashSaleIndex + 3).map((el) => ( // Hiển thị 3 flash sale tại một thời điểm
+                <div className='w-[33%]' key={el._id}>
+                  <FlashSaleItem flashsaleData={el}/> 
+                </div>
+              ))
+            }
+          </div>
+          
+          <button 
+            onClick={() => setCurrentFlashSaleIndex(Math.min(currentFlashSaleIndex + 1, flashSale.length - 3))} 
+            disabled={currentFlashSaleIndex >= flashSale.length - 3} // Vô hiệu hóa nút nếu đã ở cuối
+          >
+            <span className='cursor-pointer text-gray-300 text-[28px] font-medium hover:text-gray-500'><FaCircleChevronRight /></span>
+          </button>
+        </div>
+        }
         <div className='w-main mt-8 mx-auto'>
           <span className='text-gray-400 font-semibold text-lg capitalize'>
             {+totalService > 0 ? +totalService === 1 ? `${totalService} result` : `${totalService} results` : 'No result'}
@@ -269,6 +374,33 @@ const DetailProvider = () => {
       {
         variable === 'book' &&
         <>
+        {flashSale?.length > 0 && 
+        <div className='w-main mx-auto mt-8 flex justify-between items-center'>
+          <button 
+            onClick={() => setCurrentFlashSaleIndex(Math.max(currentFlashSaleIndex - 1, 0))} 
+            disabled={currentFlashSaleIndex === 0} // Vô hiệu hóa nút nếu đã ở đầu
+          >
+            <span className='cursor-pointer text-gray-300 text-[28px] font-medium hover:text-gray-500'><FaCircleChevronLeft /></span>
+          </button>
+          
+          <div className='flex flex-1 gap-3 px-2'>
+            {
+              flashSale?.slice(currentFlashSaleIndex, currentFlashSaleIndex + 3).map((el) => ( // Hiển thị 3 flash sale tại một thời điểm
+                <div className='w-[33%]' key={el._id}>
+                  <FlashSaleItem flashsaleData={el}/> 
+                </div>
+              ))
+            }
+          </div>
+          
+          <button 
+            onClick={() => setCurrentFlashSaleIndex(Math.min(currentFlashSaleIndex + 1, flashSale.length - 3))} 
+            disabled={currentFlashSaleIndex >= flashSale.length - 3} // Vô hiệu hóa nút nếu đã ở cuối
+          >
+            <span className='cursor-pointer text-gray-300 text-[28px] font-medium hover:text-gray-500'><FaCircleChevronRight /></span>
+          </button>
+        </div>
+        }
         <div className='w-main mx-auto mt-8 flex justify-between'>
           <div className='w-[55%] flex flex-col gap-8'>
           {service?.map((el, index) => 
@@ -335,6 +467,47 @@ const DetailProvider = () => {
         </div>
         </>
       }
+
+      {
+        variable === 'blog' &&
+        <div className='mx-auto mt-8 flex flex-col w-50 p-5'>
+          <div className='w-full'>
+            <h2 className='text-lg font-bold'>Top Blogs Post From Provider</h2>
+            <span className='flex justify-end'><p className='text-md font-semibold'><FaExternalLinkAlt onClick={() => {handleViewBlogListOnMainPage()}}/>&nbsp;&nbsp;View In Blog Pages</p></span>
+          </div>
+          {currBlogList && currBlogList.map(
+            blog => {
+              return (
+                <div className='post-item flex flex-row justify-start p-5 hover:bg-slate-300 rounded-md gap-5 m-2'
+                onClick={() => {handleChooseBlogPost(blog?._id);}}>
+                  <img src={blog?.thumb} className='gap-0.5 w-1/2 max-h-60 mr-5'/>
+                  <div>
+                    <h3 className="font-bold text-red-500 text-lg mb-2">{blog?.title || 'Title'}</h3>
+                    <h5 className="font-semibold text-md flex mb-4"><FaLocationArrow />&nbsp;&nbsp;{blog?.provider_id?.province || 'Location'}</h5>
+                    {/* <span> */}
+                      <div className="flex flex-row justify-start gap-2 mb-4"><FaRegThumbsUp /> {blog?.likes?.length || 0}&nbsp;&nbsp;&nbsp;<FaRegThumbsDown /> {blog?.dislikes?.length || 0}</div>
+                      {/* <h5 className="font-semibold text-md"><</h5> */}
+                    {/* </span> */}
+                    <br></br>
+                    {/* {blog?.content?.length > 0 
+                    &&
+                    <div className='text-sm line-clamp-[10] mb-8' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(blog?.content[0])}}></div>} */}
+
+                    <div className='flex flex-wrap'>
+                      {blog?.tags.map(label =>
+                          (<div className='bg-green-400 p-2 m-1 rounded-full w-fit'>
+                            {label}
+                          </div>)
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )
+            }
+          )}
+        </div>
+      }
+
       {
         variable === 'find-us' &&
         <>
@@ -347,6 +520,41 @@ const DetailProvider = () => {
           <div className='w-full h-[200px]'>
           </div>
         </>
+      }
+
+      {
+        variable === 'chat' &&
+        <div className='w-main flex justify-center'>
+          <div className='w-50 flex flex-col px-8 border-2 py-4 my-8 rounded-md'>
+            <h5 className="text-center p-2 bg-red-400 m-2">Opening Times:</h5>
+            {/* <div className="flex flex">. */}
+              {providerData?.time &&
+                // Object.entries(providerData.time).map(pair => {
+                //   return (<div>
+                //     {pair[0] + '' + pair[1]}
+                //   </div>)
+                // })
+                ['monday', 'tuesday', 'wednesday', 'thursday', 'firday', 'saturday', 'sunday'].map(dow => {
+                  return (
+                    <div className='flex flex-row gap-6 mt-2'>
+                      {providerData.time[`start${dow}`] && providerData.time[`end${dow}`] && <h6 className='pt-2 font-semibold'>{dow.charAt(0).toUpperCase() + dow.slice(1)}</h6>}
+                      {providerData.time[`start${dow}`] && <p className='border p-2'>Open: {providerData.time[`start${dow}`]}</p>}
+                      {providerData.time[`end${dow}`] && <p className='border p-2'>Close: {providerData.time[`end${dow}`]}</p>}
+                    </div>  
+                  );
+                })}
+            {/* </div> */}
+          </div>
+          <div className='w-50 flex flex-col justify-center items-center content-start border-2 p-4 my-8 rounded-md'>
+            <div className='w-full flex flex-col items-center justify-center py-4'>
+              <img src={providerData?.owner?.avatar || avatarDefault} alt='logo' className='w-16 h-16 object-cover'></img>
+              <span className='font-semibold'>Owner: {`${providerData?.owner?.lastName} ${providerData?.owner?.firstName}`}</span>
+            </div>
+            <p className='text-md text-center'>Address: {providerData?.address}</p>
+            <p className='text-md text-center'>Province: {providerData?.province}</p>
+            <Button handleOnclick={switchToChatWithProvider}>Chat With This Provider</Button>
+          </div>
+        </div>
       }
     </div>
   )

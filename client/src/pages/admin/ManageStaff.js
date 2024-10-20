@@ -2,17 +2,18 @@ import React, {useCallback, useEffect, useState} from 'react'
 import { InputForm, Pagination, Variant} from 'components'
 import { useForm } from 'react-hook-form'
 import {apiGetAllStaffs, apiDeleteStaff} from 'apis/staff'
-import moment from 'moment'
+// import moment from 'moment'
 import { useSearchParams, createSearchParams, useNavigate, useLocation} from 'react-router-dom'
 import useDebounce from 'hook/useDebounce'
 import UpdateStaff from './UpdateStaff'
+import ManageStaffShift from './ManageStaffShift'
 import icons from 'ultils/icon'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
-
+import { FaCalendarCheck } from "react-icons/fa";
 
 const ManageProduct = () => {
-  const {MdModeEdit, MdDelete, FaCopy} = icons
+  const {MdModeEdit, MdDelete} = icons
   const navigate = useNavigate()
   const location = useLocation()
   const [params] = useSearchParams()
@@ -21,6 +22,8 @@ const ManageProduct = () => {
   const [counts, setCounts] = useState(0)
   const [editStaff, setEditStaff] = useState(null)
   const [update, setUpdate] = useState(false)
+  const [manageStaffShift, setManageStaffShift] = useState(false)
+  const [currentStaffId, setCurrentStaffId] = useState("");
 
   const handleDeleteStaff = async(pid) => {
     Swal.fire({
@@ -85,6 +88,10 @@ const ManageProduct = () => {
       <div className='absolute inset-0 bg-zinc-900 h-[200%] z-50 flex-auto'>
         <UpdateStaff editStaff={editStaff} render={render} setEditStaff={setEditStaff}/>
       </div>}
+      {manageStaffShift &&  
+      <div className='absolute inset-0 bg-zinc-900 h-[360%] z-50 flex-auto'>
+        <ManageStaffShift staffId={currentStaffId} setManageStaffShift={setManageStaffShift}/>
+      </div>}
       <div className='h-[69px] w-full'>
       </div>
       <div className='p-4 border-b w-full flex justify-between items-center fixed top-0 bg-black'>
@@ -131,7 +138,10 @@ const ManageProduct = () => {
                 size={24}/></span>
                 <span onClick={() => handleDeleteStaff(el._id)} 
                 className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>
-
+                <span onClick={() => { setManageStaffShift(true); setCurrentStaffId(el?._id) } } 
+                className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5 pb-0.5'>
+                  <FaCalendarCheck size={"20"}/>
+                </span>
               </td>  
             </tr>
           ))}

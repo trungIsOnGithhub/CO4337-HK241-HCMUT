@@ -156,7 +156,7 @@ const AddPost = () => {
       setAddNewTagMenu(false);
     }
     else {
-      Swal.fire('Error Ocurred!!', 'Cannot create new Post Tag!!', 'error')
+      Swal.fire('Error Ocurred!!', 'Cannot create new Post Tag!!', 'error');
     }
 
     fetchTags();

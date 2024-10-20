@@ -1,12 +1,11 @@
 import React, {useState, useEffect, useRef} from 'react'
 import styled from 'styled-components'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import Contact from './Contact'
 import Welcome from './Welcome'
 import ChatContainer from './ChatContainer'
 import { getCurrent } from 'store/user/asyncAction'
-
 
 //Socket
 import {io} from 'socket.io-client'
@@ -15,8 +14,9 @@ import { apiGetAllContact } from 'apis'
 import { host } from 'ultils/APIRoute'
 
 const Chat = () => {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const {current} = useSelector(state => state.user)
   const socket = useRef()
@@ -25,7 +25,6 @@ const Chat = () => {
 
   const [currentChat, setCurrentChat] = useState(undefined)
   const [isLoaded, setIsLoaded] = useState(false)
-
 
   useEffect(() => {
     dispatch(getCurrent())
@@ -43,7 +42,15 @@ const Chat = () => {
     const fetchData = async () => { 
       if(current){
         const response = await apiGetAllContact(current._id)
+        console.log('||||||||||==================', response);
+        console.log(location?.state?.currenRedirectedChatUserId, '|||||||||||++++++++++++++++');
         setContacts(response)
+
+        if (location?.state?.currenRedirectedChatUserId) {
+          setCurrentChat(
+            response.filter(user => user?._id === location?.state?.currenRedirectedChatUserId)[0]
+          );
+        }
       }
     }
     fetchData()
@@ -63,7 +70,6 @@ const Chat = () => {
           <Welcome currentUser={current}/> : 
           <ChatContainer currentChat={currentChat} currentUser={current} socket={socket}/>)
         }
-        
       </div>
     </Container>
   )

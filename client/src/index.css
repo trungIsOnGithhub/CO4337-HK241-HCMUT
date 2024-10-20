@@ -141,48 +141,48 @@
 
 
   .custom-datepicker .MuiInputBase-root {
-    color: white !important;
+    color: #00143c !important;
   }
   
   .custom-datepicker .MuiFormLabel-root {
-    color: white !important;
+    color: #00143c !important;
   }
   
   .custom-datepicker .MuiInput-underline:before {
-    border-bottom-color: white !important;
+    border-bottom-color: #dee1e6 !important;
   }
   
   .custom-datepicker .MuiInput-underline:hover:not(.Mui-disabled):before {
-    border-bottom-color: white !important;
+    border-bottom-color: #dee1e6 !important;
   }
   
   .custom-datepicker .MuiInput-underline:after {
-    border-bottom-color: white !important;
+    border-bottom-color: #dee1e6 !important;
   }
   
   .custom-datepicker .MuiFormHelperText-root {
-    color: white !important;
+    color: #dee1e6 !important;
   }
   
   .custom-datepicker .MuiSvgIcon-root {
-    color: white !important;
+    color: #00143c !important;
   }
   
   .custom-datepicker .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
-    border-color: white !important;
+    border-color: #dee1e6 !important;
   }
   
   .custom-datepicker .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
-    border-color: white !important;
+    border-color: #dee1e6 !important;
   }
   
   .custom-datepicker .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
-    border-color: white !important;
+    border-color: #dee1e6 !important;
   }
 
 
   .message_box{
-    z-index: 1000 !important;
+    z-index: 18 !important;
   }
   
 
@@ -213,3 +213,26 @@
   .emoji-picker-react .emoji-group:before {
     background-color: #1a1635;
   }
+
+
+  @layer utilities {
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      @apply appearance-none;
+    }
+  
+    input[type="number"] {
+      @apply appearance-none;
+    }
+  }
+
+
+  /* .blink {
+    animation: blink-animation 0.5s steps(5, start) infinite;
+  }
+  
+  @keyframes blink-animation {
+    to {
+      visibility: hidden;
+    }
+  } */

@@ -14,7 +14,7 @@ function initializeElasticClient() {
     // const certFileContent = fs.readFileSync('/home/pc/Downloads/elasticsearch-8.14.3-linux-x86_64/elasticsearch-8.14.3/config/certs/http_ca.crt');
 
     const esClient = new Client({
-        node: 'http://localhost:9200',
+        node: 'http://localhost:9200'
         // auth: {
         //    username: 'elastic',
         //    password: 'yVuVvtKOBiUBCwM1ll32'
@@ -189,11 +189,11 @@ const addToElasticDB = async function(indexName, dataPayload) {
         throw new Error("ES Client not found!");
     }
 
-    return await esClient.index({
-        index: indexName,
-        body: dataPayload
-    })
-}
+//     return await esClient.index({
+//         index: indexName,
+//         body: dataPayload
+//     })
+// }
 
 const isHealthStatusOKElasticDB = async function(esClient) {
     const response = await esClient.cluster.health({
@@ -211,11 +211,11 @@ const queryElasticDB = async function(indexName, queryOptionsObject) {
         throw new Error("ES Client not found!");
     }
 
-    return await esClient.search({
-        index: indexName,
-        ...queryOptionsObject
-    });
-};
+//     return await esClient.search({
+//         index: indexName,
+//         ...queryOptionsObject
+//     });
+// };
 
 const multiFunc = async function(init, reset) {
     // const esClient = initializeElasticClient();
@@ -306,17 +306,17 @@ const multiFunc = async function(init, reset) {
         return;
     }
    
-    //  }
-    // else {
-        // const stats = await esClient?.indices?.stats({ index: indexName });
-        // const indexPStat = stats?.indices[indexName]?.primaries;
+//     //  }
+//     // else {
+//         // const stats = await esClient?.indices?.stats({ index: indexName });
+//         // const indexPStat = stats?.indices[indexName]?.primaries;
 
-        // if (indexPStat?.docs?.count > 3) {
-        //     await esClient.indices.delete({ index: indexName });
-        //     console.log('Overcount on Index Document, Deleted Index');
-        //     return;
-        // }   
-    // }
+//         // if (indexPStat?.docs?.count > 3) {
+//         //     await esClient.indices.delete({ index: indexName });
+//         //     console.log('Overcount on Index Document, Deleted Index');
+//         //     return;
+//         // }   
+//     // }
 
     // const response1 = await esClient.indices.analyze({
     //     index: indexName,
@@ -364,16 +364,16 @@ const multiFunc = async function(init, reset) {
     console.log('++++++++++++++', q1?.hits , '=======================');
     console.log("~~~~~~~~", hitsRecord, "**********");
 
-    // if (q1?.id) {
-    //     const q2 = await deleteEs(indexName, q1?.id);
-    // }
-};
+//     // if (q1?.id) {
+//     //     const q2 = await deleteEs(indexName, q1?.id);
+//     // }
+// };
 
 
 (async function () {
-    //await multiFunc(false, true);
+    await multiFunc(false, true);
     await multiFunc(true, false);
-    // await multiFunc(false, false);
+    await multiFunc(false, false);
 })();
 
 // initializeElasticClient().indices.get({

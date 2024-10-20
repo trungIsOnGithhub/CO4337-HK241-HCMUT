@@ -12,6 +12,7 @@ const InputForm = ({
   defaultValue,
   style,
   fullWidth,
+  styleInput,
   ...props
 }) => {
   return (
@@ -24,9 +25,7 @@ const InputForm = ({
         disabled={disabled}
         placeholder={placeholder}
         defaultValue={defaultValue}
-        className={`${fullWidth ? 'w-full' : 'w-fit'} ${
-          style === 'flex-auto' ? 'flex-auto' : ''
-        } ${errors[id] ? 'border-red-500' : ''}`}
+        className={`${styleInput ? styleInput : ''} ${errors[id] ? 'border-red-500' : ''}`}
         {...props}
       />
       {errors[id] && (

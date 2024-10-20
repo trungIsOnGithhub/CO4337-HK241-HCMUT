@@ -184,7 +184,7 @@ export const sorts = [
         id:7,
         value: '-createdAt',
         text: 'Date, new to old'
-    },
+    }, 
 ]
 
 export const voteOptions = [
@@ -329,7 +329,7 @@ export const adminSidebar = [
                 path: `/${path.ADMIN}/${path.MANAGE_VOUCHER}`
             },
             {
-                text: 'Manage Event',
+                text: 'Manage Sale Event',
                 path: `/${path.ADMIN}/${path.MANAGE_SALE_EVENT}`
             },
 
@@ -338,6 +338,13 @@ export const adminSidebar = [
     },
     {
         id: 11,
+        type: 'single',
+        text: 'Manage Chat',
+        path: `/${path.ADMIN}/${path.MANAGE_CHAT}`,
+        icon: <RiBillLine size={20}/>
+    },
+    {
+        id: 12,
         type: 'single',
         text: 'Setting',
         path: `/${path.ADMIN}/${path.SETTING}`,

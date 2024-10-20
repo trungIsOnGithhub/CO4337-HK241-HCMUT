@@ -1,26 +1,22 @@
-import { apiGetCalendarByUserId } from 'apis';
+import { apiGetCalendarByUserId, apiUpdateEmailByBookingId } from 'apis';
 import React, { useEffect, useState } from 'react'
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaCheckCircle, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import googleCalendar from '../../assets/google_calendar_icon.png'
-import { useSession, useSupabaseClient, useSessionContext } from '@supabase/auth-helpers-react';
-import { useNavigate } from 'react-router-dom'; // Thêm import này
-import path from 'ultils/path';
 import { Button } from 'components';
-import { FcGoogle } from "react-icons/fc";
 import { FaGoogle, FaSignOutAlt } from "react-icons/fa";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { FaSync } from "react-icons/fa";
+import { useSession, useSupabaseClient, useSessionContext } from '@supabase/auth-helpers-react';
+
 
 const Calendar = () => {
-  const navigate = useNavigate(); // Khởi tạo history
   const { current } = useSelector(state => state.user);
   const [calendar, setCalendar] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const session = useSession();
   const supabase = useSupabaseClient(); //Khởi tạo supabase Client
-  const { isLoading } = useSessionContext(); // Kiểm tra trạng thái loading
 
   useEffect(() => {
     const fetchCalendarByUserId = async () => {
@@ -53,6 +49,8 @@ const Calendar = () => {
     return reservationDate.getMonth() === currentMonth && reservationDate.getFullYear() === currentYear;
   });
 
+  
+
   // Chuyển tháng
   const changeMonth = (direction) => {
     if (direction === 'next') {
@@ -72,12 +70,47 @@ const Calendar = () => {
     }
   };
 
-  const handleAddCalendarEvent = async () => {
+  const handleAddCalendarEvent = async (reservation) => {
     if (!session) {
       await googleSignIn(); // Gọi hàm đăng nhập nếu chưa có session
     } else {
-      // Gọi hàm tạo sự kiện lịch ở đây
-      await createCalendarEvent();
+      // Tạo sự kiện lịch
+      const event = {
+        'summary': reservation.serviceName,
+        'description': `Status: ${reservation.status}`,
+        'start': {
+          'dateTime': reservation.localStart,
+          'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone
+        },
+        'end': {
+          'dateTime': reservation.localEnd,
+          'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone
+        }
+      };
+
+      await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", {
+        method: "POST",
+        headers: {
+          'Authorization': 'Bearer ' + session.provider_token, // Access token for google
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(event)
+      })
+      .then((response) => response.json())
+      .then(async(data) => {
+        toast.success("Event created, check your Google Calendar!");
+        await apiUpdateEmailByBookingId({bookingId: reservation?.bookingId, email: session?.user?.email})
+        const response = await apiGetCalendarByUserId(current?._id);
+        if (response?.success) {
+          setCalendar(response?.bookings);
+        } else {
+          toast.error('Something went wrong!');
+        }
+      })
+      .catch((error) => {
+        console.error("Error creating event:", error);
+        toast.error("Failed to create event.");
+      });
     }
   };
 
@@ -95,15 +128,67 @@ const Calendar = () => {
     }
   };
 
-  const createCalendarEvent = async () => {
-    
-  };
 
   const handleLogout = async() => {
     await supabase.auth.signOut();
   }
   
-  console.log(session?.user?.user_metadata?.avatar_url)
+  const handleSyncAllCalendar = async() => {
+    // Tạo một mảng các promise từ map
+    const syncPromises = filteredCalendar?.map(async(calendar) => {
+      if(!calendar?.emailsSync?.includes(session?.user?.email)){
+        const event = {
+          'summary': calendar.serviceName,
+          'description': `Status: ${calendar.status}`,
+          'start': {
+            'dateTime': calendar.localStart,
+            'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone
+          },
+          'end': {
+            'dateTime': calendar.localEnd,
+            'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone
+          }
+        };
+        return fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", {
+          method: "POST",
+          headers: {
+            'Authorization': 'Bearer ' + session.provider_token, // Access token for google
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(event)
+        })
+        .then((response) => response.json())
+        .then(async(data) => {
+          await apiUpdateEmailByBookingId({bookingId: calendar?.bookingId, email: session?.user?.email});
+          const response = await apiGetCalendarByUserId(current?._id);
+          if (response?.success) {
+            setCalendar(response?.bookings);
+          } else {
+            toast.error('Something went wrong!');
+          }
+        })
+        .catch((error) => {
+          console.error("Error creating event:", error);
+        });
+      }
+    });
+
+    // Chờ tất cả các promise hoàn thành
+    await Promise.all(syncPromises);
+    
+
+    // Tính toán số lượng sự kiện đã đồng bộ
+    let count = 0;
+    filteredCalendar?.forEach((calendar) => {
+      if(calendar?.emailsSync?.includes(session?.user?.email)){
+        count += 1;
+      }
+    });
+
+    if(count === filteredCalendar.length){
+      toast.success("All events have been synced to Google Calendar!");
+    }
+  }
 
   return (
     <div className="max-w-6xl mx-auto p-4 bg-white shadow-lg rounded-lg flex flex-col overflow-y-hidden h-screen">
@@ -114,13 +199,6 @@ const Calendar = () => {
             <h2 className='text-xl text-gray-700 font-semibold hover:text-gray-900 transition-colors duration-200'>
                 Hey: {session?.user?.email}
             </h2>
-            {
-                session?.user?.user_metadata?.picture &&  
-                <img 
-                    src={session?.user?.user_metadata?.picture} 
-                    className='w-12 h-12 rounded-full border border-gray-300 shadow-sm transition-transform transform hover:scale-105' 
-                />
-            }
           </div>
           <Button
             handleOnclick={handleLogout} 
@@ -137,6 +215,13 @@ const Calendar = () => {
         <h2 className="font-semibold">{`${new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })} ${currentYear}`}</h2>
         <button onClick={() => changeMonth('next')}><FaChevronRight /></button>
       </div>
+      {session &&   
+      <div className='w-full flex justify-end mb-4 h-[5%] items-center'>
+        <div className='flex gap-1 items-center bg-[#4285F4] py-1 px-2 rounded-md text-white cursor-pointer' onClick={() => handleSyncAllCalendar()}>
+          <FaSync/>
+          <span>Sync all calendars</span>
+        </div>
+      </div>}
       <div className='grow overflow-y-auto mb-4 scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-white'>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {filteredCalendar.map((reservation, index) => (
@@ -157,7 +242,16 @@ const Calendar = () => {
                 <h3 className="text-lg font-semibold text-gray-800 mb-1">{reservation.serviceName}</h3>
                 <div className='flex justify-between items-center'>
                   <p className="text-sm text-gray-600">{new Date(reservation.localStart).toDateString()}</p>
-                  <img src={googleCalendar} className='w-8 h-8 rounded-md cursor-pointer' onClick={()=>handleAddCalendarEvent()}/>
+                  {
+                    !reservation?.emailsSync?.includes(session?.user?.email) ?
+                    <img src={googleCalendar} className='w-8 h-8 rounded-md cursor-pointer' onClick={()=>handleAddCalendarEvent(reservation)}/>
+                    :
+                    <div
+                      className="bg-green-500 rounded-full p-1"
+                    >
+                      <FaCheckCircle className="w-3 h-3 text-white" />
+                    </div>
+                  }
                 </div>
               </div>
             </div>

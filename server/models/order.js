@@ -20,7 +20,11 @@ var orderSchema = new mongoose.Schema({
     orderBy:{
         type: mongoose.Types.ObjectId, 
         ref: 'User'
-    }
+    },
+    emails: [{
+        type: String,
+        match: [/^\S+@\S+\.\S+$/, 'Invalid email format']
+    }]
 },{
     timestamps: true
 });

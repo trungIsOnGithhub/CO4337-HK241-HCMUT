@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 const Service = require('../models/service')
+const ServiceProvider = require('../models/ServiceProvider')
 const User = require('../models/user')
 const asyncHandler = require("express-async-handler")
 // const slugify = require('slugify')
 const makeSku = require('uniqid')
 const Order = require('../models/order')
 const esIndexNameList = require('../services/constant');
-const esDBModule = require('../services/es');
 
 const createService = asyncHandler(async(req, res)=>{
     const {name, price, description, category, assigned_staff, hour, minute, provider_id,  elastic_query} = req.body
@@ -127,7 +127,7 @@ const getAllServicesByAdmin = asyncHandler(async (req, res) => {
 
     //Filtering
     let categoryFinish = {}
-    if (queries?.name) formatedQueries.name = { $regex: queries.title, $options: 'i' };
+    if (queries?.name) formatedQueries.name = { $regex: queries.name, $options: 'i' };
     if (queries?.category){
         delete formatedQueries.category
         const categoryArray = queries.category?.split(',')
@@ -269,7 +269,7 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
     const formatedQueries = JSON.parse(queryString);
     //Filtering
     let categoryFinish = {}
-    if (queries?.name) formatedQueries.name = { $regex: queries.title, $options: 'i' };
+    if (queries?.name) formatedQueries.name = { $regex: queries.name, $options: 'i' };
     if (queries?.category){
         delete formatedQueries.category
         const categoryArray = queries.category?.split(',')
@@ -280,54 +280,160 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
     }
 
     let queryFinish = {}
-    if(queries?.q){
-        delete formatedQueries.q
-        queryFinish = {
-            $or: [
-                {name: {$regex: queries.q, $options: 'i' }},
-                {category: {$regex: queries.q, $options: 'i' }},
-            ]
-        }
-    }
+    // if(queries?.q){
+    //     delete formatedQueries.q
+    //     queryFinish = {
+    //         $or: [
+    //             {name: {$regex: queries.q, $options: 'i' }},
+    //             {category: {$regex: queries.q, $options: 'i' }},
+    //         ]
+    //     }
+    // }
     const qr = {...formatedQueries, ...queryFinish, ...categoryFinish}
-    let queryCommand =  Service.find(qr).populate({
-        path: 'assigned_staff',
-        select: 'firstName lastName avatar',
-    })
+        console.log('aaaaaaaaaaaa', qr, 'sssssssss')
+    let services = await Service.find(qr);
+    console.log('===+++++++>', services);
+
     try {
         // sorting
         if(req.query.sort){
+            console.log('CAC1');
             const sortBy = req.query.sort.split(',').join(' ')
             queryCommand.sort(sortBy)
         }
 
-        //filtering
-        if(req.query.fields){
-            const fields = req.query.fields.split(',').join(' ')
-            queryCommand.select(fields)
+        let aggregations = []
+        // let providersQueryCommand = ServiceProvider.find({});
+        if (req?.query?.current_client_location) {
+            let {longtitude, lattitude, maxDistance} = req.query.current_client_location;
+
+            longtitude = parseFloat(longtitude);
+            lattitude = parseFloat(lattitude);
+
+            if (longtitude < -180 || longtitude > 180
+                || lattitude < -90 || lattitude > 90) {// valid long and lat
+                return res.status(500).json({
+                    success: false,
+                    error: 'Invalid Input Data!',
+                });
+            }
+
+            console.log('-----+++', req.query.current_client_location)
+            let nearbyFilterObj = {
+                type:"Point",
+                coordinates:[longtitude, lattitude]
+            };
+
+            maxDistance = parseFloat(maxDistance);
+            const maxDistanceInMeter = maxDistance * 1000.0;
+            if (!isNaN(maxDistance)) {
+                console.log('<<<<<<-->', maxDistance);
+                aggregations.push({
+                    $geoNear: {
+                        "near": nearbyFilterObj,
+                        "distanceField": "clientDistance",
+                        "maxDistance": maxDistanceInMeter,
+                        "spherical": true
+                    }
+                });
+            }
+            else {
+                aggregations.push({
+                    $geoNear: {
+                        "near": nearbyFilterObj,
+                        "distanceField": "clientDistance",
+                        // "maxDistance": maxDistance,
+                        "spherical": true
+                    }
+                });
+            }
+            // providersQueryCommand.find({
+            //     geolocation: {
+            //         $near: nearbyFilterObj
+            //     }
+            // })
+ 
+            // console.log('----->', services);
+        }
+        else {
+            for (let i=0; i < services?.length; ++i) {
+                services[i] = {
+                    sv: services[i],
+                };
+                // console.log('===============', clientDistance);
+            }
         }
 
-        //pagination
-        //limit: so object lay ve 1 lan goi API
-        //skip: n, nghia la bo qua n cai dau tien
-        //+2 -> 2
-        //+dgfbcxx -> NaN
+        if (req?.query?.province?.length > 0) {
+            aggregations.push({
+                $match: {
+                    province: {$regex: req.query.province, $options: 'i' }
+                }
+            });
+        }
+
+        let serviceProviders = [];
+        if (aggregations?.length > 0) {
+            serviceProviders = await ServiceProvider.aggregate(aggregations);
+        }
+        if (req?.query?.province?.length > 0 || req?.query?.current_client_location){
+            const mapByProviderId = new Map();
+            for (const provider of serviceProviders) {
+                // console.log(provider,'---------------');
+                mapByProviderId.set(provider._id.toString(), [provider.clientDistance]);
+            }
+            // console.log(mapByProviderId);
+            for (let i=0; i < services?.length; ++i) {
+                // console.log('===============', services[i]);
+                mapByProviderId.get(services[i]?.provider_id.toString())?.push(services[i]);
+                // console.log('===============', services[i]);
+            }
+            console.log(mapByProviderId);
+            services = [];
+            mapByProviderId.forEach((value, _, __) => {
+                console.log('value--->', value);
+                // const serviceList = value
+                // for (let i=1; i<value.length; ++i) {
+                //     value[i] = {
+                //         ...value[i],
+                //         clientDistance: value[0]
+                //     };
+                // }
+                services = services.concat(value.slice(1));
+            })
+
+            for (let i=0; i < services?.length; ++i) {
+                // console.log('===============', services[i]);
+                const clientDistance = mapByProviderId.get(services[i]?.provider_id.toString())[0];
+                services[i] = {
+                    sv: services[i],
+                    clientDistance
+                };
+                console.log('===============', clientDistance);
+            }
+        }
+
+        //filtering
+        // if (req.query.fields){
+        //     const fields = req.query.fields.split(',').join(' ')
+        //     queryCommand.select(fields)
+        // }
+
         const page = +req.query.page || 1
         const limit = +req.query.limit || process.env.LIMIT_PRODUCT
         const skip = (page-1)*limit
-        queryCommand.skip(skip).limit(limit)
+        // queryCommand.skip(skip).limit(limit)
+        services.slice(skip, skip+limit)
 
-
-        const services = await queryCommand
-        const counts = await Service.countDocuments(qr);
+        const counts = services.length;
         return res.status(200).json({
             success: true,
             counts: counts,
             services: services,
-            });
-        
+        });
     } catch (error) {
         // Xử lý lỗi nếu có
+        console.log('+++++', error, '++++')
         return res.status(500).json({
         success: false,
         error: 'Cannot get services',
@@ -495,7 +601,7 @@ const getOneService = asyncHandler(async(req, res)=>{
 
     const service = await Service.findById(sid).populate({
         path: 'assigned_staff',
-        select: 'firstName lastName avatar mobile email work',
+        select: 'firstName lastName avatar mobile email work shifts',
     }).populate({
         path: 'rating',
         populate: {
@@ -506,7 +612,7 @@ const getOneService = asyncHandler(async(req, res)=>{
         path: 'provider_id',
         select: 'bussinessName address province latitude longitude'
     })
-
+    
     return res.status(200).json({
         success: service ? true : false,
         service: service ? service : "Cannot find product"
