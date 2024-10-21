@@ -386,6 +386,28 @@ const getTopTags = asyncHandler(async(req, res)=>{
     })
 })
 
+const getAllBlogSampleTest = asyncHandler(async(req, res)=>{
+    const sampleData = require("../tests/mocks/api.blogs.data.test");
+
+    let { testMode } = req.body;
+
+    if (!testMode) {
+
+        const lossData = sampleData.slice(1);
+
+        return res.status(400).json({
+            success: false,
+            tags: lossData,
+            msg: "Data Loss"
+        })
+    }
+
+    return res.status(200).json({
+        success: true,
+        tags: sampleData
+    })
+})
+
 module.exports = {
     updateBlog,
     getAllBlogs,
@@ -399,5 +421,6 @@ module.exports = {
     createNewPostTag,
     getBlogsBySearchTerm,
     getTopBlogs,
-    getTopTags
+    getTopTags,
+    getAllBlogSampleTest
 }
