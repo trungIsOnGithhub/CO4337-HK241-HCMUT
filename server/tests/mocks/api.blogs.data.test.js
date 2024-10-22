@@ -1,4 +1,4 @@
-exports.module = [
+module.exports = [
     {
         "title": "Blog Sample Title 1",
         "content": "A 1st interesting blog...",

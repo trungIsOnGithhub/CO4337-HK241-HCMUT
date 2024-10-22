@@ -1,36 +1,72 @@
 // const sinon = require('sinon');
-// const chai = require('chai');
-// import chai from 'chai';
-// import sinon from 'sinon';
-// const expect = chai.expect;
-
-// https://www.youtube.com/watch?v=DvO-YC1wmpg
+const chai = require('chai');
+const mocha = require('mocha');
 
 // API modules
 const blogsAPIController = require("../../controllers/blog");
 
-(async function () {
-  const resp = await blogsAPIController.getAllBlogSampleTest({ body: { testMode: true } });
+// Custom type
+class DummyTestResponseType {
+  constructor() {
+  }
 
-  console.log("SAMPLE RESPONSE:", resp);
-})();
+  status(statusCode) {
+    this.statusCode = statusCode;
+    return this;
+  }
 
-// describe('Test Sample 1 - Blog API', function() {
-//     beforeEach(function() {
-//       const sampleData = require("../tests/mocks/api.blogs.data.test");
-//     });
+  json(object) {
+    for (const key of Object.keys(object)) {
+      this[key] = object[key];
+    }
+    return this;
+  }
 
-//     it('_should return the response status 400 with data loss', async function() {
-//       // sinon.stub(swapi, 'films').returns(swapiFilmListMock);
+  stringify() {
+    return JSON.stringify(this);
+  }
+}
+// console.log((new DummyTestResponseType()).status(200).json({number:68,string:"vui"}).stringify());
 
-//       const response = await starwars.filmList();
-//       expect(response).to.deep.equal(starwarsFilmListMock);
-//     });
+// (async function () {
+//   const result = await blogsAPIController.getAllBlogSampleTest({ body: { testMode: true } }, testResponse);
 
-//     it('_should return the response status 200 OL', async function() {
-//       // sinon.stub(swapi, 'films').returns(swapiFilmListMock);
+//   console.log("SAMPLE RESPONSE:", result);
+// })();
 
-//       const response = await starwars.filmList();
-//       expect(response).to.deep.equal(starwarsFilmListMock);
-//     });
-// });
+mocha.describe('Test Sample 1 - Blog API', function () {
+  let pipedTestResponse = null;
+  beforeEach(function () {
+    pipedTestResponse = new DummyTestResponseType();
+  });
+
+  it('_should return the response status 400 with data loss', async function () {
+    // sinon.stub(swapi, 'films').returns(swapiFilmListMock);
+    if (pipedTestResponse) {
+      const response = await blogsAPIController.getAllBlogSampleTest(
+        { body: { testMode: false } },
+        pipedTestResponse
+      );
+
+      chai.expect(response?.statusCode).to.deep.equal(400);
+    }
+    else {
+      throw new Error("Cannot Prepared Data To Test!");
+    }
+  });
+
+  it('_should return the response status 200 OK', async function () {
+    // sinon.stub(swapi, 'films').returns(swapiFilmListMock);
+    if (pipedTestResponse) {
+      const response = await blogsAPIController.getAllBlogSampleTest(
+        { body: { testMode: true } },
+        pipedTestResponse
+      );
+
+      chai.expect(response?.statusCode).to.deep.equal(200);
+    }
+    else {
+      throw new Error("Cannot Prepared Data To Test!");
+    }
+  });
+});
