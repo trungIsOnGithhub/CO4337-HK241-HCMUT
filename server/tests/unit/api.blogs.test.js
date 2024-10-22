@@ -1,3 +1,5 @@
+'use strict';
+
 // const sinon = require('sinon');
 const chai = require('chai');
 const mocha = require('mocha');
@@ -63,10 +65,12 @@ mocha.describe('Test Sample 1 - Blog API', function () {
         pipedTestResponse
       );
 
-      chai.expect(response?.statusCode).to.deep.equal(200);
+      chai.expect(response?.statusCode).to.deep.equal(300);
     }
     else {
       throw new Error("Cannot Prepared Data To Test!");
     }
   });
 });
+
+// mocha.run();
