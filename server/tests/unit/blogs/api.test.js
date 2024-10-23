@@ -5,7 +5,7 @@ const chai = require('chai');
 const mocha = require('mocha');
 
 // API modules
-const blogsAPIController = require("../../controllers/blog");
+const blogsAPIController = require("../../../controllers/blog");
 
 // Custom type
 class DummyTestResponseType {
@@ -35,6 +35,48 @@ class DummyTestResponseType {
 
 //   console.log("SAMPLE RESPONSE:", result);
 // })();
+
+const chaiExpectBadRequestBodyData = function(resp) {
+  chai.expect(resp).to.not.be.null;
+  chai.expect(resp.statusCode).to.deep.equal(400);
+}
+
+mocha.describe('Should Test Data Missing/Wrong Format Scenarios', function (done) {
+  // beforeEach(function () {
+  // });
+
+  it('_Test Request Missing Data Field: { title }', async function() {
+    const req = {
+      body: {
+        content: "string",
+        title: null
+      }
+    };
+    const resp = new DummyTestResponseType();
+
+    const result = await blogsAPIController.createNewBlogPost(
+      req, resp
+    );
+
+    chaiExpectBadRequestBodyData(result);
+  });
+
+  it('_Test Request Missing Data Field: { title }', async function() {
+    const req = {
+      body: {
+        content: null,
+        title: "string"
+      }
+    };
+    const resp = new DummyTestResponseType();
+
+    const result = await blogsAPIController.createNewBlogPost(
+      req, resp
+    );
+
+    chaiExpectBadRequestBodyData(result);
+  });
+});
 
 mocha.describe('Test Sample 1 - Blog API', function () {
   let pipedTestResponse = null;
