@@ -15,7 +15,13 @@ mocha.describe('Integration Endpoint Test - Get All Blog - Page 1 - Limit 10 No 
 
         chai.request.execute(commons.TEST_BASE_URL)
             .get('/')
-            .query(allBlogQueryObject) 
+            .query(allBlogQueryObject)
+            .then(resp => {
+                expect(resp).to.have.status(200);
+            })
+            .catch(err => {
+                throw err;
+            });
 
       // sinon.stub(swapi, 'films').returns(swapiFilmListMock);
       if (pipedTestResponse) {
