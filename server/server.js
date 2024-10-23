@@ -25,7 +25,7 @@ initRoutes(app);
 app.use('/', (req,res) => {res.send('SERVER ON')})
 
 const server = app.listen(port,()=>{
-
+    console.log('Running....')
 });
 
 const io = socket(server,{
@@ -49,3 +49,5 @@ io.on("connection", (socket) => {
         }
     })
 })
+
+module.exports = app;
