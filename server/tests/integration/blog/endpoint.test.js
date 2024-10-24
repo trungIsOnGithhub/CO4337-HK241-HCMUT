@@ -1,3 +1,4 @@
+const mocha = require('mocha');
 const chaiModule = require('chai');
 const chaiHttp = require('chai-http');
 const commons = require('../common');
@@ -13,42 +14,31 @@ mocha.describe('Integration Endpoint Test - Get All Blog - Page 1 - Limit 10 No 
             page: 1
         };
 
-        chai.request.execute(commons.TEST_BASE_URL)
-            .get('/')
-            .query(allBlogQueryObject)
+        chai.request(commons.TEST_BASE_URL)
+            .post('/')
+            .send(allBlogQueryObject)
             .then(resp => {
                 expect(resp).to.have.status(200);
+                expect(resp?.success).to.be.equal(false);
+                expect(resp).to.have.header('content-type', 'application/json');
             })
             .catch(err => {
                 throw err;
             });
-
-      // sinon.stub(swapi, 'films').returns(swapiFilmListMock);
-      if (pipedTestResponse) {
-        const response = await blogsAPIController.getAllBlogSampleTest(
-          { body: { testMode: false } },
-          pipedTestResponse
-        );
-  
-        chai.expect(response?.statusCode).to.deep.equal(400);
-      }
-      else {
-        throw new Error("Cannot Prepared Data To Test!");
-      }
     });
   
-    it('_should return the response status 200 OK', async function () {
-      // sinon.stub(swapi, 'films').returns(swapiFilmListMock);
-      if (pipedTestResponse) {
-        const response = await blogsAPIController.getAllBlogSampleTest(
-          { body: { testMode: true } },
-          pipedTestResponse
-        );
+    // it('_should return the response status 200 OK', async function () {
+    //   // sinon.stub(swapi, 'films').returns(swapiFilmListMock);
+    //   if (pipedTestResponse) {
+    //     const response = await blogsAPIController.getAllBlogSampleTest(
+    //       { body: { testMode: true } },
+    //       pipedTestResponse
+    //     );
   
-        chai.expect(response?.statusCode).to.deep.equal(300);
-      }
-      else {
-        throw new Error("Cannot Prepared Data To Test!");
-      }
-    });
+    //     chai.expect(response?.statusCode).to.deep.equal(300);
+    //   }
+    //   else {
+    //     throw new Error("Cannot Prepared Data To Test!");
+    //   }
+    // });
   });

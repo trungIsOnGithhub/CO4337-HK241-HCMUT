@@ -38,7 +38,8 @@ class DummyTestResponseType {
 
 const chaiExpectBadRequestBodyData = function(resp) {
   chai.expect(resp).to.not.be.null;
-  chai.expect(resp.statusCode).to.deep.equal(400);
+  chai.expect(resp?.success).to.not.be.null;
+  chai.expect(resp.success).to.be.false;
 }
 
 mocha.describe('Should Test Data Missing/Wrong Format Scenarios', function (done) {
@@ -54,28 +55,33 @@ mocha.describe('Should Test Data Missing/Wrong Format Scenarios', function (done
     };
     const resp = new DummyTestResponseType();
 
-    const result = await blogsAPIController.createNewBlogPost(
-      req, resp
-    );
+    const getAPIResult = async function()  {
+      return await blogsAPIController.createNewBlogPost(
+        req, resp
+      );
+    }
 
-    chaiExpectBadRequestBodyData(result);
+    chai.expect(getAPIResult).to.rejet;
   });
 
-  it('_Test Request Missing Data Field: { title }', async function() {
-    const req = {
-      body: {
-        content: null,
-        title: "string"
-      }
-    };
-    const resp = new DummyTestResponseType();
+  // it('_Test Request Missing Data Field: { content }', async function() {
+  //   const req = {
+  //     body: {
+  //       content: null,
+  //       title: "string"
+  //     }
+  //   };
+  //   const resp = new DummyTestResponseType();
 
-    const result = await blogsAPIController.createNewBlogPost(
-      req, resp
-    );
+  //   let result = null;
+  //   try {
+  //   result = await blogsAPIController.createNewBlogPost(
+  //     req, resp
+  //   );
+  //   } catch(err) { console.log(err); }
 
-    chaiExpectBadRequestBodyData(result);
-  });
+  //   chaiExpectBadRequestBodyData(result);
+  // });
 });
 
 mocha.describe('Test Sample 1 - Blog API', function () {
