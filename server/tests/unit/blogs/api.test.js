@@ -40,7 +40,7 @@ class DummyTestResponseType {
 
 const chaiExpectBadRequestBodyData = function(resp) {
   chai.expect(resp).to.not.be.null;
-  chai.expect(resp?.success).to.not.be.null;
+  chai.expect(resp.success).to.not.be.null;
   chai.expect(resp.success).to.be.false;
 }
 

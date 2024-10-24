@@ -1,36 +1,33 @@
 const mocha = require('mocha');
-const chaiModule = require('chai');
+const chai = require('chai');
 const chaiHttp = require('chai-http');
 const commons = require('../common');
 
-const chai = chaiModule.use(chaiHttp);
+const blogMockTestData = require('./mock.test');
 
-async function testSuccessPostRequest() {
-    const jsonPostPayload = 
-}
+const chaiWithHttp = chai.use(chaiHttp);
 
-mocha.describe('Integration Endpoint Test - Get All Blog - Page 1 - Limit 10 No Filter', function () {
-    const { mock, match } = require();
+// async function testSuccessPostRequest(done ) {
+//     const jsonPostPayload = 
+// }
 
-    beforeEach(function() {
+mocha.describe('BLOG GET 1', function () {
+    const testSuitMockData = blogMockTestData[this.title];
+    // beforeEach(function() {
 
-    });
+    // });
 
-    it('_Test Search Blog Successfully', async function () {
-        const allBlogQueryObject = {
-            searchTerm: "",
-            selectedTags: [],
-            limit: 5,
-            page: 1
-        };
+    it('_Case: Test Search Blog Successfull', async function () {
+        const { mock, match } = testSuitMockData[this.test.title];
 
-        chai.request(commons.TEST_BASE_URL)
+        chaiWithHttp.request(commons.TEST_BASE_URL)
             .post('/')
-            .send(allBlogQueryObject)
+            .send(mock)
             .then(resp => {
-                expect(resp).to.have.status(200);
-                expect(resp?.success).to.be.equal(false);
-                expect(resp).to.have.header('content-type', 'application/json');
+                chai.expect(resp).to.have.status(200);
+                chai.expect(resp.success).to.not.be.null
+                chai.expect(resp?.success).to.be.equal(false);
+                chai.expect(resp).to.have.header('content-type', 'application/json');
             })
             .catch(err => {
                 throw err;
