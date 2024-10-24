@@ -17,17 +17,32 @@ mocha.describe('BLOG GET 1', function () {
 
     // });
 
-    it('_Case: Test Search Blog Successfull', async function () {
+    it('B1-1: Search Blog Success', async function () {
+        const endpoint = '/api/blog/';
         const { mock, match } = testSuitMockData[this.test.title];
 
+        console.log("MOCK:", mock, "-------");
+        console.log("MATCH:", match, "--------");
+
         chaiWithHttp.request(commons.TEST_BASE_URL)
-            .post('/')
+            // .Request(commons.expressApp)
+            // .execute(commons.expressApp)
+            .post(endpoint)
             .send(mock)
             .then(resp => {
+                chai.expect(resp.success).to.not.be.null;
                 chai.expect(resp).to.have.status(200);
-                chai.expect(resp.success).to.not.be.null
-                chai.expect(resp?.success).to.be.equal(false);
                 chai.expect(resp).to.have.header('content-type', 'application/json');
+
+                console.log(JSON.stringify(resp), "=======================");
+
+                const matchKeys = Object.keys(match);
+                for (const key of matchKeys) {
+                    console.log(key, "======>", match[key] + "---||---" + typeof(match[key]));
+
+                    chai.expect(resp[key]).to.be.equal(match[key]);
+                    chai.expect(resp[key]).to.be.an( typeof(match[key]) );
+                }
             })
             .catch(err => {
                 throw err;

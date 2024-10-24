@@ -1,5 +1,14 @@
 module.exports = {
     'BLOG GET 1': {
-        '_Test Search Blog Successfully': {}
+        'B1-1: Search Blog Success': {
+            mock: {
+                searchTerm: "",
+                selectedTags: []
+            },
+            match: {
+                success: false,
+                blogs: []
+            }
+        }
     }
 }
