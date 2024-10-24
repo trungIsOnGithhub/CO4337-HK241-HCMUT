@@ -2,6 +2,9 @@
 
 // const sinon = require('sinon');
 const chai = require('chai');
+const promisePlugin = require('chai-as-promised');
+
+const chaiWithPromise = require('chai').use(promisePlugin);
 const mocha = require('mocha');
 
 // API modules
@@ -9,8 +12,7 @@ const blogsAPIController = require("../../../controllers/blog");
 
 // Custom type
 class DummyTestResponseType {
-  constructor() {
-  }
+  constructor() {}
 
   status(statusCode) {
     this.statusCode = statusCode;
@@ -42,10 +44,9 @@ const chaiExpectBadRequestBodyData = function(resp) {
   chai.expect(resp.success).to.be.false;
 }
 
-mocha.describe('Should Test Data Missing/Wrong Format Scenarios', function (done) {
+mocha.describe('Should Test Wrong Response Scenarios', function (done) {
   // beforeEach(function () {
   // });
-
   it('_Test Request Missing Data Field: { title }', async function() {
     const req = {
       body: {
@@ -55,13 +56,10 @@ mocha.describe('Should Test Data Missing/Wrong Format Scenarios', function (done
     };
     const resp = new DummyTestResponseType();
 
-    const getAPIResult = async function()  {
-      return await blogsAPIController.createNewBlogPost(
-        req, resp
-      );
-    }
+    await chaiWithPromise.expect(
+      blogsAPIController.createNewBlogPost(req, resp)
+    ).to.be.rejectedWith("Missing input");
 
-    chai.expect(getAPIResult).to.rejet;
   });
 
   // it('_Test Request Missing Data Field: { content }', async function() {
@@ -84,7 +82,7 @@ mocha.describe('Should Test Data Missing/Wrong Format Scenarios', function (done
   // });
 });
 
-mocha.describe('Test Sample 1 - Blog API', function () {
+mocha.describe('Should Test Success Get Request Scenarios', function () {
   let pipedTestResponse = null;
   beforeEach(function () {
     pipedTestResponse = new DummyTestResponseType();
@@ -113,7 +111,7 @@ mocha.describe('Test Sample 1 - Blog API', function () {
         pipedTestResponse
       );
 
-      chai.expect(response?.statusCode).to.deep.equal(300);
+      chai.expect(response?.statusCode).to.deep.equal(200);
     }
     else {
       throw new Error("Cannot Prepared Data To Test!");
