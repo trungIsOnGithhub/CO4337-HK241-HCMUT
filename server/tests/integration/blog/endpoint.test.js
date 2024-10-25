@@ -32,27 +32,21 @@ mocha.describe('BLOG GET 1', function () {
             // .execute(commons.expressApp)
             .post(endpoint)
             .send(mock);
-        
-            // .then(resp => {
-                chai.expect(resp.success).to.not.be.null;
-                chai.expect(resp).to.have.status(httpStatusCode);
-                chai.expect(resp).to.have.header('content-type', 'application/json; charset=utf-8');
-                chai.expect(resp.text).to.not.be.null;
 
-                console.log(JSON.stringify(resp), "=======================");
+            chai.expect(resp.success).to.not.be.null;
+            chai.expect(resp).to.have.status(httpStatusCode);
+            chai.expect(resp).to.have.header('content-type', 'application/json; charset=utf-8');
+            chai.expect(resp.text).to.not.be.null;
 
-                const matchKeys = Object.keys(match);
-                for (const key of matchKeys) {
-                    console.log(key, "======>", match[key] + "---||---" + typeof(match[key]));
+            console.log(JSON.stringify(resp), "=======================");
 
-                    chai.expect(resp.text[key]).to.be.equal(match[key]);
-                    chai.expect(resp.text[key]).to.be.an( typeof(match[key]) );
-                }
-            // })
-            // .catch(err => {
-            //     throw err;
-            // });
-        
+            const matchKeys = Object.keys(match);
+            for (const key of matchKeys) {
+                console.log(key, "======>", match[key] + "---||---" + typeof(match[key]));
+
+                chai.expect(resp.text[key]).to.be.equal(match[key]);
+                chai.expect(resp.text[key]).to.be.an( typeof(match[key]) );
+            }
     });
   
     // it('_should return the response status 200 OK', async function () {
