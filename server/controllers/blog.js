@@ -4,11 +4,23 @@ const asyncHandler = require('express-async-handler');
 const User = require('../models/user');
 
 const createNewBlogPost = asyncHandler(async(req, res)=>{
-    const {title, content} = req.body
+    const {title, content} = req.body;
+
     if(!title || !content){
         throw new Error ("Missing input")
     }
-    const response = await Blog.create(req.body)
+    // const response = await Blog.create(req.body)
+
+    const response = {
+        _id: "66377327edf989f1ae865513",
+        title: "Sample Title",
+        content: "An interesting blog...",
+        category: "Sample category",
+        numberView: 9999,
+        likes:[],
+        dislikes:[],
+        image: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI"
+    };
 
     return res.status(200).json({
         success: response ? true : false,
@@ -17,7 +29,7 @@ const createNewBlogPost = asyncHandler(async(req, res)=>{
 })
 
 const updateBlog = asyncHandler(async(req, res)=>{
-    const {bid} = req.params
+    const {bid} = req.params;
     if(Object.keys(req.body).length === 0){
         throw new Error("Missing input")
     }
