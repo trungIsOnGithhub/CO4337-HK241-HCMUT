@@ -13,11 +13,13 @@ const InputForm = ({
   style,
   fullWidth,
   styleInput,
+  styleLabel,
+  require,
   ...props
 }) => {
   return (
     <div className={style ? style : ''}>
-      {label && <label htmlFor={id}>{label}</label>}
+      {label && <label className={styleLabel} htmlFor={id}>{label}{require && <sup className='text-red-500 font-semibold'> *</sup>}</label>}
       <input
         type={type}
         id={id}

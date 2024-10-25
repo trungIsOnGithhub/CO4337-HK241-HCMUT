@@ -47,7 +47,8 @@ const getAllServicesByAdmin = asyncHandler(async (req, res) => {
     const {_id} = req.user
     const {provider_id} = await User.findById({_id}).select('provider_id')
     const queries = { ...req.query };
-
+    
+    console.log(queries)
     // Loại bỏ các trường đặc biệt ra khỏi query
     const excludeFields = ['limit', 'sort', 'page', 'fields'];
     excludeFields.forEach((el) => delete queries[el]);
@@ -58,9 +59,11 @@ const getAllServicesByAdmin = asyncHandler(async (req, res) => {
         /\b(gte|gt|lt|lte)\b/g,
         (matchedEl) => `$${matchedEl}`
     );
+    console.log(queryString);
 
     // chuyen tu chuoi json sang object
     const formatedQueries = JSON.parse(queryString);
+    console.log(formatedQueries);
 
     //Filtering
     let categoryFinish = {}
@@ -229,14 +232,13 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
     //     }
     // }
     const qr = {...formatedQueries, ...queryFinish, ...categoryFinish}
-        console.log('aaaaaaaaaaaa', qr, 'sssssssss')
+
     let services = await Service.find(qr);
-    console.log('===+++++++>', services);
+
 
     try {
         // sorting
         if(req.query.sort){
-            console.log('CAC1');
             const sortBy = req.query.sort.split(',').join(' ')
             queryCommand.sort(sortBy)
         }
@@ -257,7 +259,6 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
                 });
             }
 
-            console.log('-----+++', req.query.current_client_location)
             let nearbyFilterObj = {
                 type:"Point",
                 coordinates:[longtitude, lattitude]
@@ -266,7 +267,6 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
             maxDistance = parseFloat(maxDistance);
             const maxDistanceInMeter = maxDistance * 1000.0;
             if (!isNaN(maxDistance)) {
-                console.log('<<<<<<-->', maxDistance);
                 aggregations.push({
                     $geoNear: {
                         "near": nearbyFilterObj,
@@ -286,20 +286,12 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
                     }
                 });
             }
-            // providersQueryCommand.find({
-            //     geolocation: {
-            //         $near: nearbyFilterObj
-            //     }
-            // })
- 
-            // console.log('----->', services);
         }
         else {
             for (let i=0; i < services?.length; ++i) {
                 services[i] = {
                     sv: services[i],
                 };
-                // console.log('===============', clientDistance);
             }
         }
 
@@ -318,37 +310,22 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
         if (req?.query?.province?.length > 0 || req?.query?.current_client_location){
             const mapByProviderId = new Map();
             for (const provider of serviceProviders) {
-                // console.log(provider,'---------------');
                 mapByProviderId.set(provider._id.toString(), [provider.clientDistance]);
             }
-            // console.log(mapByProviderId);
             for (let i=0; i < services?.length; ++i) {
-                // console.log('===============', services[i]);
                 mapByProviderId.get(services[i]?.provider_id.toString())?.push(services[i]);
-                // console.log('===============', services[i]);
             }
-            console.log(mapByProviderId);
             services = [];
             mapByProviderId.forEach((value, _, __) => {
-                console.log('value--->', value);
-                // const serviceList = value
-                // for (let i=1; i<value.length; ++i) {
-                //     value[i] = {
-                //         ...value[i],
-                //         clientDistance: value[0]
-                //     };
-                // }
                 services = services.concat(value.slice(1));
             })
 
             for (let i=0; i < services?.length; ++i) {
-                // console.log('===============', services[i]);
                 const clientDistance = mapByProviderId.get(services[i]?.provider_id.toString())[0];
                 services[i] = {
                     sv: services[i],
                     clientDistance
                 };
-                console.log('===============', clientDistance);
             }
         }
 
@@ -371,8 +348,6 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
             services: services,
         });
     } catch (error) {
-        // Xử lý lỗi nếu có
-        console.log('+++++', error, '++++')
         return res.status(500).json({
         success: false,
         error: 'Cannot get services',

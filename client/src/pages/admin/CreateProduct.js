@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect} from 'react'
-import {InputForm, Select, Button, MarkdownEditor, Loading, SelectCategory} from 'components'
+import {Select, Button, MarkdownEditor, Loading, SelectCategory, InputFormm} from 'components'
 import { useForm } from 'react-hook-form'
 import {useSelector, useDispatch} from 'react-redux'
 import { validate, getBase64 } from 'ultils/helper'
@@ -9,6 +9,8 @@ import {apiCreateProduct} from 'apis/product'
 import { showModal } from 'store/app/appSlice'
 import { getCurrent } from 'store/user/asyncAction'
 import { HashLoader } from 'react-spinners'
+import bgImage from '../../assets/clouds.svg'
+import { FaPlus } from 'react-icons/fa'
 
 const CreateProduct = () => {
   const {categories_service} = useSelector(state => state.category)
@@ -65,6 +67,7 @@ const CreateProduct = () => {
       setPreview(prev => ({...prev, images: imagesPreview}))
     }
   }
+
   useEffect(() => {
     handlePreviewThumb(watch('thumb')[0])
   }, [watch('thumb')])
@@ -78,7 +81,7 @@ const CreateProduct = () => {
     const invalid = validate(payload, setInvalidField)
     if(invalid === 0){
       const finalPayload = {...data,...payload}
-      finalPayload.provider_id = current.provider_id
+      finalPayload.provider_id = current.provider_id?._id
       if(selectedCategory){
         finalPayload.category = selectedCategory
       }
@@ -99,6 +102,11 @@ const CreateProduct = () => {
         setPayload({
           description: ''
         })
+        setSelectedCategory(null)
+        setPreview({
+          thumb: null,
+          images: []
+        })
       }
       else{
         toast.error(response.mes)
@@ -112,135 +120,143 @@ const CreateProduct = () => {
 
 
   return (
-    <div className='w-full'>
-      <h1 className='h-[75px] flex justify-between items-center text-3xl font-bold px-4 border-b'>
-        <span>Create New Product</span>
-      </h1>
-      <div className='p-4 '>
-        <form onSubmit={handleSubmit(handleCreateProduct)}>
-          <InputForm
-            label = 'Name product'
-            register={register}
-            errors={errors}
-            id = 'title'
-            validate = {{
-              required: 'Need fill this field'
-            }}
-            fullWidth
-            placeholder='Name of new product'
-          />
-          <div className='w-full my-6 flex gap-4'>
-            <InputForm 
-              label = 'Price'
-              register={register}
-              errors={errors}
-              id = 'price'
-              validate = {{
-                required: 'Need fill this field'
-              }}
-              style='flex-auto'
-              placeholder='Price of new product'
-              type='number'
-            />
-            <InputForm 
-              label = 'Quantity'
-              register={register}
-              errors={errors}
-              id = 'quantity'
-              validate = {{
-                required: 'Need fill this field'
-              }}
-              style='flex-auto'
-              placeholder='Quantity of new product'
-              type='number'
-            />
-            <InputForm 
-              label = 'Color'
-              register={register}
-              errors={errors}
-              id = 'color'
-              validate = {{
-                required: 'Need fill this field'
-              }}
-              style='flex-auto'
-              placeholder='Color of new product'
-            />
-          </div>
-          <div className='w-full my-6 flex gap-4'>
-            <SelectCategory
-              label = 'Category'
-              options = {option_category}
-              register={register}
-              id = 'category'
-              validate = {{
-                required: 'Need fill this field'
-              }}
-              errors={errors}
-              fullWidth
-              onChangee={handleSelectCateChange}
-              values={selectedCategory}
-              style='flex-1'
-            />
-          </div>
-          <MarkdownEditor 
-            name = 'description'
-            changeValue={changeValue}
-            label = 'Description'
-            invalidField={invalidField}
-            setInvalidField={setInvalidField}
-          />
-          <div className='flex flex-col gap-2 mt-8'>
-            <label className='font-semibold' htmlFor='thumb'>Upload Thumb</label>
-            <input 
-              {...register('thumb', {required: 'Need upload thumb'})}
-              type='file' 
-              id='thumb'
-            />
-            {errors['thumb'] && <small className='text-xs text-red-500'>{errors['thumb']?.message}</small>}
-          </div>
-          
-          {preview.thumb 
-            && 
-          <div className='my-4'>
-            <img src={preview.thumb} alt='thumbnail' className='w-[200px] object-contain'></img>
-          </div>
-          }
-
-          <div className='flex flex-col gap-2 mt-8'>
-            <label className='font-semibold' htmlFor='product'>Upload image of product</label>
-            <input 
-              {...register('images', {required: 'Need upload image of product'})}
-              type='file' 
-              id='product' 
-              multiple
-            />
-            {errors['images'] && <small className='text-xs text-red-500'>{errors['product']?.message}</small>}
-          </div>
-
-          {preview.images?.length > 0 
-            && 
-          <div className='my-4 flex w-full gap-2 flex-wrap'>
-            {
-              preview.images?.map((el,index) => (
-                <div key={index} className='w-fit relative'>
-                  <img src={el.path} alt='image of product' className='w-[200px] object-contain'></img>
-                </div>
-              ))
-            }
-          </div>
-          }
-
-          <div className='mt-8'>
-            <Button type='submit'>
-              Create a new product
-            </Button>
-          </div>
-        </form>
-        {isLoading && (
-        <div className='flex justify-center z-50 w-full h-full fixed top-0 left-0 items-center bg-overlay'>
-            <HashLoader className='z-50' color='#3B82F6' loading={isLoading} size={80} />
+    <div className='w-full h-full relative'>
+      <div className='inset-0 absolute z-0'>
+        <img src={bgImage} className='w-full h-full object-cover'/>
+      </div>
+      <div className='relative z-10 w-full'>
+        <div className='w-full h-fit flex justify-between p-4'>
+          <span className='text-[#00143c] text-3xl h-fit font-semibold'>Add New Product</span>
         </div>
-        )}
+        <div className='w-[95%] h-fit shadow-2xl rounded-md bg-white ml-4 mb-[50px] px-4 py-2 flex flex-col gap-4'>
+          <form onSubmit={handleSubmit(handleCreateProduct)}>
+            <div className='w-full my-6 flex gap-4'>
+              <InputFormm
+                label = 'Product Name'
+                register={register}
+                errors={errors}
+                id = 'title'
+                validate = {{
+                  required: 'Need fill this field'
+                }}
+                placeholder='Name of service ...'
+                style='flex-1 flex flex-col'
+                styleLabel={'text-[#00143c] font-medium mb-1'}
+                styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none rounded-md border-[#dee1e6]'}
+              />
+              <SelectCategory 
+                label = 'Category'
+                styleLabel={'text-[#00143c] font-medium mb-1'}
+                style = 'flex-1 flex flex-col z-[999]'
+                options = {option_category}
+                register={register}
+                id = 'category'
+                validate = {{
+                  required: 'Need fill this field'
+                }}
+                errors={errors}
+                fullWidth
+                onChangee={handleSelectCateChange}
+                values={selectedCategory}
+              />
+            </div>
+            <div className='w-full my-6 flex gap-4'>
+              <InputFormm
+                label = 'Price'
+                register={register}
+                errors={errors}
+                id = 'price'
+                validate = {{
+                  required: 'Need fill this field'
+                }}
+                placeholder='Price of new product'
+                type='number'
+                style='flex-1 flex flex-col'
+                styleLabel={'text-[#00143c] font-medium mb-1'}
+                styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none rounded-md border-[#dee1e6]'}
+              />
+              <InputFormm
+                label = 'Quantity'
+                register={register}
+                errors={errors}
+                id = 'quantity'
+                validate = {{
+                  required: 'Need fill this field'
+                }}
+                placeholder='Quantity of new product'
+                type='number'
+                style='flex-1 flex flex-col'
+                styleLabel={'text-[#00143c] font-medium mb-1'}
+                styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none rounded-md border-[#dee1e6]'}
+              />
+              <InputFormm
+                label = 'Color'
+                register={register}
+                errors={errors}
+                id = 'color'
+                validate = {{
+                  required: 'Need fill this field'
+                }}
+                placeholder='Color of new product'
+                style='flex-1 flex flex-col'
+                styleLabel={'text-[#00143c] font-medium mb-1'}
+                styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none rounded-md border-[#dee1e6]'}
+              />
+            </div>
+            <div className='w-full flex flex-col gap-1 my-6'>
+              <span className='text-[#00143c] font-medium'>Description</span>
+              <MarkdownEditor 
+                name = 'description'
+                changeValue={changeValue}
+                invalidField={invalidField}
+                setInvalidField={setInvalidField}
+                className='outline-none'
+              />
+            </div>
+            <div className='w-full my-6 flex flex-col'>
+              <label className='text-[#00143c] font-medium mb-1' htmlFor='thumb'>Upload Thumb</label>
+              <input 
+                {...register('thumb', {required: 'Need upload thumb'})}
+                type='file' 
+                id='thumb'
+                className='text-[#00143c]'
+              />
+              {errors['thumb'] && <small className='text-xs text-red-500'>{errors['thumb']?.message}</small>}
+    
+              {preview.thumb 
+                && 
+              <div className='mt-2 flex justify-start'>
+                <img src={preview.thumb} alt='thumbnail' className='w-[264px] max-h-[200px] object-contain border border-[#dee1e6] rounded-md shadow-inner'></img>
+              </div>
+              }
+            </div>
+            <div className='w-full my-6 flex flex-col'>
+              <label className='text-[#00143c] font-medium mb-1' htmlFor='thumb'>Upload Images Of Service</label>
+              <input 
+                {...register('images', {required: 'Need upload image of service'})}
+                type='file' 
+                id='images' 
+                multiple
+                className='text-[#00143c]'
+              />
+              {errors['images'] && <small className='text-xs text-red-500'>{errors['images']?.message}</small>}
+            
+              {preview.images?.length > 0 
+                && 
+              <div className='mt-2 flex w-[800px] gap-1 overflow-x-auto px-2 py-1 scrollbar-thin'>
+                {
+                  preview.images?.map((el,index) => (
+                    <img key={index} src={el.path} alt='image of service' className='w-[33%] max-h-[200px] object-contain border border-[#dee1e6] rounded-md shadow-inner'></img>
+                  ))
+                }
+              </div>
+              }
+            </div>
+            <div className='w-full mt-6 mb-4 flex justify-center'>
+              <Button type='submit' style={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center'}><FaPlus /> Create a new product</Button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   )

@@ -1,7 +1,7 @@
 import React, { memo, useEffect } from 'react'
 import clsx from 'clsx'
 
-const Select = ({label, options=[], register, errors, id, validate, style, fullWidth, styleSelect, styleLabel ,text, value}) => {
+const Select = ({label, options=[], register, errors, id, validate, style, styleSelect, styleLabel ,text, value}) => {
   // useEffect(() => {
   //   if (id && value) {
   //     const element = document.getElementById(id);
@@ -11,11 +11,10 @@ const Select = ({label, options=[], register, errors, id, validate, style, fullW
   //   }
   // }, [id, value]);
   return (
-    <div className={clsx('flex flex-col gap-4',style)}>
+    <div className={style}>
       {label&& <label htmlFor={id} className={clsx(styleLabel)}>{label}</label>}
       <select 
-        className={clsx('form-select text-gray-600 max-h-[42px] cursor-pointer', 
-        fullWidth && 'w-full', styleSelect)} 
+        className={styleSelect} 
         id={id} 
         {...register(id, validate)}
         value={value?.code}

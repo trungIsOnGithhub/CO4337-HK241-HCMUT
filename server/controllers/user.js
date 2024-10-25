@@ -319,6 +319,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
 //get all customer from admin
 const getAllCustomers = asyncHandler(async (req, res) => {
+    console.log('testt')
     const {_id} = req.user;
     const user = await User.findById(_id).select('provider_id');
     const providerId = user.provider_id;
@@ -341,7 +342,11 @@ const getAllCustomers = asyncHandler(async (req, res) => {
         formatedQueries['$or'] = [
             { firstName: { $regex: req.query.q, $options: 'i' } },
             { lastName: { $regex: req.query.q, $options: 'i' } },
-            { email: { $regex: req.query.q, $options: 'i' } }
+            { email: { $regex: req.query.q, $options: 'i' } },
+            { $expr: { $regexMatch: { input: { $concat: ["$firstName", " ", "$lastName"] }, regex: req.query.q, options: 'i' } } },
+            { $expr: { $regexMatch: { input: { $concat: ["$lastName", " ", "$firstName"] }, regex: req.query.q, options: 'i' } } },
+            { $expr: { $regexMatch: { input: { $concat: ["$firstName", "", "$lastName"] }, regex: req.query.q, options: 'i' } } },
+            { $expr: { $regexMatch: { input: { $concat: ["$lastName", "", "$firstName"] }, regex: req.query.q, options: 'i' } } },
         ];
     }
 
@@ -426,7 +431,6 @@ const updateUser = asyncHandler(async (req, res) => {
 //update user by admin
 const updateUserByAdmin = asyncHandler(async (req, res) => {
     const {userId} = req.params
-    console.log('++++)))))))))', req.body)
     if(!userId || Object.keys(req.body).length === 0){
         throw new Error("Missing input")
     }

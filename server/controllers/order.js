@@ -155,7 +155,7 @@ const getOrdersByAdmin = asyncHandler(async(req, res)=>{
         path: 'info',
         populate:{
             path: 'service',
-            select: 'name price duration thumb'
+            select: 'name price duration thumb category'
         },
     }).populate({
         path: 'info',
@@ -167,7 +167,7 @@ const getOrdersByAdmin = asyncHandler(async(req, res)=>{
         path: 'info',
         populate:{
             path: 'staff',
-            select: 'firstName lastName'
+            select: 'firstName lastName avatar'
         },
     })
     try {
@@ -245,8 +245,10 @@ const getOneOrderByAdmin = asyncHandler(async(req, res)=>{
 })
 
 const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
-    const { provider_id, assigned_staff_ids, service_ids } = req.body;
-    console.log('======', req.body);
+    const {_id} = req.user
+    const {provider_id} = await User.findById({_id}).select('provider_id')
+
+    const { assigned_staff_ids, service_ids } = req.body;
 
     if (!provider_id || typeof(service_ids.length) !== 'number' || typeof(assigned_staff_ids.length) !== 'number') {
         return res.status(400).json({
@@ -255,69 +257,66 @@ const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
         });
     }
 
-    // const service_obj_ids = service_ids.map(objIdStr => new mongoose.Types.ObjectId(objIdStr))
 
-    // const providerObjectId = new mongoose.Types.ObjectId(provider_id)
-    // console.log('======||', providerObjectId);
-    let orders = await Order.aggregate([
-        {
-            $match: {
-                'info.provider': provider_id
-            }
-        },
-        {
-            $lookup: {
-                from: 'services',
-                localField: 'info.service',
-                foreignField: '_id',
-                as: 'service'
-            }
-        },
-        {
-            $unwind: "$service"
-        },
-        // {
-        //     $match
-        // }
-        // {
-        //     $match: {
-        //         "$$this.service._id": { $in: service_obj_ids }
-        //     }
-        // },
-        // {
-        //     $lookup: {
-        //         from: 'staffs',
-        //         localField: 'info.staff',
-        //         foreignField: '_id',
-        //         as: 'staffs'
-        //     }
-        // }
-    ])
-
-    if (!orders || typeof(orders.length) !== 'number') {
-        return res.status(500).json({
-            success: false,
-            error: 'Cannot Get Order'
+    if(assigned_staff_ids.length === 0 && service_ids.length === 0){
+        const orders = await Order.find({
+            'info.provider': provider_id
+        }).select('info.date info.time info.staff info.service total status').populate({
+            path: 'info.service',
+            select: 'name duration thumb category'
+        }).populate({
+            path: 'info.staff',
+            select: 'firstName lastName avatar'
+        })
+    
+        return res.status(200).json({
+            success: true,
+            orders
         });
     }
-
-    // temp
-    // orders = orders.filter(order => {
-    //     return service_ids.includes(order.service._id.toString())
-    // })
-    // orders = orders.filter(order => {
-    //     const thisOrderStaffs = order?.staffs || [];
-    //     for (const staff of thisOrderStaffs) {
-    //         if (assigned_staff_ids.includes(staff._id.toString()))
-    //             return true;
-    //     }
-    //     return false;
-    // })
-
-    res.status(200).json({
-        success: true,
-        order: orders,
-    })
+    else if(assigned_staff_ids.length === 0){
+        const orders = await Order.find({
+            'info.provider': provider_id,
+            'info.service': { $in: service_ids }
+        }).select('info.date info.time info.staff info.service total status').populate({
+            path: 'info.service',
+            select: 'name duration thumb category'
+        })
+    
+        return res.status(200).json({
+            success: true,
+            orders
+        });
+    }
+    else if(service_ids.length === 0){
+        const orders = await Order.find({
+            'info.provider': provider_id,
+            'info.staff': { $in: assigned_staff_ids }
+        }).select('info.date info.time info.staff info.service total status').populate({
+            path: 'info.service',
+            select: 'name duration thumb category'
+        })
+    
+        return res.status(200).json({
+            success: true,
+            orders
+        });
+    }
+    else {
+        const orders = await Order.find({
+            'info.provider': provider_id,
+            'info.staff': { $in: assigned_staff_ids },
+            'info.service': { $in: service_ids }
+        }).select('info.date info.time info.staff info.service total status').populate({
+            path: 'info.service',
+            select: 'name duration thumb category'
+        })
+    
+        return res.status(200).json({
+            success: true,
+            orders
+        });
+    }
 })
 
 const updateEmailByBookingId = asyncHandler(async(req,res) => {

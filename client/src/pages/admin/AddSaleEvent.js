@@ -3,6 +3,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Button, MultiSelect, InputFormm} from 'components'
+import { TbXboxXFilled } from "react-icons/tb";
 
 import React, { useCallback, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
@@ -15,6 +16,7 @@ import { useSelector } from 'react-redux';
 import { FaCheckCircle, FaExclamationCircle, FaClock} from "react-icons/fa";
 import { toast } from 'react-toastify';
 import bgImage from '../../assets/clouds.svg'
+import dayjs from 'dayjs';
 
 const AddSaleEvent = () => {
   const { register, formState: { errors }, reset, handleSubmit, watch, setValue } = useForm();
@@ -34,6 +36,7 @@ const AddSaleEvent = () => {
 
   const [hours, setHours] = useState("")
   const [minutes, setMinutes] = useState("")
+  const [name, setName] = useState("")
 
 
   useEffect(() => {
@@ -189,6 +192,7 @@ const AddSaleEvent = () => {
   const handleAddSaleEvent = async (data) => {
     try {
       setIsLoading(true);
+      console.log(data)
       const flashSaleData = {
         ...data,
         promotionApplicationDate,
@@ -227,101 +231,119 @@ const AddSaleEvent = () => {
         <img src={bgImage} className='w-full h-full object-cover'/>
       </div>
       <div className='relative z-10'>
-        <div className='w-full h-24 flex justify-between p-4'>
-          <span className='text-[#00143c] text-3xl font-semibold'>Add Sale Event</span>
+        <div className='w-full h-fit flex justify-between p-4'>
+          <span className='text-[#00143c] text-3xl h-fit font-semibold'>Add Sale Event</span>
         </div>
-        <div className='w-[95%] h-fit shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-4 py-2 flex flex-col gap-4'>
+        <div className='w-[95%] h-fit shadow-2xl rounded-md bg-white ml-4 mb-[50px] px-4 py-2 flex flex-col gap-4'>
           <form onSubmit={handleSubmit(handleAddSaleEvent)}>
-            <div className='w-full my-6 flex flex-col gap-2'>
-              <div className='flex gap-4 items-center max-w-fit text-[#00143c]'>
-                <span className='font-medium'>Promotion Application Date<sup className='text-red-500 font-semibold'> *</sup></span>
+            <div className='w-full my-6 flex gap-4 items-start'>
+              <div className='flex flex-1 flex-col'>
+                <label htmlFor="name" className="block font-medium text-[#00143c] mb-1">
+                  Sale Event Name <sup className='text-red-500 font-semibold'> *</sup>
+                </label>
+                <div className='flex gap-4 items-center text-[#00143c]'>
+                  <input
+                    type="text"
+                    id="name"
+                    {...register('name', {
+                      required: 'Need fill this field', 
+                    })}
+                    className={`w-full px-4 py-2 border text-[#00143c] outline-none rounded-md ${errors['names'] ? "border-red-500" : "border-[#dee1e6]"}`}
+                    placeholder="Enter sale event name"
+                    onInput={(e)=>{setName(e.target.value)}}
+                  />
+                </div>
+              </div>
+              <div className='flex flex-1 flex-col'>
+                <span className='font-medium mb-1 text-[#00143c]'>Promotion Application Date<sup className='text-red-500 font-semibold'> *</sup></span>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DemoContainer components={['DatePicker']}>
                     <DatePicker
-                      label="Choose date"
                       slotProps={{ textField: { size: 'small' } }}
-                      className='custom-datepicker font-bold text-[#00143c] z-[50]'
+                      className="w-full h-full custom-datepicker font-bold text-[#00143c] z-[50]"
                       onChange={handleDateChange}
                       value={exprDate}
+                      shouldDisableDate={(date) => dayjs(date).isBefore(dayjs(), 'day') || dayjs(date).isSame(dayjs(), 'day')}
                     />
                   </DemoContainer>
                 </LocalizationProvider>
               </div>
-              {errors.expiration && <p className='text-red-500'>{errors.expiration.message}</p>}
             </div>
             <div className='w-full my-6 text-[#00143c]'> 
-              <div className='flex flex-1 items-start gap-4'>
-              <h2 className="font-medium h-fit text-[#00143c] my-auto">Flash Sale Duration<sup className='text-red-500 font-semibold'> *</sup></h2>
-              <div className="flex-1">
-                <label htmlFor="hours" className="block text-sm font-medium text-[#00143c] mb-1">
-                  Hours (0-23)
-                </label>
-                <div className="relative mb-1">
-                  <input
-                    type="number"
-                    id="hours"
-                    {...register('hours', {
-                      required: 'Need fill this field', 
-                      min: {
-                        value: 0,
-                        message: 'Hours must be at least 0',
-                      },
-                      max: {
-                        value: 23,
-                        message: 'Hours must be at most 23',
+              <div className='flex flex-1 flex-col items-start'>
+                <h2 className="font-medium h-fit text-[#00143c] mb-1">Flash Sale Duration<sup className='text-red-500 font-semibold'> *</sup></h2>
+                <div className='flex gap-4 w-full'>
+                  <div className="flex-1">
+                    <div className="relative mb-1">
+                      <input
+                        type="number"
+                        id="hours"
+                        {...register('hours', {
+                          required: 'Need fill this field', 
+                          min: {
+                            value: 0,
+                            message: 'Hours must be at least 0',
+                          },
+                          max: {
+                            value: 23,
+                            message: 'Hours must be at most 23',
+                          }
+                        })}
+                        className={`w-full px-4 py-2 border text-[#00143c] outline-none rounded-md ${errors['hours'] ? "border-red-500" : "border-[#dee1e6]"}`}
+                        placeholder="Enter hours (0-23)"
+                        aria-label="Hours input"
+                        onInput={(e)=>{setHours(e.target.value)}}
+                      />
+                      {
+                        hours !== "" && +hours >= 0 && +hours < 24  ?
+                      <FaCheckCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500" />
+                        : 
+                        hours === "" ?
+                      <FaClock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" /> 
+                        :
+                      <TbXboxXFilled className="absolute right-3 top-1/2 transform -translate-y-1/2 text-red-500"/>
                       }
-                    })}
-                    className={`w-full px-4 py-2 border text-black font-medium outline-none rounded-md ${errors['hours'] ? "border-red-500" : "border-[#dee1e6]"}`}
-                    placeholder="Enter hours"
-                    aria-label="Hours input"
-                    onInput={(e)=>{setHours(e.target.value)}}
-                  />
-                  {
-                    hours !== "" && +hours >= 0 && +hours < 24  ?
-                  <FaCheckCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500" />
-                    : 
-                  <FaClock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  }
+                    </div>
+                    {errors['hours'] && <small className='text-xs text-red-500'>{errors['hours']?.message}</small>}
+                  </div>
+                  <div className="flex-1">
+                    <div className="relative mb-1">
+                      <input
+                        type="number"
+                        id="minutes"
+                        {...register("minutes", {
+                          required: 'Need fill this field',
+                          min: {
+                            value: 0,
+                            message: 'Hours must be at least 0',
+                          },
+                          max: {
+                            value: 59,
+                            message: 'Hours must be at most 59',
+                          }  
+                        })}
+                        className={`w-full px-4 py-2 border text-[#00143c] outline-none rounded-md ${errors['minutes'] ? "border-red-500" : "border-[#dee1e6]"}`}
+                        placeholder="Enter minutes (0-59)"
+                        min="0"
+                        max="59"
+                        aria-label="Minutes input"
+                        onInput={(e)=>{setMinutes(e.target.value)}}
+                      />
+                      {
+                        minutes !== "" && +minutes >= 0 && +minutes < 60  ?
+                      <FaCheckCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500" />
+                        : 
+                        minutes === "" ?
+                      <FaClock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                        :
+                      <TbXboxXFilled className="absolute right-3 top-1/2 transform -translate-y-1/2 text-red-500"/>
+                      }
+                    </div>
+                    {errors['minutes'] && <small className='text-xs text-red-500'>{errors['minutes']?.message}</small>}
+                  </div>
                 </div>
-                {errors['hours'] && <small className='text-xs text-red-500'>{errors['hours']?.message}</small>}
               </div>
-              <div className="flex-1">
-                <label htmlFor="minutes" className="block text-sm font-medium text-[#00143c] mb-1">
-                  Minutes (0-59)
-                </label>
-                <div className="relative mb-1">
-                  <input
-                    type="number"
-                    id="minutes"
-                    {...register("minutes", {
-                      required: 'Need fill this field',
-                      min: {
-                        value: 0,
-                        message: 'Hours must be at least 0',
-                      },
-                      max: {
-                        value: 59,
-                        message: 'Hours must be at most 59',
-                      }  
-                    })}
-                    className={`w-full px-4 py-2 border text-black font-medium outline-none rounded-md ${errors['minutes'] ? "border-red-500" : "border-[#dee1e6]"}`}
-                    placeholder="Enter minutes"
-                    min="0"
-                    max="59"
-                    aria-label="Minutes input"
-                    onInput={(e)=>{setMinutes(e.target.value)}}
-                  />
-                  {
-                    minutes !== "" && +minutes >= 0 && +minutes < 60  ?
-                  <FaCheckCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500" />
-                    : 
-                  <FaClock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                  }
-                </div>
-                {errors['minutes'] && <small className='text-xs text-red-500'>{errors['minutes']?.message}</small>}
-              </div>
-              </div>
-              <div className="mt-6 p-4 bg-blue-50 rounded-md">
+              <div className="mt-1 p-4 bg-blue-200 rounded-md">
                 <h3 className="text-lg font-semibold mb-2 text-blue-800">Example</h3>
                 <p className="text-sm text-blue-600">
                   For a 75-minute, enter: <strong>1 hour</strong> and <strong>15 minutes</strong>
@@ -329,21 +351,21 @@ const AddSaleEvent = () => {
               </div>
             </div>
             <div className='w-full my-6 flex gap-4 items-start'>
-                <div className="flex-1 my-6 flex flex-col gap-4">
+                <div className="flex-1 flex flex-col">
                   <label
                     htmlFor="startTime"
-                    className="block text-[#00143c] font-medium"
+                    className="block text-[#00143c] font-medium mb-1"
                   >
                     Flash Sale Start Time <sup className='text-red-500 font-semibold'> *</sup>
                   </label>
-                  <div className="relative">
+                  <div className="relative mb-1">
                     <input
                       type="text"
                       id="startTime"
-                      className={`w-full px-4 py-2 border text-[#00143c] font-medium outline-none transition-all duration-300 rounded-md ${
-                        error
+                      className={`w-full px-4 py-2 border text-[#00143c] outline-none transition-all duration-300 rounded-md ${
+                        errors['startTime']
                           ? "border-red-500 focus:ring-red-200"
-                          : "border-gray-300 focus:ring-blue-200"
+                          : "[border-[#dee1e6] focus:ring-blue-200"
                       } ${isValid ? "pr-10" : ""}`}
                       placeholder="Enter time (e.g., 18:00)"
                       value={startTime}
@@ -353,15 +375,12 @@ const AddSaleEvent = () => {
                       {...register("startTime", {
                         required: 'Need fill this field'})}
                     />
-                    {isValid && (
-                      <FaCheckCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500" />
-                    )}
                   </div>
-                  {errors['startTime'] && <small className='text-xs text-red-500'>{errors['startTime']?.message}</small>}
+                  {errors['startTime'] && <small className='text-xs text-red-500 mb-1'>{errors['startTime']?.message}</small>}
                   {error && (
                     <div
                       id="timeError"
-                      className="flex items-center mt-2 text-sm text-red-600"
+                      className="flex items-center mb-1 text-sm text-red-600"
                     >
                       <FaExclamationCircle className="mr-2" />
                       <span>{error}</span>
@@ -371,7 +390,7 @@ const AddSaleEvent = () => {
                     Enter the start time for your flash sale in 24-hour format (HH:mm).
                   </p>
                 </div>
-                <div className='my-6 flex-1'>
+                <div className='flex-1'>
                   <InputFormm
                     label={'Usage Limit'}
                     require={true}
@@ -389,8 +408,9 @@ const AddSaleEvent = () => {
                         message: 'Usage limit must be a whole number greater than 0'
                       }
                     }}
-                    style='flex-1 gap-4'
-                    styleInput={'outline-none text-[#00143c]'}
+                    style='flex-1 flex flex-col'
+                    styleLabel={'font-medium text-[#00143c]'}
+                    styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none transition-all duration-300 rounded-md mt-1 border-[#dee1e6] font-'}
                     placeholder='Usage Limit ...'
                     type='number'
                     step='1'
@@ -398,8 +418,9 @@ const AddSaleEvent = () => {
                   />
                 </div>
             </div>
-            <div className='w-full my-6 flex gap-4'>
+            <div className='w-full my-6 flex gap-4 items-start'>
               <MultiSelect
+                labelStyle={'text-[#00143c] font-medium'}
                 title='Services'
                 id='service' 
                 require={true}
@@ -410,15 +431,15 @@ const AddSaleEvent = () => {
             </div>
             <div className='w-full my-6 flex gap-4'>
               <label className='block flex-1'>
-                <span className='text-[#00143c] mb-[8px] block'>Type</span>
+                <span className='text-[#00143c] font-medium mb-[8px] block'>Type</span>
                 <select
                   {...register('type')}
-                  className='block w-full text-black h-[36px] border-gray-300 pl-2'
+                  className='block w-full h-[36px] border border-[#dee1e6] pl-2 outline-none rounded-md text-[#00143c] cursor-pointer'
                   onChange={(e)=>handleEventVoucherType(e?.target?.value)}
                   value={voucherType}
                 >
-                  <option className='text-gray-800 font-semibold' value='percentage'>Percentage Amount</option>
-                  <option className='text-gray-800 font-semibold' value='fixed'>Fixed Amount</option>
+                  <option className='text-[#00143c] font-medium' value='percentage'>Percentage Amount</option>
+                  <option className='text-[#00143c] font-medium' value='fixed'>Fixed Amount</option>
                 </select>
               </label>
             </div>
@@ -426,7 +447,7 @@ const AddSaleEvent = () => {
               <div className='w-full my-6 flex flex-col gap-4'>
                 {selectedService.map((service) => (
                   <div key={service} className='w-[80%]'>
-                    <label htmlFor={`percentageDiscount-${service}`} className='block mb-2'>
+                    <label htmlFor={`percentageDiscount-${service}`} className='block mb-2 text-[#00143c] font-medium'>
                       Percentage Discount of {services.find(s => s._id === service)?.name}
                     </label>
                     <input
@@ -453,7 +474,7 @@ const AddSaleEvent = () => {
             {voucherType === 'fixed' && selectedService.length > 0 && (
               <div className='w-full my-6 flex flex-col gap-4'>
                 {selectedService.map((service) => (
-                  <div key={service.value} className='w-[80%] flex flex-col items-start'>
+                  <div key={service.value} className='w-[80%] flex flex-col items-start text-[#00143c] font-medium'>
                     <label className='block mb-2'>{services.find(s => s._id === service)?.name}</label>
                     <div className='p-2 flex w-full justify-between items-center gap-16 text-[#00143c]'>
                       <Slider
@@ -469,8 +490,8 @@ const AddSaleEvent = () => {
                         value={fixedAmount.find(item => item.id === service)?.value || 0}
                         sx={{
                           '& .MuiSlider-markLabel': {
-                            color: 'white',
-                            paddingLeft: '15px',
+                            color: '#00143c',
+                            paddingLeft: '20px',
                           },
                           '& .MuiSlider-thumb': {
                             backgroundColor: '#36A2EB', // Màu của núm kéo
@@ -491,7 +512,7 @@ const AddSaleEvent = () => {
                       />
                       <input
                         type="number"
-                        className="border border-gray-300 rounded p-1 w-32 ml-2 text-black font-semibold outline-none text-center bg-blue-100 placeholder:text-gray-600 placeholder:font-semibold"
+                        className="border border-[#dee1e6] rounded p-1 w-32 ml-2 text-[#00143c] outline-none text-center bg-blue-200 "
                         placeholder="Enter amount"
                         onChange={(e) => handleFixedAmountInputChange(service, e.target.value)}
                         value={fixedAmount.find(item => item.id === service)?.value || ''}
@@ -501,7 +522,7 @@ const AddSaleEvent = () => {
                 ))}
               </div>
             )}
-            <Button type='submit' style={'w-fit flex gap-1 items-center bg-[#005aee] px-4 py-2 rounded-md text-white shadow-md mx-auto'}>
+            <Button type='submit' style={'w-fit flex gap-1 items-center bg-[#005aee] px-4 py-2 rounded-md text-white shadow-inner mx-auto mb-4'}>
               Create a new flash sale event
               <span><PiSealPercent size={24}/></span>
             </Button>

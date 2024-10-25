@@ -146,6 +146,7 @@
   
   .custom-datepicker .MuiFormLabel-root {
     color: #00143c !important;
+    z-index: 100;
   }
   
   .custom-datepicker .MuiInput-underline:before {
@@ -168,6 +169,10 @@
     color: #00143c !important;
   }
   
+  .MuiStack-root{
+    padding-top: 0px !important;
+  }
+  
   .custom-datepicker .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline {
     border-color: #dee1e6 !important;
   }
@@ -178,6 +183,11 @@
   
   .custom-datepicker .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
     border-color: #dee1e6 !important;
+  }
+
+  .Mui-disabled {
+    cursor: not-allowed !important; /* Con trỏ "not-allowed" */
+    pointer-events: all !important;
   }
 
 
@@ -236,3 +246,4 @@
       visibility: hidden;
     }
   } */
+   

@@ -1,5 +1,6 @@
 const Coupon = require('../models/coupon');
 const asyncHandler = require('express-async-handler');
+const User = require('../models/user')
 
 // Handler to create a new coupon
 const createNewCoupon = asyncHandler(async (req, res) => {
@@ -150,4 +151,20 @@ const getCouponsByProviderId = asyncHandler(async (req, res) => {
     return res.status(200).json({ success: true, coupons });
 });
 
-module.exports = { createNewCoupon, getCouponsByServiceId, validateAndUseCoupon, updateCouponUsage, getCouponsByProviderId };
+const getAllCouponsByAdmin = asyncHandler(async (req, res) => {
+    const {_id} = req.user
+    const {provider_id} = await User.findById({_id}).select('provider_id')
+    console.log(provider_id)
+
+    
+    const coupons = await Coupon.find({ providerId: provider_id })
+        .populate('services', 'name thumb'); // Populate trường services với thông tin name
+
+    if (coupons.length === 0) {
+        return res.status(404).json({ message: 'No coupons found for the given provider ID.' });
+    }
+
+    return res.status(200).json({ success: true, coupons });
+});
+
+module.exports = { createNewCoupon, getCouponsByServiceId, validateAndUseCoupon, updateCouponUsage, getCouponsByProviderId, getAllCouponsByAdmin };

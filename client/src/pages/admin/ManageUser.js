@@ -2,16 +2,23 @@ import React, { useEffect, useState, useCallback} from 'react'
 import { apiUsers, apiModifyUser, apiDeleteUser} from 'apis/user'
 import { roles, blockStatus } from 'ultils/constant'
 import moment from 'moment'
-import { InputField, Pagination, InputForm, Select, Button } from 'components'
+import { InputField, Pagination, Select, Button, InputFormm } from 'components'
 import useDebounce from 'hook/useDebounce'
-import { useSearchParams} from 'react-router-dom'
+import { createSearchParams, useLocation, useNavigate, useSearchParams} from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import Swal from 'sweetalert2'
 import clsx from 'clsx'
+import bgImage from '../../assets/clouds.svg'
+import avatarUser from '../../assets/avatarDefault.png'
+import { FcExport } from "react-icons/fc";
+import { MdBlock } from "react-icons/md";
+import { TfiExport } from 'react-icons/tfi'
 
 const ManageUser = () => {
-  const {handleSubmit, register, formState:{errors}, reset } = useForm({
+  const navigate = useNavigate()
+  const location = useLocation()
+  const {handleSubmit, register, formState:{errors}, watch } = useForm({
     email: '',
     firstName: '',
     lastName: '',
@@ -28,24 +35,40 @@ const ManageUser = () => {
   const [update, setUpdate] = useState(false)
   const [editEl, setEditEl] = useState(null)
   const [params] = useSearchParams()
+  const [counts, setCounts] = useState(0)
   const fetchUsers = async(params) => {
     const response = await apiUsers({...params, limit:process.env.REACT_APP_LIMIT})
     if(response.success){
-      setUser(response)
+      setUser(response?.users)
+      setCounts(response?.counts)
     }
   }
+
+  useEffect(() => {
+    const searchParams = Object.fromEntries([...params]) 
+    console.log(searchParams)
+    fetchUsers(searchParams)
+  }, [params]);
   
   const render = useCallback(() => {
     setUpdate(!update)}
   ,[update])
 
-  const queriesDebounce = useDebounce(query.q,800)
+  const queryDebounce = useDebounce(watch('q'),800)
 
   useEffect(() => {
-    const queries = Object.fromEntries([...params]) 
-    if(queriesDebounce) queries.q = queriesDebounce
-    fetchUsers(queries)
-  }, [queriesDebounce, params, update])
+    if(queryDebounce) {
+      navigate({
+        pathname: location.pathname,
+        search: createSearchParams({q:queryDebounce}).toString()
+      })
+    }
+    else{
+      navigate({
+        pathname: location.pathname,
+      })
+    }
+  }, [queryDebounce])
 
   const handleUpdate = async (data) => { 
     const response = await apiModifyUser(data, editEl._id)
@@ -78,151 +101,86 @@ const ManageUser = () => {
     })
   }
   
-  // useEffect(() => {
-  //   if(editEl){
-  //    reset({
-  //     role: editEl.role,
-  //     status: editEl.isBlocked,
-
-  //    }) 
-  //   }
-  // }, [editEl])
-  
+   
   return (
-    <div className={clsx('w-full', editEl&&'pl-[8rem]')}>
-      <h1 className='h-[75px] flex justify-between items-center text-3xl font-bold px-4 border-b'>
-        <span>Manage Users</span>
-      </h1>
-      <div className='w-full p-4'>
-        <div className='flex justify-end py-4'>
-          <InputField 
-            nameKey={'q'}
-            value={query?.q}
-            setValue = {setQuery}
-            style = {'w400'}
-            placeholder= 'Search user name or email address'
-            isHideLabel={true}
-          />
+    <div className="w-full h-full relative">
+      <div className='inset-0 absolute z-0'>
+        <img src={bgImage} className='w-full h-full object-cover'/>
+      </div>
+      <div className="relative z-10"> {/* Thêm lớp này để đảm bảo dòng chữ không bị che mất */}
+        <div className='w-full h-24 flex justify-between p-4'>
+          <span className='text-[#00143c] text-3xl font-semibold'>Manage Users</span>
         </div>
+        <div className='w-[95%] h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
+          <div className='w-full h-fit flex justify-between items-center'>
+            <h1 className='text-[#00143c] font-medium text-[16px]'>{`All Customers (${counts})`}</h1>
+            <div className='flex w-[50%] gap-2 items-center justify-end'>
+              <Button style={'px-4 py-2 rounded-md text-[#00143c] bg-[#fff] font-semibold w-fit h-fit flex gap-2 items-center border border-[#b3b9c5]'}><TfiExport className='text-lg font-bold' /> Export Data</Button>
+              <form className='flex-1' >
+                <InputFormm
+                  id='q'
+                  register={register}
+                  errors={errors}
+                  fullWidth
+                  placeholder= 'Search user by name, email address ...'
+                  style={'w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'}
+                  styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
+                >
+                </InputFormm>
+              </form>
+            </div>
+          </div>
+          <div className='text-[#99a1b1]'>
+            <div className='w-full flex gap-1 border-b border-[##dee1e6] py-1 px-[8px]'>
+              <span className='w-[40%] flex font-medium justify-start px-[8px]'>Customer</span>
+              <span className='w-[20%] flex font-medium justify-center'>Phone</span>
+              <span className='w-[10%] flex font-medium justify-center'>Status</span>
+              <span className='w-[10%] flex font-medium justify-center'>Created</span>
+              <span className='w-[20%] flex font-medium justify-center'>Action</span>
+            </div>
+            <div>
+              {
+                user?.map((el,index) => (
+                  <div key={index} className='w-full flex border-b border-[#f4f6fa] gap-1 h-[64px] p-[8px]'>
+                    <span className='w-[40%] text-[#00143c] flex items-center'>
+                      <img src={el?.avatar || avatarUser} alt='avatar' className='w-[40px] h-[40px] mr-[10px]'/>
+                      <div className='flex flex-col justify-center'>
+                        <span className='font-semibold text-base'>{`${el?.lastName} ${el?.firstName}`}</span>
+                        <span className='text-[#99a1b1] text-sm'>{el?.email}</span>
+                      </div>
+                    </span>
+                    <span style={{fontSize:'15px', lineHeight:'1.5rem'}} className='w-[20%] text-[#00143c] flex justify-center items-center font-medium'>{el?.mobile}</span>
+                    <span style={{fontSize:'15px', lineHeight:'1.5rem'}} className='w-[10%] text-[#00143c] flex justify-center items-center font-medium'>Active</span>
+                    <span style={{fontSize:'15px', lineHeight:'1.5rem'}} className='w-[10%] text-[#00143c] flex justify-center items-center font-medium'>{moment(el.createdAt).format('DD/MM/YYYY')}</span>
+                    <span style={{fontSize:'15px', lineHeight:'1.5rem'}} className='w-[20%] text-[#00143c] flex justify-center items-center font-medium'>
+                      <div className="relative group inline-block">
+                        <span className='inline-block hover:underline cursor-pointer text-[#005aee] hover:text-orange-500 px-0.5'>
+                          <FcExport size={24}/>
+                        </span>
+                        <div className="absolute left-1/2 top-[-18px] transform -translate-x-1/2 translate-y-full mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-[#00143c] border border-[##dee1e6] text-xs p-1 rounded z-[99]">
+                          Export data
+                        </div>
+                      </div>
+                      
+                      <div className="relative group inline-block">
+                        <span className='inline-block hover:underline cursor-pointer text-main hover:text-orange-500 px-0.5'>
+                          <MdBlock size={24}/>
+                        </span>
 
-        <form onSubmit={handleSubmit(handleUpdate)}>
-        {editEl&&
-          <Button type='submit'>
-          Update
-          </Button>
-        }
-        <table className='table-auto mb-6 text-left w-full'>
-          <thead className='font-bold bg-blue-500 text-[13px] text-white'>
-           <tr className='border border-gray-500'>
-            <th className='text-center py-2'>#</th>
-            <th className='text-center py-2'>Email Address</th>
-            <th className='text-center py-2'>First Name</th>
-            <th className='text-center py-2'>Last Name</th>
-            <th className='text-center py-2'>Phone</th>
-            <th className='text-center py-2'>Status</th>
-            <th className='text-center py-2'>Created At</th>
-            <th className='text-center py-2'>Actions</th>
-           </tr>
-          </thead>
-          <tbody>
-            {user?.users?.map((el,idx)=>(
-              <tr key={el._id} className='border border-gray-500'>
-                <td className='text-center py-2'>{idx+1}</td>
-                <td className='text-center py-2'>{
-                editEl?._id === el._id ? 
-                <InputForm 
-                  register={register} 
-                  fullWidth
-                  errors={errors} 
-                  defaultValue={editEl?.email}
-                  id={'email'} 
-                  validate={{
-                    required: 'Require fill', 
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "invalid email address"
-                    }
-                  }} 
-                /> 
-                :
-                el.email}</td>
-                <td className='text-center py-2'>
-                {
-                editEl?._id === el._id ? 
-                <InputForm 
-                  register={register} 
-                  fullWidth
-                  errors={errors} 
-                  defaultValue={editEl?.firstName}
-                  id={'firstName'} 
-                  validate={{required: 'Require fill'}} 
-                /> 
-                :
-                el.firstName}
-                </td>
-                <td className='text-center py-2'>
-                  {
-                  editEl?._id === el._id ? 
-                  <InputForm 
-                    register={register} 
-                    fullWidth
-                    errors={errors} 
-                    defaultValue={editEl?.lastName}
-                    id={'lastName'} 
-                    validate={{required: 'Require fill'}} 
-                  /> 
-                  :
-                  el.lastName}
-                </td>
-                <td className='text-center py-2'>
-                {
-                editEl?._id === el._id ? 
-                <InputForm 
-                  register={register} 
-                  fullWidth
-                  errors={errors} 
-                  defaultValue={editEl?.mobile}
-                  id={'mobile'} 
-                  validate={{
-                    required: 'Require fill', 
-                    pattern: {
-                      value: /^[62|0]+\d{9}/gi,
-                      message: "invalid phone number"
-                    }
-                  }} 
-                /> 
-                : 
-                el.mobile}</td>
-                <td className='text-center py-2'>{
-                editEl?._id === el._id ? 
-                <Select 
-                  register={register} 
-                  fullWidth
-                  errors={errors} 
-                  defaultValue={el.isBlocked}      
-                  id={'isBlocked'} 
-                  validate={{required: 'Require fill'}} 
-                  options={blockStatus}
-                /> 
-                : 
-                el.isBlocked? 'Block': 'Active'}</td>
-                <td className='text-center py-2'>{moment(el.createdAt).format('DD/MM/YYYY')}</td>
-                <td className='text-center py-2'>
-                  {editEl?._id === el._id ? <span onClick={()=>{setEditEl(null)}} className='px-2 text-orange-400 hover:underline cursor-pointer'>Back</span>
-                          :
-                          <span onClick={()=>{setEditEl(el)}} className='px-2 text-orange-400 hover:underline cursor-pointer'>Edit</span>}
-                  <span onClick={()=>handleDelete(el._id)} className='px-2 text-orange-400 hover:underline cursor-pointer'>Delete</span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        </form>  
-        
-        <div className='w-full text-right'>
-          <Pagination
-            totalCount={user?.counts}
-          />
+                        {/* Tooltip */}
+                        <div className="absolute left-1/2 top-[-2px] transform -translate-x-1/2 translate-y-full mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-[#00143c] border border-[##dee1e6] text-xs p-1 rounded">
+                          Block
+                        </div>
+                      </div>
+                    </span>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+          <div className='text-[#00143c] flex-1 flex items-end'>
+            <Pagination totalCount={counts} />
+          </div>
         </div>
       </div>
     </div>
