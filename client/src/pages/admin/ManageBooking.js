@@ -3,9 +3,7 @@ import { createSearchParams, useSearchParams } from 'react-router-dom';
 import { apiGetOrdersByAdmin } from 'apis/order';
 import moment from 'moment';
 import { Button, InputFormm, Pagination } from 'components';
-import { FiCalendar, FiDollarSign } from 'react-icons/fi';
-import { FaTags } from "react-icons/fa";
-import { AiOutlineUser, AiOutlineTeam } from 'react-icons/ai';
+import { FiCalendar, FiChevronLeft, FiChevronRight, FiX } from 'react-icons/fi';
 import path from 'ultils/path';
 import withBaseComponent from 'hocs/withBaseComponent';
 import { formatPrice, formatPricee } from 'ultils/helper';
@@ -15,12 +13,32 @@ import { useForm } from 'react-hook-form';
 import { BsCalendar } from "react-icons/bs";
 import { RxMixerVertical } from 'react-icons/rx';
 import { GoPlusCircle } from "react-icons/go";
+import { format, isValid, isBefore, isAfter, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths } from "date-fns";
 
 const ManageBooking = ({ dispatch, navigate }) => {
   const [params] = useSearchParams();
   const [booking, setBookings] = useState(null);
   const [counts, setCounts] = useState(0);
   const [selectedMonth, setSelectedMonth] = useState(12);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleInputClick = () => {
+    setShowCalendar(!showCalendar);
+  };
+  const handleConfirm = () => {
+    if (startDate && endDate) {
+      setShowCalendar(false);
+    }
+  };
+
+  const isDateInRange = (date) => {
+    if (!startDate || !endDate) return false;
+    return isAfter(date, startDate) && isBefore(date, endDate);
+  };
 
   const fetchBooking = async (params) => {
     const response = await apiGetOrdersByAdmin({ ...params, limit: process.env.REACT_APP_LIMIT });
@@ -37,6 +55,13 @@ const ManageBooking = ({ dispatch, navigate }) => {
       pathname: `/${path.ADMIN}/${path.MANAGE_BOOKING_DETAIL}`,
       search: createSearchParams({ bookingid }).toString()
     });
+  };
+
+  const handleClearDates = (e) => {
+    e.stopPropagation();
+    setStartDate(null);
+    setEndDate(null);
+    setError("");
   };
 
   useEffect(() => {
@@ -109,6 +134,90 @@ const ManageBooking = ({ dispatch, navigate }) => {
     return item ? item.color : 'rgba(0, 0, 0, 0.1)'; // Màu mặc định nếu không tìm thấy
   };
 
+  
+  const nextMonth = () => {
+    setCurrentMonth(addMonths(currentMonth, 1));
+  };
+
+  const prevMonth = () => {
+    setCurrentMonth(subMonths(currentMonth, 1));
+  };
+
+  const handleDateSelect = (date) => {
+    if (!startDate || (startDate && endDate)) {
+      setStartDate(date);
+      setEndDate(null);
+    } else {
+      if (isBefore(date, startDate)) {
+        setError("End date cannot be before start date");
+        return;
+      }
+      setEndDate(date);
+      setError("");
+    }
+  };
+  const generateCalendarDays = (month) => {
+    const start = startOfMonth(month);
+    const end = endOfMonth(month);
+    return eachDayOfInterval({ start, end });
+  };
+
+  const Calendar = ({ month }) => {
+    const days = generateCalendarDays(month);
+
+    return (
+      <div className="p-4 rounded-lg shadow-lg text-[#00143c] w-[300px]">
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick={prevMonth}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            aria-label="Previous month"
+          >
+            <FiChevronLeft className="w-5 h-5" />
+          </button>
+          <h2 className="text-lg font-semibold">{format(month, "MMMM yyyy")}</h2>
+          <button
+            onClick={nextMonth}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            aria-label="Next month"
+          >
+            <FiChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="grid grid-cols-7 gap-1">
+          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+            <div key={day} className="text-center text-sm font-medium py-2">
+              {day}
+            </div>
+          ))}
+          {days.map((date) => {
+            const isSelected = 
+              (startDate && format(date, "yyyy-MM-dd") === format(startDate, "yyyy-MM-dd")) ||
+              (endDate && format(date, "yyyy-MM-dd") === format(endDate, "yyyy-MM-dd"));
+            const inRange = isDateInRange(date);
+
+            return (
+              <button
+                key={date.toString()}
+                onClick={() => handleDateSelect(date)}
+                className={`
+                  p-2 text-sm rounded-full transition-all
+                  ${isSelected ? "bg-blue-500 text-white" : ""}
+                  ${inRange ? "bg-blue-100" : ""}
+                  hover:bg-blue-200
+                `}
+                aria-label={format(date, "MMMM d, yyyy")}
+              >
+                {format(date, "d")}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
+
   return (
     <div className="w-full h-full relative">
       <div className='inset-0 absolute z-0'>
@@ -138,8 +247,53 @@ const ManageBooking = ({ dispatch, navigate }) => {
                 </InputFormm>
               </form>
             </div>
-            <div className='w-[25%] h-[36px] m-[6px]'>
-              <Button style={'px-4 py-2 rounded-md text-[#00143c] bg-[#fff] font-normal w-full h-fit flex gap-2 items-center border border-[#b3b9c5]'}><BsCalendar className='text-lg font-semibold' /> Start date - End date</Button>
+            <div className="relative w-[25%] h-[36px] m-[6px]">
+              <div className="relative" onClick={handleInputClick}>
+                <input
+                  type="text"
+                  readOnly
+                  value={
+                    startDate && endDate
+                      ? `${format(startDate, "MMM d, yyyy")} - ${format(endDate, "MMM d, yyyy")}`
+                      : "Select date range"
+                  }
+                  className="w-full px-4 py-2 border rounded-lg cursor-pointer focus:outline-none text-[#00143c] text-sm"
+                  aria-label="Date range picker"
+                />
+                {startDate && endDate ? (
+                  <FiX
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#00143c] cursor-pointer"
+                    onClick={handleClearDates}
+                  />
+                ) : (
+                  <FiCalendar className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#00143c] cursor-pointer" />
+                )}
+              </div>
+
+              {error && <p className="text-main mt-2 text-xs font-medium">{error}</p>}
+
+              {showCalendar && (
+                <div className="absolute w-fit right-[-100px] z-10 mt-2 px-4 py-3 bg-white rounded-lg shadow-xl border animate-fade-in-down">
+                  <div className="flex gap-4">
+                    <Calendar month={currentMonth} />
+                    <Calendar month={addMonths(currentMonth, 1)} />
+                  </div>
+                  <div className="mt-3 flex justify-end">
+                    <button
+                      onClick={handleConfirm}
+                      disabled={!startDate || !endDate}
+                      className={`
+                        px-4 py-2 rounded-lg transition-all
+                        ${startDate && endDate
+                          ? "text-white bg-[#005aee] hover:bg-blue-600"
+                          : "bg-gray-200 text-gray-500 cursor-not-allowed"}
+                      `}
+                    >
+                      Confirm
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
             <div className='w-[10%] h-[36px] m-[6px]'>
               <Button style={'w-full px-4 py-2 bg-[#dee1e6] rounded-md text-[#00143c] flex gap-1 items-center justify-center font-semibold'}>

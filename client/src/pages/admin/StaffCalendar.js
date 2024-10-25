@@ -19,7 +19,11 @@ import { FiChevronLeft, FiChevronRight, FiEdit2, FiTrash2 } from 'react-icons/fi
 import format from "date-fns/format";
 import { IoNavigate } from "react-icons/io5";
 import { FaCaretDown } from "react-icons/fa";
-
+import { RxMixerVertical } from 'react-icons/rx';
+import { FaTags } from "react-icons/fa";
+import { FiSearch } from "react-icons/fi";
+import { IoMdClose } from "react-icons/io";
+import { motion, AnimatePresence } from "framer-motion";
 const localizer = momentLocalizer(moment);
 
 const StaffCalendar = () => {
@@ -38,9 +42,45 @@ const StaffCalendar = () => {
   const [view, setView] = useState("month");
   const [date, setDate] = useState(new Date());
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenService, setIsOpenService] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Service name");
   const modalRef = useRef(null);
   const buttonRef = useRef(null);
+  const popupRef = useRef(null);
+  const inputRef = useRef(null);
+  const [showFilter, setShowFilter] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleServiceToggle = (serviceId) => {
+    setSelectedServices((prev) =>
+      prev.includes(serviceId)
+        ? prev.filter((id) => id !== serviceId)
+        : [...prev, serviceId]
+    );
+  };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        setIsOpenService(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+
+  const getSelectedServiceNames = () => {
+    const selectedServicesList = services.filter(service => 
+      selectedServices.includes(service._id)
+    );
+    if (selectedServicesList.length === 0) return <span className='flex gap-2 items-center text-[#00143c] font-medium'><FaTags color='#808a9e' /> Service</span>;
+    if (selectedServicesList.length === 1) return <span className='flex gap-2 items-center'><FaTags />{selectedServicesList[0].name}</span>;
+    return <span className='flex gap-2 items-center'><FaTags />{`${selectedServicesList[0].name}, +${selectedServicesList.length - 1}`}</span>;
+  };
+  const clearSelectedServices = () => {
+    setSelectedServices([]);
+  };
 
   const locales = {
     "en-US": require("date-fns/locale/en-US")
@@ -119,7 +159,7 @@ const StaffCalendar = () => {
         
         return {
             id: index,
-            title: name,
+            title: selectedOption === "Service name" ? name : `${staff?.lastName} ${staff?.firstName}`,
             start: datepair[0],
             end: datepair[1].toDate(),
             service,
@@ -185,6 +225,13 @@ const StaffCalendar = () => {
 
   }, [selectedOption])
     
+
+  useEffect(() => {
+    if (isOpenService && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpenService, searchTerm]);
+
   const handleAddSelectedStaff = (staff) => {
     if(selectedStaff?.find(el => el === staff?._id)){
       setSelectedStaff(selectedStaff?.filter(el => el !== staff?._id))
@@ -205,6 +252,10 @@ const StaffCalendar = () => {
   const handleSelectEvent = (event) => {
     setSelectedOrder(calendarEvents.find(order => order.id === event.id));
   };
+
+  const filteredServices = services.filter((service) =>
+    service.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const CustomToolbar = (toolbar) => {
     const goToBack = () => {
@@ -254,8 +305,11 @@ const StaffCalendar = () => {
       document.addEventListener("mousedown", handleClickOutside);
       return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    
   
     return (
+      <>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-4 gap-1">
           <button
@@ -300,7 +354,7 @@ const StaffCalendar = () => {
             >
               <div className="p-4">
                 <p className="text-sm font-medium text-gray-700 mb-3">
-                  Show appointment titles as
+                  Show booking titles as
                 </p>
                 <div className="space-y-2">
                   <button
@@ -343,11 +397,43 @@ const StaffCalendar = () => {
             Day
           </button>
 
+          <button
+            onClick={()=>{setShowFilter(prev => !prev)}}
+            className={`px-3 py-1.5 text-sm font-medium rounded-md bg-[#edeff3] text-[#00143c] hover:bg-gray-100 flex gap-1 items-center`}
+          >
+            <span className='font-bold text-lg'><RxMixerVertical /></span>
+            <span>Filter</span>
+          </button>
         </div>
       </div>
+      {
+        showFilter &&
+          <button
+            onClick={() => setIsOpenService(true)}
+            className={clsx("inline-flex items-center px-4 py-1.5 rounded-lg focus:outline-none transition-colors mb-[12px] w-fit", selectedServices.length > 0 ? "bg-blue-500 text-white" : "bg-white border border-[#ccd0d8] hover:bg-[#f7f8f9]")}
+            aria-label="Open service selection"
+          >
+            <span className="mr-2">{getSelectedServiceNames()}</span>
+            {selectedServices.length > 0 && (
+              <IoMdClose
+                className="w-5 h-5 cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  clearSelectedServices();
+                }}
+              />
+            )}
+          </button>
+      }
+      </>
     );
   };
 
+
+
+
+
+  console.log(selectedServices)
   return (
     <div className="w-full h-full relative">
       <div className='inset-0 absolute z-0'>
@@ -453,6 +539,69 @@ const StaffCalendar = () => {
             )}
           </div>
         </div>
+        <AnimatePresence>
+            {isOpenService && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <motion.div
+                  ref={popupRef}
+                  className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[80vh] overflow-hidden"
+                  onClick={(e)=>{e.stopPropagation();}}
+                >
+                  <div className="p-6">
+                    <div className="relative mb-4">
+                      <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      <input
+                        type="text"
+                        ref={inputRef}
+                        placeholder="Search services..."
+                        value={searchTerm}
+                        onChange={(e) => {setSearchTerm(e.target.value); e.stopPropagation()}}
+                        className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none text-[#00143c] font-medium"
+                        aria-label="Search services"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </div>
+
+                    <div className="overflow-y-auto max-h-[60vh]">
+                      {filteredServices.map((service) => (
+                        <div
+                          key={service._id}
+                          className={`flex items-start space-x-3 p-3 rounded-lg transition-colors ${
+                            selectedServices.includes(service.id)
+                              ? "bg-blue-50"
+                              : "hover:bg-gray-50"
+                          }`}
+                        >
+                          <div className="flex items-center h-5">
+                            <input
+                              type="checkbox"
+                              checked={selectedServices.includes(service._id)}
+                              onChange={(e) => {handleServiceToggle(service._id); e.stopPropagation()}}
+                              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                              aria-label={`Select ${service.name}`}
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="font-medium text-gray-900">
+                              {service.name}
+                            </h3>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
       </div>
     </div>
   )

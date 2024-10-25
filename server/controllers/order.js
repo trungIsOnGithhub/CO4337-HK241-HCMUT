@@ -281,6 +281,9 @@ const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
         }).select('info.date info.time info.staff info.service total status').populate({
             path: 'info.service',
             select: 'name duration thumb category'
+        }).populate({
+            path: 'info.staff',
+            select: 'firstName lastName avatar'
         })
     
         return res.status(200).json({
@@ -295,6 +298,9 @@ const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
         }).select('info.date info.time info.staff info.service total status').populate({
             path: 'info.service',
             select: 'name duration thumb category'
+        }).populate({
+            path: 'info.staff',
+            select: 'firstName lastName avatar'
         })
     
         return res.status(200).json({
@@ -310,6 +316,9 @@ const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
         }).select('info.date info.time info.staff info.service total status').populate({
             path: 'info.service',
             select: 'name duration thumb category'
+        }).populate({
+            path: 'info.staff',
+            select: 'firstName lastName avatar'
         })
     
         return res.status(200).json({
