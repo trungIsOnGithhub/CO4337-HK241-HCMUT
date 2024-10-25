@@ -1,14 +1,15 @@
 module.exports = {
     'BLOG GET 1': {
-        'B1-1: Search Blog Success': {
+        'BL1_/api/blog/_400_Missing input': {
             mock: {
                 searchTerm: "",
                 selectedTags: []
             },
             match: {
                 success: false,
-                blogs: []
-            }
+                mes: "Missing input"
+            },
+            httpStatusCode: 500
         }
     }
 }

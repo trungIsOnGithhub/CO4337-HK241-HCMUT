@@ -77,72 +77,73 @@ const getAllBlogTags = asyncHandler(async (req,res) => {
 
 const getAllBlogs = asyncHandler(async (req, res)=>{
     const { provider_id, title, sortBy, provinces } = req.body;
-    // if(!provider_id){
-    //     throw new Error ("Missing input")
-    // }
-    // const searchFilter = {};
-    // if (provider_id) {
-    //     searchFilter.provider_id = provider_id;
-    // }
-    // if (title) {
-    //     searchFilter.title = title;
-    // }
-    // let response = await Blog.find(searchFilter).populate({
-    //     path: 'provider_id',
-    //     select: 'bussinessName province',
-    // });
 
-    // if (sortBy?.length) {
-    //     if (sortBy[0] === 1) {
-    //         response.sort((b1,b2) => {
-    //             if (b1.createdAt > b2.createdAt) {
-    //                 return -1;
-    //             }
-    //             else if (b1.createdAt < b2.createdAt) {
-    //                 return 1;
-    //             }
-    //             return 0;
-    //         });
-    //     }
-    //     else if (sortBy[0] === 2) {
-    //         response.sort((b1,b2) => {
-    //             if (b1.likes < b2.likes) {
-    //                 return -1;
-    //             }
-    //             else if (b1.likes > b2.likes) {
-    //                 return 1;
-    //             }
-    //             return 0;
-    //         });
-    //     }
-    //     else if (sortBy[0] === 3) {
-    //         response.sort((b1,b2) => {
-    //             if (b1.dislikes > b2.dislikes) {
-    //                 return -1;
-    //             }
-    //             else if (b1.dislikes <   b2.dislikes) {
-    //                 return 1;
-    //             }
-    //             return 0;
-    //         });
-    //     }
-    // }
+    if(!provider_id){
+        throw new Error ("Missing input")
+    }
+    const searchFilter = {};
+    if (provider_id) {
+        searchFilter.provider_id = provider_id;
+    }
+    if (title) {
+        searchFilter.title = title;
+    }
+    let response = await Blog.find(searchFilter).populate({
+        path: 'provider_id',
+        select: 'bussinessName province',
+    });
 
-    // if (provinces?.length) {
-    //     response = response.filter(blog => {
-    //         for (let province of provinces) {
-    //             // let province_words_tokens = province.split(' ');
+    if (sortBy?.length) {
+        if (sortBy[0] === 1) {
+            response.sort((b1,b2) => {
+                if (b1.createdAt > b2.createdAt) {
+                    return -1;
+                }
+                else if (b1.createdAt < b2.createdAt) {
+                    return 1;
+                }
+                return 0;
+            });
+        }
+        else if (sortBy[0] === 2) {
+            response.sort((b1,b2) => {
+                if (b1.likes < b2.likes) {
+                    return -1;
+                }
+                else if (b1.likes > b2.likes) {
+                    return 1;
+                }
+                return 0;
+            });
+        }
+        else if (sortBy[0] === 3) {
+            response.sort((b1,b2) => {
+                if (b1.dislikes > b2.dislikes) {
+                    return -1;
+                }
+                else if (b1.dislikes <   b2.dislikes) {
+                    return 1;
+                }
+                return 0;
+            });
+        }
+    }
+
+    if (provinces?.length) {
+        response = response.filter(blog => {
+            for (let province of provinces) {
+                // let province_words_tokens = province.split(' ');
                 
-    //             // for (let token of province_words_tokens) {
-    //                 if (blog?.provider_id?.province?.indexOf(province) >= 0
-    //                     || province.indexOf(blog?.provider_id?.province || '~') >= 0) { // ~ = random  string to make it fail
-    //                     return true;
-    //                 }
-    //             // }
-    //         }
-    //         return false;
-    //     });
-    // }
+                // for (let token of province_words_tokens) {
+                    if (blog?.provider_id?.province?.indexOf(province) >= 0
+                        || province.indexOf(blog?.provider_id?.province || '~') >= 0) { // ~ = random  string to make it fail
+                        return true;
+                    }
+                // }
+            }
+            return false;
+        });
+    }
 
     return res.status(200).json({
         success: response ? true : false,
@@ -308,8 +309,9 @@ const createNewPostTag = asyncHandler(async(req, res)=>{
 })
 
 const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
-    let { searchTerm, selectedTags } = req.query;
+    let { searchTerm, selectedTags } = req.body;
 
+    console.log("hhehehheeheh")
 
     if (!searchTerm) {
         searchTerm = '';
@@ -319,8 +321,8 @@ const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
     }
 
     // Loại bỏ các trường đặc biệt ra khỏi query
-    const excludeFields = ['limit', 'sort', 'page', 'fields'];
-    excludeFields.forEach((el) => delete req.query[el]);
+    // const excludeFields = ['limit', 'sort', 'page', 'fields'];
+    // excludeFields.forEach((el) => delete req.query[el]);
 
     // Format lại các toán tử cho đúng cú pháp của mongoose
     // let queryString = JSON.stringify(queries);
@@ -329,40 +331,40 @@ const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
     //     (matchedEl) => `$${matchedEl}`
     // );
 
-    let queryFinish = {}
-    if(searchTerm?.length){
-        queryFinish = {
-            $or: [
-                {title: {$regex: searchTerm, $options: 'i' }},
-                {author: {$regex: searchTerm, $options: 'i' }},
-                {'provider_id.bussinessName': {$regex: searchTerm, $options: 'i' }},
-                {'provider_id.province': {$regex: searchTerm, $options: 'i' }},
-                {tags: {$regex: searchTerm, $options: 'i' }}
-            ]
-        }
-    }
+    // let queryFinish = {}
+    // if(searchTerm?.length){
+    //     queryFinish = {
+    //         $or: [
+    //             {title: {$regex: searchTerm, $options: 'i' }},
+    //             {author: {$regex: searchTerm, $options: 'i' }},
+    //             {'provider_id.bussinessName': {$regex: searchTerm, $options: 'i' }},
+    //             {'provider_id.province': {$regex: searchTerm, $options: 'i' }},
+    //             {tags: {$regex: searchTerm, $options: 'i' }}
+    //         ]
+    //     }
+    // }
 
-    const qr = { ...queryFinish }
+    // const qr = { ...queryFinish }
 
-    let queryCommand = Blog.find({}).populate({
-        path: 'provider_id',
-        select: 'bussinessName province',
-    }).find(qr);
+    // let queryCommand = Blog.find({}).populate({
+    //     path: 'provider_id',
+    //     select: 'bussinessName province',
+    // }).find(qr);
 
-    let blogs = await queryCommand;
+    // let blogs = await queryCommand;
 
-    blogs = blogs.filter(blog => {
-        for (const tag of selectedTags) {
-            if (blog?.tags.includes(tag)) {
-                return true;
-            }
-        }
-        return false;
-    })
-
+    // blogs = blogs.filter(blog => {
+    //     for (const tag of selectedTags) {
+    //         if (blog?.tags.includes(tag)) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // })
+    let blogs = [];
     return res.status(200).json({
-        success: blogs?.length ? true : false,
-        blogs: blogs?.length ? blogs : "Cannot Find Post Blogs"
+        success: blogs.length ? true : false,
+        blogs: blogs.length ? blogs : "Cannot Find Post Blogs"
     })
 })
 

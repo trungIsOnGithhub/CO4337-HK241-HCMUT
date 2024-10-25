@@ -22,7 +22,7 @@ dbConnect();
 // services init
 initRoutes(app);
 
-app.use('/', (req,res) => {res.send('SERVER ON')})
+// app.use('/', (req,res) => {res.send('SERVER ON')})
 
 const server = app.listen(port,()=>{
     console.log('Running....')
