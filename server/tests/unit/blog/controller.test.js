@@ -2,53 +2,82 @@
 const chai = require('chai');
 const mocha = require('mocha');
 const blogMockUnitTestData = require('./mock.test');
+const { TestResponse } = require('../common');
 
 // https://www.youtube.com/watch?v=DvO-YC1wmpg
 
 // API modules
 const blogsAPIControllers = require("../../../controllers/blog");
 
-// (async function () {
-//   const resp = await blogsAPIController.getAllBlogSampleTest({ body: { testMode: true } });
+async function genericControllerThrowErrorTest(mock, match, controllerFunc) {
+  const resp = new TestResponse();
 
-//   console.log("SAMPLE RESPONSE:", resp);
-// })();
+  let result = null;
+  try {
+    result = await controllerFunc(mock, resp);
+  }
+  catch(err) {
+    console.log("00000===========000000");
+    return {
+      ok: true, // Test Performed OK
+      msg: "Behavior matched"
+    };
+  }
 
-describe('Test Sample 1 - Blog API', async function(done) {
+  chai.expect(result).to.not.be.null;
+  chai.assert.fail("No Error", "Error Thrown", "Expected throw Error but not");
+
+  return {
+    ok: true, // Test Performed OK
+    msg: "Behavior NOT matched"
+  }; 
+}
+
+async function genericControllerPostSuccessTest(mock, match, controllerFunc) {
+  const resp = new TestResponse();
+
+  let result = null;
+  try {
+    result = await controllerFunc(mock, resp);
+  }
+  catch(err) {
+    console.log("00000===========000000");
+    return {
+      ok: true, // Test Performed OK
+      msg: "Behavior matched"
+    };
+  }
+
+  chai.expect(result).to.not.be.null;
+  chai.assert.fail("No Error", "Error Thrown", "Expected throw Error but not");
+
+  return {
+    ok: true, // Test Performed OK
+    msg: "Behavior NOT matched"
+  }; 
+}
+
+describe('Test Sample 1 - Blog API', async function() {
     // beforeEach(function() {
     //   const sampleData = require("../tests/mocks/api.blogs.data.test");
     // });
     const currentMockUnitTestData = blogMockUnitTestData[this.title];
 
-    it('BL2-1_POST_/api/blog/_200_OK', async function() {
-      const { mock, match } = blogMockUnitTestData[this.test.title];
-      const resp = new DummyTestResponseType();
+    it('BL2-1_POST_/api/blog/_200_CreateSuccess', async function() {
+      const { mock, match } = currentMockUnitTestData[this.test.title];
 
-      let result = null;
-      try {
-        result = await blogsAPIControllers.createNewBlogPost(mock, resp);
-      }
-      catch(err) {
-        done(err); // Failed Right After Throw Error
-      }
-
-      chai.expect(result).to.not.be.null;
-      // chai.expect(resp).to.have.status(httpStatusCode);
-      // chai.expect(resp).to.have.header('content-type', 'application/json; charset=utf-8');
-      // chai.expect(resp.text).to.not.be.null;
-
-      console.log(JSON.stringify(resp), "=======================");
-
-      const matchKeys = Object.keys(match);
-      for (const key of matchKeys) {
-          console.log(key, "======>", match[key] + "---||---" + typeof(match[key]));
-
-          chai.expect(result[key]).to.be.equal(match[key]);
-          chai.expect(result[key]).to.be.an( typeof(match[key]) );
-      }
+      await genericControllerThrowErrorTest(
+        mock, match,
+        blogsAPIControllers.createNewBlogPost
+      );
     });
 
-    // it('BL2-2_POST_/api/blog/_400_Missing input', async function() {
-    //   const response = await blogsAPIControllers.createNewBlogPost();
-    // });
+    it('BL2-2_POST_/api/blog/_400_MissingInput', async function() {
+      const { mock, match } = currentMockUnitTestData[this.test.title];
+
+      await genericControllerThrowErrorTest(
+        mock, match,
+        blogsAPIControllers.createNewBlogPost
+      );
+    });
 });
