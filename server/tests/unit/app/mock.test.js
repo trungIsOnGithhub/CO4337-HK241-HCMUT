@@ -38,7 +38,7 @@ module.exports = {
                 }
             }
         },
-        'MDW2-2_VerifyAccessToken_200_Success': {
+        'MDW2-2_VerifyAccessToken_400_InvalidToken': {
             mock: {
                 headers: {
                     authorization: "Bearer "
@@ -52,6 +52,21 @@ module.exports = {
                     expiresIn: '2d'
                 }
             }           
+        },
+        'MDW2-3_VerifyAccessToken_200_Success': {
+            mock: {
+                headers: {
+                    authorization: "Bearer "
+                }
+            },
+            match: {
+                statusCode: 401,
+                jwtData: {
+                    _id: "66377327edf989f1ae865588",
+                    role: 1111,
+                    expiresIn: '2d'
+                }
+            }          
         }
     }
 }

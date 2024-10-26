@@ -9,6 +9,11 @@ class DummyTestResponseType {
     return this;
   }
 
+  cookie(cookieValue) {
+    this.cookie = cookieValue;
+    return this;
+  }
+
   json(object) {
     for (const key of Object.keys(object)) {
       this[key] = object[key];
@@ -98,12 +103,14 @@ async function testFailMiddleware(mock, match, controllerFunc) {
   chai.expect(result, "Result Should Not Be Null As Middleware Failed.").to.not.be.null;
   chai.expect(resp?.statusCode).to.not.be.null;
 
-  console.log("}}}}}}}}", resp);
+  // console.log("}}}}}}}}", resp);
 
   chai.expect(resp?.statusCode)
     .to.be.deep.equal(match?.statusCode)
     .to.be.gte(400);
   chai.expect(resp?.success).to.be.false;
+
+  return resp; // return for further logi
 }
 
 
@@ -142,12 +149,17 @@ async function testSuccess(mock, match, controllerFunc) {
     result = await controllerFunc(mock, resp);
   }
   catch(err) {
+    console.log(err,"------------>");
     chai.assert.fail("Error Thrown", "No Error", "Throw Error while not Expected");
   }
 
   chai.expect(result, "Result Should Not Null").to.not.be.null;
   if (!result.success && !result.status) {
     chai.assert.fail("No Status Or Success Indicator In Response"); 
+  }
+
+  if (match.cookie) {
+    chai.expect(typeof resp.cookie).to.be.oneOf(["string", "object"]);
   }
 
   matchRecursiveObjects(result, match);

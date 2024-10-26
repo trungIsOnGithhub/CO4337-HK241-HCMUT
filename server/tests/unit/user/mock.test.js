@@ -1,30 +1,33 @@
 module.exports = {
-    'UnitTest BLOG: Controller': {
-        'BL2-1_POST_/api/blog/_200_CreateSuccess': {
+    'UnitTest USER: Controller': {
+        'USR1-1_POST_/api/user/register_200_RegisterAdminSuccess': {
             mock: {
                 body: {
-                    title: "sample",
-                    content: "sample"
+                    "firstName": "Long Clone",
+                    "lastName": "Nguyenn",
+                    "email": "nvlongclone@outlook.com",
+                    "mobile": "0980234588",
+                    "password": "$2b$10$7C..IuefFhV2SAo1yvvcQeK/xAD1UZgzQVtHTlCCK1fDs.XW4qsEq",
+                    "role": 1411,
                 }
             },
             match: {
-                createBlog: {
-                    _id: "66377327edf989f1ae865513",
-                    title: "Sample Title",
-                    content: "An interesting blog...",
-                    category: "Sample category",
-                    numberView: 9999,
-                    likes:[],
-                    dislikes:[],
-                    image: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI"
-                }
+                cookie: "",
+                success:  true,
+                mes: "Please check your email to active accout!"
             }
         },
 
-        'BL2-2_POST_/api/blog/_400_MissingInput': {
+        'USR1-2_POST_/api/user/register_400_UserAlreadyExist': {
             mock: {
-                title: "",
-                content: null
+                body: {
+                    "firstName": "Long",
+                    "lastName": "Nguyen Van",
+                    "email": "nvlong@outlook.com",
+                    "mobile": "0980234568",
+                    "password": "$2b$10$7C..IuefFhV2SAo1yvvcQeK/xAD1UZgzQVtHTlCCK1fDs.XW4qsEq",
+                    "role": 1411,
+                }
             },
             match: {
                 success: false,
@@ -32,18 +35,16 @@ module.exports = {
             }
         },
 
-        'BL2-3_PUT_/upload_image/:bid_200_UploadImageSuccess': {
+        'BL2-1_POST_/api/blog/:bid_400_LoginFailed': {
             mock: {
-                params: {
-                    bid: "66377327edf989f1ae865513"
-                },
-                file: {
-                    path: "https://monngonmoingay.com/wp-content/smush-webp/2024/10/Bap-hat-chien-gion-2.png.webp"
+                body: {
+                    "email": "nvlong@outlook.com",
+                    "password": "$2b$10$7C..IuefFhV2SAo1yvvcQeK/xAD1UZgzQVtHTlCCK1fDs.XW4qsEq",
                 }
             },
             match: {
-                status: true,
-                uploadImage: {}
+                success: false,
+                mes: "Missing input"
             }
         },
 

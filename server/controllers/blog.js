@@ -401,8 +401,8 @@ const getTopTags = asyncHandler(async(req, res)=>{
     if(!limit){
         limit = 5;
     }
-    const response = await PostTag.find({}).limit(5)
-
+    // const response = await PostTag.find({}).limit(5)
+    const response = [];
     return res.status(200).json({
         success: response ? true : false,
         tags: response ? response : "Cannot Get Post Tags!"
