@@ -35,6 +35,16 @@ describe('UnitTest BLOG: Controller', async function() {
     });
 
 
+    it('BL2-3_PUT_/upload_image/:bid_200_UploadImageSuccess', async function() {
+      const { mock, match } = currentMockUnitTestData[this.test.title];
+
+      await GenericController.testSuccess(
+        mock, match,
+        blogsAPIControllers.uploadImage
+      );
+    });
+
+
     it('BL2-4_PUT_/api/blog/:bid_200_UpdateSuccess', async function() {
       const { mock, match } = currentMockUnitTestData[this.test.title];
 

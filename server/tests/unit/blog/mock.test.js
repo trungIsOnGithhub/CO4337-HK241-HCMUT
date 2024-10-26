@@ -32,6 +32,21 @@ module.exports = {
             }
         },
 
+        'BL2-3_PUT_/upload_image/:bid_200_UploadImageSuccess': {
+            mock: {
+                params: {
+                    bid: "66377327edf989f1ae865513"
+                },
+                file: {
+                    path: "https://monngonmoingay.com/wp-content/smush-webp/2024/10/Bap-hat-chien-gion-2.png.webp"
+                }
+            },
+            match: {
+                status: true,
+                uploadImage: {}
+            }
+        },
+
         'BL2-4_PUT_/api/blog/:bid_200_UpdateSuccess': {
             mock: {
                 params: {

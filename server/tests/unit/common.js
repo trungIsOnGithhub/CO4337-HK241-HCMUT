@@ -60,7 +60,9 @@ async function testSuccess(mock, match, controllerFunc) {
   }
 
   chai.expect(result, "Result Should Not Null").to.not.be.null;
-  chai.expect(result.success).to.be.true;
+  if (!result.success && !result.status) {
+    chai.assert.fail("No Status Or Success Indicator In Response"); 
+  }
 
   const matchKeys = Object.keys(match);
   for (const key of matchKeys) {

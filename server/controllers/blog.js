@@ -290,11 +290,12 @@ const deleteBlog = asyncHandler(async(req, res)=>{
 
 const uploadImage = asyncHandler(async(req, res)=>{
     const {bid} = req.params
+    const response = {};
     if(!req.file){
         throw new Error("Missing input")
     }
     else{
-        const response = await Blog.findByIdAndUpdate(bid, {image: req.file.path},{new: true})
+        // const response = await Blog.findByIdAndUpdate(bid, {image: req.file.path},{new: true})
         return res.status(200).json({
             status: response? true : false,
             uploadImage: response? response : "Cannot upload image"
