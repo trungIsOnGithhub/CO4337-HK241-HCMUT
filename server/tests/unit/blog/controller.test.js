@@ -2,87 +2,14 @@
 const chai = require('chai');
 const mocha = require('mocha');
 const blogMockUnitTestData = require('./mock.test');
-const { TestResponse } = require('../common');
+const { TestResponse, GenericController } = require('../common');
 
 // https://www.youtube.com/watch?v=DvO-YC1wmpg
 
 // API modules
 const blogsAPIControllers = require("../../../controllers/blog");
 
-async function genericControllerThrowErrorTest(mock, match, controllerFunc) {
-  const resp = new TestResponse();
-
-  let result = null;
-  try {
-    result = await controllerFunc(mock, resp);
-  }
-  catch(err) {
-    console.log("00000===========000000");
-    return {
-      ok: true, // Test Performed OK
-      msg: "Behavior matched"
-    };
-  }
-
-  chai.expect(result).to.not.be.null;
-  chai.assert.fail("No Error", "Error Thrown", "Expected throw Error but not");
-}
-
-async function genericControllerSuccessTest(mock, match, controllerFunc) {
-  const resp = new TestResponse();
-
-  let result = null;
-  try {
-    result = await controllerFunc(mock, resp);
-  }
-  catch(err) {
-    chai.assert.fail("Error Thrown", "No Error", "Throw Error while not Expected");
-  }
-
-  chai.expect(result).to.not.be.null;
-  chai.expect(result.success).to.be.true;
-
-  const matchKeys = Object.keys(match);
-  for (const key of matchKeys) {
-      // console.log(key, "======>", match[key] + "---||---" + typeof(match[key]));
-
-      chai.expect(result[key]).to.not.be.null;
-      chai.expect(typeof result[key])
-          .to.equal(typeof match[key]);
-
-      if (typeof(match[key]) === 'object') {
-        const innerResult = result[key];
-        const innerMatch = match[key];
-        const matchKeys = Object.keys(innerMatch);
-
-        for (const innerKey of matchKeys) {
-          // console.log(innerKey, ":::::::>",  innerResult[innerKey] + "+++||+++" + typeof(innerMatch[innerKey]));
-
-          chai.expect(innerResult[innerKey]).to.not.be.null;
-          chai.expect(
-            typeof innerResult[innerKey]
-          ).to.equal(
-            typeof innerMatch[innerKey]
-          );
-
-          if (innerMatch.length) {
-            chai.expect(innerResult.length).to.equal(innerMatch.length);
-          }
-        }
-      }
-
-      if (match.length) {
-        chai.expect(result.length).to.equal(match.length);
-      }
-  }
-
-  return {
-    ok: true, // Test Performed OK
-    msg: "Behavior matched"
-  }; 
-}
-
-describe('Test Sample 1 - Blog API', async function() {
+describe('UnitTest BLOG: Controller', async function() {
     // beforeEach(function() {
     //   const sampleData = require("../tests/mocks/api.blogs.data.test");
     // });
@@ -91,18 +18,65 @@ describe('Test Sample 1 - Blog API', async function() {
     it('BL2-1_POST_/api/blog/_200_CreateSuccess', async function() {
       const { mock, match } = currentMockUnitTestData[this.test.title];
 
-      await genericControllerSuccessTest(
+      await GenericController.testSuccess(
         mock, match,
         blogsAPIControllers.createNewBlogPost
       );
     });
 
+
     it('BL2-2_POST_/api/blog/_400_MissingInput', async function() {
       const { mock, match } = currentMockUnitTestData[this.test.title];
 
-      await genericControllerThrowErrorTest(
+      await GenericController.testError(
         mock, match,
         blogsAPIControllers.createNewBlogPost
+      );
+    });
+
+
+    it('BL2-4_PUT_/api/blog/:bid_200_UpdateSuccess', async function() {
+      const { mock, match } = currentMockUnitTestData[this.test.title];
+
+      await GenericController.testSuccess(
+        mock, match,
+        blogsAPIControllers.updateBlog
+      );
+    });
+
+
+    it('BL2-5_POST_/api/blog/like_200_LikeSuccess', async function() {
+      const { mock, match } = currentMockUnitTestData[this.test.title];
+
+      await GenericController.testSuccess(
+        mock, match,
+        blogsAPIControllers.likeBlog
+      );
+    });
+    it('BL2-6_POST_/api/blog/like_400_LikeThrowError', async function() {
+      const { mock, match } = currentMockUnitTestData[this.test.title];
+
+      await GenericController.testError(
+        mock, match,
+        blogsAPIControllers.likeBlog
+      );
+    });
+
+
+    it('BL2-7_POST_/api/blog/dislike_200_DislikeSuccess', async function() {
+      const { mock, match } = currentMockUnitTestData[this.test.title];
+
+      await GenericController.testSuccess(
+        mock, match,
+        blogsAPIControllers.dislikeBlog
+      );
+    });
+    it('BL2-8_POST_/api/blog/dislike_400_DislikeThrowError', async function() {
+      const { mock, match } = currentMockUnitTestData[this.test.title];
+
+      await GenericController.testError(
+        mock, match,
+        blogsAPIControllers.likeBlog
       );
     });
 });

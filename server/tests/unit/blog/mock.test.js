@@ -1,5 +1,5 @@
 module.exports = {
-    'Test Sample 1 - Blog API': {
+    'UnitTest BLOG: Controller': {
         'BL2-1_POST_/api/blog/_200_CreateSuccess': {
             mock: {
                 body: {
@@ -20,6 +20,7 @@ module.exports = {
                 }
             }
         },
+
         'BL2-2_POST_/api/blog/_400_MissingInput': {
             mock: {
                 title: "",
@@ -29,6 +30,61 @@ module.exports = {
                 success: false,
                 mes: "Missing input"
             }
+        },
+
+        'BL2-4_PUT_/api/blog/:bid_200_UpdateSuccess': {
+            mock: {
+                params: {
+                    bid: "66377327edf989f1ae865513"
+                },
+                body: {
+                    title: "New Sample Title3"
+                }
+            },
+            match: {
+                updatedBlog: []
+            }
+        },
+
+        'BL2-5_POST_/api/blog/like_200_LikeSuccess': {
+            mock: {
+                body: {
+                    _id: "66377327edf989f1ae865588",
+                    bid: "66377327edf989f1ae865513"
+                }
+            },
+            match: {
+                success: true,
+                rs: {}
+            }
+        },
+        'BL2-6_POST_/api/blog/like_400_LikeThrowError': {
+            mock: {
+                body: {
+                    _id: null,
+                    bid: null
+                }
+            },
+            match: {}   
+        },
+
+        'BL2-7_POST_/api/blog/dislike_200_DislikeSuccess': {
+            mock: {
+                body: {
+                    _id: "66377327edf989f1ae865588",
+                    bid: "66377327edf989f1ae865513"
+                }
+            },
+            match: {
+                success: true,
+                rs: {}
+            }
+        },
+        'BL2-8_POST_/api/blog/dislike_400_DislikeThrowError': {
+            mock: {
+                body: {}
+            },
+            match: {}   
         }
     }
 }
