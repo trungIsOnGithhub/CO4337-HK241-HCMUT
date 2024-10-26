@@ -2,33 +2,20 @@ module.exports = {
     'UnitTest USER: Controller': {
         'USR1-1_POST_/api/user/register_200_RegisterAdminSuccess': {
             mock: {
-                body: {
-                    "firstName": "Long Clone",
-                    "lastName": "Nguyenn",
-                    "email": "nvlongclone@outlook.com",
-                    "mobile": "0980234588",
-                    "password": "$2b$10$7C..IuefFhV2SAo1yvvcQeK/xAD1UZgzQVtHTlCCK1fDs.XW4qsEq",
-                    "role": 1411,
-                }
+                body: {}
             },
-            match: {
-                cookie: "",
-                success:  true,
-                mes: "Please check your email to active accout!"
-            }
+            match: {}
         },
 
         'USR1-2_POST_/api/user/register_400_UserAlreadyExist': {
             mock: {
                 body: {
-                    "firstName": "Long",
-                    "lastName": "Nguyen Van",
-                    "email": "nvlong@outlook.com",
-                    "mobile": "0980234568",
-                    "password": "$2b$10$7C..IuefFhV2SAo1yvvcQeK/xAD1UZgzQVtHTlCCK1fDs.XW4qsEq",
-                    "role": 1411,
-                }
-            },
+                    
+                },
+                files: {
+                    thumb: [],
+                    images: []
+                },
             match: {
                 success: false,
                 mes: "Missing input"

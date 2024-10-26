@@ -45,6 +45,7 @@ const createService = asyncHandler(async(req, res)=>{
 // get all staffs
 const getAllServicesByAdmin = asyncHandler(async (req, res) => {
     const {_id} = req.user
+    if (!_id) throw new Error("Missing input");
     const {provider_id} = await User.findById({_id}).select('provider_id')
     const queries = { ...req.query };
 

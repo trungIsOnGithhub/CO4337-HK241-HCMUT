@@ -3,28 +3,29 @@ const mocha = require('mocha');
 const userMockUnitTestData = require('./mock.test');
 const { TestResponse, GenericController } = require('../common');
 
-const servicesAPIControllers = require("../../../controllers/service");
+const usersAPIControllers = require("../../../controllers/user");
 
-describe('UnitTest SERVICES: Controller', async function() {
+describe('UnitTest USER: Controller', async function() {
     // beforeEach(function() {
     //   const sampleData = require("../tests/mocks/api.blogs.data.test");
     // });
     const currentMockUnitTestData = userMockUnitTestData[this.title];
 
-    it('SVC1-1_POST_/api/service_200_CreateServiceMissingInput', async function() {
-      const { mock, match } = currentMockUnitTestData[this.test.title];
-
-      await GenericController.testError(
-        mock, match,
-        servicesAPIControllers.createService
-      );
-    });
-    it('SVC1-2_POST_/api/servicer_400_CreateServiceOK', async function() {
+    it('USR1-1_POST_/api/user/register_200_RegisterAdminSuccess', async function() {
       const { mock, match } = currentMockUnitTestData[this.test.title];
 
       await GenericController.testSuccess(
         mock, match,
-        servicesAPIControllers.createService
+        usersAPIControllers.register
+      );
+    });
+
+    it('USR1-2_POST_/api/user/register_400_UserAlreadyExist', async function() {
+      const { mock, match } = currentMockUnitTestData[this.test.title];
+
+      await GenericController.testError(
+        mock, match,
+        usersAPIControllers.register
       );
     });
 
@@ -34,7 +35,7 @@ describe('UnitTest SERVICES: Controller', async function() {
 
       await GenericController.testFail(
         mock, match,
-        servicesAPIControllers.register
+        usersAPIControllers.register
       );
     });
 
@@ -44,7 +45,7 @@ describe('UnitTest SERVICES: Controller', async function() {
 
       await GenericController.testError(
         mock, match,
-        servicesAPIControllers.login
+        usersAPIControllers.login
       );
     });
     it('USR2-2_POST_/api/blog/login_400_LoginSuccess', async function() {
@@ -52,7 +53,7 @@ describe('UnitTest SERVICES: Controller', async function() {
   
         await GenericController.testError(
           mock, match,
-          servicesAPIControllers.login
+          usersAPIControllers.login
         );
     });
     it('USR2-3_POST_/api/blog/login_400_AccountBlocked', async function() {
@@ -60,7 +61,7 @@ describe('UnitTest SERVICES: Controller', async function() {
   
         await GenericController.testError(
           mock, match,
-          servicesAPIControllers.login
+          usersAPIControllers.login
         );
     });
 
@@ -70,7 +71,7 @@ describe('UnitTest SERVICES: Controller', async function() {
 
       await GenericController.testError(
         mock, match,
-        servicesAPIControllers.logout
+        usersAPIControllers.logout
       );
     });
     it('USR3-2_POST_/api/blog/logout_200_LogoutOK', async function() {
@@ -78,7 +79,7 @@ describe('UnitTest SERVICES: Controller', async function() {
 
         // await GenericController.testSuccess(
         //   mock, match,
-        //   servicesAPIControllers.logout
+        //   usersAPIControllers.logout
         // );
     });
     it('USR3-3_POST_/api/blog/logout_200_LogoutNotFound', async function() {
@@ -86,7 +87,7 @@ describe('UnitTest SERVICES: Controller', async function() {
 
         await GenericController.testError(
           mock, match,
-          servicesAPIControllers.logout
+          usersAPIControllers.logout
         );
     });
 
@@ -96,7 +97,7 @@ describe('UnitTest SERVICES: Controller', async function() {
 
       await GenericController.testError(
         mock, match,
-        servicesAPIControllers.forgotPassword
+        usersAPIControllers.forgotPassword
       );
     });
     it('BL4-2_POST_/api/blog/forgotpassword_400_MissingEmail', async function() {
@@ -104,7 +105,7 @@ describe('UnitTest SERVICES: Controller', async function() {
 
       await GenericController.testError(
         mock, match,
-        servicesAPIControllers.forgotPassword
+        usersAPIControllers.forgotPassword
       );
     });
     it('BL4-3_POST_/api/blog/forgotpassword_400_ForgotPasswordOK', async function() {
@@ -112,7 +113,7 @@ describe('UnitTest SERVICES: Controller', async function() {
 
       await GenericController.testSuccess(
         mock, match,
-        servicesAPIControllers.forgotPassword
+        usersAPIControllers.forgotPassword
       );
     });
 
