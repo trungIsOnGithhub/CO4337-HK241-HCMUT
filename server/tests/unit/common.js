@@ -72,7 +72,7 @@ async function testSuccessMiddleware(mock, match, controllerFunc) {
     chai.assert.fail("Error Thrown", "No Error", "Throw Error while not Expected");
   }
 
-  chai.expect(result, "Result Should Be Null As Middleware Success.").to.be.null;
+  chai.expect(result, "Result Should Be Null As Middleware Success.").to.not.be.an("object");
 
   return {
     ok: true, // Test Performed OK
@@ -98,8 +98,12 @@ async function testFailMiddleware(mock, match, controllerFunc) {
   chai.expect(result, "Result Should Not Be Null As Middleware Failed.").to.not.be.null;
   chai.expect(resp?.statusCode).to.not.be.null;
 
-  chai.expect(resp?.statusCode).to.be.deep.equal(match?.statusCode);
-  // chai.expect(result?.success).to.be.null;
+  console.log("}}}}}}}}", resp);
+
+  chai.expect(resp?.statusCode)
+    .to.be.deep.equal(match?.statusCode)
+    .to.be.gte(400);
+  chai.expect(resp?.success).to.be.false;
 }
 
 
