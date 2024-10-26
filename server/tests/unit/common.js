@@ -21,6 +21,88 @@ class DummyTestResponseType {
   }
 }
 
+function matchRecursiveObjects(result, match) {
+  const matchKeys = Object.keys(match);
+  for (const key of matchKeys) {
+      // console.log(key, "======>", match[key] + "---||---" + typeof(match[key]));
+      chai.expect(typeof result[key],
+          `Properties ${key} of Result should be: of type ${typeof match[key]}`)
+          .to.equal(typeof match[key]);
+
+      if (typeof(match[key]) === 'object') {
+        const innerResult = result[key];
+        const innerMatch = match[key];
+        const matchKeys = Object.keys(innerMatch);
+
+        for (const innerKey of matchKeys) {
+          // console.log(innerKey, ":::::::>",  innerResult[innerKey] + "+++||+++" + typeof(innerMatch[innerKey]));
+
+          chai.expect(innerResult[innerKey]).to.not.be.null;
+          chai.expect(
+            typeof innerResult[innerKey]
+          ).to.equal(
+            typeof innerMatch[innerKey]
+          );
+
+          if (innerMatch.length) {
+            chai.expect(innerResult.length).to.equal(innerMatch.length);
+          }
+        }
+      }
+
+      if (match.length) {
+        chai.expect(result.length).to.equal(match.length);
+      }
+  }
+  return true;
+}
+
+async function testSuccessMiddleware(mock, match, controllerFunc) {
+  // check the input
+  chai.expect(mock, "Mock Data Should Not Null").to.not.be.null;
+  chai.expect(match, "Match Data Should Not Null").to.not.be.null;
+
+  const resp = new DummyTestResponseType();
+
+  let result = null;
+  try {
+    result = await controllerFunc(mock, resp, ()=>{});
+  }
+  catch(err) {
+    chai.assert.fail("Error Thrown", "No Error", "Throw Error while not Expected");
+  }
+
+  chai.expect(result, "Result Should Be Null As Middleware Success.").to.be.null;
+
+  return {
+    ok: true, // Test Performed OK
+    msg: "Behavior matched"
+  }; 
+}
+
+async function testFailMiddleware(mock, match, controllerFunc) {
+  // check the input
+  chai.expect(mock, "Mock Data Should Not Null").to.not.be.null;
+  chai.expect(match, "Match Data Should Not Null").to.not.be.null;
+
+  const resp = new DummyTestResponseType();
+
+  let result = null;
+  try {
+    result = await controllerFunc(mock, resp, ()=>{});
+  }
+  catch(err) {
+    chai.assert.fail("Error Thrown", "No Error", "Throw Error while not Expected");
+  }
+
+  chai.expect(result, "Result Should Not Be Null As Middleware Failed.").to.not.be.null;
+  chai.expect(resp?.statusCode).to.not.be.null;
+
+  chai.expect(resp?.statusCode).to.be.deep.equal(match?.statusCode);
+  // chai.expect(result?.success).to.be.null;
+}
+
+
 async function testError(mock, match, controllerFunc) {
   // check the input
   chai.expect(mock, "Mock Data Should Not Null").to.not.be.null;
@@ -64,39 +146,7 @@ async function testSuccess(mock, match, controllerFunc) {
     chai.assert.fail("No Status Or Success Indicator In Response"); 
   }
 
-  const matchKeys = Object.keys(match);
-  for (const key of matchKeys) {
-      // console.log(key, "======>", match[key] + "---||---" + typeof(match[key]));
-
-      chai.expect(typeof result[key],
-          `Properties ${key} of Result should be: of type ${typeof match[key]}`)
-          .to.equal(typeof match[key]);
-
-      if (typeof(match[key]) === 'object') {
-        const innerResult = result[key];
-        const innerMatch = match[key];
-        const matchKeys = Object.keys(innerMatch);
-
-        for (const innerKey of matchKeys) {
-          // console.log(innerKey, ":::::::>",  innerResult[innerKey] + "+++||+++" + typeof(innerMatch[innerKey]));
-
-          chai.expect(innerResult[innerKey]).to.not.be.null;
-          chai.expect(
-            typeof innerResult[innerKey]
-          ).to.equal(
-            typeof innerMatch[innerKey]
-          );
-
-          if (innerMatch.length) {
-            chai.expect(innerResult.length).to.equal(innerMatch.length);
-          }
-        }
-      }
-
-      if (match.length) {
-        chai.expect(result.length).to.equal(match.length);
-      }
-  }
+  matchRecursiveObjects(result, match);
 
   return {
     ok: true, // Test Performed OK
@@ -128,11 +178,22 @@ async function testFail(mock, match, controllerFunc) {
   }
 }
 
+function dummyNext() {
+  return {
+    success: true,
+    msg: "Previous middleware Passed!"
+  };
+}
+
 module.exports = {
   TestResponse: DummyTestResponseType,
   GenericController: {
     testSuccess,
     testError,
-    testFail
-  }
+    testFail,
+    dummyNext,
+    testSuccessMiddleware,
+    testFailMiddleware
+  },
+  matchRecursiveObjects
 }
