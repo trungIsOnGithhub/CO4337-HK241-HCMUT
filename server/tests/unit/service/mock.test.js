@@ -73,30 +73,24 @@ module.exports = {
         },
 
 
-        // 'SVC2-1_POST_/api/service_200_CreateServiceOK': {
-        //     mock: {
-        //         body: {
-        //             "email": "nvlong@outlook.com",
-        //             "password": "$2b$10$7C..IuefFhV2SAo1yvvcQeK/xAD1UZgzQVtHTlCCK1fDs.XW4qsEq",
-        //         }
-        //     },
-        //     match: {
-        //         success: false,
-        //         mes: "Missing input"
-        //     }
-        // },
-        // 'SVC2-2_POST_/api/service_200_CreateServiceOK': {
-        //     mock: {
-        //         body: {
-        //             "email": "nvlong@outlook.com",
-        //             "password": "$2b$10$7C..IuefFhV2SAo1yvvcQeK/xAD1UZgzQVtHTlCCK1fDs.XW4qsEq",
-        //         }
-        //     },
-        //     match: {
-        //         success: false,
-        //         mes: "Missing input"
-        //     }
-        // },
+        'SVC3-1_GET_/api/service_400_MissingInput': {
+            mock: {
+                user: null
+            },
+            match: {}
+        },
+        'SVC3-2_GET_/api/service_400_GetAllServiceByAdminOK': {
+            mock: {
+                user: {
+                    _id: "663771db2463a33c6f3a39cf"
+                }
+            },
+            match: {
+                success: true,
+                counts: 0,
+                services: [],
+            }
+        },
 
         // 'SVC2-1_POST_/api/service_200_CreateServiceOK': {
         //     mock: {

@@ -182,7 +182,7 @@ async function testFail(mock, match, controllerFunc) {
     chai.assert.fail("No Error", "Error Thrown", "Expected throw Error but not");
   }
 
-  console.log("RESP Test For Fail", resp, "--------");
+  // console.log("RESP Test For Fail", resp, "--------");
   chai.expect(result, "Result Should Not Null").to.not.be.null;
   chai.expect(result.success).to.be.false;
   
