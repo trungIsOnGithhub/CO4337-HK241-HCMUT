@@ -36,7 +36,8 @@ var userSchema = new mongoose.Schema({
         duration: Number,
         date: String,
         time: String,
-        price: Number
+        price: Number,
+        dateTime: Date
     }],
     cart_product:[{
         product: {type:mongoose.Types.ObjectId, ref: 'Product'},

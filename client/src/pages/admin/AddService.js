@@ -74,8 +74,6 @@ const AddService = () => {
     
     if(invalid === 0){
       const finalPayload = {...data,...payload}
-      
-      console.log(finalPayload)
       finalPayload.provider_id = current.provider_id?._id
       if(selectedStaff?.length > 0){
         finalPayload.assigned_staff = selectedStaff
@@ -147,6 +145,7 @@ const AddService = () => {
     }
   }
   useEffect(() => {
+    console.log(watch('thumb'))
     handlePreviewThumb(watch('thumb')[0])
   }, [watch('thumb')])
 

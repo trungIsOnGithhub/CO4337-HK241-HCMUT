@@ -224,17 +224,28 @@ const BookingDateTIme = () => {
     }
   };
 
-  const handleOnClick = async(time) => {
+  const handleOnClick = async (time) => {
     setSelectedTime(time);
+
+    // Lấy date và chuyển đổi thành định dạng "yyyy-mm-dd"
+    const date = moment(new Date(datetime)).format("DD/MM/YYYY");
+    const [day, month, year] = date.split('/');
+    const formattedDate = `${year}-${month}-${day}`;
+
+    // Kết hợp formattedDate và time để tạo datetime
+    const dateTime = new Date(`${formattedDate}T${time}:00Z`);
+
     await apiUpdateCartService({
-      service: service?._id, 
-      provider: provider?._id, 
-      staff: staff?._id, 
-      duration: service?.duration,
-      time: time,
-      date: moment(new Date(datetime)).format("DD/MM/YYYY")
-    })
-  }
+        service: service?._id,
+        provider: provider?._id,
+        staff: staff?._id,
+        duration: service?.duration,
+        time: time,
+        date: date,
+        dateTime: dateTime, // datetime chứa cả date và time
+        price: service?.price
+    });
+}
 
   const parseTimee = (time) => {
     const [hour, minute] = time.split(':').map(Number);
@@ -369,7 +380,7 @@ const BookingDateTIme = () => {
               <span className='font-semibold text-gray-600'>{service?.name}</span>
             </div>
             <div className='flex gap-2'>
-              <span className='text-gray-700 font-bold'>Duration:</span>
+              <span className='text-gray-700 font-bold'>Durationnnnn:</span>
               <span className='font-semibold text-gray-600'>{`${service?.duration} minutes`}</span>
             </div>
             <div className='flex gap-2'>

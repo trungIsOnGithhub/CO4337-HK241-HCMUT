@@ -12,6 +12,7 @@ import { useLocation } from 'react-router-dom';
 
 const CheckoutService = ({ dispatch, navigate }) => {
   const { currentCartService, current: currentUser } = useSelector((state) => state.user);
+  console.log(currentCartService)
   const [isSuccess, setIsSuccess] = useState(false);
   const [exchangeRate, setExchangeRate] = useState(null); // State để lưu trữ tỉ giá hối đoái
   const location = useLocation();
@@ -89,7 +90,7 @@ const CheckoutService = ({ dispatch, navigate }) => {
         <img className="h-[70%] object-contain" src={paypalLogo} alt="PayPal Logo"></img>
       </div>
       <div className="w-full flex flex-col items-center justify-center gap-6 col-span-5">
-        <h2 className="text-3xl mb-6 font-bold">Check out your booking !</h2>
+        <h2 className="text-3xl mb-6 font-bold">Checkout your booking !</h2>
         <div className="w-full flex flex-col gap-6 items-center">
           <div className="border border-gray-400 h-fit pb-5 rounded-md w-fit px-5">
             <div className="mb-4 border-b-2 border-gray-200 px-3 py-2 flex justify-center items-center">

@@ -427,6 +427,7 @@ const AddSaleEvent = () => {
                 options={options}
                 onChangee={handleSelectServiceChange}
                 values={selectedService}
+                style={'w-full flex flex-col gap-1'}
               />
             </div>
             <div className='w-full my-6 flex gap-4'>
