@@ -149,7 +149,7 @@ async function testSuccess(mock, match, controllerFunc) {
     result = await controllerFunc(mock, resp);
   }
   catch(err) {
-    console.log(err,"------------>");
+    // console.log(err,"------------>");
     chai.assert.fail("Error Thrown", "No Error", "Throw Error while not Expected");
   }
 

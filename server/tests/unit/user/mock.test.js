@@ -34,6 +34,13 @@ module.exports = {
                 mes: "Missing input"
             }
         },
+        'USR1-3_POST_/api/user/register_400_MissingInputError': {
+            mock: {
+                body: {}
+            },
+            match: {}
+        },
+
 
         'USR2-1_POST_/api/blog/login_400_LoginFailed': {
             mock: {

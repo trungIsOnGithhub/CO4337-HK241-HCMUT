@@ -10,12 +10,16 @@ const esDBModule = require('../services/es');
 const esIndexNameList = require('../services/constant');
 
 const createService = asyncHandler(async(req, res)=>{
-    const {name, price, description, category, assigned_staff, hour, minute, provider_id,  elastic_query} = req.body
+    const {name, price, description, category, assigned_staff, hour, minute, provider_id } = req.body
+
+    console.log("--------");
+    console.log(name, price, description, category, assigned_staff, hour, minute, provider_id);
+    console.log("--------");
 
     const thumb = req.files?.thumb[0]?.path
     const image = req.files?.images?.map(el => el.path)
 
-    if(!name || !price || !description || !assigned_staff || !category || !hour || !minute || !provider_id){
+    if(!name || !price || !description || !assigned_staff || !category || !provider_id){
         throw new Error("Missing input")
     }
     req.body.duration = +hour*60 + +minute
@@ -144,6 +148,10 @@ const deleteServiceByAdmin = asyncHandler(async (req, res) => {
 const updateServiceByAdmin = asyncHandler(async(req, res)=>{
     const {sid} = req.params
 
+    if (!sid) {
+        throw new Error("Missing input");
+    }
+
     const files = req?.files
     if(files?.thumb){
         req.body.thumb = files?.thumb[0]?.path
@@ -152,6 +160,7 @@ const updateServiceByAdmin = asyncHandler(async(req, res)=>{
         req.body.image = files?.images?.map(el => el.path)
     }
     const service = await Service.findByIdAndUpdate(sid, req.body, {new: true})
+
     return res.status(200).json({
         success: service ? true : false,
         mes: service ? 'Updated successfully' : "Cannot update service"

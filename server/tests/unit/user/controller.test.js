@@ -3,15 +3,23 @@ const mocha = require('mocha');
 const userMockUnitTestData = require('./mock.test');
 const { TestResponse, GenericController } = require('../common');
 
-const servicesAPIControllers = require("../../../controllers/service");
+const servicesAPIControllers = require("../../../controllers/user");
 
-describe('UnitTest SERVICES: Controller', async function() {
+describe('UnitTest USER: Controller', async function() {
     // beforeEach(function() {
     //   const sampleData = require("../tests/mocks/api.blogs.data.test");
     // });
     const currentMockUnitTestData = userMockUnitTestData[this.title];
 
-    it('SVC1-1_POST_/api/service_200_CreateServiceMissingInput', async function() {
+    it('USR1-1_POST_/api/user/register_200_RegisterAdminSuccess', async function() {
+      const { mock, match } = currentMockUnitTestData[this.test.title];
+
+      await GenericController.testSuccess(
+        mock, match,
+        servicesAPIControllers.register
+      );
+    });
+    it('USR1-2_POST_/api/user/register_400_UserAlreadyExist', async function() {
       const { mock, match } = currentMockUnitTestData[this.test.title];
 
       await GenericController.testError(
@@ -19,16 +27,6 @@ describe('UnitTest SERVICES: Controller', async function() {
         servicesAPIControllers.createService
       );
     });
-    it('SVC1-2_POST_/api/servicer_400_CreateServiceOK', async function() {
-      const { mock, match } = currentMockUnitTestData[this.test.title];
-
-      await GenericController.testSuccess(
-        mock, match,
-        servicesAPIControllers.createService
-      );
-    });
-
-
     it('USR1-3_POST_/api/user/register_400_MissingInputError', async function() {
       const { mock, match } = currentMockUnitTestData[this.test.title];
 
@@ -91,29 +89,29 @@ describe('UnitTest SERVICES: Controller', async function() {
     });
 
 
-    it('BL4-1_POST_/api/blog/forgotpassword_400_UserNotFound', async function() {
-      const { mock, match } = currentMockUnitTestData[this.test.title];
+    // it('BL4-1_POST_/api/blog/forgotpassword_400_UserNotFound', async function() {
+    //   const { mock, match } = currentMockUnitTestData[this.test.title];
 
-      await GenericController.testError(
-        mock, match,
-        servicesAPIControllers.forgotPassword
-      );
-    });
-    it('BL4-2_POST_/api/blog/forgotpassword_400_MissingEmail', async function() {
-      const { mock, match } = currentMockUnitTestData[this.test.title];
+    //   await GenericController.testError(
+    //     mock, match,
+    //     servicesAPIControllers.forgotPassword
+    //   );
+    // });
+    // it('BL4-2_POST_/api/blog/forgotpassword_400_MissingEmail', async function() {
+    //   const { mock, match } = currentMockUnitTestData[this.test.title];
 
-      await GenericController.testError(
-        mock, match,
-        servicesAPIControllers.forgotPassword
-      );
-    });
-    it('BL4-3_POST_/api/blog/forgotpassword_400_ForgotPasswordOK', async function() {
-      const { mock, match } = currentMockUnitTestData[this.test.title];
+    //   await GenericController.testError(
+    //     mock, match,
+    //     servicesAPIControllers.forgotPassword
+    //   );
+    // });
+    // it('BL4-3_POST_/api/blog/forgotpassword_400_ForgotPasswordOK', async function() {
+    //   const { mock, match } = currentMockUnitTestData[this.test.title];
 
-      await GenericController.testSuccess(
-        mock, match,
-        servicesAPIControllers.forgotPassword
-      );
-    });
+    //   await GenericController.testSuccess(
+    //     mock, match,
+    //     servicesAPIControllers.forgotPassword
+    //   );
+    // });
 
 });

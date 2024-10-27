@@ -1,110 +1,151 @@
 module.exports = {
-    'UnitTest USER: Controller': {
-        'USR1-1_POST_/api/user/register_200_RegisterAdminSuccess': {
+    'UnitTest SERVICE: Controller': {
+        'SVC1-1_POST_/api/service_200_CreateServiceMissingInput': {
             mock: {
                 body: {}
             },
             match: {}
         },
-
-        'USR1-2_POST_/api/user/register_400_UserAlreadyExist': {
+        'SVC1-2_POST_/api/service_400_CreateServiceOK': {
             mock: {
                 body: {
-                    
+                    name: "Yoga Class For Beginner",
+                    description: [
+                      "<p>Relax and Soothe your muscle with our Yoga Professionals.</p>\r\n<p>Suitable for All Members</p>"
+                    ],
+                    price: 880000,
+                    category: "Yoga",
+                    duration: 50,
+                    provider_id: "663771db2463a33c6f3a39d2",
+                    assigned_staff: [],
+                    variantss: [],
+                    hour: 1,
+                    minute: 0
                 },
                 files: {
-                    thumb: [],
-                    images: []
+                    thumb: "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714912894/ecommerce/o770lsinlsnvjazpyedb.jpg",
+                    images: [
+                        "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714912894/ecommerce/uwz4dsugfbquub80mrvo.jpg"
+                    ]
+                }
+            },  
+            match: {
+                success: true,
+                mes: 'Created successfully'
+            }
+        },
+
+        'SVC2-1_POST_/api/service_200_AdminUpdateServiceOK': {
+            mock: {
+                params: {
+                    sid: "66377b05e479e46dab038112"
                 },
-            match: {
-                success: false,
-                mes: "Missing input"
-            }
-        },
-
-        'USR2-1_POST_/api/blog/login_400_LoginFailed': {
-            mock: {
                 body: {
-                    "email": "nvlong@outlook.com",
-                    "password": "$2b$10$7C..IuefFhV2SAo1yvvcQeK/xAD1UZgzQVtHTlCCK1fDs.XW4qsEq",
-                }
-            },
-            match: {
-                success: false,
-                mes: "Missing input"
-            }
-        },
-
-        'USR2-2_POST_/api/blog/login_400_LoginSuccess': {
-            mock: {
-                body: {
-                    "email": "nvlong@outlook.com",
-                    "password": "$2b$10$7C..IuefFhV2SAo1yvvcQeK/xAD1UZgzQVtHTlCCK1fDs.XW4qsEq",
+                    "price": 980000
                 }
             },
             match: {
                 success: true,
-                accessToken: "",
-                userData: {}
+                mes: 'Updated successfully'
             }
         },
-
-        'USR2-3_POST_/api/blog/login_400_AccountBlocked': {
+        'SVC2-2_POST_/api/service_400_MissingInputError': {
             mock: {
+                params: {
+                    sid: null
+                }
+            },
+            match: {}
+        },
+        'SVC2-3_POST_/api/service_400_AdminUpdateNotFoundService': {
+            mock: {
+                params: {
+                    sid: "69388b05e479a46dab038112"
+                },
                 body: {
-                    "email": "nvlong@outlook.com",
-                    "password": "$2b$10$7C..IuefFhV2SAo1yvvcQeK/xAD1UZgzQVtHTlCCK1fDs.XW4qsEq",
+                    "category": "Barber",
                 }
             },
             match: {
                 success: false,
-                mes: "Account is blocked"
+                mes: "Cannot update service"
             }
         },
 
-        'USR3-1_POST_/api/blog/logout_400_LogoutFaikedNoCookie': {
-            mock: {},
-            match: {}   
-        },
-        'USR3-2_POST_/api/blog/logout_200_LogoutOK': {
-            mock: {
-                cookie: ""
-            },
-            match: {
-                success: true,
-                rs: {}
-            }
-        },
-        'USR3-3_POST_/api/blog/logout_200_LogoutNotFound': {
-            mock: {},
-            match: {}   
-        },
 
+        // 'SVC2-1_POST_/api/service_200_CreateServiceOK': {
+        //     mock: {
+        //         body: {
+        //             "email": "nvlong@outlook.com",
+        //             "password": "$2b$10$7C..IuefFhV2SAo1yvvcQeK/xAD1UZgzQVtHTlCCK1fDs.XW4qsEq",
+        //         }
+        //     },
+        //     match: {
+        //         success: false,
+        //         mes: "Missing input"
+        //     }
+        // },
+        // 'SVC2-2_POST_/api/service_200_CreateServiceOK': {
+        //     mock: {
+        //         body: {
+        //             "email": "nvlong@outlook.com",
+        //             "password": "$2b$10$7C..IuefFhV2SAo1yvvcQeK/xAD1UZgzQVtHTlCCK1fDs.XW4qsEq",
+        //         }
+        //     },
+        //     match: {
+        //         success: false,
+        //         mes: "Missing input"
+        //     }
+        // },
 
-        'BL4-1_POST_/api/blog/forgotpassword_400_UserNotFound': {
-            mock: {
-                body: {
-                    email: "aaaaa@aaa.aa" // invalid email
-                }
-            },
-            match: {}  
-        },
-        'BL4-2_POST_/api/blog/forgotpassword_400_MissingEmail': {
-            mock: {
-                body: {}
-            },
-            match: {} 
-        },
-        'BL4-3_POST_/api/blog/forgotpassword_400_ForgotPasswordOK': {
-            mock: {
-                body: {
-                    email: "nvlong@outlook.com" // invalid email
-                }
-            },
-            match: {
-                success: true,
-                mes: "Please check your email"
-            } 
-        }
+        // 'SVC2-1_POST_/api/service_200_CreateServiceOK': {
+        //     mock: {
+        //         body: {
+        //             "email": "nvlong@outlook.com",
+        //             "password": "$2b$10$7C..IuefFhV2SAo1yvvcQeK/xAD1UZgzQVtHTlCCK1fDs.XW4qsEq",
+        //         }
+        //     },
+        //     match: {
+        //         success: false,
+        //         mes: "Missing input"
+        //     }
+        // },
+        // 'SVC2-2_POST_/api/service_200_CreateServiceOK': {
+        //     mock: {
+        //         body: {
+        //             "email": "nvlong@outlook.com",
+        //             "password": "$2b$10$7C..IuefFhV2SAo1yvvcQeK/xAD1UZgzQVtHTlCCK1fDs.XW4qsEq",
+        //         }
+        //     },
+        //     match: {
+        //         success: false,
+        //         mes: "Missing input"
+        //     }
+        // },
+
+        // 'SVC2-1_POST_/api/service_200_CreateServiceOK': {
+        //     mock: {
+        //         body: {
+        //             "email": "nvlong@outlook.com",
+        //             "password": "$2b$10$7C..IuefFhV2SAo1yvvcQeK/xAD1UZgzQVtHTlCCK1fDs.XW4qsEq",
+        //         }
+        //     },
+        //     match: {
+        //         success: false,
+        //         mes: "Missing input"
+        //     }
+        // },
+        // 'SVC2-2_POST_/api/service_200_CreateServiceOK': {
+        //     mock: {
+        //         body: {
+        //             "email": "nvlong@outlook.com",
+        //             "password": "$2b$10$7C..IuefFhV2SAo1yvvcQeK/xAD1UZgzQVtHTlCCK1fDs.XW4qsEq",
+        //         }
+        //     },
+        //     match: {
+        //         success: false,
+        //         mes: "Missing input"
+        //     }
+        // },
     }
 }
