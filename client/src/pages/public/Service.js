@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useCallback} from 'react'
 import { useParams, useSearchParams, createSearchParams, useNavigate} from 'react-router-dom'
-import { Breadcrumb, Service, SearchItemService, InputSelect, Pagination, InputField} from '../../components'
+import { Breadcrumb, Service, SearchItemService, NewInputSelect, InputSelect, Pagination, InputField} from '../../components'
 import { apiGetServicePublic } from '../../apis'
 import Masonry from 'react-masonry-css'
 import { sorts } from '../../ultils/constant'
@@ -11,6 +11,7 @@ import { getCurrent } from 'store/user/asyncAction'
 import { tinh_thanhpho } from 'tinh_thanhpho'
 import { apiModifyUser } from '../../apis/user'
 import Swal from "sweetalert2";
+import { FaSortAmountDown, FaMoneyCheckAlt, FaCubes  } from "react-icons/fa";
 
 const breakpointColumnsObj = {
   default: 4,
@@ -150,40 +151,44 @@ const Services = ({dispatch}) => {
           <Breadcrumb category={category} />
         </div>
       </div>
-      <div className='w-main border p-4 flex justify-start m-auto mt-8'>
+      <div className='w-main p-2 flex justify-start m-auto mt-8'>
         <div className='flex-auto flex flex-col gap-3'>
-          <span className='font-semibold text-sm'>Filter by:</span>
+          {/* <span className='font-semibold text-sm'>Filter by:</span> */}
           <div className='flex items-center gap-4'>
-          <SearchItemService name='price' activeClick={active} changeActiveFilter={changeActive} type='input'/>
-          <SearchItemService name='category' activeClick={active} changeActiveFilter={changeActive}/>
+            <FaMoneyCheckAlt />
+            <SearchItemService name='price' activeClick={active} changeActiveFilter={changeActive} type='input'/>
+            <FaCubes />
+            <SearchItemService name='category' activeClick={active} changeActiveFilter={changeActive}/>
+            <FaSortAmountDown />
+            <NewInputSelect value={sort} options={sorts} changeValue={changeValue} />
+
+            <div className='flex justify-start m-auto'>
+                {/* <span className='font-semibold text-sm p-5'>Search By:</span> */}
+                {/* <div className='w-full'> */}
+                <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} />
+                <span className='font-semibold text-sm p-5'>Near Me Search:</span>
+                <input className='ml-3 p-5' onInput={() => {handleGetDirections()}} type="checkbox"/>
+                { nearMeOption && 
+                  <>
+                    <span className='font-semibold text-sm p-3'>Province:</span>
+                    <InputSelect
+                      value={searchFilter?.province}
+                      options={Object.entries(tinh_thanhpho).map(ele => { return {id:ele[0], text:ele[1]?.name, value:ele[0]}})}
+                      changeValue={(value) => {console.log(value); setSearchFilter(function(prev) {return {...prev, province: value};}) }}
+                    />
+                  </>
+                }
+                { nearMeOption && <InputField nameKey='maxDistance' value={searchFilter.maxDistance} setValue={setSearchFilter} placeholder={"Maximum Distance(optional)"} /> }
+                {/* </div> */}
+            </div>
           </div>
         </div>
-        <div className='flex flex-col gap-3'>
-          <span className='font-semibold text-sm'>Sort by:</span>
-          <div className='w-full'> 
-            <InputSelect value={sort} options={sorts} changeValue={changeValue} />
+        {/* <div className='flex flex-col gap-3'>
+          <div className='w-full'>
+
           </div>
-        </div>
+        </div> */}
       </div>
-      <div className='w-main border p-4 flex justify-start m-auto mt-8'>
-          <span className='font-semibold text-sm p-5'>Search By:</span>
-          {/* <div className='w-full'> */}
-          <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} />
-          <span className='font-semibold text-sm p-5'>Near Me Search:</span>
-          <input className='ml-3 p-5' onInput={() => {handleGetDirections()}} type="checkbox"/>
-          { nearMeOption && 
-            <>
-              <span className='font-semibold text-sm p-3'>Province:</span>
-              <InputSelect
-                value={searchFilter?.province}
-                options={Object.entries(tinh_thanhpho).map(ele => { return {id:ele[0], text:ele[1]?.name, value:ele[0]}})}
-                changeValue={(value) => {console.log(value); setSearchFilter(function(prev) {return {...prev, province: value};}) }}
-              />
-            </>
-          }
-          { nearMeOption && <InputField nameKey='maxDistance' value={searchFilter.maxDistance} setValue={setSearchFilter} placeholder={"Maximum Distance(optional)"} /> }
-          {/* </div> */}
-        </div>
       <div className={clsx('mt-8 w-main m-auto', isShowModal ? 'hidden' : '')}>
         <Masonry
           breakpointCols={breakpointColumnsObj}
