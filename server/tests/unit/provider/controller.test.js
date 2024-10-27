@@ -30,12 +30,12 @@ describe('UnitTest PROVIDER: Controller', async function() {
         );
     });
     it('PRVD1-3_POST_/api/service_provider_400_CreateProviderAlreadyExist', async function() {
-    const { mock, match } = currentMockUnitTestData[this.test.title];
+        const { mock, match } = currentMockUnitTestData[this.test.title];
 
-    await GenericController.testFail(
-        mock, match,
-        providerAPIControllers.createServiceProvider
-    );
+        await GenericController.testFail(
+            mock, match,
+            providerAPIControllers.createServiceProvider
+        );
     });
 
     it('PRVD2-1_GET_/api/service_provider_200_GetAllProviderOK', async function() {
