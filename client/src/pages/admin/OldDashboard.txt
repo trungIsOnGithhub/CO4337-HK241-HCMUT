@@ -6,51 +6,17 @@ import { useSelector } from 'react-redux';
 import moment from 'moment';
 import Swal from 'sweetalert2'
 import { apiGetMostPurchasedServicesByYear } from 'apis'
-import { FaAngleDoubleUp, FaAngleDoubleDown, FaBars } from "react-icons/fa";
 // // import './style.css';
 
 const button_string_style = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 roundedtext-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 text-sm'
-
-const MetricIndicator = ({ prev, current }) => {
-  return (
-    <span>
-      {
-      current > prev &&
-        (<span className="flex justify-center items-center">
-            <span className='text-teal-500 pr-1 text-center text-base'>{(current - prev).toFixed(2)}</span>
-            <FaAngleDoubleUp style={{color: 'green' }} className='text-teal-500 rotate-45'/>
-        </span>)
-      }
-      {
-      current < prev && 
-        (<span className="flex justify-center items-center">
-            <span className='text-rose-700 pr-1 text-center text-base'>{(prev - current).toFixed(2)}</span>
-            <FaAngleDoubleDown className='text-rose-700 rotate-105'/>
-        </span>)
-      }
-      {current === prev && <FaBars />}
-    </span>
-  )  
-}
 
 const DashBoard = () => {
   const {current} = useSelector((state) => state.user);
   const [totalRevenue, setTotalRevenue] = useState(0)
   const [monthRevenue, setMonthRevenue] = useState(0)
   const [monthOrders, setMonthOrders] = useState(0)
-  const [monthCustomer, setMonthCustomer] = useState(0);
-  const [totalServices, setTotalServices] = useState(0);
-  const [currentMetricView, setCurrentMetricView] = useState(0);
-
-  const metricViewOptions = [
-    { value: 3, label: "Current Week" },
-    { value: 2, label: "Last Week" },
-    { value: 1, label: "Current Month" },
-    { value: 0, label: "Last Month" },
-  ];
-
-  const revenueLast3Months = [88.8, 68.8, 39.6];// sort by time line [2w ago, 1w ago, now]
-  const revenueLast3Weeks = [8.8, 6.8, 9.6];// sort by time line [2m ago, 1m ago, now]
+  const [monthCustomer, setMonthCustomer] = useState(0)
+  const [totalServices, setTotalServices] = useState(0)
 
   const fetchDailyRevenue = useCallback(async () => {
     const requestBody = {
@@ -80,134 +46,81 @@ const DashBoard = () => {
   }, [])
 
   return (
+    // <div style={{width:'60%'}}>
+    //   <ReactApexChart
+    //     options={options}
+    //     series={series}
+    //     type="line"
+    //     height={350}
+    //   />
+    // </div>
     <>
-      <div className="flex justify-center mb-8 flex-wrap">
-        <div className="max-w-sm rounded overflow-hidden grow">
-          <div className="px-6 py-4">
-            <p className="font-bold text-xl mb-2 text-center">Total Revenue</p>
-            <p className="font-bold text-blue-700 text-xl text-center">
-              {totalRevenue}
-            </p>
-          </div>
+    <div className="flex justify-center mb-8 flex-wrap">
+      <div className="max-w-sm rounded overflow-hidden grow">
+        <div className="px-6 py-4">
+          <p className="font-bold text-xl mb-2 text-center">Total Revenue</p>
+          <p className="font-bold text-blue-700 text-xl text-center">
+            {totalRevenue}
+          </p>
         </div>
-
-        <section className='grid grid-cols-2 gap-2 min-w-28 bg-slate-50 p-3 text-gray-900 rounded-md'>
-          <div className='flex flex-col justify-start'>
-            <h5 className='pb-2'>
-              Metric
-            </h5>
-            <span className='text-lg font-bold text-center'>
-              { currentMetricView === 3 && revenueLast3Weeks[2] }
-              { currentMetricView === 2 && revenueLast3Weeks[1] }
-              { currentMetricView === 1 && revenueLast3Months[2] }
-              { currentMetricView === 0 && revenueLast3Months[1] }
-            </span>
-          </div>
-          <div className='flex flex-col justify-start'>
-            <select
-              className="text-xs"
-              onChange={(event) => { setCurrentMetricView(parseInt(event.target.value)); }}
-              
-            >
-              {metricViewOptions.map(
-                (opt, idx) => { 
-                  if (idx > 0)
-                    return <option className="text-xs" value={opt?.value}>{opt?.label}</option>
-                  return <option className="text-xs" selected="selected" value={opt?.value}>{opt?.label}</option>
-                }
-              )}
-            </select>
-            <div className='mt-3'>
-                {
-                  currentMetricView === 3 &&
-                    <MetricIndicator
-                      prev={revenueLast3Weeks[1]} current={revenueLast3Weeks[2]}>
-                    </MetricIndicator>
-                }
-                {
-                  currentMetricView === 2 &&
-                    <MetricIndicator
-                      prev={revenueLast3Weeks[0]} current={revenueLast3Weeks[1]}>
-                    </MetricIndicator>
-                }
-                {
-                  currentMetricView === 1 &&
-                    <MetricIndicator
-                      prev={revenueLast3Months[1]} current={revenueLast3Months[2]}>
-                    </MetricIndicator>
-                }
-                {
-                  currentMetricView === 0 &&
-                    <MetricIndicator
-                      prev={revenueLast3Months[1]} current={revenueLast3Months[0]}>
-                    </MetricIndicator>
-                  // (<>
-                  //   {(revenueLast3Months[1] > revenueLast3Months[0]) && <FaAngleDoubleUp />}
-                  //   {(revenueLast3Months[1] < revenueLast3Months[0]) && <FaAngleDoubleDown />}
-                  //   {(revenueLast3Months[1] === revenueLast3Months[0]) && <FaBars />}
-                  // </>)
-                }
-            </div>
-          </div>
-        </section>
-
-        {/* <div className="max-w-sm rounded overflow-hidden grow">
-          <div className="px-6 py-4">
-            <p className="font-bold text-xl mb-2 text-center">This Month Revenue</p>
-            <p className="font-bold text-blue-700 text-xl text-center">
-              {monthRevenue}
-            </p>
-          </div>
-        </div>
-        <div className="max-w-sm rounded overflow-hidden grow">
-          <div className="px-6 py-4">
-            <p className="font-bold text-xl mb-2 text-center">This Month Orders</p>
-            <p className="font-bold text-blue-700 text-xl text-center">
-              {monthOrders}
-            </p>
-          </div>
-        </div>
-        <div className="max-w-sm rounded overflow-hidden grow">
-          <div className="px-6 py-4">
-            <p className="font-bold text-xl mb-2 text-center">This Month Customers</p>
-            <p className="font-bold text-blue-700 text-xl text-center">
-              {monthCustomer}
-            </p>
-          </div>
-        </div> */}
-        <div className="max-w-sm rounded overflow-hidden grow">
-          <div className="px-6 py-4">
-            <p className="font-bold text-xl mb-2 text-center">Total Services</p>
-            <p className="font-bold text-blue-700 text-xl text-center">
-              {totalServices}
-            </p>
-          </div>
-        </div>
-        {/* <div className="max-w-sm rounded overflow-hidden grow">
-          <div className="px-6 py-4">
-            <div className="font-bold text-xl mb-1 text-center">Total dsadsad</div>
-            <p className="font-bold text-blue-700 text-xl text-center">
-              sdk;alsdk
-            </p>
-          </div>
-        </div> */}
-
       </div>
-      <div className="flex">
-        <MostPurchasedServicesByYear
-          currentUser={current}
-        />
-        <MostPurchasedServicesByYear
-          currentUser={current}
-        />
+      <div className="max-w-sm rounded overflow-hidden grow">
+        <div className="px-6 py-4">
+          <p className="font-bold text-xl mb-2 text-center">This Month Revenue</p>
+          <p className="font-bold text-blue-700 text-xl text-center">
+            {monthRevenue}
+          </p>
+        </div>
       </div>
-      <div className="flex">
+      <div className="max-w-sm rounded overflow-hidden grow">
+        <div className="px-6 py-4">
+          <p className="font-bold text-xl mb-2 text-center">This Month Orders</p>
+          <p className="font-bold text-blue-700 text-xl text-center">
+            {monthOrders}
+          </p>
+        </div>
+      </div>
+      <div className="max-w-sm rounded overflow-hidden grow">
+        <div className="px-6 py-4">
+          <p className="font-bold text-xl mb-2 text-center">This Month Customers</p>
+          <p className="font-bold text-blue-700 text-xl text-center">
+            {monthCustomer}
+          </p>
+        </div>
+      </div>
+      <div className="max-w-sm rounded overflow-hidden grow">
+        <div className="px-6 py-4">
+          <p className="font-bold text-xl mb-2 text-center">Total Services</p>
+          <p className="font-bold text-blue-700 text-xl text-center">
+            {totalServices}
+          </p>
+        </div>
+      </div>
+      {/* <div className="max-w-sm rounded overflow-hidden grow">
+        <div className="px-6 py-4">
+          <div className="font-bold text-xl mb-1 text-center">Total dsadsad</div>
+          <p className="font-bold text-blue-700 text-xl text-center">
+            sdk;alsdk
+          </p>
+        </div>
+      </div> */}
 
-        <ApexChart />
-        <UserVisitStatChart
-          currentUser={current}
-        />
-      </div>
+    </div>
+    <div className="flex">
+      <MostPurchasedServicesByYear
+        currentUser={current}
+      />
+      <MostPurchasedServicesByYear
+        currentUser={current}
+      />
+    </div>
+    <div className="flex">
+
+      <ApexChart />
+      <UserVisitStatChart
+        currentUser={current}
+      />
+    </div>
     </>
   );
 }
@@ -539,14 +452,39 @@ function ApexChart() {
 
     return (
       <div className="grow" style={{width: '55%'}}>
-        {/* <p className="font-bold text-xl mb-2 text-center">Recent Revenue</p>
+        <p className="font-bold text-xl mb-2 text-center">Recent Revenue</p>
         <div id="chart">
+          {/* <div className="toolbar flex gap-3 ml-4">
+            <button id="one_month" style={{border: '1px solid white', padding: '3px', borderRadius: '5px'}}
+                onClick={()=>updateData('one_month')} className={ (state.selection==='one_month' ? 'active' : '') }>
+              1M
+            </button>
+             
+            <button id="six_months" style={{border: '1px solid white', padding: '3px', borderRadius: '5px'}}
+                onClick={()=>updateData('six_months')} className={ (state.selection==='six_months' ? 'active' : '') }>
+              6M
+            </button>
+             
+            <button id="one_year" style={{border: '1px solid white', padding: '3px', borderRadius: '5px'}}
+                onClick={()=>updateData('one_year')} className={ (state.selection==='one_year' ? 'active' : '') }>
+              1Y
+            </button>
+
+            <button id="ytd" style={{border: '1px solid white', padding: '3px', borderRadius: '5px'}}
+                onClick={()=>updateData('ytd')} className={ (state.selection==='ytd' ? 'active' : '') }>
+              YTD
+            </button>
+             
+            <button id="all" style={{border: '1px solid white', padding: '3px', borderRadius: '5px'}}
+                onClick={()=>updateData('all')} className={ (state.selection==='all' ? 'active' : '') }>
+              ALL
+            </button>
+          </div> */}
         
           <div id="chart-timeline">
             <ReactApexChart options={state.options} series={state.series} type="area" height={380} />
           </div>
-        </div> */}
-        
+        </div>
         {/* <div id="html-dist"></div> */}
       </div>
   );
