@@ -52,6 +52,9 @@ const DashBoard = () => {
   const revenueLast3Months = [88.8, 68.8, 39.6];// sort by time line [2w ago, 1w ago, now]
   const revenueLast3Weeks = [8.8, 6.8, 9.6];// sort by time line [2m ago, 1m ago, now]
 
+  const actualWorkHoursThisMonth = [];// sort by time line [2m ago, 1m ago, now]
+  const actualWorkHoursThisMonth = [];
+
   const fetchDailyRevenue = useCallback(async () => {
     const requestBody = {
       provider_id: current.provider_id

@@ -1,0 +1,137 @@
+import React, { useState, useEffect } from 'react';
+
+const Calendar = () => {
+  const [occupancyData, setOccupancyData] = useState([]);
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth()); // 0-11
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [hoverInfo, setHoverInfo] = useState({ date: null, occupancy: null, isHovered: false });
+
+  const getDaysInMonth = (month, year) => {
+    return new Date(year, month + 1, 0).getDate();
+  };
+
+  const getStartDayOfMonth = (month, year) => {
+    return new Date(year, month, 1).getDay();
+  };
+
+  const fetchOccupancyData = () => {
+    const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+    const newData = Array.from({ length: daysInMonth }, () => Math.floor(Math.random() * 101));
+    setOccupancyData(newData);
+  };
+
+  useEffect(() => {
+    fetchOccupancyData();
+  }, [currentMonth, currentYear]);
+
+  const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+  const startDay = getStartDayOfMonth(currentMonth, currentYear);
+
+  const getOccupancyColor = (percentage) => {
+    if (percentage >= 81) return 'bg-blue-900';
+    if (percentage >= 41) return 'bg-blue-700';
+    if (percentage >= 21) return 'bg-blue-500';
+    if (percentage > 0) return 'bg-blue-300';
+    return 'bg-gray-200';
+  };
+
+  const changeMonth = (direction) => {
+    if (direction === 'prev') {
+      if (currentMonth === 0) {
+        setCurrentMonth(11);
+        setCurrentYear(currentYear - 1);
+      } else {
+        setCurrentMonth(currentMonth - 1);
+      }
+    } else {
+      if (currentMonth === 11) {
+        setCurrentMonth(0);
+        setCurrentYear(currentYear + 1);
+      } else {
+        setCurrentMonth(currentMonth + 1);
+      }
+    }
+  };
+
+  const handleMouseEnter = (day, occupancy) => {
+    const date = new Date(currentYear, currentMonth, day + 1).toLocaleDateString();
+    setHoverInfo({ date, occupancy, isHovered: true });
+  };
+
+  const handleMouseLeave = () => {
+    setHoverInfo({ ...hoverInfo, isHovered: false });
+  };
+
+  return (
+    <div className="relative max-w-xs mx-auto p-4">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold">Daily occupancy</h2>
+        <div className="flex items-center space-x-2">
+          <button onClick={() => changeMonth('prev')} className="text-gray-500">&lt;</button>
+          <span className="text-sm text-gray-500">
+            {new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })} {currentYear}
+          </span>
+          <button onClick={() => changeMonth('next')} className="text-gray-500">&gt;</button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-7 gap-2 text-center">
+        {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, index) => (
+          <div key={index} className="text-gray-500">{day}</div>
+        ))}
+
+        {/* Empty placeholders for days before the start of the month */}
+        {Array.from({ length: startDay }).map((_, index) => (
+          <div key={`empty-${index}`} className="w-8 h-8"></div>
+        ))}
+
+        {/* Days of the month with occupancy data */}
+        {occupancyData.map((percentage, day) => (
+          <div
+            key={day}
+            className={`relative w-8 h-8 rounded-lg ${getOccupancyColor(percentage)} flex items-center justify-center text-white`}
+            onMouseEnter={() => handleMouseEnter(day, percentage)}
+            onMouseLeave={handleMouseLeave}
+          >
+            {day + 1}
+          </div>
+        ))}
+      </div>
+
+      {/* Tooltip for displaying hover information */}
+      {hoverInfo.isHovered && (
+        <div className="absolute left-1/2 transform -translate-x-1/2 bottom-16 p-2 bg-white border border-gray-300 rounded-lg shadow-lg text-sm text-gray-700 z-10">
+          <div><strong>Date:</strong> {hoverInfo.date}</div>
+          <div><strong>Occupancy:</strong> {hoverInfo.occupancy}%</div>
+        </div>
+      )}
+
+      {/* Legend */}
+      <div className="mt-4">
+        <div className="text-sm font-semibold">Legend</div>
+        <div className="flex items-center mt-2">
+          <span className="w-4 h-4 bg-blue-900 rounded-full mr-2"></span>
+          <span className="text-gray-700 text-sm">81% and higher</span>
+        </div>
+        <div className="flex items-center mt-2">
+          <span className="w-4 h-4 bg-blue-700 rounded-full mr-2"></span>
+          <span className="text-gray-700 text-sm">Between 41% and 80%</span>
+        </div>
+        <div className="flex items-center mt-2">
+          <span className="w-4 h-4 bg-blue-500 rounded-full mr-2"></span>
+          <span className="text-gray-700 text-sm">Between 21% and 40%</span>
+        </div>
+        <div className="flex items-center mt-2">
+          <span className="w-4 h-4 bg-blue-300 rounded-full mr-2"></span>
+          <span className="text-gray-700 text-sm">20% and lower</span>
+        </div>
+        <div className="flex items-center mt-2">
+          <span className="w-4 h-4 bg-gray-200 rounded-full mr-2"></span>
+          <span className="text-gray-700 text-sm">0%</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Calendar;
