@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const Calendar = () => {
+const GridPercentageCalendar = () => {
   const [occupancyData, setOccupancyData] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth()); // 0-11
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -63,7 +63,7 @@ const Calendar = () => {
   };
 
   return (
-    <div className="relative max-w-xs mx-auto p-4">
+    <div className="relative max-w-xs mx-auto p-4 bg-white border-2 rounded-lg">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">Daily occupancy</h2>
         <div className="flex items-center space-x-2">
@@ -134,4 +134,4 @@ const Calendar = () => {
   );
 };
 
-export default Calendar;
+export default GridPercentageCalendar;
