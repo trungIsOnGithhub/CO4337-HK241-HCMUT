@@ -107,7 +107,7 @@ const DashBoard = () => {
         </div> */}
 
         <div className="flex gap-4">
-          <section className='grid grid-cols-2 gap-2 min-w-40 bg-slate-50 p-3 text-gray-900 rounded-md grow border-2'>
+          <section className='grid grid-cols-2 gap-2 min-w-40 bg-white p-3 text-gray-900 rounded-md grow border-2'>
             <div className='flex flex-col justify-start'>
               <h5 className='pb-2'>
                 Metric
@@ -167,7 +167,67 @@ const DashBoard = () => {
             </div>
           </section>
 
-          <section className='grid grid-cols-2 gap-2 min-w-40 bg-slate-50 p-3 text-gray-900 rounded-md grow border-2'>
+          <section className='grid grid-cols-2 gap-2 min-w-40 bg-white p-3 text-gray-900 rounded-md grow border-2'>
+            <div className='flex flex-col justify-start'>
+              <h5 className='pb-2'>
+                Metric
+              </h5>
+              <span className='text-lg font-bold text-center'>
+                { currentMetricView === 3 && revenueLast3Weeks[2] }
+                { currentMetricView === 2 && revenueLast3Weeks[1] }
+                { currentMetricView === 1 && revenueLast3Months[2] }
+                { currentMetricView === 0 && revenueLast3Months[1] }
+              </span>
+            </div>
+            <div className='flex flex-col justify-start'>
+              <select
+                className="text-xs"
+                onChange={(event) => { setCurrentMetricView(parseInt(event.target.value)); }}
+                
+              >
+                {metricViewOptions.map(
+                  (opt, idx) => { 
+                    if (idx > 0)
+                      return <option className="text-xs" value={opt?.value}>{opt?.label}</option>
+                    return <option className="text-xs" selected="selected" value={opt?.value}>{opt?.label}</option>
+                  }
+                )}
+              </select>
+              <div className='mt-3'>
+                  {
+                    currentMetricView === 3 &&
+                      <MetricIndicator
+                        prev={revenueLast3Weeks[1]} current={revenueLast3Weeks[2]}>
+                      </MetricIndicator>
+                  }
+                  {
+                    currentMetricView === 2 &&
+                      <MetricIndicator
+                        prev={revenueLast3Weeks[0]} current={revenueLast3Weeks[1]}>
+                      </MetricIndicator>
+                  }
+                  {
+                    currentMetricView === 1 &&
+                      <MetricIndicator
+                        prev={revenueLast3Months[1]} current={revenueLast3Months[2]}>
+                      </MetricIndicator>
+                  }
+                  {
+                    currentMetricView === 0 &&
+                      <MetricIndicator
+                        prev={revenueLast3Months[1]} current={revenueLast3Months[0]}>
+                      </MetricIndicator>
+                    // (<>
+                    //   {(revenueLast3Months[1] > revenueLast3Months[0]) && <FaAngleDoubleUp />}
+                    //   {(revenueLast3Months[1] < revenueLast3Months[0]) && <FaAngleDoubleDown />}
+                    //   {(revenueLast3Months[1] === revenueLast3Months[0]) && <FaBars />}
+                    // </>)
+                  }
+              </div>
+            </div>
+          </section>
+
+          <section className='grid grid-cols-2 gap-2 min-w-40 bg-white p-3 text-gray-900 rounded-md grow border-2'>
             <div className='flex flex-col justify-start'>
               <h5 className='pb-2'>
                 Metric
@@ -228,7 +288,7 @@ const DashBoard = () => {
           </section>
 
 
-          <section className='grid grid-cols-2 gap-2 min-w-40 bg-slate-50 p-3 text-gray-900 rounded-md grow border-2'>
+          <section className='grid grid-cols-2 gap-2 min-w-40 bg-white p-3 text-gray-900 rounded-md grow border-2'>
             <div className='flex flex-col justify-start'>
               <h5 className='pb-2'>
                 Metric
@@ -331,10 +391,10 @@ const DashBoard = () => {
         </div> */}
 
       </div>
-        <div class="grid grid-cols-10 gap-4">
-          <div class="col-span-7">
-            <div class="grid grid-cols-10 gap-4">
-              <div class="col-span-3 grid grid-cols-2 gap-2 text-gray-900">
+        <div class="flex gap-4 justify-center">
+          {/* <div class="col-span-6"> */}
+            {/* <div class="grid grid-cols-10 gap-4"> */}
+              {/* <div class="col-span-3 grid grid-cols-2 gap-2 text-gray-900">
                 <div className='flex flex-col justify-start'>
                     <h5 className='pb-2'>
                       Metric
@@ -452,8 +512,8 @@ const DashBoard = () => {
                       }
                   </div>
                 </div>
-              </div>
-            </div>
+              </div> */}
+            {/* </div> */}
 
             {/* <div class="">
               
@@ -466,7 +526,7 @@ const DashBoard = () => {
               </div>
             </div> */}
             <CenterChart />
-
+{/* 
             <div class="grid grid-cols-10 gap-4 text-gray-900">
               <div class="col-span-3">
                 <span className='text-lg font-bold'>
@@ -486,12 +546,12 @@ const DashBoard = () => {
                   <span>28.6%</span>
                 </div>
               </div>
-            </div>
-          </div>
+            </div> */}
+          {/* </div> */}
 
-          <div class="col-span-3">
+          {/* <div class="col-span-4"> */}
             <GridPercentageCalendar />
-          </div>
+          {/* </div> */}
       </div>
       {/* <div className="flex">
         <MostPurchasedServicesByYear
@@ -503,8 +563,9 @@ const DashBoard = () => {
       </div> */}
 
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <OrdersList />
+        <div>By Service</div>
       </div>
 
         </div>

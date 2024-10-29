@@ -10,8 +10,8 @@ const months = [
 ];
 
 const CenterChart = () => {
-  const [newCustomers, setNewCustomers] = useState(0);
-  const [returningCustomers, setReturningCustomers] = useState(0);
+  const [newCustomers, setNewCustomers] = useState(30);
+  const [returningCustomers, setReturningCustomers] = useState(70);
   const [appointmentsBooked, setAppointmentsBooked] = useState(0);
   const [appointmentsBookedChange, setAppointmentsBookedChange] = useState(0);
   const [canceledAppointments, setCanceledAppointments] = useState(0);
@@ -121,7 +121,7 @@ const CenterChart = () => {
   }
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md max-w-lg mx-auto">
+    <div className="p-4 bg-white rounded-lg shadow-md max-w-lg border-2 grow">
       {/* Header with appointment statistics and month/year selector */}
       <div className="flex justify-between items-center mb-4">
         <div className="flex space-x-8">
@@ -129,14 +129,14 @@ const CenterChart = () => {
             <div className="text-gray-500 text-sm">Appointments booked</div>
             <div className="text-2xl font-bold text-blue-500">{appointmentsBooked}</div>
             <div className={`text-sm ${appointmentsBookedChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-              {appointmentsBookedChange >= 0 ? '▲' : '▼'} {Math.abs(appointmentsBookedChange)}% {appointmentsBookedChange >= 0 ? 'Increase' : 'Decrease'}
+              {Math.abs(appointmentsBookedChange)}% {appointmentsBookedChange >= 0 ? 'Increase' : 'Decrease'}
             </div>
           </div>
           <div>
             <div className="text-gray-500 text-sm">Canceled appointments</div>
             <div className="text-2xl font-bold text-red-500">{canceledAppointments}</div>
             <div className={`text-sm ${canceledAppointmentsChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-              {canceledAppointmentsChange < 0 ? '▼' : '▲'} {Math.abs(canceledAppointmentsChange)}% {canceledAppointmentsChange < 0 ? 'Decrease' : 'Increase'}
+              {Math.abs(canceledAppointmentsChange)}% {canceledAppointmentsChange < 0 ? 'Decrease' : 'Increase'}
             </div>
           </div>
         </div>
@@ -170,19 +170,19 @@ const CenterChart = () => {
       {/* Customer Statistics Summary */}
       <div className="flex justify-around items-center border-t border-gray-200 pt-4">
         {/* Pie Chart */}
-        <div className="w-1/2">
+        <div className="w-1/3">
           <Pie data={pieData} options={pieOptions} />
         </div>
 
         {/* Legend and percentages */}
-        <div className="flex flex-col items-center w-1/2">
+        <div className="flex flex-col items-center w-2/3">
           <div className="flex items-center space-x-2">
             <div className="w-6 h-6 border-4 border-blue-500 rounded-full flex items-center justify-center">
               <span className="text-xs font-bold text-blue-500">{newCustomers}</span>
             </div>
             <div>
-              <div className="text-gray-500 text-sm">New Customers</div>
-              <div className="text-blue-500 font-semibold">{newCustomerPercentage}%</div>
+            <p className="text-gray-500 text-sm text-center pt-1">New Customers</p>
+            <p className="text-green-500 font-semibold text-center pt-1">{newCustomerPercentage}%</p>
             </div>
           </div>
 
@@ -191,8 +191,8 @@ const CenterChart = () => {
               <span className="text-xs font-bold text-green-500">{returningCustomers}</span>
             </div>
             <div>
-              <div className="text-gray-500 text-sm">Returning Customers</div>
-              <div className="text-green-500 font-semibold">{returningCustomerPercentage}%</div>
+              <p className="text-gray-500 text-sm text-center pt-1">Returning Customers</p>
+              <p className="text-green-500 font-semibold text-center pt-1">{returningCustomerPercentage}%</p>
             </div>
           </div>
         </div>

@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from 'react';
 
+const months = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
 const GridPercentageCalendar = () => {
   const [occupancyData, setOccupancyData] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth()); // 0-11
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [hoverInfo, setHoverInfo] = useState({ date: null, occupancy: null, isHovered: false });
+
+  const [selectedMonth, setSelectedMonth] = useState(2);
+  const [selectedYear, setSelectedYear] = useState(2024);
 
   const getDaysInMonth = (month, year) => {
     return new Date(year, month + 1, 0).getDate();
@@ -63,14 +71,36 @@ const GridPercentageCalendar = () => {
   };
 
   return (
-    <div className="relative max-w-xs mx-auto p-4 bg-white border-2 rounded-lg">
+    <div className="relative max-w-md p-4 bg-white border-2 rounded-lg grow">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Daily occupancy</h2>
+        <h2 className="text-lg font-semibold text-gray-900">Daily occupancy</h2>
+  
+        <div className="flex items-center space-x-2 text-gray-500">
+          <select
+            className="border border-gray-300 rounded px-2 py-1"
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+          >
+            {months.map((month, index) => (
+              <option key={index} value={index}>{month}</option>
+            ))}
+          </select>
+          <select
+            className="border border-gray-300 rounded px-2 py-1"
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+          >
+            {[2023, 2024, 2025].map((year) => (
+              <option key={year} value={year}>{year}</option>
+            ))}
+          </select>
+        </div>
+
         <div className="flex items-center space-x-2">
           <button onClick={() => changeMonth('prev')} className="text-gray-500">&lt;</button>
-          <span className="text-sm text-gray-500">
+          {/* <span className="text-sm text-gray-500">
             {new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })} {currentYear}
-          </span>
+          </span> */}
           <button onClick={() => changeMonth('next')} className="text-gray-500">&gt;</button>
         </div>
       </div>
@@ -93,9 +123,10 @@ const GridPercentageCalendar = () => {
             onMouseEnter={() => handleMouseEnter(day, percentage)}
             onMouseLeave={handleMouseLeave}
           >
-            {day + 1}
+            {/* {day + 1} */}
           </div>
         ))}
+
       </div>
 
       {/* Tooltip for displaying hover information */}
