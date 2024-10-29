@@ -95,14 +95,14 @@ const GridPercentageCalendar = () => {
             ))}
           </select>
         </div>
-
+{/* 
         <div className="flex items-center space-x-2">
           <button onClick={() => changeMonth('prev')} className="text-gray-500">&lt;</button>
-          {/* <span className="text-sm text-gray-500">
+          <span className="text-sm text-gray-500">
             {new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })} {currentYear}
-          </span> */}
+          </span>
           <button onClick={() => changeMonth('next')} className="text-gray-500">&gt;</button>
-        </div>
+        </div> */}
       </div>
 
       <div className="grid grid-cols-7 gap-2 text-center">
