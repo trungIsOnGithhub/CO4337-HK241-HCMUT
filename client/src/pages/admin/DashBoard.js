@@ -8,6 +8,8 @@ import Swal from 'sweetalert2'
 import { apiGetMostPurchasedServicesByYear } from 'apis'
 import { FaAngleDoubleUp, FaAngleDoubleDown, FaBars } from "react-icons/fa";
 import GridPercentageCalendar from './GridPercentageCalendar';
+import CenterChart from './CenterChart';
+import OrdersList from './OrdersList';
 // // import './style.css';
 import bgImage from '../../assets/clouds.svg'
 
@@ -453,16 +455,17 @@ const DashBoard = () => {
               </div>
             </div>
 
-            <div class="">
-              {/*
+            {/* <div class="">
+              
 
               <div className="flex">
                 <ApexChart />
                 <UserVisitStatChart
                   currentUser={current}
                 />
-              </div> */}
-            </div>
+              </div>
+            </div> */}
+            <CenterChart />
 
             <div class="grid grid-cols-10 gap-4 text-gray-900">
               <div class="col-span-3">
@@ -498,6 +501,12 @@ const DashBoard = () => {
           currentUser={current}
         />
       </div> */}
+
+
+      <div className="grid grid-cols-4 gap-4">
+        <OrdersList />
+      </div>
+
         </div>
       </div>
     </div>
