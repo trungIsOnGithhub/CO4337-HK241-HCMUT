@@ -121,7 +121,7 @@ const CenterChart = () => {
   }
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md max-w-lg border-2 grow">
+    <div className="p-4 bg-white rounded-lg shadow-md border-2 w-1/2 grow">
       {/* Header with appointment statistics and month/year selector */}
       <div className="flex justify-between items-center mb-4">
         <div className="flex space-x-8">
@@ -170,29 +170,35 @@ const CenterChart = () => {
       {/* Customer Statistics Summary */}
       <div className="flex justify-around items-center border-t border-gray-200 pt-4">
         {/* Pie Chart */}
-        <div className="w-1/3">
+        <div className="w-1/4">
           <Pie data={pieData} options={pieOptions} />
         </div>
 
         {/* Legend and percentages */}
-        <div className="flex flex-col items-center w-2/3">
-          <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 border-4 border-blue-500 rounded-full flex items-center justify-center">
-              <span className="text-xs font-bold text-blue-500">{newCustomers}</span>
-            </div>
+        <div className="flex flex-col items-center w-3/4">
+          <div className="flex items-center justify-center">
             <div>
-            <p className="text-gray-500 text-sm text-center pt-1">New Customers</p>
+            <div className="text-gray-500 text-sm text-center pt-1 flex">
+              New Customers
+              <div className="ml-1 w-4 h-4 border-4 border-blue-500 rounded-full flex items-center justify-center inline-block">
+                <span className="text-xs font-bold text-blue-500"></span>
+              </div>
+            </div>
             <p className="text-green-500 font-semibold text-center pt-1">{newCustomerPercentage}%</p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-2 mt-4">
-            <div className="w-6 h-6 border-4 border-green-500 rounded-full flex items-center justify-center">
-              <span className="text-xs font-bold text-green-500">{returningCustomers}</span>
-            </div>
+          <div className="flex items-center justify-center space-x-2 mt-4">
             <div>
-              <p className="text-gray-500 text-sm text-center pt-1">Returning Customers</p>
-              <p className="text-green-500 font-semibold text-center pt-1">{returningCustomerPercentage}%</p>
+              <div className="text-gray-500 text-sm text-center pt-1 flex">
+                Returning Customers
+                <div className="ml-1 w-4 h-4 border-4 border-green-500 rounded-full flex items-center justify-center inline-block">
+                  <span className="text-xs font-bold text-green-500"></span>
+                </div>
+              </div>
+              <p className="text-green-500 font-semibold text-center pt-1">
+                {returningCustomerPercentage}%
+              </p>
             </div>
           </div>
         </div>
