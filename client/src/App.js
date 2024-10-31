@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {Route, Routes, useLocation} from 'react-router-dom'
 
-import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageSaleEvent, ManagePostDetail, EditPostDetail, AddPost, ManageChat } from 'pages/admin'
+import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageSaleEvent, ManagePostDetail, EditPostDetail, AddPost, ManageChat, ManageSetting } from 'pages/admin'
 import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct, ViewBlog, DetailProvider } from 'pages/public'
 
 import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct, Calendarr} from 'pages/user'
@@ -80,6 +80,7 @@ function App() {
         <Route path={path.MANAGE_POST_DETAIL} element={<ManagePostDetail/>}/>
         <Route path={path.EDIT_POST_DETAIL} element={<EditPostDetail/>}/>
         <Route path={path.MANAGE_CHAT} element={<ManageChat/>}/>
+        <Route path={path.SETTING} element={<ManageSetting/>}/>
 
       </Route>
       <Route path={path.USER} element={<UserLayout />}>

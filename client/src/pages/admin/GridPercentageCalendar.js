@@ -71,7 +71,7 @@ const GridPercentageCalendar = () => {
   };
 
   return (
-    <div className="max-w-sm p-4 bg-white border-2 rounded-lg w-1/2">
+    <div className="max-w-sm p-4 bg-white border-2 rounded-lg w-1/2 h-fit">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold text-gray-900">Daily occupancy</h2>
   

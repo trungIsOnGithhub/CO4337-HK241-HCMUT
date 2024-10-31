@@ -9,20 +9,20 @@ const STATUS_STYLES = {
 };
 
 // Available statuses for filtering and editing
-const STATUS_OPTIONS = ["All Statuses", "Approved", "No Show", "Canceled", "Rejected"];
+const STATUS_OPTIONS = ["All", "Approved", "No Show", "Canceled", "Rejected"];
 const EDITABLE_STATUS_OPTIONS = ["Approved", "No Show", "Canceled", "Rejected"];
 
 const OrdersList = () => {
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [selectedStatus, setSelectedStatus] = useState("All Statuses"); // Default to show all statuses
+  const [selectedStatus, setSelectedStatus] = useState("All"); // Default to show all statuses
   const ordersPerPage = 7; // Display 7 orders per page
 
   // Fetch orders data from the API
   const fetchOrders = async (page, status) => {
     try {
-      const statusQuery = status === "All Statuses" ? "" : `&status=${status}`;
+      const statusQuery = status === "All" ? "" : `&status=${status}`;
       const response = await fetch(`https://api.example.com/orders?page=${page}&limit=${ordersPerPage}${statusQuery}`);
       const data = await response.json();
 
