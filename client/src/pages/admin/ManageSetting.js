@@ -16,6 +16,7 @@ function ManageSetting() {
   const [phoneCountryCode, setPhoneCountryCode] = useState('United States');
   const [firstPage, setFirstPage] = useState('Dashboard');
   const [dashboardLanguage, setDashboardLanguage] = useState('English');
+  const [viewOption, setViewOption] = useState("general");
 
   // Effect to simulate loading current settings
   useEffect(() => {
@@ -55,14 +56,25 @@ function ManageSetting() {
         <div className="flex mb-6">
           <div className="w-1/4 pr-8 border-r border-gray-200">
             <ul className="text-gray-600 space-y-4">
-              <li className="font-semibold text-blue-600 cursor-pointer">General</li>
-              <li className="cursor-pointer">Company</li>
-              <li className="cursor-pointer">Office Hours</li>
-              <li className="cursor-pointer">Company Days Off</li>
-              <li className="cursor-pointer">SMS Notifications</li>
-              <li className="cursor-pointer">Email Notifications</li>
-              <li className="cursor-pointer">Payments</li>
-              <li className="cursor-pointer">Users & Roles</li>
+              <li className="font-semibold text-blue-600 cursor-pointer"
+                onClick={() => {setViewOption("general");}}
+              >General</li>
+              <li className="cursor-pointer" 
+                onClick={() => {setViewOption("bussiness");}}
+              >Bussiness</li>
+              <li className="cursor-pointer" 
+                onClick={() => {setViewOption("working_hour");}}
+              >Working Hours</li>
+              <li className="cursor-pointer" 
+                onClick={() => {setViewOption("sms_noti");}}
+              >SMS Notifications</li>
+              <li className="cursor-pointer" 
+                onClick={() => {setViewOption("email_noti");}}
+              >Email Notifications</li>
+              <li className="cursor-pointer" 
+                onClick={() => {setViewOption("payment");}}
+              >Payments</li>
+              {/* <li className="cursor-pointer">Users & Roles</li> */}
             </ul>
           </div>
 
@@ -140,61 +152,66 @@ function ManageSetting() {
               </div>
             </div>
 
-            {/* Global Settings */}
-            <h2 className="font-semibold text-xl text-gray-800 mt-8 mb-6">Global Settings</h2>
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <label className="text-gray-800 font-medium">Date Format</label>
-                <select value={dateFormat} onChange={(e) => setDateFormat(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
-                  <option>MMMM D, YYYY</option>
-                  <option>DD/MM/YYYY</option>
-                  <option>MM/DD/YYYY</option>
-                </select>
+            {
+
+            }
+                {/* Global Settings */}
+                <h2 className="font-semibold text-xl text-gray-800 mt-8 mb-6">Global Settings</h2>
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <label className="text-gray-800 font-medium">Date Format</label>
+                    <select value={dateFormat} onChange={(e) => setDateFormat(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
+                      <option>MMMM D, YYYY</option>
+                      <option>DD/MM/YYYY</option>
+                      <option>MM/DD/YYYY</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-gray-800 font-medium">Time Format</label>
+                    <select value={timeFormat} onChange={(e) => setTimeFormat(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
+                      <option>h:mm a</option>
+                      <option>HH:mm</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-gray-800 font-medium">Time Zone</label>
+                    <select value={timeZone} onChange={(e) => setTimeZone(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
+                      <option>Bangkok</option>
+                      <option>UTC</option>
+                      <option>New York</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-gray-800 font-medium">First Day of the Week</label>
+                    <select value={firstDayOfWeek} onChange={(e) => setFirstDayOfWeek(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
+                      <option>Monday</option>
+                      <option>Sunday</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-gray-800 font-medium">Default phone country code</label>
+                    <select value={phoneCountryCode} onChange={(e) => setPhoneCountryCode(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
+                      <option>United States</option>
+                      <option>United Kingdom</option>
+                      <option>Australia</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-gray-800 font-medium">Default FirstPage</label>
+                    <select className="border rounded-lg p-2 w-full mt-1">
+                      <option>Dashboard</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-gray-700 font-medium">Dashboard language</label>
+                    <select className="border rounded-lg p-2 w-full mt-1">
+                      <option>English</option>
+                    </select>
+                  </div>
+                </div>
               </div>
-              <div>
-                <label className="text-gray-800 font-medium">Time Format</label>
-                <select value={timeFormat} onChange={(e) => setTimeFormat(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
-                  <option>h:mm a</option>
-                  <option>HH:mm</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-gray-800 font-medium">Time Zone</label>
-                <select value={timeZone} onChange={(e) => setTimeZone(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
-                  <option>Bangkok</option>
-                  <option>UTC</option>
-                  <option>New York</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-gray-800 font-medium">First Day of the Week</label>
-                <select value={firstDayOfWeek} onChange={(e) => setFirstDayOfWeek(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
-                  <option>Monday</option>
-                  <option>Sunday</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-gray-800 font-medium">Default phone country code</label>
-                <select value={phoneCountryCode} onChange={(e) => setPhoneCountryCode(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
-                  <option>United States</option>
-                  <option>United Kingdom</option>
-                  <option>Australia</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-gray-800 font-medium">Default FirstPage</label>
-                <select className="border rounded-lg p-2 w-full mt-1">
-                  <option>Dashboard</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-gray-700 font-medium">Dashboard language</label>
-                <select className="border rounded-lg p-2 w-full mt-1">
-                  <option>English</option>
-                </select>
-              </div>
-            </div>
-          </div>
+
+
         </div>
       </div>
     </div>
