@@ -212,7 +212,7 @@ const CenterChart = () => {
                 <span className="text-xs font-bold text-blue-500"></span>
               </div>
             </div>
-            <p className="text-green-500 font-semibold text-center pt-1">{newCustomerRatio}%</p>
+            <p className="font-semibold text-center pt-1">{newCustomerRatio}%</p>
             </div>
           </div>
 
@@ -224,7 +224,7 @@ const CenterChart = () => {
                   <span className="text-xs font-bold text-green-500"></span>
                 </div>
               </div>
-              <p className="text-green-500 font-semibold text-center pt-1">
+              <p className="font-semibold text-center pt-1">
                 {returningCustomerRatio}%
               </p>
             </div>

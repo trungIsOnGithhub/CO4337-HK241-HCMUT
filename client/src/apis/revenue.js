@@ -39,3 +39,13 @@ export const apiGetOccupancyDataByMonth = (data) => axios({
     method: 'post',
     data
 })
+export const apiGetPerformanceDataByService = (data) => axios({
+    url: '/revenue/performance_by_service',
+    method: 'post',
+    data
+})
+export const apiGetPerformanceDataByStaff = (data) => axios({
+    url: '/revenue/performance_by_staff',
+    method: 'post',
+    data
+})

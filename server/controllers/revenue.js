@@ -366,7 +366,36 @@ const getOccupancyByServices = asyncHandler(async (req, res) => {
         });
     }
 
-    let allOrdersThisMonth = [{}, {}, {}];
+    let allOrdersThisMonth = [
+        {
+            info: [
+                {
+                    service: {
+                        _id: "1a",
+                        name:"Service Sample 1",
+                        thumb: "https://monngonmoingay.com/wp-content/smush-webp/2024/09/dui-ech-chien-8.jpg.webp",
+                        price: 10.1,
+                        duration: 10,
+                        assigned_staff: [1,2]
+                    }
+                }
+            ]
+        },
+        {
+            info: [
+                {
+                    service: {
+                        _id: "2b",
+                        name:"Service Sample 2",
+                        thumb: "https://monngonmoingay.com/wp-content/smush-webp/2024/09/dui-ech-chien-8.jpg.webp",
+                        price: 20.2,
+                        duration: 20,
+                        assigned_staff: [1,2]
+                    }
+                }
+            ]
+        }
+    ];
     let allServiceInOrders = [];
 
     let orderCountByService = {};
@@ -376,29 +405,31 @@ const getOccupancyByServices = asyncHandler(async (req, res) => {
     allOrdersThisMonth.forEach(order => {
         if (order.info?.length > 0) {
             for (const item of order.info) {
-                if (!item.service || !item.service?.id) continue;
+                if (!item.service || !item.service?._id) continue;
 
                 if (allServiceInOrders.filter(serv => serv._id === item.service?._id)) {
                     allServiceInOrders.push(item.service);
                 }
-                sumWorkedHourByService[item.service?._id] += item.service.duration;
-                orderCountByService[item.service?._id] += 1;
-                revenueCountByService[item.service?._id] += item.service.price;
+                sumWorkedHourByService[item.service?._id] = (sumWorkedHourByService[item.service?._id] || 0) + item.service.duration;
+                orderCountByService[item.service?._id] = (orderCountByService[item.service?._id] || 0) + 1;
+                revenueCountByService[item.service?._id] = (revenueCountByService[item.service?._id] || 0) + item.service.price;
             }
         }
     });
 
-    let sumProviderWorkHours = 8;
+    let sumProviderWorkHoursPerDay = 8;
+
+    // console.log("----->", orderCountByService);
 
     let numDaysInMonth = new Date(currYear, currMonth, 0).getDate();
     for (const idx in allServiceInOrders) {
         const serviceId = allServiceInOrders[idx]._id;
 
-        const totalAssignedStaffHours = allServiceInOrders[idx].assigned_staff.length * sumProviderWorkHours;
+        const totalAssignedStaffHours = allServiceInOrders[idx].assigned_staff.length * sumProviderWorkHoursPerDay * numDaysInMonth;
 
-        allServiceInOrders[idx].numberOrders += orderCountByService[serviceId];
-        allServiceInOrders[idx].revenue += revenueCountByService[serviceId];
-        allServiceInOrders[idx].occupancy += sumWorkedHourByService[serviceId] * 100 / totalAssignedStaffHours;
+        allServiceInOrders[idx].numberOrders = orderCountByService[serviceId];
+        allServiceInOrders[idx].revenue = revenueCountByService[serviceId];
+        allServiceInOrders[idx].occupancy = sumWorkedHourByService[serviceId] * 100 / totalAssignedStaffHours;
     }
 
     return res.json({
@@ -407,6 +438,86 @@ const getOccupancyByServices = asyncHandler(async (req, res) => {
     })
 });
 
+const getOccupancyByStaffs = asyncHandler(async (req, res) => {
+    const { currMonth, currYear } = req.body;
+    if (!currMonth || !currYear || currMonth < 0 || currMonth > 12) {
+        return res.status(400).json({
+            success: false,
+            error: 'Missing Input'
+        });
+    }
+
+    let allOrdersThisMonth = [
+        {
+            info: [
+                {
+                    service: {
+                        _id: "1a",
+                        name:"Service Sample 1",
+                        thumb: "https://monngonmoingay.com/wp-content/smush-webp/2024/09/dui-ech-chien-8.jpg.webp",
+                        price: 10.1,
+                        duration: 10,
+                        assigned_staff: [1,2]
+                    }
+                }
+            ]
+        },
+        {
+            info: [
+                {
+                    service: {
+                        _id: "2b",
+                        name:"Service Sample 2",
+                        thumb: "https://monngonmoingay.com/wp-content/smush-webp/2024/09/dui-ech-chien-8.jpg.webp",
+                        price: 20.2,
+                        duration: 20,
+                        assigned_staff: [1,2]
+                    }
+                }
+            ]
+        }
+    ];
+    let allServiceInOrders = [];
+
+    let orderCountByService = {};
+    let revenueCountByService = {};
+    let sumWorkedHourByService = {};
+
+    allOrdersThisMonth.forEach(order => {
+        if (order.info?.length > 0) {
+            for (const item of order.info) {
+                if (!item.service || !item.service?._id) continue;
+
+                if (allServiceInOrders.filter(serv => serv._id === item.service?._id)) {
+                    allServiceInOrders.push(item.service);
+                }
+                sumWorkedHourByService[item.service?._id] = (sumWorkedHourByService[item.service?._id] || 0) + item.service.duration;
+                orderCountByService[item.service?._id] = (orderCountByService[item.service?._id] || 0) + 1;
+                revenueCountByService[item.service?._id] = (revenueCountByService[item.service?._id] || 0) + item.service.price;
+            }
+        }
+    });
+
+    let sumProviderWorkHoursPerDay = 8;
+
+    console.log("----->", orderCountByService);
+
+    let numDaysInMonth = new Date(currYear, currMonth, 0).getDate();
+    for (const idx in allServiceInOrders) {
+        const serviceId = allServiceInOrders[idx]._id;
+
+        const totalAssignedStaffHours = allServiceInOrders[idx].assigned_staff.length * sumProviderWorkHoursPerDay * numDaysInMonth;
+
+        allServiceInOrders[idx].numberOrders = orderCountByService[serviceId];
+        allServiceInOrders[idx].revenue = revenueCountByService[serviceId];
+        allServiceInOrders[idx].occupancy = sumWorkedHourByService[serviceId] * 100 / totalAssignedStaffHours;
+    }
+
+    return res.json({
+        success: true,
+        performance: allServiceInOrders
+    })
+});
 
 module.exports = {
     getRevenueByDateRange,
@@ -417,5 +528,7 @@ module.exports = {
     getThisMonthRevenueAndOrderStatistic,
     getCustomerDataByMonth,
     getOccupancyByDayCurrentMonth,
-    fakeGetOrders
+    fakeGetOrders,
+    getOccupancyByServices,
+    getOccupancyByStaffs
 }

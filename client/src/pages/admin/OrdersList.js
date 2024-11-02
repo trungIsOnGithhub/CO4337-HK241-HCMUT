@@ -22,7 +22,7 @@ const OrdersList = () => {
 
   // Fetch orders data from the API
   const fetchOrders = async (page, status) => {
-
+    //  let orders = await apiGetOccupancyDataByService();
   };
 
   useEffect(() => {

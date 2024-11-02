@@ -11,5 +11,7 @@ router.post('/recent_occupancy', ctrls.getOccupancy3RecentStatistic);
 router.post('/chart_info', ctrls.getThisMonthRevenueAndOrderStatistic);
 router.post('/customer_by_month', ctrls.getCustomerDataByMonth);
 router.post('/occupancy_by_month', ctrls.getOccupancyByDayCurrentMonth);
+router.post('/performance_by_service', ctrls.getOccupancyByServices);
+router.post('/performance_by_staff', ctrls.getOccupancyByStaffs);
 
-module.exports = router
+module.exports = router;

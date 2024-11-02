@@ -309,12 +309,13 @@ const DashBoard = () => {
               <select
                 className="text-xs border-2 rounded-md"
                 onChange={(event) => { onChangeMetricViewOption(event, "occupancy"); }}
+                defaultValue={3}
               >
                 {metricViewOptions.map(
                   (opt, idx) => { 
                     if (idx > 0)
                       return <option className="text-xs" value={opt?.value}>{opt?.label}</option>
-                    return <option className="text-xs" selected="selected" value={opt?.value}>{opt?.label}</option>
+                    return <option className="text-xs" value={opt?.value}>{opt?.label}</option>
                   }
                 )}
               </select>
@@ -360,7 +361,7 @@ const DashBoard = () => {
 
       <div className="flex justify-center gap-4">
         <OrdersList />
-        <PerformanceSummary servicesData={[]}/>
+        <PerformanceSummary />
       </div>
 
         </div>
