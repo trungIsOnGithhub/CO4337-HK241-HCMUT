@@ -1,3 +1,4 @@
+import { apiUpdateOrderStatus } from 'apis';
 import React, { useState, useEffect } from 'react';
 
 // Sample statuses with styling
@@ -21,16 +22,7 @@ const OrdersList = () => {
 
   // Fetch orders data from the API
   const fetchOrders = async (page, status) => {
-    try {
-      const statusQuery = status === "All" ? "" : `&status=${status}`;
-      const response = await fetch(`https://api.example.com/orders?page=${page}&limit=${ordersPerPage}${statusQuery}`);
-      const data = await response.json();
 
-      setOrders(data.orders);
-      setTotalPages(data.totalPages);
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-    }
   };
 
   useEffect(() => {
@@ -46,27 +38,13 @@ const OrdersList = () => {
 
   // Update order status
   const updateOrderStatus = async (orderId, newStatus) => {
-    try {
-      // Optimistically update the UI
-      setOrders((prevOrders) =>
-        prevOrders.map((order) =>
-          order.id === orderId ? { ...order, status: newStatus } : order
-        )
-      );
-
-      // Call the API to update the status
-      await fetch(`https://api.example.com/orders/${orderId}/status`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-    } catch (error) {
-      console.error('Error updating order status:', error);
-      // Rollback UI update in case of error
-      fetchOrders(currentPage, selectedStatus);
-    }
+    let resp = await apiUpdateOrderStatus(orderId, { status: newStatus });
+    // Optimistically update the UI
+    setOrders((prevOrders) =>
+      prevOrders.map((order) =>
+        order.id === orderId ? { ...order, status: newStatus } : order
+      )
+    );
   };
 
   // Format timestamp to a more readable date
@@ -85,7 +63,7 @@ const OrdersList = () => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Last booked appointments</h2>
+        <h2 className="text-xl font-semibold">Last Orders</h2>
         
         {/* Status Filter Dropdown */}
         <select
@@ -119,14 +97,14 @@ const OrdersList = () => {
             <tr key={index} className="border-b border-gray-100">
               <td className="py-4 text-gray-500">{formatTimestamp(order.timestamp)}</td>
               <td className="flex items-center space-x-2">
-                <span className="text-gray-600">{order.serviceType}</span>
+                <span className="text-gray-600">{order.info.length}</span>
               </td>
-              <td className="text-gray-600">{order.customerName}</td>
+              <td className="text-gray-600">{order.orderBy?.firstName + order.orderBy?.lastName}</td>
               <td>
                 {/* Editable Status Dropdown */}
                 <select
                   value={order.status}
-                  onChange={(e) => updateOrderStatus(order.id, e.target.value)}
+                  onChange={(e) => updateOrderStatus(order._id, e.target.value)}
                   className={`px-2 py-1 rounded-full text-sm font-medium ${STATUS_STYLES[order.status] || 'text-gray-500 bg-gray-100'}`}
                 >
                   {EDITABLE_STATUS_OPTIONS.map((status) => (
@@ -137,8 +115,8 @@ const OrdersList = () => {
                 </select>
               </td>
               <td className="flex items-center space-x-2">
-                <img src={order.staff.avatarUrl} alt={order.staff.name} className="w-8 h-8 rounded-full" />
-                <span className="text-gray-600">{order.staff.name}</span>
+                <img src={order.info[0]?.staff.avatarUrl} alt={order.info[0]?.staff.name} className="w-8 h-8 rounded-full" />
+                <span className="text-gray-600">{order.info[0]?.staff.name}</span>
               </td>
             </tr>
           ))}

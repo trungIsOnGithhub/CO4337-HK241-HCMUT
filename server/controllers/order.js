@@ -31,7 +31,7 @@ const createNewOrder = asyncHandler(async(req, res)=>{
 
 const updateStatus = asyncHandler(async(req, res)=>{
     const {oid} = req.params
-    const {status}  = req.body
+    const {status} = req.body
     if(!status){
         throw new Error("Missing input")
     }

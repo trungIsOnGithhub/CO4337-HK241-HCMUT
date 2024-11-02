@@ -33,3 +33,9 @@ export const apiUpdateEmailByBookingId = (data) => axios({
     method: 'put',
     data
 })
+
+export const apiUpdateOrderStatus = (data, oid) => axios({
+    url: `/order/status/${oid}`,
+    method: 'put',
+    data
+})

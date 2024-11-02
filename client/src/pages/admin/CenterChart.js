@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Line, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement, ArcElement } from 'chart.js';
+import { apiGetCustomerDataByMonth, apiGet3ChartInfoByMonth } from 'apis'
+import Swal from 'sweetalert2';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, ArcElement);
 
@@ -12,6 +14,9 @@ const months = [
 const CenterChart = () => {
   const [newCustomers, setNewCustomers] = useState(30);
   const [returningCustomers, setReturningCustomers] = useState(70);
+  const [newCustomerRatio, setNewCustomerRatio] = useState(0.0);
+  const [returningCustomerRatio, setReturningCustomerRatio] = useState(0.0);
+
   const [appointmentsBooked, setAppointmentsBooked] = useState(0);
   const [appointmentsBookedChange, setAppointmentsBookedChange] = useState(0);
   const [canceledAppointments, setCanceledAppointments] = useState(0);
@@ -23,10 +28,7 @@ const CenterChart = () => {
   const [selectedYear, setSelectedYear] = useState(2024);
 
   const fetchCustomerData = async (month, year) => {
-    try {
       setLoading(true);
-      // const response = await fetch(`https://api.example.com/customer-trends?month=${month + 1}&year=${year}`);
-      // const data = await response.json();
 
       const data = {
         dailyTrends: [18,59,8,99,68,86,100,66,30,36,39],
@@ -38,28 +40,43 @@ const CenterChart = () => {
         canceledAppointmentsChange: 39
       }
 
-      setNewCustomers(data.newCustomers);
-      setReturningCustomers(data.returningCustomers);
-      setAppointmentsBooked(data.appointmentsBooked);
-      setAppointmentsBookedChange(data.appointmentsBookedChange);
-      setCanceledAppointments(data.canceledAppointments);
-      setCanceledAppointmentsChange(data.canceledAppointmentsChange);
+    const chartData = await apiGet3ChartInfoByMonth({ currMonth: 5, currYear: 2024 });
+    const customerData = await apiGetCustomerDataByMonth({ currMonth: 5, currYear: 2024 });
 
-      setDailyTrends(data.dailyTrends);
-    } catch (error) {
-      console.error('Error fetch customer data:', error);
-    } finally {
-      setLoading(false);
+    if (!chartData.success || !customerData.success) {
+      Swal.fire('Error Ocurred!!', 'Cannot Update Staff Shift!!', 'error');
+      return;
     }
+
+    // console.log(chartData);
+
+    setNewCustomers(customerData.newCustomers);
+    setReturningCustomers(customerData.returningCustomers);
+
+    const sumNumCustomerMonth = (customerData.newCustomers + customerData.returningCustomers) || 0;
+    const newCustomerRatio = (+customerData.newCustomers / sumNumCustomerMonth * 100).toFixed(2);
+    setNewCustomerRatio(newCustomerRatio);
+    // console.log("---", +customerData.returningCustomers);
+    const returningCustomerRatio = (+customerData.returningCustomers / sumNumCustomerMonth * 100).toFixed(2);
+    setReturningCustomerRatio(returningCustomerRatio);
+
+    setAppointmentsBooked(chartData.finished);
+    setCanceledAppointments(chartData.canceled);
+
+    const sumOrdersChartData = (chartData.finished + chartData.canceled) || 1;
+    const ratioFinish = (chartData.finished / sumOrdersChartData).toFixed(1);
+    const ratioCanceled = (chartData.canceled / sumOrdersChartData).toFixed(1);
+    setAppointmentsBookedChange(ratioFinish);
+    setCanceledAppointmentsChange(ratioCanceled);
+
+    setDailyTrends(chartData.revenueSeries);
+
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchCustomerData(selectedMonth, selectedYear);
   }, [selectedMonth, selectedYear]);
-
-  const totalCustomers = newCustomers + returningCustomers;
-  const newCustomerPercentage = totalCustomers ? ((newCustomers / totalCustomers) * 100).toFixed(1) : 0;
-  const returningCustomerPercentage = totalCustomers ? ((returningCustomers / totalCustomers) * 100).toFixed(1) : 0;
 
   const lineData = {
     labels: ['F', 'S', 'S', 'M', 'T', 'W', 'T', 'F', 'S', 'S', 'M', 'T', 'W', 'T', 'F', 'S', 'S'],
@@ -195,7 +212,7 @@ const CenterChart = () => {
                 <span className="text-xs font-bold text-blue-500"></span>
               </div>
             </div>
-            <p className="text-green-500 font-semibold text-center pt-1">{newCustomerPercentage}%</p>
+            <p className="text-green-500 font-semibold text-center pt-1">{newCustomerRatio}%</p>
             </div>
           </div>
 
@@ -208,7 +225,7 @@ const CenterChart = () => {
                 </div>
               </div>
               <p className="text-green-500 font-semibold text-center pt-1">
-                {returningCustomerPercentage}%
+                {returningCustomerRatio}%
               </p>
             </div>
           </div>

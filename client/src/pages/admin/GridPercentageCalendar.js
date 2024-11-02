@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { apiGetOccupancyDataByMonth } from 'apis'
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -22,10 +23,14 @@ const GridPercentageCalendar = () => {
     return new Date(year, month, 1).getDay();
   };
 
-  const fetchOccupancyData = () => {
-    const daysInMonth = getDaysInMonth(currentMonth, currentYear);
-    const newData = Array.from({ length: daysInMonth }, () => Math.floor(Math.random() * 101));
-    setOccupancyData(newData);
+  const fetchOccupancyData = async () => {
+    // const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+    // const newData = Array.from({ length: daysInMonth }, () => Math.floor(Math.random() * 101));
+    let resp = await apiGetOccupancyDataByMonth({ currMonth: 5, currYear: 2024 });
+
+    if (resp.success && resp.occupancySeries) {
+      setOccupancyData(resp.occupancySeries);
+    }
   };
 
   useEffect(() => {
@@ -124,20 +129,17 @@ const GridPercentageCalendar = () => {
             onMouseLeave={handleMouseLeave}
           >
             {/* {day + 1} */}
+            {hoverInfo.isHovered && new Date(hoverInfo.date).getDate() === day && (
+              <div className="bottom-16 p-2 bg-white border border-gray-300 rounded-lg shadow-lg text-sm text-gray-700 z-10 w-fit">
+                <div><strong>Date:</strong> {hoverInfo.date}</div>
+                <div><strong>Occupancy:</strong> {hoverInfo.occupancy}%</div>
+              </div>
+            )}
           </div>
         ))}
 
       </div>
 
-      {/* Tooltip for displaying hover information */}
-      {hoverInfo.isHovered && (
-        <div className="absolute left-1/2 transform -translate-x-1/2 bottom-16 p-2 bg-white border border-gray-300 rounded-lg shadow-lg text-sm text-gray-700 z-10">
-          <div><strong>Date:</strong> {hoverInfo.date}</div>
-          <div><strong>Occupancy:</strong> {hoverInfo.occupancy}%</div>
-        </div>
-      )}
-
-      {/* Legend */}
       <div className="mt-4">
         <div className="text-sm font-semibold">Legend</div>
         <div className="flex items-center mt-2">

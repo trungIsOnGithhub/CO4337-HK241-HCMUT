@@ -24,3 +24,18 @@ export const apiGet3RecentOccupancyStatistic = (data) => axios({
     method: 'post',
     data
 })
+export const apiGet3ChartInfoByMonth = (data) => axios({
+    url: '/revenue/chart_info',
+    method: 'post',
+    data
+})
+export const apiGetCustomerDataByMonth = (data) => axios({
+    url: '/revenue/customer_by_month',
+    method: 'post',
+    data
+})
+export const apiGetOccupancyDataByMonth = (data) => axios({
+    url: '/revenue/occupancy_by_month',
+    method: 'post',
+    data
+})
