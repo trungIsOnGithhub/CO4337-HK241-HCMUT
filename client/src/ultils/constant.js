@@ -314,7 +314,7 @@ export const adminSidebar = [
     {
         id: 10,
         type: 'parent',
-        text: 'Manage Customer Program',
+        text: 'Customer Programs',
         submenu:[
             {
                 text: 'Add Vourcher Code',

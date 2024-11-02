@@ -97,9 +97,79 @@ const getRevenueStatistic = asyncHandler(async (req, res) => {
             totalServices
         }
     })
-})
+});
+
+const getRevenue3RecentStatistic = asyncHandler(async (req, res) => {
+    const { periodData } = req.body;
+    if (!periodData) {
+        return res.status(400).json({
+            success: false,
+            error: 'Missing Input'
+        });
+    }
+
+    let revenueData = null;
+    if (periodData === 'week') {
+        revenueData = [666, 888, 999];
+    }
+    else if (periodData === 'month') {
+        revenueData = [999, 888, 666];
+    }
+
+    return res.json({
+        success: revenueData ? true : false,
+        revenue: revenueData
+    })
+});
+const getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
+    const { periodData } = req.body;
+    if (!periodData) {
+        return res.status(400).json({
+            success: false,
+            error: 'Missing Input'
+        });
+    }
+
+    let newCustomerData = null;
+    if (periodData === 'week') {
+        newCustomerData = [222, 333, 444];
+    }
+    else if (periodData === 'month') {
+        newCustomerData = [444, 333, 222];
+    }
+
+    return res.json({
+        success: newCustomerData ? true : false,
+        newCustomer: newCustomerData
+    });
+});
+const getOccupancy3RecentStatistic = asyncHandler(async (req, res) => {
+    const { periodData } = req.body;
+    if (!periodData) {
+        return res.status(400).json({
+            success: false,
+            error: 'Missing Input'
+        });
+    }
+
+    let occupancyData = null;
+    if (periodData === 'week') {
+        occupancyData = [555, 333, 222];
+    }
+    else if (periodData === 'month') {
+        occupancyData = [22, 333, 555];
+    }
+
+    return res.json({
+        success: occupancyData ? true : false,
+        occupancy: occupancyData
+    })
+});
 
 module.exports = {
     getRevenueByDateRange,
-    getRevenueStatistic
+    getRevenueStatistic,
+    getRevenue3RecentStatistic,
+    getNewCustomer3RecentStatistic,
+    getOccupancy3RecentStatistic
 }

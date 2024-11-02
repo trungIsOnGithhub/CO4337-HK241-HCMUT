@@ -25,8 +25,18 @@ const CenterChart = () => {
   const fetchCustomerData = async (month, year) => {
     try {
       setLoading(true);
-      const response = await fetch(`https://api.example.com/customer-trends?month=${month + 1}&year=${year}`);
-      const data = await response.json();
+      // const response = await fetch(`https://api.example.com/customer-trends?month=${month + 1}&year=${year}`);
+      // const data = await response.json();
+
+      const data = {
+        dailyTrends: [18,59,8,99,68,86,100,66,30,36,39],
+        returningCustomers: 68,
+        newCustomers: 32,
+        appointmentsBooked: 88,
+        appointmentsBookedChange: 20,
+        canceledAppointments: 99,
+        canceledAppointmentsChange: 39
+      }
 
       setNewCustomers(data.newCustomers);
       setReturningCustomers(data.returningCustomers);
@@ -34,9 +44,10 @@ const CenterChart = () => {
       setAppointmentsBookedChange(data.appointmentsBookedChange);
       setCanceledAppointments(data.canceledAppointments);
       setCanceledAppointmentsChange(data.canceledAppointmentsChange);
+
       setDailyTrends(data.dailyTrends);
     } catch (error) {
-      console.error('Error fetching customer data:', error);
+      console.error('Error fetch customer data:', error);
     } finally {
       setLoading(false);
     }
@@ -126,14 +137,14 @@ const CenterChart = () => {
       <div className="flex justify-between items-center mb-4">
         <div className="flex space-x-8">
           <div>
-            <div className="text-gray-500 text-sm">Appointments booked</div>
+            <div className="text-gray-500 text-sm">Orders Booked</div>
             <div className="text-2xl font-bold text-blue-500">{appointmentsBooked}</div>
             <div className={`text-sm ${appointmentsBookedChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
               {Math.abs(appointmentsBookedChange)}% {appointmentsBookedChange >= 0 ? 'Increase' : 'Decrease'}
             </div>
           </div>
           <div>
-            <div className="text-gray-500 text-sm">Canceled appointments</div>
+            <div className="text-gray-500 text-sm">Canceled Orders</div>
             <div className="text-2xl font-bold text-red-500">{canceledAppointments}</div>
             <div className={`text-sm ${canceledAppointmentsChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
               {Math.abs(canceledAppointmentsChange)}% {canceledAppointmentsChange < 0 ? 'Decrease' : 'Increase'}
@@ -170,7 +181,7 @@ const CenterChart = () => {
       {/* Customer Statistics Summary */}
       <div className="flex justify-around items-center border-t border-gray-200 pt-4">
         {/* Pie Chart */}
-        <div className="w-1/4">
+        <div className="flex justify-center w-1/4">
           <Pie data={pieData} options={pieOptions} />
         </div>
 
