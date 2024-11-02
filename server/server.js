@@ -13,39 +13,12 @@ app.use(cors({
     credentials: true
 }))
 app.use(cookieParser())
-const port = process.env.PORT || 8888;
+// const port = ;
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-// services init
-dbConnect();
-// services init
-initRoutes(app);
+initRoutes(app)
 
 app.use('/', (req,res) => {res.send('SERVER ON')})
 
-const server = app.listen(port,()=>{
-
-});
-
-const io = socket(server,{
-    cors: {
-        origin: "http://localhost:3000",
-        credentials: true
-    }
-})
-
-global.onlineUsers = new Map()
-
-io.on("connection", (socket) => {
-    global.chatSocket = socket
-    socket.on("add-user", (userId) => {
-        onlineUsers.set(userId, socket.id)
-    })
-    socket.on("send-msg", (data) => {
-        const sendUserSocket = onlineUsers.get(data.to)
-        if(sendUserSocket){
-            socket.to(sendUserSocket).emit("msg-recieve", data.message)
-        }
-    })
-})
+app.listen(5000, ()=>{});

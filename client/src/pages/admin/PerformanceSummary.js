@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { FaCog } from "react-icons/fa";
 
 function PerformanceSummary({ servicesData }) {
   // State for managing time period selection
-  const [timePeriod, setTimePeriod] = useState("Current Week (Mon - Sun)");
+  const [timePeriod, setTimePeriod] = useState("Current Week");
 
   // State for service performance data
   const [services, setServices] = useState(servicesData);
@@ -45,12 +46,11 @@ function PerformanceSummary({ servicesData }) {
             <option>Last Week</option>
             <option>Last Month</option>
           </select>
-        </div>
 
-        {/* Settings Icon */}
-        <button onClick={() => console.log('Open settings')} className="text-gray-400 hover:text-gray-600 ml-2">
-          <i className="fas fa-cog"></i>
-        </button>
+          <button onClick={() => console.log('Open settings')} className="text-gray-400 hover:text-gray-600 ml-2">
+            <FaCog />
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -65,7 +65,7 @@ function PerformanceSummary({ servicesData }) {
             <div className="flex items-center mb-3">
               {/* Service Image */}
               <img
-                src={service.image}
+                src={service.thumb}
                 alt={`${service.name} icon`}
                 className="w-10 h-10 rounded-full mr-4"
               />
@@ -75,8 +75,8 @@ function PerformanceSummary({ servicesData }) {
             </div>
             <div className="text-sm text-gray-600">
               <div className="flex justify-between">
-                <span>Appointments</span>
-                <span>{service.appointments}</span>
+                <span>Number Of Orders</span>
+                <span>{service.numberOrders}</span>
               </div>
               <div className="flex justify-between">
                 <span>Revenue</span>
@@ -84,13 +84,13 @@ function PerformanceSummary({ servicesData }) {
               </div>
               <div className="flex justify-between items-center mt-2">
                 <span>Occupancy rate</span>
-                <span>{service.occupancyRate}%</span>
+                <span>{service.occupancy}%</span>
               </div>
             </div>
             {/* Occupancy Rate Bar */}
             <div className="w-full bg-gray-200 h-1 rounded-full mt-2">
               <div
-                style={{ width: `${service.occupancyRate}%` }}
+                style={{ width: `${service.occupancy}%` }}
                 className="bg-blue-600 h-1 rounded-full"
               ></div>
             </div>
