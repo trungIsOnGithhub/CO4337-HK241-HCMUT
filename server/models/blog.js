@@ -7,6 +7,10 @@ var blogSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    category: {
+        type:String,
+        required:true,
+    },
     content:{
         type:Array,
         required:true
@@ -39,11 +43,6 @@ var blogSchema = new mongoose.Schema({
         type: String,
         default: 'https://noithatkendesign.vn/storage/app/media/uploaded-files/san-vuon1.jpg'
     },
-    images: [
-        {
-            type: String
-        }
-    ],
     author:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

@@ -4,11 +4,17 @@ const asyncHandler = require('express-async-handler');
 const User = require('../models/user');
 
 const createNewBlogPost = asyncHandler(async(req, res)=>{
+    const {_id} = req.user
+    
     const {title, content} = req.body
+    const thumb = req.files?.thumb[0]?.path
+    if(thumb){
+        req.body.thumb = thumb
+    }
     if(!title || !content){
         throw new Error ("Missing input")
     }
-    const response = await Blog.create(req.body)
+    const response = await Blog.create({...req.body, owner: _id})
 
     return res.status(200).json({
         success: response ? true : false,
@@ -64,10 +70,11 @@ const getAllBlogTags = asyncHandler(async (req,res) => {
 });
 
 const getAllBlogs = asyncHandler(async (req, res)=>{
+
+    console.log('aaaa')
+    console.log(req.body)
     const { provider_id, title, sortBy, provinces } = req.body;
-    // if(!provider_id){
-    //     throw new Error ("Missing input")
-    // }
+
     const searchFilter = {};
     if (provider_id) {
         searchFilter.provider_id = provider_id;
@@ -283,8 +290,8 @@ const uploadImage = asyncHandler(async(req, res)=>{
 
 const createNewPostTag = asyncHandler(async(req, res)=>{
 
-    const {label, created_by} = req.body
-    if(!label || !created_by){
+    const {label} = req.body
+    if(!label){
         throw new Error ("Missing input")
     }
     const response = await PostTag.create(req.body)
