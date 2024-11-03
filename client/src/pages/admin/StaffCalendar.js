@@ -444,7 +444,7 @@ const StaffCalendar = () => {
           <span className='text-[#00143c] text-3xl font-semibold'>Calendar</span>
         </div>
         <div className='w-[95%] h-[fit] shadow-2xl rounded-md bg-white ml-4 mb-[200px] pt-[8px] flex flex-col gap-4'>
-          {/* <div className='w-full h-[116px] px-[20px] pb-[8px] flex'>
+          <div className='w-full h-[116px] px-[20px] pb-[8px] flex'>
             <div onClick={() => setSelectedStaff([])} className={clsx('w-[92px] mr-[8px] p-[10px] rounded-md flex flex-col justify-start items-center cursor-pointer ease-in-out', selectedStaff?.length === 0 ? 'bg-[#e6effe]' : 'bg-white hover:bg-[#f2f6fe]')}>
               <div className='w-[48px] h-[48px] rounded-full mb-[8px] text-[#005aee] bg-white p-[12px] flex items-center justify-center text-2xl'>
                 <FaUsersViewfinder />
@@ -537,9 +537,9 @@ const StaffCalendar = () => {
                 </div>
               </div>
             )}
-          </div> */}
+          </div>
         </div>
-        {/* <AnimatePresence>
+        <AnimatePresence>
             {isOpenService && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -601,7 +601,7 @@ const StaffCalendar = () => {
                 </motion.div>
               </motion.div>
             )}
-          </AnimatePresence> */}
+          </AnimatePresence>
       </div>
     </div>
   )
