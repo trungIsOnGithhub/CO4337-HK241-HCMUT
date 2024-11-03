@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import Swal from 'sweetalert2';
+import { useSelector } from 'react-redux'
+import React, { useEffect, useState } from 'react';
 import { FaClock, FaTrashAlt } from 'react-icons/fa';
 
 const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -105,6 +107,44 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
 };
 
 const WeeklyOfficeHours = () => {
+  const {current} = useSelector(state => state.user);
+
+  const fetchCurrentProviderWorkingHours = async () => {
+    if (!current?.provider_id?.time) {
+      Swal.fire("Error Occured!!", "Cannot Fetched Working Hours Data!", "error");
+      return;
+    }
+
+    console.log("=========", current?.provider_id?.time)
+  
+    setOfficeHours(
+      daysOfWeek.reduce((acc, day) => {
+        const respKeyIndex = day.toLowerCase();
+
+        let periodsData = [];
+        if (current.provider_id.time[`start${respKeyIndex}`] &&
+            current.provider_id.time[`end${respKeyIndex}`] )
+        {
+          periodsData = [{
+            start: current.provider_id.time[`start${respKeyIndex}`],
+            finish: current.provider_id.time[`end${respKeyIndex}`]
+          }];
+        }
+
+        acc[day] = {
+          isEnabled: true,
+          periods: periodsData
+        };
+
+        return acc;
+      }, {})
+    )
+  };
+
+  useEffect(() => {
+    fetchCurrentProviderWorkingHours();
+  }, []);
+
   const [officeHours, setOfficeHours] = useState(
     daysOfWeek.reduce((acc, day) => {
       acc[day] = { isEnabled: true, periods: [{ start: '9:00 am', finish: '5:00 pm' }] };
@@ -115,6 +155,7 @@ const WeeklyOfficeHours = () => {
   const [sourceDay, setSourceDay] = useState(null);
 
   const handlePeriodChange = (day, index, field, value) => {
+    // console.log("++++", officeHours);
     setOfficeHours((prev) => {
       const updatedDay = { ...prev[day] };
       if (field === 'add') {
