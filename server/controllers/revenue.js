@@ -840,10 +840,9 @@ const getOccupancyByServices = asyncHandler(async (req, res) => {
 
     let allOrdersThisMonth = await getAllOrderSpecificMonth(currMonth, currYear, spid);
     console.log('ALl Service In Orders: ', allOrdersThisMonth.length, currMonth, currYear);
-    let allServiceInOrders = allOrdersThisMonth.map(order => {
-        return order.info[0]?.service;
-    });
-    console.log('ALl Service In Orders: ', allServiceInOrders);
+
+    let allServiceInOrders = [];
+    // console.log('ALl Service In Orders: ', allServiceInOrders);
     // allServiceInOrders = allServiceInOrders.filter((serv, idx, self) => {
     //     return self.indexOf()
     // })
@@ -910,80 +909,55 @@ const getOccupancyByStaffs = asyncHandler(async (req, res) => {
         });
     }
 
-    let allOrdersThisMonth = [
-        {
-            info: [
-                {
-                    service: {
-                        _id: "1a",
-                        name:"Service Sample 1",
-                        thumb: "https://monngonmoingay.com/wp-content/smush-webp/2024/09/dui-ech-chien-8.jpg.webp",
-                        price: 10.1,
-                        duration: 10,
-                        assigned_staff: [1,2]
-                    }
-                }
-            ]
-        },
-        {
-            info: [
-                {
-                    service: {
-                        _id: "2b",
-                        name:"Service Sample 2",
-                        thumb: "https://monngonmoingay.com/wp-content/smush-webp/2024/09/dui-ech-chien-8.jpg.webp",
-                        price: 20.2,
-                        duration: 20,
-                        assigned_staff: [1,2]
-                    }
-                }
-            ]
-        }
-    ];
-    let allServiceInOrders = [];
+    let allOrdersThisMonth = await getAllOrderSpecificMonth(currMonth, currYear, spid);
+    console.log('ALl Orders This Month: ', allOrdersThisMonth.length, currMonth, currYear);
+    let allStaffInOrders = [];
 
-    let orderCountByService = {};
-    let revenueCountByService = {};
-    let sumWorkedHourByService = {};
+    let orderCountByStaff = {};
+    let revenueCountByStaff = {};
+    let sumWorkedHourByStaff = {};
 
     allOrdersThisMonth.forEach(order => {
         if (order.info?.length > 0) {
             for (const item of order.info) {
-                if (!item.service || !item.service?._id) continue;
+                if (!item.staff || !item.staff?._id || !item.service) continue;
 
-                if (allServiceInOrders.filter(serv => serv._id === item.service?._id)) {
-                    allServiceInOrders.push(item.service);
+                if (allStaffInOrders.filter(staff => staff._id === item.staff?._id).length === 0) {
+                    allStaffInOrders.push(item.staff);
                 }
-                sumWorkedHourByService[item.service?._id] = (sumWorkedHourByService[item.service?._id] || 0) + item.service.duration;
-                orderCountByService[item.service?._id] = (orderCountByService[item.service?._id] || 0) + 1;
-                revenueCountByService[item.service?._id] = (revenueCountByService[item.service?._id] || 0) + item.service.price;
+                sumWorkedHourByStaff[item.staff?._id] = (sumWorkedHourByStaff[item.staff?._id] || 0) + item.service?.duration;
+                orderCountByStaff[item.staff?._id] = (orderCountByStaff[item.staff?._id] || 0) + 1;
+                revenueCountByStaff[item.staff?._id] = (revenueCountByStaff[item.staff?._id] || 0) + item.service?.price;
             }
         }
     });
 
-    // const serviceProviderInfo = await ServiceProvider.findById(spid);
-    // let totalWorkingHoursOfProviderPerWeek = 0;
-    // [
-    //     'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
-    // ].forEach(day => {
-    //     totalWorkingHoursOfProviderPerWeek +=
-    //         getMinutesDifference(serviceProviderInfo?.time[`start${day}`], serviceProviderInfo?.time[`end${day}`]);
-    // });
+    const serviceProviderInfo = await ServiceProvider.findById(spid);
+    let totalWorkingHoursOfProviderPerWeek = 0;
+    [
+        'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
+    ].forEach(day => {
+        totalWorkingHoursOfProviderPerWeek +=
+            getMinutesDifference(serviceProviderInfo?.time[`start${day}`], serviceProviderInfo?.time[`end${day}`]);
+    });
 
     // console.log("----->", orderCountByService);
 
     // let numDaysInMonth = new Date(currYear, currMonth, 0).getDate();
-    // for (const idx in allServiceInOrders) {
-    //     const serviceId = allServiceInOrders[idx]._id;
+    for (const idx in allStaffInOrders) {
+        const serviceId = allStaffInOrders[idx]._id;
 
-    //     allServiceInOrders[idx].numberOrders = orderCountByService[serviceId];
-    //     allServiceInOrders[idx].revenue = revenueCountByService[serviceId];
-    //     allServiceInOrders[idx].occupancy = sumWorkedHourByService[serviceId] * 100 / totalWorkingHoursOfProviderPerWeek;
-    // }
+        allStaffInOrders[idx] = {
+            ...(allStaffInOrders[idx].toObject()),
+            numberOrders: orderCountByStaff[staffId],
+            revenue: revenueCountByStaff[staffId],
+            occupancy: sumWorkedHourByStaff[staffId] * 100 / totalWorkingHoursOfProviderPerWeek * 4
+        }
+    }
 
     return res.json({
         success: true,
-        performance: allServiceInOrders
+        performance: allStaffInOrders
     })
 });
 
