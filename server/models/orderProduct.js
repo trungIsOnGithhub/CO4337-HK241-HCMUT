@@ -8,8 +8,7 @@ var orderProductSchema = new mongoose.Schema({
         color: {type: String},
         price: {type: Number},
         thumb: {type: String},
-        title: {type: String},  
-        provider: {type:mongoose.Types.ObjectId, ref: 'Service_Provider'},
+        title: {type: String},
     }],
     status:{
         type: String,
@@ -22,6 +21,10 @@ var orderProductSchema = new mongoose.Schema({
     orderBy:{
         type: mongoose.Types.ObjectId, 
         ref: 'User'
+    },
+    provider: {
+        type: mongoose.Types.ObjectId,
+        ref: 'Service_Provider'
     }
 },{
     timestamps: true

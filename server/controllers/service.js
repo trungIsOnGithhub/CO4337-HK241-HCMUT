@@ -48,7 +48,6 @@ const getAllServicesByAdmin = asyncHandler(async (req, res) => {
     const {provider_id} = await User.findById({_id}).select('provider_id')
     const queries = { ...req.query };
     
-    console.log(queries)
     // Loại bỏ các trường đặc biệt ra khỏi query
     const excludeFields = ['limit', 'sort', 'page', 'fields'];
     excludeFields.forEach((el) => delete queries[el]);
@@ -59,11 +58,9 @@ const getAllServicesByAdmin = asyncHandler(async (req, res) => {
         /\b(gte|gt|lt|lte)\b/g,
         (matchedEl) => `$${matchedEl}`
     );
-    console.log(queryString);
 
     // chuyen tu chuoi json sang object
     const formatedQueries = JSON.parse(queryString);
-    console.log(formatedQueries);
 
     //Filtering
     let categoryFinish = {}
@@ -194,13 +191,12 @@ const updateServiceByAdmin = asyncHandler(async(req, res)=>{
 // get all staffs
 const getAllServicesPublic = asyncHandler(async (req, res) => {
     let queries = { ...req.query };
-    // queries = { current_client_location: { longtitude: '6', lattitude: '8' } };
 
     // Loại bỏ các trường đặc biệt ra khỏi query
     const excludeFields = ['limit', 'sort', 'page', 'fields'];
     excludeFields.forEach((el) => delete queries[el]);
 
-    // // Format lại các toán tử cho đúng cú pháp của mongoose
+    // Format lại các toán tử cho đúng cú pháp của mongoose
     let queryString = JSON.stringify({});
     queryString = queryString.replace(
         /\b(gte|gt|lt|lte)\b/g,
@@ -222,15 +218,6 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
     }
 
     let queryFinish = {}
-    // if(queries?.q){
-    //     delete formatedQueries.q
-    //     queryFinish = {
-    //         $or: [
-    //             {name: {$regex: queries.q, $options: 'i' }},
-    //             {category: {$regex: queries.q, $options: 'i' }},
-    //         ]
-    //     }
-    // }
     const qr = {...formatedQueries, ...queryFinish, ...categoryFinish}
 
     let services = await Service.find(qr);
@@ -338,14 +325,17 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
         const page = +req.query.page || 1
         const limit = +req.query.limit || process.env.LIMIT_PRODUCT
         const skip = (page-1)*limit
+
+        console.log(page, limit, skip)
         // queryCommand.skip(skip).limit(limit)
-        services.slice(skip, skip+limit)
+        const results = services.slice(+skip, (+skip) + (+limit))
+        console.log(results)
 
         const counts = services.length;
         return res.status(200).json({
             success: true,
             counts: counts,
-            services: services,
+            services: results,
         });
     } catch (error) {
         return res.status(500).json({

@@ -26,9 +26,10 @@ const ManageStaffShift = ({setManageStaffShift, staffId}) => {
       let response = await apiGetOneStaff(staffId);
 
       if (response?.success && response?.staff) {
+        console.log(response)
         setCurrentStaff(response.staff);
         setCurrentStaffShifts(response.staff?.shifts);
-        console.log(Object.values(response.staff?.shifts));
+        // console.log(Object.values(response.staff?.shifts));
       }
       else {
         Swal.fire('Error Ocurred!!', 'Cannot Get Staff Shift Data!!', 'error')
@@ -92,7 +93,7 @@ const ManageStaffShift = ({setManageStaffShift, staffId}) => {
     <div className='w-full'>
         <h1 className='h-[75px] flex justify-between items-center text-3xl font-bold px-4 border-b'>
           <span>Manage Staff Shifts</span>
-          <span className='text-main text-lg hover:underline cursor-pointer' onClick={()=>setManageStaffShift(false)}>Cancel</span>
+          <span className='text-[#0a66c2] text-lg hover:underline cursor-pointer' onClick={()=>setManageStaffShift(false)}>Cancel</span>
         </h1>
 
       {currentStaff && <table className='table-auto p-0 w-full px-4'>

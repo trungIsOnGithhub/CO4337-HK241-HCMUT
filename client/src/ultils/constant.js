@@ -10,6 +10,8 @@ import { CiDiscount1 } from "react-icons/ci";
 import { IoIosSettings } from "react-icons/io";
 import { FaCalendarAlt } from 'react-icons/fa';
 import { MdHistory } from "react-icons/md";
+import { MdOutlineColorLens } from "react-icons/md";
+
 export const navigation = [
     {
         id: 1,
@@ -350,6 +352,30 @@ export const adminSidebar = [
         path: `/${path.ADMIN}/${path.SETTING}`,
         icon: <IoIosSettings size={20}/>
     },
+    {
+        id: 13,
+        type: 'parent',
+        text: 'Customize',
+        submenu:[
+            {
+                text: 'Theme and Appearance',
+                path: `/${path.ADMIN}/${path.THEMEANDAPPEARANCE}`
+            },
+            {
+                text: 'Hero Section',
+                path: `/${path.ADMIN}/${path.HEROSECTION}`
+            },
+            {
+                text: 'Footer Section',
+                path: `/${path.ADMIN}/${path.FOOTERSECTION}`
+            },
+            {
+                text: 'Service Page',
+                path: `/${path.ADMIN}/${path.SERVICEPAGE}`
+            },
+        ],
+        icon: <MdOutlineColorLens size={20}/>
+    }
 ]
 
 export const roles = [

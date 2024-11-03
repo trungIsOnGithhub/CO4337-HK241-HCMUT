@@ -14,7 +14,9 @@ const path = {
     FAQS: 'faqs',
     DETAIL_SERVICE__CATEGORY__PID__TITLE: 'service/:category/:sid/:name',
     DETAIL_PRODUCT__CATEGORY__PID__TITLE: 'product/:category/:sid/:name',
-    DETAIL_PROVIDER_ID: 'detail_provider/:prid',
+    DETAIL_PROVIDER_ID_VARIABLE: 'detail_provider/:prid/:v',
+    DETAIL_PROVIDER_ID_SERVICEID: 'detail_provider/:prid/service/:sid',
+    DETAIL_PROVIDER_ID_PRODUCTID: 'detail_provider/:prid/product/:pid',
     FINAL_REGISTER: 'final_register/:status',
     RESET_PASSWORD: 'reset_password/:token',
     DETAIL_CART: 'detail_cart',
@@ -55,6 +57,11 @@ const path = {
     MANAGE_CHAT: 'manage_chat',
 
     SETTING: 'setting',
+    THEMEANDAPPEARANCE: 'themeandappearance',
+    HEROSECTION: 'herosection',
+    FOOTERSECTION: 'footersection',
+    SERVICEPAGE: 'servicepage',
+
     //User
     USER: 'user',
     PERSONAL: 'personal',

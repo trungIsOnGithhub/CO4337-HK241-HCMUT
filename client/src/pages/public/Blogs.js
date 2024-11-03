@@ -135,7 +135,7 @@ const Blogs = () => {
     </div>
     <div className='w-full flex flex-row'>
       <div className='w-2/3 flex flex-col'>
-        <h2 className='text-xl font-semibold py-[15px] border-b-2 border-main'>Trending Blogs</h2>
+        <h2 className='text-xl font-semibold py-[15px] border-b-2 border-[#0a66c2]'>Trending Blogs</h2>
         <div className='w-2/3 p-6 bg-slate-300 m-3 rounded-md flex gap-4'>
           <Select
               title='Sort By'
@@ -198,7 +198,7 @@ const Blogs = () => {
         </div> */}
       </div>
 
-      <div className='w-1/3 flex flex-col gap-4 justify-items-center justify-start items-center border-l-2 border-main pl-5'>
+      <div className='w-1/3 flex flex-col gap-4 justify-items-center justify-start items-center border-l-2 border-[#0a66c2] pl-5'>
         <div className="relative flex items-left h-12 rounded-lg focus-within:shadow-lg bg-white overflow-hidden border-2 w-full">
           <div class="grid place-items-center h-full w-12 text-gray-200">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

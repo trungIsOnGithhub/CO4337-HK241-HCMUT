@@ -91,7 +91,7 @@ const BookingDateTIme = () => {
     
           const generateTimeOptions = (openingTime, closingTime, currentTime, duration) => {
             const timeOptions = [];
-            if (openingTime && closingTime && duration) {
+            if (openingTime>=0 && closingTime>=0 && duration>=0) {
               let currentHour = Math.floor(currentTime / 100);
               let currentMinute = currentTime % 100;
               let currentTimeInMinutes = currentHour * 60 + currentMinute;
@@ -139,7 +139,7 @@ const BookingDateTIme = () => {
     
           const generateTimeOptions = (openingTime, closingTime, duration) => {
             const timeOptions = [];
-            if (openingTime && closingTime && duration) {
+            if (openingTime>=0 && closingTime>=0 && duration>=0) {
               let serviceDurationInMinutes = duration;
               let saveOpeningTime = openingTime
               setTimeOptions([])
@@ -234,6 +234,7 @@ const BookingDateTIme = () => {
 
     // Kết hợp formattedDate và time để tạo datetime
     const dateTime = new Date(`${formattedDate}T${time}:00Z`);
+    console.log(dateTime)
 
     await apiUpdateCartService({
         service: service?._id,
@@ -401,7 +402,7 @@ const BookingDateTIme = () => {
             </div>
             <div className='flex gap-2'>
               <span className='text-gray-700 font-bold'>Total Price:</span>
-              <span className='font-semibold text-main'>{`${formatPrice(formatPricee(service?.price))} VNĐ`}</span>
+              <span className='font-semibold text-[#0a66c2]'>{`${formatPrice(formatPricee(service?.price))} VNĐ`}</span>
             </div>
           </div>
           </div>

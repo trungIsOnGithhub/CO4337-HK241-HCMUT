@@ -89,7 +89,7 @@ const DealDaily = ({dispatch}) => {
   return (
     <div className='w-full border flex-auto'>
         <div className='flex items-center justify-between p-4 w-full'>
-            <span className='flex-2 flex justify-center'><FaStar color='#d11' size={20}/></span>
+            <span className='flex-2 flex justify-center'><FaStar color='#0a66c2' size={20}/></span>
             <span className='flex-5 font-semibold text-[20px] flex justify-center text-gray-700'>DEAL DAILY</span>
             <span className='flex-3'></span>
         </div>
@@ -108,7 +108,7 @@ const DealDaily = ({dispatch}) => {
                 <Countdown unit={'Minutes'} number = {minute}/>
                 <Countdown unit={'Seconds'} number = {second}/>
             </div>
-            <button type='button' className='flex gap-2 items-center justify-center w-full bg-main hover:bg-gray-800 text-white font-semibold py-2'>
+            <button type='button' className='flex gap-2 items-center justify-center w-full bg-[#0a66c2] hover:bg-gray-800 text-white font-semibold py-2'>
                 <MdMenu />
                 <span>
                     Option

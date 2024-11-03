@@ -27,3 +27,9 @@ export {default as AddPost} from './AddPost'
 export {default as ManagePostDetail} from './ManagePostDetail'
 export {default as EditPostDetail} from './EditPostDetail'
 export {default as ManageChat} from './ManageChat'
+
+
+export {default as ManageThemeAndAppearance} from './ManageThemeAndAppearance'
+export {default as ManageFooterSection} from './ManageFooterSection'
+export {default as ManageHeroSection} from './ManageHeroSection'
+export {default as ManageServicePage} from './ManageServicePage'

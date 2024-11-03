@@ -55,7 +55,7 @@ const CheckoutProduct = ({dispatch, navigate}) => {
                 <span>
                     Subtotal
                 </span>
-                <span className='text-main font-semibold text-lg'>
+                <span className='text-[#0a66c2] font-semibold text-lg'>
                     {
                         `${formatPrice(currentCartProduct?.reduce((sum,el)=> +el?.price * +el?.quantity +sum, 0))} VND`
                     }

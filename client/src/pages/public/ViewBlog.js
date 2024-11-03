@@ -168,11 +168,11 @@ const ViewBlog = () => {
             <Button style='px-6 rounded-md text-white bg-blue-400 font-semibold py-1 flex gap-2 my-5' handleOnclick={()=>backToHomepage()}><FaBackward /><FaHome /></Button>  
             <div className='w-full flex flex-row'>
               <div className='w-3/4'>
-                  <h2 className='text-[18px] py-[15px] font-semibold border-b-2 border-main'>Reading {`> ${post?.title}`}</h2>
+                  <h2 className='text-[18px] py-[15px] font-semibold border-b-2 border-[#0a66c2]'>Reading {`> ${post?.title}`}</h2>
                   <br></br>
                   <h3 className="font-bold text-3xl text-left">{post?.title || 'Title'}</h3>
                   <br></br>
-                  <span className='flex gap-4 border-b-2 border-main p-2'>
+                  <span className='flex gap-4 border-b-2 border-[#0a66c2] p-2'>
                     <p className="font-semibold text-lg text-left flex gap-2"><span><FaClock /></span> {(new Date(post?.createdAt)).toLocaleDateString("en-US") || 'Date'}</p>
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     <p className="font-semibold text-lg text-left flex gap-2"><span><FaPencilAlt/></span>: {(post?.author?.firstName + post?.author?.lastName) || 'Unknown Author'}</p>
@@ -223,14 +223,14 @@ const ViewBlog = () => {
                 <span className="flex justify-center">
                 </span>
 
-                  <h2 className='text-[20px] border-b-2 border-main w-full font-semibold'>Post From</h2>
+                  <h2 className='text-[20px] border-b-2 border-[#0a66c2] w-full font-semibold'>Post From</h2>
                   {post?.provider_id ?
                   (<ServiceBlogIntroCard 
                     provider={post?.provider_id}
-                  />) : <p className='text-main text-center'>Provider Details Not Found!</p>
+                  />) : <p className='text-[#0a66c2] text-center'>Provider Details Not Found!</p>
                   }
 
-                  <h2 className='text-[20px] border-b-2 border-main w-full font-semibold mt-5'>Comments</h2>
+                  <h2 className='text-[20px] border-b-2 border-[#0a66c2] w-full font-semibold mt-5'>Comments</h2>
                   {/* <div className='w-full'> */}
                   <div className='p-4 flex items-center justify-center text-sm flex-col gap-2'>
                   <div onClick={e=> e.stopPropagation()} className='bg-white w-3/4 p-2 flex flex-row gap-4 items-center justify-center rounded-md border border-gray-500 shadow-md animate-scale-up-center'>
@@ -248,7 +248,7 @@ const ViewBlog = () => {
                     </div>
                   </div>
                   </div>
-                  <h2 className='my-5 font-semibold text-xl border-main'>All Comments</h2>
+                  <h2 className='my-5 font-semibold text-xl border-[#0a66c2]'>All Comments</h2>
 
                   <div className='flex flex-col gap-2'>
                       {commentList?.map(el=>(
@@ -265,8 +265,8 @@ const ViewBlog = () => {
                   </div>
                   {/* </div> */}
               </div>
-              <div className='w-1/4 flex flex-col gap-4 justify-items-center justify-start items-center border-l-2 border-main pl-5'>
-                <h2 className='text-[18px] border-b-2 border-main w-full text-center font-semibold'>Other Trending Posts</h2>
+              <div className='w-1/4 flex flex-col gap-4 justify-items-center justify-start items-center border-l-2 border-[#0a66c2] pl-5'>
+                <h2 className='text-[18px] border-b-2 border-[#0a66c2] w-full text-center font-semibold'>Other Trending Posts</h2>
                 {currBlogList?.map(
                   blog => {
                     return (

@@ -11,7 +11,6 @@ import { toast } from 'react-toastify'
 import { getBase64 } from 'ultils/helper'
 import { useSearchParams } from 'react-router-dom'
 import withBaseComponent from 'hocs/withBaseComponent'
-import {InputField, Loading} from '../../components'
 import Swal from "sweetalert2";
 
 const MyServiceProvider = ({navigate, dispatch}) => {

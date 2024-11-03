@@ -11,6 +11,7 @@ import { showCart, showMessage } from "store/app/appSlice";
 import { IoChatbubblesSharp } from "react-icons/io5";
 import Message from "components/Message/Message";
 import { FaCalendarAlt } from "react-icons/fa";
+import logoWeb from '../../assets/logoWeb.png'
 
 const {FaPhoneAlt, MdEmail, FaUser, FaShoppingBag} = icons
 const Header = () => {
@@ -35,22 +36,18 @@ const Header = () => {
     
 
     return (
-        <div className="flex justify-between w-main h-[110px] py-[35px]">
-            <Link to={`/${path.HOME}`}>
-                <span className="text-gray-600 text-3xl font-bold">Service&nbsp;</span>
-                <span className="text-main text-3xl italic font-bold">Provider</span>
-            </Link>
+        <div className="flex justify-end w-main items-center py-[24px] text-white mx-auto">
             <div className="flex text-[13px]">
                 <div className="flex flex-col items-center px-6 border-r">
                     <span className="flex gap-4 items-center">
-                        <FaPhoneAlt color='red' />
+                        <FaPhoneAlt color='white' />
                         <span className="font-semibold">(+1800) 000 8808</span>
                     </span>
                     <span>Mon-Sat 9:00AM - 8:00PM</span>
                 </div>
                 <div className="flex flex-col items-center px-6 border-r">
                     <span className="flex gap-4 items-center">
-                        <MdEmail color='red' />
+                        <MdEmail color='white' />
                         <span className="font-semibold">SUPPORT@TADATHEMES.COM</span>
                     </span>
                     <span>Online Support 24/7</span>
@@ -58,12 +55,12 @@ const Header = () => {
                 {current &&
                 <Fragment>
                 <div onClick={()=> dispatch(showCart())} className="cursor-pointer flex items-center justify-center gap-2 px-6 border-r">
-                    <FaShoppingBag color='red' />
+                    <FaShoppingBag color='white' />
                     <span>{`${current?.cart_product?.length || 0} item(s)`}</span>
                 </div>
                 
                 <div onClick={()=> dispatch(showMessage())} className="cursor-pointer flex items-center justify-center gap-2 px-6 border-r relative">
-                    <IoChatbubblesSharp color='red' />
+                    <IoChatbubblesSharp color='white' />
                     {isShowMessage &&
                        <div className="absolute top-[120%] left-[-100px] z-[1000]">
                             <Message />
@@ -72,7 +69,7 @@ const Header = () => {
                 </div>
 
                 <div onClick={()=> navigate(`/${path.USER}/${path.MY_CALENDAR}`)} className="cursor-pointer flex items-center justify-center gap-2 px-6 border-r relative">
-                    <FaCalendarAlt color='red' />
+                    <FaCalendarAlt color='white' />
                 </div>
 
                 <div
@@ -82,7 +79,7 @@ const Header = () => {
 //to = {+current?.role === 1411 ? `/${path.ADMIN}/${path.DASHBOARD}` : `/${path.USER}/${path.PERSONAL}`}
                     className="cursor-pointer flex items-center justify-center px-6 gap-2 relative">
 
-                    <FaUser color='red' />
+                    <FaUser color='white' />
                     <span>Profile</span>
                     {isShowOptions &&
                         <div onClick={(e)=>{e.stopPropagation()}} className="flex flex-col absolute top-full left-0 bg-gray-100 border min-w-[150px] py-2">

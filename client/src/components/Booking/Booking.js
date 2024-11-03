@@ -140,7 +140,7 @@ const Booking = () => {
   
         const generateTimeOptions = (openingTime, closingTime, currentTime, duration) => {
           const timeOptions = [];
-          if (openingTime && closingTime && duration) {
+          if (openingTime>=0 && closingTime>=0 && duration>=0) {
             let currentHour = Math.floor(currentTime / 100);
             let currentMinute = currentTime % 100;
             let currentTimeInMinutes = currentHour * 60 + currentMinute;
@@ -346,7 +346,7 @@ const Booking = () => {
               </div>
               <div className='flex gap-2'>
                 <span className='text-gray-700 font-bold'>Total Price:</span>
-                <span className={clsx('font-semibold text-main', discountValue > 0 && 'line-through')}>
+                <span className={clsx('font-semibold text-[#0a66c2]', discountValue > 0 && 'line-through')}>
                   {`${formatPrice(formatPricee(originalPrice))} VNĐ`}
                 </span>
                 {discountValue > 0 && <span className='font-semibold text-green-500'>{` ${formatPrice(formatPricee(discountValue))} VNĐ`}</span>}

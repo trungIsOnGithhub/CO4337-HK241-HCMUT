@@ -7,14 +7,7 @@ import { sorts } from '../../ultils/constant'
 import clsx from 'clsx'
 import { useSelector } from 'react-redux'
 import withBaseComponent from 'hocs/withBaseComponent'
-import { getCurrent } from 'store/user/asyncAction'
-
-const breakpointColumnsObj = {
-  default: 4,
-  1100: 3,
-  700: 2,
-  500: 1
-};
+import { current } from '@reduxjs/toolkit'
 
 const Products = ({dispatch}) => {
   const navigate = useNavigate()
@@ -32,7 +25,6 @@ const Products = ({dispatch}) => {
     }
     const response = await apiGetProduct(queries)
     if(response.success) setProducts(response)
-    dispatch(getCurrent())
   }
 
   useEffect(() => {
@@ -77,6 +69,8 @@ const Products = ({dispatch}) => {
       }) 
     }   
   }, [sort])
+
+  console.log(products)
   return (
     <div className='w-full'>
       <div className='h-[81px] flex items-center justify-center bg-gray-100'>
@@ -100,19 +94,12 @@ const Products = ({dispatch}) => {
           </div>
         </div>
       </div>
-      <div className={clsx('mt-8 w-main m-auto', isShowModal ? 'hidden' : '')}>
-        <Masonry
-          breakpointCols={breakpointColumnsObj}
-          className="my-masonry-grid flex mx-[-10px]"
-          columnClassName="my-masonry-grid_column">
-          {products?.products?.map(el => (
-            <Product 
-              key={el._id} 
-              productData={el}
-              normal={true}
-            />
-          ))}
-        </Masonry>
+      <div className={clsx('mt-8 w-main m-auto flex gap-4 flex-wrap', isShowModal ? 'hidden' : '')}>
+        {products?.products?.map((product, index) => (
+          <div key={index} className='w-[24%]'>
+            <Product productData={product}/>
+          </div>
+        ))}
       </div>
       <div className='w-main m-auto my-4 flex justify-end'>
        {products&&

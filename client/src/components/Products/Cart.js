@@ -55,7 +55,7 @@ const Cart = ({dispatch, navigate}) => {
             <Button 
             handleOnclick={()=>{dispatch(showCart())
                                 navigate(`/${path.USER}/${path.MYCART}`)}} 
-            style='rounded-none w-full bg-main py-2'>
+            style='rounded-none w-full bg-[#0a66c2] py-2'>
                 Shopping Cart
             </Button>
         </div>

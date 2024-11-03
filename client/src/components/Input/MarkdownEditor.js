@@ -29,7 +29,7 @@ const MarkdownEditor = ({label, value, changeValue, name, invalidField, setInval
         
       />
       {invalidField?.some(el => el.name === name) && 
-        <small className='text-main text-sm'>
+        <small className='text-[#0a66c2] text-sm'>
         {invalidField?.find(el => el.name === name)?.mes}
         </small>}
     </div>

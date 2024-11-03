@@ -105,7 +105,7 @@ const VariantService = ({variant, setVariant, render}) => {
     <div className='w-full'>
       <h1 className='h-[75px] flex justify-between items-center text-3xl font-bold px-4 border-b'>
           <span>Customize Variant</span>
-          <span className='text-main text-lg hover:underline cursor-pointer' onClick={()=>{setVariant(null)}}>Back</span>
+          <span className='text-[#0a66c2] text-lg hover:underline cursor-pointer' onClick={()=>{setVariant(null)}}>Back</span>
       </h1>
       <div className='p-4 w-full'>
         <form onSubmit={handleSubmit(handleAddVariant)} className='p-4 w-full flex flex-col gap-4'>

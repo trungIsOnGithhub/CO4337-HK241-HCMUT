@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import { BiSolidCoupon } from "react-icons/bi";
 import { validate, getBase64 } from 'ultils/helper'
 import { toast } from 'react-toastify';
+import { RiCoupon2Fill } from "react-icons/ri";
 import bgImage from '../../assets/clouds.svg'
 import html2canvas from "html2canvas";
 import dayjs from 'dayjs';
@@ -61,29 +62,140 @@ const AddVoucher = () => {
   });
 
   const handleAddVoucherCode = async (data) => {
-    try {
-      setIsLoading(true);
-      const couponData = {
-        ...data,
-        expirationDate,
-        services: selectedService,
-        discount_type: voucherType,
-        percentageDiscount: voucherType === 'percentage' ? percentageDiscount : [],
-        fixedAmount: voucherType === 'fixed' ? fixedAmount : [],
-      };
-      couponData.providerId = current?.provider_id
-      //Call API to create a new coupon
-      const response = await apiCreateNewCoupon(couponData);
-      if (response?.success) {
-        toast.success('Voucher created successfully!');
-        reset(); // Reset the form fields
-        setSelectedService([])
-        setExprdate(null)
-      } else {
-        toast.error('Failed to create voucher.');
+    if (voucherRef.current) {
+      try {
+        setIsLoading(true);
+        const canvas = await html2canvas(voucherRef.current);
+        const image = canvas.toDataURL("image/png");
+        const responseImage = await fetch(image);
+        const blob = await responseImage.blob();
+        const file = new File([blob], 'voucher.png', {
+          type: 'image/png',
+          lastModified: Date.now(),
+        });
+        const formData = new FormData();
+
+        const couponData = {
+          ...data,
+          expirationDate,
+          services: selectedService,
+          discount_type: voucherType,
+          percentageDiscount: voucherType === 'percentage' ? percentageDiscount : [],
+          fixedAmount: voucherType === 'fixed' ? fixedAmount : [],
+        };
+        couponData.providerId = current?.provider_id?._id
+
+        for(let i of Object.entries(couponData)){
+          formData.append(i[0],i[1])
+        }
+
+        formData.append('image', file);
+
+        formData.delete('expirationDate')
+        formData.append('expirationDate[date]', couponData.expirationDate.date); // Append ngày
+        formData.append('expirationDate[time]', couponData.expirationDate.time);
+        
+
+        formData.delete('percentageDiscount'); // Xóa giá trị cũ nếu có
+        formData.delete('fixedAmount');
+        formData.delete('services');
+        if(couponData.percentageDiscount) {
+          couponData.percentageDiscount.forEach((item, index) => {
+            formData.append(`percentageDiscount[${index}][id]`, item.id); // Append id
+            formData.append(`percentageDiscount[${index}][value]`, item.value); // Append value
+          });
+        }
+        if(couponData.fixedAmount) {
+          couponData.fixedAmount.forEach((item, index) => {
+            formData.append(`fixedAmount[${index}][id]`, item.id); // Append id
+            formData.append(`fixedAmount[${index}][value]`, item.value); // Append value
+          });
+        }
+        if(couponData.services) {
+          for (let service of couponData.services) formData.append('services', service)
+        }
+        //Call API to create a new coupon
+        const response = await apiCreateNewCoupon(formData);
+        if (response?.success) {
+          toast.success('Voucher created successfully!');
+          reset(); // Reset the form fields
+          setSelectedService([])
+          setExprdate(null)
+          setVoucherCode("")
+          setVoucherName("")
+          setPreview({
+            thumb: null
+          })
+          setPercentageDiscount([])
+          setFixedAmount([])
+        } else {
+          toast.error('Failed to create voucher.');
+        }
+      } catch (error) {
+        alert('An error occurred. Please try again.');
       }
-    } catch (error) {
-      alert('An error occurred. Please try again.');
+    }
+    else{
+      try {
+        setIsLoading(true);
+        const formData = new FormData();
+
+        const couponData = {
+          ...data,
+          expirationDate,
+          services: selectedService,
+          discount_type: voucherType,
+          percentageDiscount: voucherType === 'percentage' ? percentageDiscount : [],
+          fixedAmount: voucherType === 'fixed' ? fixedAmount : [],
+        };
+        couponData.providerId = current?.provider_id?._id
+        for(let i of Object.entries(couponData)){
+          formData.append(i[0],i[1])
+        }
+
+        formData.append('image', couponData.thumb[0]);
+
+        formData.delete('expirationDate')
+        formData.append('expirationDate[date]', couponData.expirationDate.date); // Append ngày
+        formData.append('expirationDate[time]', couponData.expirationDate.time);
+        
+
+        formData.delete('percentageDiscount'); // Xóa giá trị cũ nếu có
+        formData.delete('fixedAmount');
+        if(couponData.percentageDiscount) {
+          couponData.percentageDiscount.forEach((item, index) => {
+            formData.append(`percentageDiscount[${index}][id]`, item.id); // Append id
+            formData.append(`percentageDiscount[${index}][value]`, item.value); // Append value
+          });
+        }
+        if(couponData.fixedAmount) {
+          couponData.fixedAmount.forEach((item, index) => {
+            formData.append(`fixedAmount[${index}][id]`, item.id); // Append id
+            formData.append(`fixedAmount[${index}][value]`, item.value); // Append value
+          });
+        }
+        // for (let [key, value] of formData.entries()) {
+        //   console.log(`${key}:`, value);
+        // }
+
+        //Call API to create a new coupon
+        const response = await apiCreateNewCoupon(formData);
+        if (response?.success) {
+          toast.success('Voucher created successfully!');
+          reset(); // Reset the form fields
+          setSelectedService([])
+          setExprdate(null)
+          setVoucherCode("")
+          setVoucherName("")
+          setPreview({
+            thumb: null
+          })
+        } else {
+          toast.error('Failed to create voucher.');
+        }
+      } catch (error) {
+        alert('An error occurred. Please try again.');
+      }
     }
     setIsLoading(false);
   };
@@ -246,7 +358,6 @@ const AddVoucher = () => {
     }));
   };
 
-  console.log(customization)
 
   const handleIconToggle = (iconId) => {
     setCustomization((prev) => {
@@ -294,18 +405,18 @@ const AddVoucher = () => {
   }
 
   useEffect(() => {
-    console.log(watch('thumb'))
-    handlePreviewThumb(watch('thumb')[0])
+    if(watch('thumb')){
+      handlePreviewThumb(watch('thumb')[0])
+    }
   }, [watch('thumb')])
   
-  const fileInputRef = useRef(null);
+
 
   const handleDeleteImageVoucher = () => {
     setPreview({
       thumb: null
     })
   };
-
 
   return (
     <div className='w-full h-full relative'>
@@ -557,12 +668,11 @@ const AddVoucher = () => {
                   <div className='w-full flex flex-col'>
                     {!preview?.thumb && <label className='text-[#00143c] font-medium mb-1' htmlFor='thumb'>Do you have an image for the voucher? Upload it!</label>}
                     <input 
-                      {...register('thumb', {required: 'Need upload thumb'})}
+                      {...register('thumb')}
                       type='file' 
                       id='thumb'
                       className='cursor-pointer'
                     />
-                    {errors['thumb'] && <small className='text-xs text-red-500'>{errors['thumb']?.message}</small>}
                   
                     {preview.thumb 
                       && 
@@ -577,7 +687,7 @@ const AddVoucher = () => {
             </div>
             <div className='w-1/2 my-6 flex gap-4 items-start pr-2'>
               <div className='flex flex-1 flex-col'>
-                <span className='font-medium mb-1 text-[#00143c]'>Promotion Application Date<sup className='text-red-500 font-semibold'> *</sup></span>
+                <span className='font-medium mb-1 text-[#00143c]'>Expiration Date<sup className='text-red-500 font-semibold'> *</sup></span>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DemoContainer components={['DatePicker']}>
                     <DatePicker
@@ -595,7 +705,6 @@ const AddVoucher = () => {
               <div className='w-[40%]'>
                 <InputFormm
                   label={'Usage Limit'}
-                  labelClassName={noUsageLimit && 'text-red-500 italic'}
                   register={register}
                   errors={errors}
                   id='usageLimit'
@@ -633,12 +742,11 @@ const AddVoucher = () => {
               <div className='w-[40%]'>
                 <InputFormm
                   label={'Limit Per User'}
-                  labelClassName={noUsageLimit && 'text-red-500 italic'}
                   register={register}
                   errors={errors}
                   id='limitPerUser'
                   validate={{
-                    required: !noUsageLimit && 'Need fill this field',
+                    required: !noLimitPerUser && 'Need fill this field',
                     min: {
                       value: 1,
                       message: 'Limit per user must be greater than 0',
@@ -661,7 +769,7 @@ const AddVoucher = () => {
                 <input 
                   type='checkbox' 
                   id='noLimitPerUser' 
-                  {...register('noUsageLimit')} 
+                  {...register('noLimitPerUser')} 
                   onChange={handleNoLimitPerUserChange}
                 />
                 <label htmlFor='noLimitPerUser' className='ml-2 text-[#00143c] italic'>Voucher has no limit per user</label>
@@ -773,6 +881,10 @@ const AddVoucher = () => {
               </div>
             )}
 
+            <Button type='submit' style={'w-fit flex gap-1 items-center bg-[#005aee] px-4 py-2 rounded-md text-white shadow-inner mx-auto mb-4'}>
+              Create a new voucher
+              <span><RiCoupon2Fill size={20}/></span>
+            </Button>
           </form>
         </div>
       </div>

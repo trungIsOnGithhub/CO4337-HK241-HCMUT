@@ -123,7 +123,7 @@ const CheckoutService = ({ dispatch, navigate }) => {
               </div>
               <div className='flex gap-4'>
                 <span className='text-gray-700 font-bold'>Total Price:</span>
-                <span className='font-semibold text-main'>{`${formatPrice(formatPricee(price))} VNĐ`}</span>
+                <span className='font-semibold text-[#0a66c2]'>{`${formatPrice(formatPricee(price))} VNĐ`}</span>
               </div>
             </div>
           </div>

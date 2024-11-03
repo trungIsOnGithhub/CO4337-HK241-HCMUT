@@ -75,6 +75,7 @@ const AddService = () => {
     if(invalid === 0){
       const finalPayload = {...data,...payload}
       finalPayload.provider_id = current.provider_id?._id
+      console.log(finalPayload)
       if(selectedStaff?.length > 0){
         finalPayload.assigned_staff = selectedStaff
       }
@@ -93,7 +94,8 @@ const AddService = () => {
       if(finalPayload.assigned_staff) {
         for (let staff of finalPayload.assigned_staff) formData.append('assigned_staff', staff)
       }
-      for (var pair of formData.entries()) {
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
       }
 
       setIsLoading(true);
@@ -145,7 +147,6 @@ const AddService = () => {
     }
   }
   useEffect(() => {
-    console.log(watch('thumb'))
     handlePreviewThumb(watch('thumb')[0])
   }, [watch('thumb')])
 

@@ -78,7 +78,7 @@ const UpdateStaff = ({editStaff, render, setEditStaff}) => {
     <div className='w-full'>
         <h1 className='h-[75px] flex justify-between items-center text-3xl font-bold px-4 border-b'>
           <span>Update Staff</span>
-          <span className='text-main text-lg hover:underline cursor-pointer' onClick={()=>setEditStaff(null)}>Cancel</span>
+          <span className='text-[#0a66c2] text-lg hover:underline cursor-pointer' onClick={()=>setEditStaff(null)}>Cancel</span>
         </h1>
         <div className='p-4 '>
         <form onSubmit={handleSubmit(handleUpdateStaff)}>

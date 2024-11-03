@@ -39,7 +39,7 @@ const ManageBookingDetail = ({ dispatch, navigate }) => {
         >
           <div className='flex flex-col gap-4'>
             <div className='flex items-center gap-2'>
-              <span><strong className='text-main text-xl'>#ID: {booking?._id}</strong></span>
+              <span><strong className='text-[#0a66c2] text-xl'>#ID: {booking?._id}</strong></span>
             </div>
             <div className='flex items-center gap-2'>
               <AiOutlineUser className='text-xl text-blue-400' />

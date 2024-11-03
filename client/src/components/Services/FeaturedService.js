@@ -17,10 +17,9 @@ const FeaturedProduct = () => {
     }, [])
   return (
     <div className='w-main mb-8'>
-        <h3 className='text-[15px] font-semibold py-[15px] border-b-2 border-main'>FEATURED SERVICE PROVIDERS</h3>
+        <h3 className='text-[15px] font-semibold py-[15px] border-b-2 border-[#0a66c2]'>FEATURED SERVICE PROVIDERS</h3>
         <div className='flex flex-wrap mt-[15px] mx-[-10px] mb-20'>
             {product?.map(el => {
-                console.log('.....', el);
                 return (<ServiceCard 
                     provider={el}
                 />);

@@ -7,12 +7,12 @@ const Sidebar = () => {
     const {categories_service} = useSelector(state => state.category)
     return (
         <div className="flex flex-col border">
-            <span className="p-2 text-center text-white bg-red-600 text-semibold">Service Category</span>
+            <span className="px-5 pt-[15px] pb-[14px] text-white bg-[#0a66c2] font-semibold text-lg">Service Category</span>
             {categories_service?.map(el =>(
                 <NavLink
                     key={createSlug(el.title)}
                     to={`service/${createSlug(el.title)}`}
-                    className={({isActive})=> isActive ? 'bg-main text-white px-5 pt-[15px] pb-[14px] text-sm hover:text-main' : 'px-5 pt-[15px] pb-[14px] text-sm hover:text-main'}>
+                    className={({isActive})=> isActive ? 'bg-[#0a66c2] text-white px-5 pt-[15px] pb-[14px] text-sm transition-colors' : 'px-5 pt-[15px] pb-[14px] text-sm hover:bg-[#0a66c2] hover:text-white'}>
                     {el.title}
                 </NavLink>
             ) )}

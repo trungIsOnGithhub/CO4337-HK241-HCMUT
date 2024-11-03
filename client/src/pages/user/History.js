@@ -95,7 +95,7 @@ const History = ({navigate, location}) => {
                     <span className='flex items-center gap-2' key={item?._id}>
                       <img src={item?.thumb} alt='thumbnail' className='w-12 h-12 rounded-md object-cover'></img>
                       <span className='flex flex-col'>
-                        <span className='text-main font-semibold'>{item?.title}</span>
+                        <span className='text-[#0a66c2] font-semibold'>{item?.title}</span>
                         <span className='flex items-center text-xs italic gap-2'>
                           <span>Quantity: </span>
                           <span>{item?.quantity}</span>

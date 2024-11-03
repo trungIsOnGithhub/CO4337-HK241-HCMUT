@@ -289,7 +289,7 @@ const ManageBooking = () => {
                 )}
               </div>
 
-              {error && <p className="text-main mt-2 text-xs font-medium">{error}</p>}
+              {error && <p className="text-[#0a66c2] mt-2 text-xs font-medium">{error}</p>}
 
               {showCalendar && (
                 <div className="absolute w-fit right-[-100px] z-10 mt-2 px-4 py-3 bg-white rounded-lg shadow-xl border animate-fade-in-down">
