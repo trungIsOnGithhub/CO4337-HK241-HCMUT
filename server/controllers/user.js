@@ -9,6 +9,10 @@ const makeToken = require('uniqid')
 const {users} = require('../ultils//constant')
 const mongoose = require('mongoose');
 
+const makeTokenNumber = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString(); // Tạo mã 6 chữ số
+};
+
 // const register = asyncHandler(async(req, res)=>{
 //     const {email, password, firstName, lastName} = req.body
 //     if(!email || !password || !firstName || !lastName){
@@ -32,7 +36,12 @@ const mongoose = require('mongoose');
 
 const register = asyncHandler(async(req, res) => {
     const {email, password, firstName, lastName, mobile, role} = req.body;
+    const avatar = req.files?.avatar[0]?.path
 
+    console.log(avatar)
+    if(avatar){
+        req.body.avatar = avatar
+    }
     if(req.body?.role && req.body.role !== 202 && req.body.role !== 1411) {
         return res.status(400).json({
             success: false,
@@ -55,16 +64,29 @@ const register = asyncHandler(async(req, res) => {
         throw new Error("User has existed already")
     }
     else{
-        const token = makeToken()
+        const token = makeTokenNumber()
         const email_edit = btoa(email) + '@' + token
         const newUser = await User.create({
-            email:email_edit,password,firstName,lastName,mobile
+            email:email_edit,password,firstName,lastName,mobile, avatar
         })
         // res.cookie('dataregister', {...req.body, token}, {httpOnly: true, maxAge: 15*60*1000})
 
-        if(newUser){
-            const html = `<h2>Register code: </h2><br /><blockquote>${token}</blockquote>`
-            await sendMail({email, html, subject: 'Complete Registration'})
+        if (newUser) {
+            const html = `
+                <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; padding: 20px; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);">
+                    <h2 style="color: #0a66c2; text-align: center;">Complete Your Registration</h2>
+                    <p style="font-size: 16px;">Hello,</p>
+                    <p style="font-size: 16px;">Thank you for registering with us! To complete your registration, please use the following verification code:</p>
+                    <div style="text-align: center; margin: 20px 0;">
+                        <span style="font-size: 24px; font-weight: bold; color: #0a66c2; padding: 10px 20px; background-color: #f7f7f7; border: 2px solid #0a66c2; border-radius: 8px; display: inline-block;">
+                            ${token}
+                        </span>
+                    </div>
+                    <p style="font-size: 16px;">This code is valid for 15 minutes. If you didn’t request this, please ignore this email.</p>
+                    <p style="font-size: 16px;">Best regards,<br>Your Company Team</p>
+                </div>
+            `;
+            await sendMail({ email, html, subject: 'Complete Registration' });
         }
         setTimeout(async()=>{
             await User.deleteOne({email: email_edit})
@@ -476,9 +498,9 @@ const updateUserAddress = asyncHandler(async (req, res) => {
 // update cart_service
 const updateCartService = asyncHandler(async (req, res) => {
     const {_id} = req.user;
-    const {service, provider, staff, time, date, duration, price} = req.body;
+    const {service, provider, staff, time, date, duration, price, dateTime} = req.body;
     
-    if (!service || !provider || !staff || !time || !date || !duration || !price) {
+    if (!service || !provider || !staff || !time || !date || !duration || !price || !dateTime) {
         throw new Error("Missing input");
     } else {
         const user = await User.findById(_id).select('cart_service');
@@ -489,7 +511,7 @@ const updateCartService = asyncHandler(async (req, res) => {
 
         try {
             // Thêm một phần tử mới vào mảng 'cart'
-            response = await User.findByIdAndUpdate(_id, {$push: {cart_service: {service, provider, staff, time, date, duration, price}}}, {new: true});
+            response = await User.findByIdAndUpdate(_id, {$push: {cart_service: {service, provider, staff, time, date, duration, price, dateTime}}}, {new: true});
         } catch (error) {
             // Xử lý lỗi nếu có
             return res.status(500).json({ success: false, mes: "Something went wrong" });

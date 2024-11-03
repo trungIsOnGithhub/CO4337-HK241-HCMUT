@@ -9,6 +9,17 @@ export const apiUpdateCurrentServiceProvider = (provider_id, data) => axios({
     method: 'put',
     data
 })
+export const apiUpdateServiceProviderTheme = (provider_id, data) => axios({
+    url: `/service_provider/updatetheme/${provider_id}`,
+    method: 'put',
+    data
+})
+
+export const apiFinalRegisterProvider = (token) => axios({
+    url: '/service_provider/final_register/'+token,
+    method: 'put',
+})
+
 export const apiGetServiceProviderById = (provider_id) => axios({
     url: `/service_provider/${provider_id}`,
     method: 'get'

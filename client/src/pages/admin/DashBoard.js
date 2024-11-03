@@ -42,6 +42,8 @@ const MetricIndicator = ({ prev, current }) => {
 }
 
 const DashBoard = () => {
+  const currentUser = useSelector(state => state.user.current);
+
   const {current} = useSelector((state) => state.user);
   const [totalRevenue, setTotalRevenue] = useState(0)
   const [monthRevenue, setMonthRevenue] = useState(0)
@@ -50,9 +52,9 @@ const DashBoard = () => {
   const [totalServices, setTotalServices] = useState(0);
 
   const [currentMetricView, setCurrentMetricView] = useState({
-    occupancy: 0,
-    new_customer: 0,
-    revenue: 0
+    occupancy: 3,
+    new_customer: 3,
+    revenue: 3
   });
 
   const [revenueTriplet, setRevenueTriplet] = useState([88.8, 68.8, 39.6]);
@@ -67,22 +69,23 @@ const DashBoard = () => {
   ];
 
   const fetchRevenueTriplet = async (periodData) => {
-    const resp = await apiGet3RecentRevenueStatistic({ periodData });
+    const resp = await apiGet3RecentRevenueStatistic({ periodData, spid: currentUser.provider_id?._id  });
     if (resp.success && resp.revenue?.length) {
       return resp.revenue;
     }
     return [];
   };
   const fetchOccupancyTriplet = async (periodData) => {
-    const resp = await apiGet3RecentOccupancyStatistic({ periodData });
+    const resp = await apiGet3RecentOccupancyStatistic({ periodData, spid: currentUser.provider_id?._id  });
     if (resp.success && resp.occupancy?.length) {
       return resp.occupancy;
     }
     return [];
   };
   const fetchNewCustomerTriplet = async (periodData) => {
-    const resp = await apiGet3RecentNewCustomerStatistic({ periodData });
+    const resp = await apiGet3RecentNewCustomerStatistic({ periodData, spid: currentUser.provider_id?._id  });
     if (resp.success && resp.newCustomer?.length) {
+      console.log('++++', resp.newCustomer);
       return resp.newCustomer;
     }
     return [];
@@ -145,7 +148,7 @@ const DashBoard = () => {
 
         // console.log("333333333", data, "++++++");
       })();
-  }, []);
+  }, [currentMetricView]);
 
   // const revenueLast3Months = [88.8, 68.8, 39.6];// sort by time line [2w ago, 1w ago, now]
   // const revenueLast3Weeks = [8.8, 6.8, 9.6];// sort by time line [2m ago, 1m ago, now]
@@ -179,7 +182,8 @@ const DashBoard = () => {
               <h5 className='pb-1 fond-semibold text-sm'>
                 New Customers
               </h5>
-              <span className='text-lg font-bold text-center'>
+              <span className='text-lg font-bold'>
+                {/* { currentMetricView.new_customer + '---' } */}
                 { currentMetricView.new_customer === 3 && newCustomerTriplet[2] }
                 { currentMetricView.new_customer === 2 && newCustomerTriplet[1] }
                 { currentMetricView.new_customer === 1 && newCustomerTriplet[2] }
@@ -238,7 +242,7 @@ const DashBoard = () => {
               <h5 className='pb-1 fond-semibold text-sm'>
                 Revenue
               </h5>
-              <span className='text-lg font-bold text-center'>
+              <span className='text-lg font-bold'>
                 { currentMetricView.revenue === 3 && revenueTriplet[2] }
                 { currentMetricView.revenue === 2 && revenueTriplet[1] }
                 { currentMetricView.revenue === 1 && revenueTriplet[2] }
@@ -298,7 +302,7 @@ const DashBoard = () => {
               <h5 className='pb-1 fond-semibold text-sm'>
                   Occupancy
               </h5>
-              <span className='text-lg font-bold text-center'>
+              <span className='text-lg font-bold'>
                 { currentMetricView.occupancy === 3 && occupancyTriplet[2] }
                 { currentMetricView.occupancy === 2 && occupancyTriplet[1] }
                 { currentMetricView.occupancy === 1 && occupancyTriplet[2] }

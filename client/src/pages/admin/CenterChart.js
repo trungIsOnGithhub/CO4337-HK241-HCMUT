@@ -3,6 +3,7 @@ import { Line, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement, ArcElement } from 'chart.js';
 import { apiGetCustomerDataByMonth, apiGet3ChartInfoByMonth } from 'apis'
 import Swal from 'sweetalert2';
+import { useSelector } from 'react-redux';
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, ArcElement);
 
@@ -12,6 +13,8 @@ const months = [
 ];
 
 const CenterChart = () => {
+  const currentUser = useSelector(state => state.user.current);
+
   const [newCustomers, setNewCustomers] = useState(30);
   const [returningCustomers, setReturningCustomers] = useState(70);
   const [newCustomerRatio, setNewCustomerRatio] = useState(0.0);
@@ -28,6 +31,10 @@ const CenterChart = () => {
   const [selectedYear, setSelectedYear] = useState(2024);
 
   const fetchCustomerData = async (month, year) => {
+      if (!currentUser.provider_id?._id) {
+        Swal.fire('Error Ocurred!!', 'Cannot Find User Session!', 'error');
+        return;
+      }
       setLoading(true);
 
       const data = {
@@ -40,11 +47,13 @@ const CenterChart = () => {
         canceledAppointmentsChange: 39
       }
 
-    const chartData = await apiGet3ChartInfoByMonth({ currMonth: 5, currYear: 2024 });
-    const customerData = await apiGetCustomerDataByMonth({ currMonth: 5, currYear: 2024 });
+      console.log("Selected Month: ....", selectedMonth);
+
+    const chartData = await apiGet3ChartInfoByMonth({ currMonth: selectedMonth+1, currYear: selectedYear, spid: currentUser.provider_id?._id });
+    const customerData = await apiGetCustomerDataByMonth({ currMonth: selectedMonth+1, currYear: selectedYear, spid: currentUser.provider_id?._id });
 
     if (!chartData.success || !customerData.success) {
-      Swal.fire('Error Ocurred!!', 'Cannot Update Staff Shift!!', 'error');
+      Swal.fire('Error Ocurred!!', 'Cannot Update Chart Data!', 'error');
       return;
     }
 
@@ -145,11 +154,11 @@ const CenterChart = () => {
   };
 
   if (loading) {
-    return <div className="text-center p-6 text-gray-500">Loading...</div>;
+    return <div className="text-center p-6 text-gray-500 w-2/3 grow">Loading...</div>;
   }
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md border-2 w-1/2 grow">
+    <div className="p-4 bg-white rounded-lg shadow-md border-2 w-2/3 grow">
       {/* Header with appointment statistics and month/year selector */}
       <div className="flex justify-between items-center mb-4">
         <div className="flex space-x-8">

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { createSearchParams, useSearchParams } from 'react-router-dom';
+import { createSearchParams, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { apiGetOrdersByAdmin } from 'apis/order';
 import moment from 'moment';
 import { Button, InputFormm, Pagination } from 'components';
@@ -14,17 +14,19 @@ import { BsCalendar } from "react-icons/bs";
 import { RxMixerVertical } from 'react-icons/rx';
 import { GoPlusCircle } from "react-icons/go";
 import { format, isValid, isBefore, isAfter, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths } from "date-fns";
+import useDebounce from 'hook/useDebounce';
 
-const ManageBooking = ({ dispatch, navigate }) => {
+const ManageBooking = () => {
   const [params] = useSearchParams();
   const [booking, setBookings] = useState(null);
   const [counts, setCounts] = useState(0);
-  const [selectedMonth, setSelectedMonth] = useState(12);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate()
+  const location = useLocation()
 
   const handleInputClick = () => {
     setShowCalendar(!showCalendar);
@@ -41,21 +43,38 @@ const ManageBooking = ({ dispatch, navigate }) => {
   };
 
   const fetchBooking = async (params) => {
-    const response = await apiGetOrdersByAdmin({ ...params, limit: process.env.REACT_APP_LIMIT });
-    if (response?.success) {
-      // Sắp xếp các đơn đặt chỗ theo `createdAt` từ mới nhất đến cũ nhất
-      const sortedBookings = response?.order?.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      setBookings(sortedBookings);
-      setCounts(response?.counts);
+    if (startDate && endDate) {
+        const startDateUTC = new Date(Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()));
+        const endDateUTC = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 23, 59, 59));
+
+        const startDateISO = startDateUTC.toISOString();
+        const endDateISO = endDateUTC.toISOString();
+
+        const response = await apiGetOrdersByAdmin({
+            ...params,
+            startDate: startDateISO,
+            endDate: endDateISO,
+            limit: process.env.REACT_APP_LIMIT
+        });
+
+        if (response?.success) {
+            setBookings(response?.orders);
+            setCounts(response?.counts);
+        }
+    } else {
+        const response = await apiGetOrdersByAdmin({ ...params, limit: process.env.REACT_APP_LIMIT });
+        if (response?.success) {
+            setBookings(response?.orders);
+            setCounts(response?.counts);
+        }
     }
   };
 
-  const handleOnClickDetail = (bookingid) => {
-    navigate({
-      pathname: `/${path.ADMIN}/${path.MANAGE_BOOKING_DETAIL}`,
-      search: createSearchParams({ bookingid }).toString()
-    });
-  };
+  useEffect(() => {
+    const searchParams = Object.fromEntries([...params]);
+    fetchBooking(searchParams);
+  }, [params, startDate, endDate]);
+
 
   const handleClearDates = (e) => {
     e.stopPropagation();
@@ -64,31 +83,9 @@ const ManageBooking = ({ dispatch, navigate }) => {
     setError("");
   };
 
-  useEffect(() => {
-    const searchParams = Object.fromEntries([...params]);
-    fetchBooking(searchParams);
-  }, [params]);
 
-  const filterBookingsByMonth = (bookings, month) => {
-    if (month === 12) return bookings;
-    return bookings?.filter(bookingItem => {
-      const bookingMonth = moment(bookingItem?.info[0]?.date, 'DD/MM/YYYY').format('M');
-      return parseInt(bookingMonth) === month + 1;
-    });
-  };
-
-  const countBookingsByMonth = (bookings) => {
-    if (!bookings) return 0;
-    return bookings?.length;
-  };
-
-  useEffect(() => {
-    setCounts(countBookingsByMonth(filterBookingsByMonth(booking, selectedMonth)));
-  }, [booking, selectedMonth]);
 
   const {register,formState:{errors}, handleSubmit, watch} = useForm()
-
-  console.log(booking)
 
   const data = [
     {
@@ -218,6 +215,28 @@ const ManageBooking = ({ dispatch, navigate }) => {
   };
 
 
+  const queryDebounce = useDebounce(watch('q'),800)
+
+  useEffect(() => {
+    if(queryDebounce) {
+      navigate({
+        pathname: location.pathname,
+        search: createSearchParams({q:queryDebounce}).toString()
+      })
+    }
+    else{
+      navigate({
+        pathname: location.pathname,
+      })
+    }
+  }, [queryDebounce])
+
+  useEffect(() => {
+    if(startDate && endDate){
+
+    }
+  }, [startDate, endDate]);
+
   return (
     <div className="w-full h-full relative">
       <div className='inset-0 absolute z-0'>
@@ -270,7 +289,7 @@ const ManageBooking = ({ dispatch, navigate }) => {
                 )}
               </div>
 
-              {error && <p className="text-main mt-2 text-xs font-medium">{error}</p>}
+              {error && <p className="text-[#0a66c2] mt-2 text-xs font-medium">{error}</p>}
 
               {showCalendar && (
                 <div className="absolute w-fit right-[-100px] z-10 mt-2 px-4 py-3 bg-white rounded-lg shadow-xl border animate-fade-in-down">
@@ -317,20 +336,23 @@ const ManageBooking = ({ dispatch, navigate }) => {
                 <div key={index} className='w-full flex border-b border-[#f4f6fa] gap-1 h-[56px] px-[8px] py-[12px]'>
                   <span className='w-[10%] py-2 text-[#00143c]'>{el?.info[0]?.time}</span>
                   <span className='w-[25%] py-2 text-[#00143c] text-sm flex justify-start font-medium'>
-                    <div className='pl-[4px] flex items-center' style={{borderLeft: `4px solid ${getColorByCategory(el?.info[0]?.service?.category)}` }}>
-                      {el?.info[0]?.service?.name}
+                    <div className='pl-[4px] flex items-center' style={{borderLeft: `4px solid ${getColorByCategory(el?.serviceDetails?.category)}` }}>
+                      {el?.serviceDetails?.name}
                     </div>
                   </span>
-                  <span className='w-[15%] py-2 text-[#00143c] text-sm line-clamp-1'>{`${el?.orderBy?.lastName} ${el?.orderBy?.firstName}`}</span>
-                  <span className='w-[10%] px-2 py-2 text-[#00143c] text-sm line-clamp-1'>{`${el?.info[0]?.service?.duration}min`}</span>
+                  <span className='w-[15%] py-2 text-[#00143c] text-sm line-clamp-1'>{`${el?.userDetails?.lastName} ${el?.userDetails?.firstName}`}</span>
+                  <span className='w-[10%] px-2 py-2 text-[#00143c] text-sm line-clamp-1'>{`${el?.serviceDetails?.duration}min`}</span>
                   <span className='w-[15%] px-2 py-2 text-[#00143c]'>Status</span>
                   <span className='w-[20%] px-4 py-2 text-[#00143c] flex items-center'>
-                    <img className='w-[32px] h-[32px] rounded-full ml-[-10px] mr-[0px]' src={el?.info[0]?.staff?.avatar}/>
+                    <img className='w-[32px] h-[32px] rounded-full ml-[-10px] mr-[0px]' src={el?.staffDetails?.avatar}/>
                   </span>
                   <span className='w-[5%] px-2 py-2 text-[#00143c] font-bold text-xl'><GoPlusCircle /></span>
                 </div>
               ))}
             </div>
+          </div>
+          <div className='text-[#00143c] flex-1 flex items-end'>
+            <Pagination totalCount={counts} />
           </div>
         </div>
       </div>
@@ -338,4 +360,4 @@ const ManageBooking = ({ dispatch, navigate }) => {
   );
 };
 
-export default withBaseComponent(ManageBooking);
+export default ManageBooking;

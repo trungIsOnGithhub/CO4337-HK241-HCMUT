@@ -105,7 +105,7 @@ const SearchItemService = ({name, activeClick, changeActiveFilter, type='checkbo
                     e.stopPropagation() 
                     setSelected([])
                     changeActiveFilter(null)
-                    }} className='cursor-pointer underline hover:text-main'>Reset</span>
+                    }} className='cursor-pointer underline hover:text-[#0a66c2]'>Reset</span>
                 </div>
                 <div onClick={e=> e.stopPropagation()} className='flex flex-col gap-3 mt-4'>
                 {
@@ -131,7 +131,7 @@ const SearchItemService = ({name, activeClick, changeActiveFilter, type='checkbo
                     e.stopPropagation() 
                     setPrice({from:'',to:''})
                     changeActiveFilter(null)
-                    }} className='cursor-pointer underline hover:text-main'>Reset</span>
+                    }} className='cursor-pointer underline hover:text-[#0a66c2]'>Reset</span>
                 </div>
                 <div className='flex items-center p-2 gap-2'>
                   <div className='flex items-center gap-2'>

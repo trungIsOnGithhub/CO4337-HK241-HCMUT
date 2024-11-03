@@ -6,8 +6,15 @@ const mongoose = require('mongoose');
 const sendMail = require('../ultils/sendMail')
 const crypto = require('crypto')
 
+const makeTokenNumber = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString(); // Tạo mã 6 chữ số
+};
+
 const createServiceProvider = asyncHandler(async(req, res)=>{
+    console.log('testtt')
     const { email, password, firstName, lastName, mobile } = req.body
+    const avatar = req.files?.avatar[0]?.path
+
     if(!email || !password || !firstName || !lastName || !mobile){
         return res.status(400).json({
             success: false,
@@ -21,10 +28,10 @@ const createServiceProvider = asyncHandler(async(req, res)=>{
             mes: "User has existed already"
         })}
 
-    const token = makeToken()
+    const token = makeTokenNumber()
     const email_edit = btoa(email) + '@' + token
     const newUser = await User.create({
-        email:email_edit,password,firstName,lastName,mobile
+        email:email_edit,password,firstName,lastName,mobile,avatar
     })
 
     if(!newUser){
@@ -33,35 +40,51 @@ const createServiceProvider = asyncHandler(async(req, res)=>{
             mes: "Error creating user"
         })
     }
+    else{
+        setTimeout(async()=>{
+            await User.deleteOne({email: email_edit})
+        },[15*60*1000])
+    }
 
-
-    const { bussinessName, province } = req.body
-    if (!bussinessName || !province ) {
+    const { bussinessName, address } = req.body
+    if (!bussinessName || !address ) {
         return res.status(400).json({
             success: false,
             mes: "Missing Input On Provider"
         })
     }
 
-
+    console.log('test111')
+    const images = req.files?.images[0]?.path
+    console.log(images)
+    req.body.images = images
 
     const bname = await ServiceProvider.findOne({bussinessName})
     if(bname){
         return res.status(400).json({
             success: false,
             mes: "Provider name has existed already"
-        })}
+        })
+    }
 
-    const response = await ServiceProvider.create({
+
+    const newProvider = await ServiceProvider.create({
         ...req.body,
-        success: true,
+        bussinessName:  bussinessName + "@" + token
     });
-    if (!response) {
+
+    if (!newProvider) {
+        console.log('test333')
         res.status(400).json({
             success: false,
             mes: "Cannot Create Provider Register"
         })
-        return
+    }
+    else{
+        console.log('test444')
+        setTimeout(async()=>{
+            await ServiceProvider.deleteOne({bussinessName: req.body.bussinessName + "@" + token})
+        },[15*60*1000])
     }
 
     user = await User.findOne({mobile: req?.body?.mobile})
@@ -72,16 +95,48 @@ const createServiceProvider = asyncHandler(async(req, res)=>{
         })
         return
     }
-    const userUpdated = await User.updateOne({mobile: req?.body?.mobile}, { provider_id: response.id, role: 1411 })
+    const userUpdated = await User.updateOne({mobile: req?.body?.mobile}, { provider_id: newProvider.id, role: 1411 })
 
-    const html = `<h2>Register code: </h2><br /><blockquote>${token}</blockquote>`
+    const html = `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; padding: 20px; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);">
+        <h2 style="color: #0a66c2; text-align: center;">Complete Your Registration</h2>
+        <p style="font-size: 16px;">Hello,</p>
+        <p style="font-size: 16px;">Thank you for registering with us! To complete your registration, please use the following verification code:</p>
+        <div style="text-align: center; margin: 20px 0;">
+            <span style="font-size: 24px; font-weight: bold; color: #0a66c2; padding: 10px 20px; background-color: #f7f7f7; border: 2px solid #0a66c2; border-radius: 8px; display: inline-block;">
+                ${token}
+            </span>
+        </div>
+        <p style="font-size: 16px;">This code is valid for 15 minutes. If you didn’t request this, please ignore this email.</p>
+        <p style="font-size: 16px;">Best regards,<br>Your Company Team</p>
+    </div>
+    `;
     await sendMail({email, html, subject: 'Complete Registration'})
 
     return res.status(201).json({
-        success: response ? true : false,
+        success: newProvider ? true : false,
         mes: "Created Provider and Account Successful"
     })
 })
+
+const finalRegisterProvider = asyncHandler(async(req, res)=>{
+    const {token} = req.params
+    const notActiveEmail = await User.findOne({email:new RegExp(`${token}$`)})
+    const notActiveProvider = await ServiceProvider.findOne({bussinessName:new RegExp(`${token}$`)})
+    if(notActiveEmail){
+        notActiveEmail.email = atob(notActiveEmail?.email?.split("@")[0])
+        notActiveEmail.save()
+    }
+    if(notActiveProvider){
+        notActiveProvider.bussinessName = notActiveProvider?.bussinessName?.split("@")[0]
+        notActiveProvider.save()
+    }
+    return res.json({
+        success: (notActiveEmail && notActiveProvider) ? true : false,
+        mes: (notActiveEmail && notActiveProvider) ? "Successfully" : "Something went wrong"
+    })
+})
+
 
 const getAllServiceProvider = asyncHandler(async(req, res) => {
     const queries = { ...req.query };
@@ -155,7 +210,10 @@ const updateServiceProvider = asyncHandler(async(req, res)=>{
 
 const getServiceProvider = asyncHandler(async(req, res)=>{
     const spid = req.params.spid;
-    const sp = await ServiceProvider.findById(spid).populate('owner')
+    const sp = await ServiceProvider.findById(spid);
+
+    const owner = await User.find({provider_id: spid});
+    sp.owner = owner;
 
     return res.status(200).json({
         success: sp ? true : false,
@@ -197,6 +255,33 @@ const getServiceProviderByOwnerId = asyncHandler(async(req, res)=>{
     })
 })
 
+
+
+const updateServiceProviderTheme = asyncHandler(async(req, res)=>{
+    const spid = req.params.spid
+
+    const {theme} = req.body
+    if(!theme){
+        throw new Error('Missing inputttt')
+    }
+
+    const response = await ServiceProvider.findByIdAndUpdate(spid,  { $set: { theme } }, {new: true})
+
+    if (!response) {
+        return res.status(404).json({
+            success: false,
+            message: "Service Provider not found",
+        });
+    }
+
+    return res.status(200).json({
+        success: response ? true : false,
+        updatedServiceProvider: response ? response : "Cannot update a Service Provider",
+        mes: response ? 'Settings has been saved' : 'Failed to Update'
+    })
+})
+
+
 module.exports = {
     createServiceProvider,
     getAllServiceProvider,
@@ -204,5 +289,7 @@ module.exports = {
     deleteServiceProvider,
     getServiceProvider,
     addServiceProviderQuestion,
-    getServiceProviderByOwnerId
+    getServiceProviderByOwnerId,
+    updateServiceProviderTheme,
+    finalRegisterProvider
 }

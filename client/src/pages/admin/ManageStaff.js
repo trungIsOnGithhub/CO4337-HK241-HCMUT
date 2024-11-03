@@ -90,7 +90,7 @@ const ManageProduct = () => {
       </div>}
       {manageStaffShift &&  
       <div className='absolute inset-0 bg-zinc-900 h-[360%] z-50 flex-auto'>
-        <ManageStaffShift staffId={currentStaffId} setManageStaffShift={setManageStaffShift}/>
+        {/* <ManageStaffShift staffId={currentStaffId} setManageStaffShift={setManageStaffShift}/> */}
       </div>}
       <div className='h-[69px] w-full'>
       </div>

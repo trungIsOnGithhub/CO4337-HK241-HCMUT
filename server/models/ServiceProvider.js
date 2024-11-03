@@ -22,7 +22,7 @@ var ProviderServiceSchema = new mongoose.Schema({
         type: Object,
     },
     images: {
-        type: [],
+        type: Array,
     },
     latitude: {
         type: Number,
@@ -45,10 +45,6 @@ var ProviderServiceSchema = new mongoose.Schema({
             required: true
         }
     },
-    owner: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-    },
     chatGivenQuestions: [{
         question: {
             type: String
@@ -56,7 +52,11 @@ var ProviderServiceSchema = new mongoose.Schema({
         answer: {
             type: String,
         }
-    }]
+    }],
+    theme: {
+        type: String,
+        defaultValue: 'light'
+    }
 },{
     timestamps: true
 });

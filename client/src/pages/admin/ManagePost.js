@@ -97,7 +97,7 @@ const ManagePost = ({ dispatch, navigate }) => {
                 </div>
                 <div className='flex flex-col gap-2 text-gray-700'>
                   <div className='flex items-center gap-1'>
-                    <span><strong className='text-main'>{`Title: ${postItem?.title}`}</strong></span>
+                    <span><strong className='text-[#0a66c2]'>{`Title: ${postItem?.title}`}</strong></span>
                   </div>
                   <span>
                     <span><strong>Category:</strong> {`${postItem?.tags.join(', ')}`}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>

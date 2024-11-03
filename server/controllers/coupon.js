@@ -19,6 +19,7 @@ const createNewCoupon = asyncHandler(async (req, res) => {
         providerId
     } = req.body;
 
+    const image = req.files?.image[0]?.path
     // Validate required fields
     if (!name || !code || !discount_type || !expirationDate || !providerId) {
         return res.status(400).json({ message: 'Name, code, discount_type, and expirationDate are required fields.' });
@@ -44,7 +45,8 @@ const createNewCoupon = asyncHandler(async (req, res) => {
         services,
         usageCount: 0, // Khởi tạo giá trị mặc định
         usedBy: [], // Khởi tạo mảng rỗng
-        providerId
+        providerId,
+        image
     });
 
     // Save the coupon to the database
@@ -154,7 +156,6 @@ const getCouponsByProviderId = asyncHandler(async (req, res) => {
 const getAllCouponsByAdmin = asyncHandler(async (req, res) => {
     const {_id} = req.user
     const {provider_id} = await User.findById({_id}).select('provider_id')
-    console.log(provider_id)
 
     
     const coupons = await Coupon.find({ providerId: provider_id })

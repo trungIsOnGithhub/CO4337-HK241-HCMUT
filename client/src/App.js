@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import {Route, Routes, useLocation} from 'react-router-dom'
-
-import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageSaleEvent, ManagePostDetail, EditPostDetail, AddPost, ManageChat, ManageSetting, WeeklyOfficeHours } from 'pages/admin'
+import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageSaleEvent, ManagePostDetail, EditPostDetail, AddPost, ManageChat, ManageThemeAndAppearance, ManageHeroSection, ManageFooterSection, ManageServicePage, ManageSetting, WeeklyOfficeHours } from 'pages/admin'
 import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct, ViewBlog, DetailProvider } from 'pages/public'
 
 import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct, Calendarr} from 'pages/user'
@@ -14,6 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Booking, BookingDateTIme, Cart, Chat, MessageBox, Modal } from './components';
 import { showCart, showMessage } from 'store/app/appSlice';
 import ManagePost from 'pages/admin/ManagePost';
+import DetailProviderService from 'pages/public/DetailProviderService';
 
 function App() {
   const dispatch = useDispatch();
@@ -38,6 +38,8 @@ function App() {
      <Routes>
       <Route path={path.CHECKOUT_SERVICE} element={<CheckoutService />} />
       <Route path={path.CHECKOUT_PRODUCT} element={<CheckoutProduct />} />
+      <Route path={path.DETAIL_PROVIDER_ID_VARIABLE} element={<DetailProvider />} />
+      <Route path={path.DETAIL_PROVIDER_ID_SERVICEID} element={<DetailProviderService />} />
       <Route path={path.PUBLIC} element={<Public />}>
         <Route path={path.HOME} element={<Home />} />
         <Route path={path.BLOGS} element={<Blogs />} />
@@ -46,7 +48,6 @@ function App() {
         <Route path={path.FAQS} element={<FAQ />} />
         
         <Route path={path.OUR_PROVIDERS_CATEGORY} element={<OurProviders />} />
-        <Route path={path.DETAIL_PROVIDER_ID} element={<DetailProvider />} />
         <Route path={path.SERVICES_CATEGORY} element={<Services />} />
         <Route path={path.PRODUCTS_CATEGORY} element={<Products />} />
         <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
@@ -57,7 +58,7 @@ function App() {
         {/* <Route path={path.DETAIL_CART} element={<DetailCart />} /> */}
         {/* <Route path={path.ALL} element={<Home />} /> */}
       </Route>
-        <Route path={path.ADMIN} element={<AdminLayout />}>
+      <Route path={path.ADMIN} element={<AdminLayout />}>
         <Route path={path.DASHBOARD} element={<DashBoard/>}/>
         <Route path={path.MANAGE_ORDER} element={<ManageOrder/>}/>
         <Route path={path.MANAGE_BOOKING} element={<ManageBooking/>}/>
@@ -74,6 +75,10 @@ function App() {
         <Route path={path.ADD_SALE_EVENT} element={<AddSaleEvent/>}/>
         <Route path={path.MANAGE_VOUCHER} element={<ManageVoucher/>}/>
         <Route path={path.MANAGE_SALE_EVENT} element={<ManageSaleEvent/>}/>
+        <Route path={path.THEMEANDAPPEARANCE} element={<ManageThemeAndAppearance/>}/>
+        <Route path={path.HEROSECTION} element={<ManageHeroSection/>}/>
+        <Route path={path.FOOTERSECTION} element={<ManageFooterSection/>}/>
+        <Route path={path.SERVICEPAGE} element={<ManageServicePage/>}/>
 
         <Route path={path.ADD_POST} element={<AddPost/>}/>
         <Route path={path.MANAGE_POST} element={<ManagePost/>}/>

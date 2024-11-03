@@ -90,7 +90,7 @@ const ManageBooking = ({ dispatch, navigate }) => {
                 </div>
                 <div className='flex flex-col gap-4 text-gray-700'>
                   <div className='flex items-center gap-2'>
-                    <span><strong className='text-main'>#ID: {bookingItem?._id}</strong></span>
+                    <span><strong className='text-[#0a66c2]'>#ID: {bookingItem?._id}</strong></span>
                   </div>
                   <span className='line-clamp-1'>
                     <span><strong>Customer Name:</strong> {`${bookingItem?.orderBy?.lastName} ${bookingItem?.orderBy?.firstName}`}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>

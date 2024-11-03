@@ -3,7 +3,12 @@ const ctrls = require('../controllers/user')
 const {verifyAccessToken, isAdmin} = require('../middlewares/verify_token')
 const uploader = require('../config/cloudinary.config')
 
-router.post('/register', ctrls.register)
+router.post('/register', uploader.fields([
+    {
+        name: 'avatar',
+        maxCount: 1
+    },
+]), ctrls.register)
 router.post('/mock', ctrls.createUsers)
 router.put('/final_register/:token', ctrls.finalRegister)
 router.post('/login', ctrls.login)

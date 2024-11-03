@@ -251,7 +251,7 @@ const AddPost = () => {
             />
             { !addNewTagMenu && 
             <Button
-              style="p-2 rounded-md text-white bg-main"
+              style="p-2 rounded-md text-white bg-[#0a66c2]"
               handleOnclick={() => {setAddNewTagMenu(prev => !prev);}}
             ><FaPlus /></Button>
             }
@@ -261,12 +261,12 @@ const AddPost = () => {
               <div className='w-full my-6 flex flex-col z-60'>
                 <span className='flex gap-2 m-auto'>
                   <Button
-                    style={"rounded-md text-white bg-main font-semibold p-2 w-fit"}
+                    style={"rounded-md text-white bg-[#0a66c2] font-semibold p-2 w-fit"}
                     handleOnclick={() => { setAddNewTagMenu(false); }}
                   >Close
                   </Button>
                   <Button
-                    style={"rounded-md text-white bg-main font-semibold p-2 w-fit"}
+                    style={"rounded-md text-white bg-[#0a66c2] font-semibold p-2 w-fit"}
                     handleOnclick={() => { addNewTagOnClick(newTagLabel) }}
                   >Add Tag
                   </Button>

@@ -76,11 +76,11 @@ const GridPercentageCalendar = () => {
   };
 
   return (
-    <div className="max-w-sm p-4 bg-white border-2 rounded-lg w-1/2 h-fit">
-      <div className="flex justify-between items-center mb-4">
+    <div className="max-w-md p-4 bg-white border-2 rounded-lg w-1/3 h-fit">
+      <div className="flex flex-col justify-center items-center mb-4 gap-4">
         <h2 className="text-lg font-semibold text-gray-900">Daily occupancy</h2>
   
-        <div className="flex items-center space-x-2 text-gray-500">
+        <div className="flex items-center justify-center text-gray-500 gap-2">
           <select
             className="border border-gray-300 rounded px-2 py-1"
             value={selectedMonth}

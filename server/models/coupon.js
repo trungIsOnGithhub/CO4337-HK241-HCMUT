@@ -27,7 +27,7 @@ var couponSchema = new mongoose.Schema({
             type: Number,
             min: 0,
             max: 100,
-        }
+        },
     }],
     fixedAmount: [{
         id: {
@@ -37,7 +37,7 @@ var couponSchema = new mongoose.Schema({
         value: {
             type: Number,
             min: 0,
-        }
+        },
     }],
     expirationDate: {
         type: {
@@ -83,6 +83,9 @@ var couponSchema = new mongoose.Schema({
         }
     }],
     providerId: {type:mongoose.Types.ObjectId, ref: 'Service_Provider'},
+    image: {
+        type:String,
+    },
 },{
     timestamps: true
 });

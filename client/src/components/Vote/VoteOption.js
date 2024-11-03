@@ -15,7 +15,7 @@ const VoteOption = ({nameProduct, handleSubmitVoteOption}) => {
   },[])
   return (
     <div onClick={e=> e.stopPropagation()} ref={modalRef} className='bg-white w-[700px] p-6 flex flex-col gap-4 items-center justify-center rounded-md border border-gray-500 shadow-md animate-scale-up-center'>
-      <h1 className='text-center font-semibold text-main text-3xl'>{`Rating ${nameProduct}`}</h1>
+      <h1 className='text-center font-semibold text-[#0a66c2] text-3xl'>{`Rating ${nameProduct}`}</h1>
       <textarea 
       onChange={e=>setComment(e.target.value)}
       value = {comment}

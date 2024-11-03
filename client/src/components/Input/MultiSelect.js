@@ -30,6 +30,11 @@ const colourStyles = {
       color: '#FFF', // Màu văn bản trắng
     },
   }),
+  menu: (styles) => ({
+    ...styles,
+    maxHeight: '200px', // Giới hạn chiều cao của menu option
+    overflowY: 'auto',  // Thêm overflow-y cho phép cuộn
+  }),
 };
 
 const MultiSelect = ({options, id, onChangee, values, title, disabled = false, require, style, labelStyle}) => {

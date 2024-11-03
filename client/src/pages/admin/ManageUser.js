@@ -163,7 +163,7 @@ const ManageUser = () => {
                       </div>
                       
                       <div className="relative group inline-block">
-                        <span className='inline-block hover:underline cursor-pointer text-main hover:text-orange-500 px-0.5'>
+                        <span className='inline-block hover:underline cursor-pointer text-[#0a66c2] hover:text-orange-500 px-0.5'>
                           <MdBlock size={24}/>
                         </span>
 

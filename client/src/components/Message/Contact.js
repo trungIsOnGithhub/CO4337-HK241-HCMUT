@@ -34,7 +34,7 @@ const Contact = ({contacts, currentUser, changeChat}) => {
         <Container>
           <div className="brand" onClick={()=>navigate('/')}>
             <span className="text-gray-600 text-2xl font-bold">Service&nbsp;</span>
-            <span className="text-main text-2xl italic font-bold">Provider</span>
+            <span className="text-[#0a66c2] text-2xl italic font-bold">Provider</span>
           </div>
           <div className='contacts'>
             {

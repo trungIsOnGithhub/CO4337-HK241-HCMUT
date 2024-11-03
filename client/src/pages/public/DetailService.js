@@ -291,7 +291,7 @@ const DetailService = ({isQuickView, data}) => {
             <h2 className='text-[30px] font-semibold'>
               {`${formatPrice(formatPricee(currentProduct?.price || product?.price))} VNĐ`}
             </h2>
-            <span className='text-sm text-main'>
+            <span className='text-sm text-[#0a66c2]'>
               {`(Booking: ${product?.bookingQuantity})`}
             </span>
           </div>
@@ -389,7 +389,7 @@ const DetailService = ({isQuickView, data}) => {
       <>
         <div className='w-main m-auto mt-[8px]'>
           <h3 className='text-[20px] font-semibold py-[15px] border-b-2 border-gray-500 shadow-sm'>OTHER CUSTOMERS ALSO BUY:</h3>
-          <CustomSliderService products={productCate} normal={true}/>
+          <CustomSliderService services={productCate} normal={true}/>
         </div>
         <div className='h-[100px] w-full'></div>
       </>}

@@ -15,7 +15,7 @@ const InputField = ({value, setValue, nameKey, type, invalidField, setInvalidFie
         onFocus={()=> setInvalidField && setInvalidField([])}
         onKeyDown={onKeyPress}
         />
-        {invalidField?.some(el => el.name === nameKey) && <small className='text-main font-[10px] italic'>
+        {invalidField?.some(el => el.name === nameKey) && <small className='text-[#0a66c2] font-[10px] italic'>
           {invalidField?.find(el => el.name === nameKey)?.mes}
         </small>}
     </div>

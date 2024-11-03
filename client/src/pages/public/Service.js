@@ -2,10 +2,9 @@ import React, {useEffect, useState, useCallback} from 'react'
 import { useParams, useSearchParams, createSearchParams, useNavigate} from 'react-router-dom'
 import { Breadcrumb, Service, SearchItemService, NewInputSelect, InputSelect, Pagination, InputField} from '../../components'
 import { apiGetServicePublic } from '../../apis'
-import Masonry from 'react-masonry-css'
 import { sorts } from '../../ultils/constant'
 import clsx from 'clsx'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import withBaseComponent from 'hocs/withBaseComponent'
 import { getCurrent } from 'store/user/asyncAction'
 import { tinh_thanhpho } from 'tinh_thanhpho'
@@ -13,15 +12,9 @@ import { apiModifyUser } from '../../apis/user'
 import Swal from "sweetalert2";
 import { FaSortAmountDown, FaMoneyCheckAlt, FaCubes  } from "react-icons/fa";
 
-const breakpointColumnsObj = {
-  default: 4,
-  1100: 3,
-  700: 2,
-  500: 1
-};
-
-const Services = ({dispatch}) => {
+const Services = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [services, setServices] = useState(null)
   const [active, setActive] = useState(null)
   const [params] = useSearchParams()
@@ -61,6 +54,7 @@ const Services = ({dispatch}) => {
     }
 
     const response = await apiGetServicePublic(queries)
+    console.log(response)
     if(response.success) setServices(response)
     dispatch(getCurrent())
   }
@@ -109,7 +103,6 @@ const Services = ({dispatch}) => {
   }, [sort])
 
   useEffect(() => {
-    console.log('Search Filter: ', searchFilter, '++++');
   }, [searchFilter])
 
     const handleGetDirections = () => {
@@ -125,7 +118,6 @@ const Services = ({dispatch}) => {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(async (position) => {
             const { latitude, longitude } = position.coords;
-            console.log(latitude, longitude);
             await apiModifyUser({ lastGeoLocation: {
               type: "Point",
               coordinates: [longitude, latitude]
@@ -189,21 +181,31 @@ const Services = ({dispatch}) => {
           </div>
         </div> */}
       </div>
-      <div className={clsx('mt-8 w-main m-auto', isShowModal ? 'hidden' : '')}>
-        <Masonry
-          breakpointCols={breakpointColumnsObj}
-          className="my-masonry-grid flex mx-[-10px]"
-          columnClassName="my-masonry-grid_column">
-          {services?.services?.map(el => (
-            <Service 
-              key={el.sv._id} 
-              serviceData={el.sv}
-              pid= {el.sv._id}
-              normal={true}
-              clientDistance={el?.clientDistance}
-            />
-          )) || "Your Search Result Here..."}
-        </Masonry>
+      <div className='w-main border p-4 flex justify-start m-auto mt-8'>
+          <span className='font-semibold text-sm p-5'>Search By:</span>
+          {/* <div className='w-full'> */}
+          <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} />
+          <span className='font-semibold text-sm p-5'>Near Me Search:</span>
+          <input className='ml-3 p-5' onInput={() => {handleGetDirections()}} type="checkbox"/>
+          { nearMeOption && 
+            <>
+              <span className='font-semibold text-sm p-3'>Province:</span>
+              <InputSelect
+                value={searchFilter?.province}
+                options={Object.entries(tinh_thanhpho).map(ele => { return {id:ele[0], text:ele[1]?.name, value:ele[0]}})}
+                changeValue={(value) => {setSearchFilter(function(prev) {return {...prev, province: value};}) }}
+              />
+            </>
+          }
+          { nearMeOption && <InputField nameKey='maxDistance' value={searchFilter.maxDistance} setValue={setSearchFilter} placeholder={"Maximum Distance(optional)"} /> }
+          {/* </div> */}
+        </div>
+      <div className={clsx('mt-8 w-main m-auto flex gap-4 flex-wrap', isShowModal ? 'hidden' : '')}>
+        {services?.services?.map((service, index) => (
+          <div key={index} className='w-[32%]'>
+            <Service serviceData={service}/>
+          </div>
+        ))}
       </div>
       <div className='w-main m-auto my-4 flex justify-end'>
        {services&&
@@ -217,4 +219,4 @@ const Services = ({dispatch}) => {
   )
 }
 
-export default withBaseComponent(Services)
+export default Services
