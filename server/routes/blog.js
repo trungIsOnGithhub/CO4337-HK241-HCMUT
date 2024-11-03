@@ -7,7 +7,12 @@ const {verifyAccessToken, isAdmin} = require('../middlewares/verify_token')
 router.get('/tags', ctrls.getAllBlogTags)
 router.post('/', ctrls.getAllBlogs)
 router.get('/', ctrls.getBlogsBySearchTerm)
-router.post('/create', ctrls.createNewBlogPost)
+router.post('/create', [verifyAccessToken, isAdmin], uploader.fields([
+    {
+        name: 'thumb',
+        maxCount: 1
+    },
+]), ctrls.createNewBlogPost)
 router.post('/create_tag', ctrls.createNewPostTag)
 router.get('/:bid', ctrls.getBlog)
 router.delete('/:bid',[verifyAccessToken, isAdmin], ctrls.deleteBlog)

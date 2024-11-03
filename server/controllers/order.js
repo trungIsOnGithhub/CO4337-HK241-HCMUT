@@ -159,13 +159,6 @@ const getOrdersByAdmin = asyncHandler(async (req, res) => {
                 $lte: new Date(endDate)
             }
         };
-        // console.log(aggregationPipeline)
-        // const orders = await Order.aggregate(aggregationPipeline);
-        // return res.status(200).json({
-        //     success: true,
-        //     counts: 99,
-        //     orders: orders,
-        // }); 
     }
     else {
         aggregationPipeline.push({ $match: qr });
