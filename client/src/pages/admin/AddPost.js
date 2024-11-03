@@ -15,7 +15,7 @@ import bgImage from '../../assets/clouds.svg'
 import { FiX } from 'react-icons/fi'
 
 const AddPost = () => {
-  const {blogCategories_service} = useSelector(state => state.blogCategory)
+  const {categories_service} = useSelector(state => state.category)
   const [addNewTagMenu, setAddNewTagMenu] = useState(false);
   const [newTagLabel, setNewTagLabel] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -66,11 +66,13 @@ const AddPost = () => {
 
 
 
-  // const option_category = blogCategories_service?.map((cate) => ({
-  //   label: cate?.title,
-  //   value: cate?.title,
-  //   // color: cate?.color
-  // })) || [];
+
+  const option_category = categories_service?.map((cate) => ({
+    label: cate?.title,
+    value: cate?._id,
+    color: cate?.color
+  }));
+
 
   const handlePreviewThumb = async(file) => {
     const base64Thumb = await getBase64(file)
@@ -88,8 +90,12 @@ const AddPost = () => {
 
   const handleAddBlog = async(data) => {
     const finalPayload = {...data,...payload};
+    finalPayload.provider_id = current?.provider_id?._id;
     if(blogTag.length > 0){
       finalPayload.tags = blogTag
+    }
+    if(selectedCategory){
+      finalPayload.category = selectedCategory
     }
     const formData = new FormData()
     for(let i of Object.entries(finalPayload)){
@@ -133,9 +139,10 @@ const AddPost = () => {
     }
   }
 
-  // const handleSelectCateChange = useCallback(selectedOptions => {
-  //   setSelectedCategory(selectedOptions);
-  // }, []);
+  const handleSelectCateChange = useCallback(selectedOptions => {
+    setSelectedCategory(selectedOptions);
+  }, []);
+
   const handleSelectTagChange = useCallback(selectedOptions => {
     setSelectedTags(selectedOptions);
   }, []);
@@ -195,6 +202,23 @@ const AddPost = () => {
                 styleLabel={'text-[#00143c] font-medium mb-1'}
                 styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none rounded-md border-[#dee1e6]'}
               />
+            </div>
+            <div className='w-full my-6 flex gap-4'>
+              <SelectCategory 
+                  label = 'Category'
+                  styleLabel={'text-[#00143c] font-medium mb-1'}
+                  style = 'flex-1 flex flex-col z-[999]'
+                  options = {option_category}
+                  register={register}
+                  id = 'category'
+                  validate = {{
+                    required: 'Need fill this field'
+                  }}
+                  errors={errors}
+                  fullWidth
+                  onChangee={handleSelectCateChange}
+                  values={selectedCategory}
+                />
             </div>
             <div className='w-full flex flex-col gap-1 my-6'>
               <span className='text-[#00143c] font-medium'>Blog Content</span>

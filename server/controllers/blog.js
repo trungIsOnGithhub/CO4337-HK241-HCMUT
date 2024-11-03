@@ -70,10 +70,11 @@ const getAllBlogTags = asyncHandler(async (req,res) => {
 });
 
 const getAllBlogs = asyncHandler(async (req, res)=>{
+
+    console.log('aaaa')
+    console.log(req.body)
     const { provider_id, title, sortBy, provinces } = req.body;
-    // if(!provider_id){
-    //     throw new Error ("Missing input")
-    // }
+
     const searchFilter = {};
     if (provider_id) {
         searchFilter.provider_id = provider_id;
