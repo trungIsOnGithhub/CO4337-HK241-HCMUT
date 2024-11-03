@@ -8,7 +8,7 @@ const months = [
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-function PerformanceSummary() {
+function PerformanceSummary({ providerId }) {
   // State for managing time period selection
   const [timePeriod, setTimePeriod] = useState("Current Week");
 
@@ -31,13 +31,15 @@ function PerformanceSummary() {
       
       if (performanceViewOption === "service") {
         resp = await apiGetPerformanceDataByService({
-          currMonth: selectedMonth,
-          currYear: selectedYear
+          currMonth: selectedMonth+1,
+          currYear: selectedYear,
+          spid: providerId,
         });
       } else {
         resp = await apiGetPerformanceDataByStaff({
-          currMonth: selectedMonth,
-          currYear: selectedYear
+          currMonth: selectedMonth+1,
+          currYear: selectedYear,
+          spid: providerId
         });
       }
   
@@ -53,14 +55,14 @@ function PerformanceSummary() {
   }, [selectedMonth, selectedYear, performanceViewOption]);
 
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg w-full max-w-md">
+    <div className="p-6 bg-white shadow-lg rounded-lg w-full">
       {/* Header */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-col justify-center items-center mb-4 gap-4">
         <h2 className="font-semibold text-lg text-gray-800">Top Performance</h2>
 
         {/* Time Period Dropdown */}
         <div className="relative">
-          <div className="flex items-center space-x-2 text-gray-500">
+          <div className="flex items-center justify-center gap-2 space-x-2 text-gray-500">
             <select
               className="border border-gray-300 rounded px-2 py-1"
               value={selectedMonth}
@@ -121,17 +123,17 @@ function PerformanceSummary() {
               </div>
             </div>
             <div className="text-sm text-gray-600">
-              <div className="flex justify-between">
-                <span>Number Of Orders</span>
+              <div className="flex justify-between mb-1">
+                <span className="font-semibold">Orders</span>
                 <span>{service.numberOrders}</span>
               </div>
-              <div className="flex justify-between">
-                <span>Revenue</span>
-                <span>${Number(service.revenue).toFixed(2)}</span>
+              <div className="flex justify-between mb-1">
+                <span className="font-semibold">Revenue</span>
+                <span>${Number(service.revenue)?.toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center mt-2">
-                <span>Occupancy rate</span>
-                <span>{service.occupancy.toFixed(2)}%</span>
+                <span className="font-semibold">Occupancy rate</span>
+                <span>{service.occupancy?.toFixed(2)}%</span>
               </div>
             </div>
             {/* Occupancy Rate Bar */}
@@ -164,11 +166,11 @@ function PerformanceSummary() {
               </div>
               <div className="flex justify-between">
                 <span>Revenue</span>
-                <span>${Number(service.revenue).toFixed(2)}</span>
+                <span>${Number(service.revenue)?.toFixed(2)}</span>
               </div>
               <div className="flex justify-between items-center mt-2">
                 <span>Occupancy rate</span>
-                <span>{service.occupancy.toFixed(2)}%</span>
+                <span>{service.occupancy?.toFixed(2)}%</span>
               </div>
             </div>
             {/* Occupancy Rate Bar */}

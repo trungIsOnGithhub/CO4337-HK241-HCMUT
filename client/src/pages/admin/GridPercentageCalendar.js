@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { apiGetOccupancyDataByMonth } from 'apis'
+import { apiGetOccupancyDataByMonth } from 'apis';
+import { useSelector } from 'react-redux';
 
 const months = [
   'January', 'February', 'March', 'April', 'May', 'June',
@@ -7,6 +8,8 @@ const months = [
 ];
 
 const GridPercentageCalendar = () => {
+  const currentUser = useSelector(state => state.user.current);
+
   const [occupancyData, setOccupancyData] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth()); // 0-11
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -26,7 +29,8 @@ const GridPercentageCalendar = () => {
   const fetchOccupancyData = async () => {
     // const daysInMonth = getDaysInMonth(currentMonth, currentYear);
     // const newData = Array.from({ length: daysInMonth }, () => Math.floor(Math.random() * 101));
-    let resp = await apiGetOccupancyDataByMonth({ currMonth: 5, currYear: 2024 });
+    console.log(selectedMonth, ';;;;');
+    let resp = await apiGetOccupancyDataByMonth({ currMonth: selectedMonth+1, currYear: selectedYear, spid: currentUser?.provider_id?._id });
 
     if (resp.success && resp.occupancySeries) {
       setOccupancyData(resp.occupancySeries);
@@ -35,7 +39,7 @@ const GridPercentageCalendar = () => {
 
   useEffect(() => {
     fetchOccupancyData();
-  }, [currentMonth, currentYear]);
+  }, [selectedMonth, selectedYear]);
 
   const daysInMonth = getDaysInMonth(currentMonth, currentYear);
   const startDay = getStartDayOfMonth(currentMonth, currentYear);
@@ -76,7 +80,7 @@ const GridPercentageCalendar = () => {
   };
 
   return (
-    <div className="max-w-md p-4 bg-white border-2 rounded-lg w-1/3 h-fit">
+    <div className="max-w-md p-4 bg-white border-2 rounded-lg w-full h-fit">
       <div className="flex flex-col justify-center items-center mb-4 gap-4">
         <h2 className="text-lg font-semibold text-gray-900">Daily occupancy</h2>
   
@@ -132,7 +136,7 @@ const GridPercentageCalendar = () => {
             {hoverInfo.isHovered && new Date(hoverInfo.date).getDate() === day && (
               <div className="bottom-16 p-2 bg-white border border-gray-300 rounded-lg shadow-lg text-sm text-gray-700 z-10 w-fit">
                 <div><strong>Date:</strong> {hoverInfo.date}</div>
-                <div><strong>Occupancy:</strong> {hoverInfo.occupancy}%</div>
+                <div><strong>Occupancy:</strong> {hoverInfo.occupancy || 0}%</div>
               </div>
             )}
           </div>

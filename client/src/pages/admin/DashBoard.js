@@ -14,6 +14,7 @@ import OrdersList from './OrdersList';
 // // import './style.css';
 import bgImage from '../../assets/clouds.svg'
 import PerformanceSummary from './PerformanceSummary';
+import { SlPlane } from 'react-icons/sl';
 
 const button_string_style = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 roundedtext-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 text-sm'
 
@@ -22,21 +23,24 @@ const MetricIndicator = ({ prev, current }) => {
     <span>
       {
       current > prev &&
-        (<span className="flex justify-center items-center">
+        (<span className="flex justify-center items-center flex-col flex-wrap">
             <span className="text-teal-500 text-xs">higher</span>
-            <span className='text-teal-500 pr-1 text-base'>&nbsp;{(current - prev).toFixed(2)}</span>
+            <span className='text-teal-500 pr-1 text-base'>&nbsp;{(current - prev)?.toFixed(2)}</span>
             <FaAngleDoubleUp style={{color: 'green' }} className='text-teal-500 rotate-45'/>
         </span>)
       }
       {
       current < prev && 
-        (<span className="flex justify-center items-center">
+        (<span className="flex justify-center items-center flex-col flex-wrap">
             <span className="text-rose-700 text-xs">lower</span>
-            <span className='text-rose-700 pr-1 text-base'>&nbsp;{(prev - current).toFixed(2)}</span>
+            <span className='text-rose-700 pr-1 text-base'>&nbsp;{(prev - current)?.toFixed(2)}</span>
             <FaAngleDoubleDown className='text-rose-700 -rotate-45'/>
         </span>)
       }
-      {current === prev && <FaBars />}
+      {current === prev && (<span className="flex justify-center items-center flex-col flex-wrap">
+            <span className="text-gray-500 text-xs text-center">No Change</span>
+            <FaBars />
+        </span>)}
     </span>
   )  
 }
@@ -246,7 +250,7 @@ const DashBoard = () => {
                 { currentMetricView.revenue === 3 && revenueTriplet[2] }
                 { currentMetricView.revenue === 2 && revenueTriplet[1] }
                 { currentMetricView.revenue === 1 && revenueTriplet[2] }
-                { currentMetricView.revenue === 0 && revenueTriplet[1] }
+                { currentMetricView.revenue === 0 && revenueTriplet[1] } $
               </span>
             </div>
             <div className='flex flex-col justify-start'>
@@ -303,10 +307,10 @@ const DashBoard = () => {
                   Occupancy
               </h5>
               <span className='text-lg font-bold'>
-                { currentMetricView.occupancy === 3 && occupancyTriplet[2] }
-                { currentMetricView.occupancy === 2 && occupancyTriplet[1] }
-                { currentMetricView.occupancy === 1 && occupancyTriplet[2] }
-                { currentMetricView.occupancy === 0 && occupancyTriplet[1] }
+                { currentMetricView.occupancy === 3 && occupancyTriplet[2]?.toFixed(1) }
+                { currentMetricView.occupancy === 2 && occupancyTriplet[1]?.toFixed(1) }
+                { currentMetricView.occupancy === 1 && occupancyTriplet[2]?.toFixed(1) }
+                { currentMetricView.occupancy === 0 && occupancyTriplet[1]?.toFixed(1) } %
               </span>
             </div>
             <div className='flex flex-col justify-start'>
@@ -359,13 +363,21 @@ const DashBoard = () => {
         </div>
 
       <div className="flex justify-start gap-4">
-        <CenterChart />
-        <GridPercentageCalendar />
+        <div className="w-[65%]">
+          <CenterChart providerId={currentUser.provider_id?._id}/>
+        </div>
+        <div className="w-[33%]">
+          <GridPercentageCalendar providerId={currentUser.provider_id?._id}/>
+        </div>
       </div>
 
       <div className="flex justify-center gap-4">
-        <OrdersList />
-        <PerformanceSummary />
+        <div className="w-[65%]">
+          <OrdersList />
+        </div>
+        <div className="w-[33%]">
+          <PerformanceSummary providerId={currentUser.provider_id?._id}/>
+        </div>
       </div>
 
         </div>
@@ -417,13 +429,6 @@ const MostPurchasedServicesByYear = ({currentUser}) => {
         dataLabels: {
           offset: -5,
         },
-      },
-    },
-    labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
-    dataLabels: {
-      formatter(val, opts) {
-        const name = opts.w.globals.labels[opts.seriesIndex]
-        return [name, val.toFixed(1) + '%']
       },
     },
     legend: {

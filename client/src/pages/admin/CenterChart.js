@@ -12,8 +12,8 @@ const months = [
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-const CenterChart = () => {
-  const currentUser = useSelector(state => state.user.current);
+const CenterChart = ({ providerId }) => {
+  // const currentUser = useSelector(state => state.user.current);
 
   const [newCustomers, setNewCustomers] = useState(30);
   const [returningCustomers, setReturningCustomers] = useState(70);
@@ -31,7 +31,7 @@ const CenterChart = () => {
   const [selectedYear, setSelectedYear] = useState(2024);
 
   const fetchCustomerData = async (month, year) => {
-      if (!currentUser.provider_id?._id) {
+      if (!providerId) {
         Swal.fire('Error Ocurred!!', 'Cannot Find User Session!', 'error');
         return;
       }
@@ -49,8 +49,8 @@ const CenterChart = () => {
 
       console.log("Selected Month: ....", selectedMonth);
 
-    const chartData = await apiGet3ChartInfoByMonth({ currMonth: selectedMonth+1, currYear: selectedYear, spid: currentUser.provider_id?._id });
-    const customerData = await apiGetCustomerDataByMonth({ currMonth: selectedMonth+1, currYear: selectedYear, spid: currentUser.provider_id?._id });
+    const chartData = await apiGet3ChartInfoByMonth({ currMonth: selectedMonth+1, currYear: selectedYear, spid: providerId });
+    const customerData = await apiGetCustomerDataByMonth({ currMonth: selectedMonth+1, currYear: selectedYear, spid: providerId });
 
     if (!chartData.success || !customerData.success) {
       Swal.fire('Error Ocurred!!', 'Cannot Update Chart Data!', 'error');
@@ -62,19 +62,20 @@ const CenterChart = () => {
     setNewCustomers(customerData.newCustomers);
     setReturningCustomers(customerData.returningCustomers);
 
-    const sumNumCustomerMonth = (customerData.newCustomers + customerData.returningCustomers) || 0;
-    const newCustomerRatio = (+customerData.newCustomers / sumNumCustomerMonth * 100).toFixed(2);
+    const sumNumCustomerMonth = (customerData.newCustomers + customerData.returningCustomers) || 1;
+    const newCustomerRatio = (+customerData.newCustomers / sumNumCustomerMonth * 100)?.toFixed(2);
     setNewCustomerRatio(newCustomerRatio);
     // console.log("---", +customerData.returningCustomers);
-    const returningCustomerRatio = (+customerData.returningCustomers / sumNumCustomerMonth * 100).toFixed(2);
+    const returningCustomerRatio = (+customerData.returningCustomers / sumNumCustomerMonth * 100)?.toFixed(2);
     setReturningCustomerRatio(returningCustomerRatio);
 
     setAppointmentsBooked(chartData.finished);
     setCanceledAppointments(chartData.canceled);
 
     const sumOrdersChartData = (chartData.finished + chartData.canceled) || 1;
-    const ratioFinish = (chartData.finished / sumOrdersChartData).toFixed(1);
-    const ratioCanceled = (chartData.canceled / sumOrdersChartData).toFixed(1);
+    console.log(sumOrdersChartData, "------");
+    const ratioFinish = (chartData.finished / sumOrdersChartData)?.toFixed(1);
+    const ratioCanceled = (chartData.canceled / sumOrdersChartData)?.toFixed(1);
     setAppointmentsBookedChange(ratioFinish);
     setCanceledAppointmentsChange(ratioCanceled);
 
@@ -158,7 +159,7 @@ const CenterChart = () => {
   }
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md border-2 w-2/3 grow">
+    <div className="p-4 bg-white rounded-lg shadow-md border-2 w-full">
       {/* Header with appointment statistics and month/year selector */}
       <div className="flex justify-between items-center mb-4">
         <div className="flex space-x-8">
@@ -221,7 +222,7 @@ const CenterChart = () => {
                 <span className="text-xs font-bold text-blue-500"></span>
               </div>
             </div>
-            <p className="font-semibold text-center pt-1">{newCustomerRatio}%</p>
+            <p className="font-semibold text-center pt-1 text-gray-600">{newCustomerRatio}%</p>
             </div>
           </div>
 
@@ -233,7 +234,7 @@ const CenterChart = () => {
                   <span className="text-xs font-bold text-green-500"></span>
                 </div>
               </div>
-              <p className="font-semibold text-center pt-1">
+              <p className="font-semibold text-center pt-1 text-gray-600">
                 {returningCustomerRatio}%
               </p>
             </div>

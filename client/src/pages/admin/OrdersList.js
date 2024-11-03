@@ -1,28 +1,45 @@
-import { apiUpdateOrderStatus } from 'apis';
+import { apiUpdateOrderStatus, apiGetOrdersByAdmin } from 'apis';
 import React, { useState, useEffect } from 'react';
+import Swal from 'sweetalert2';
 
+const PAGE_LIMIT = 5;
 // Sample statuses with styling
 const STATUS_STYLES = {
-  Approved: 'text-green-500 bg-green-100',
-  "No Show": 'text-gray-500 bg-gray-100',
-  Canceled: 'text-yellow-500 bg-yellow-100',
-  Rejected: 'text-red-500 bg-red-100'
+  Successful: 'text-green-500 bg-green-100',
+  Pending: 'text-gray-500 bg-gray-100',
+  Canceled: 'text-yellow-500 bg-yellow-100'
 };
 
 // Available statuses for filtering and editing
-const STATUS_OPTIONS = ["All", "Approved", "No Show", "Canceled", "Rejected"];
-const EDITABLE_STATUS_OPTIONS = ["Approved", "No Show", "Canceled", "Rejected"];
+const STATUS_OPTIONS = ["All", "Successful", "Pending", "Canceled"];
+const EDITABLE_STATUS_OPTIONS = ["Successful", "Pending", "Canceled"];
 
 const OrdersList = () => {
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [selectedStatus, setSelectedStatus] = useState("All"); // Default to show all statuses
+  const [selectedStatus, setSelectedStatus] = useState("Successful"); // Default to show all statuses
   const ordersPerPage = 7; // Display 7 orders per page
 
   // Fetch orders data from the API
   const fetchOrders = async (page, status) => {
-    //  let orders = await apiGetOccupancyDataByService();
+    let orders = await apiGetOrdersByAdmin({
+      limit: PAGE_LIMIT,
+      page: page,
+      sort: 'createdAt:desc',
+      status: status
+    });
+
+    if (!orders.success) {
+      Swal.fire("Error Occured!", "Cannot fetch Order Data", "error");
+      return;
+    }
+
+    console.log('Orders: ', orders);
+
+    setOrders(orders.orders);
+    setCurrentPage(page);
+    setTotalPages(Math.ceil(orders.counts/PAGE_LIMIT));
   };
 
   useEffect(() => {
@@ -54,16 +71,14 @@ const OrdersList = () => {
       day: '2-digit',
       month: 'short',
       year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
       hour12: true,
     });
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
+    <div className="bg-white p-6 rounded-lg shadow-md w-full mx-auto">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Last Orders</h2>
+        <h2 className="text-xl font-semibold text-gray-500">Last Orders</h2>
         
         {/* Status Filter Dropdown */}
         <select
@@ -84,7 +99,7 @@ const OrdersList = () => {
 
       <table className="w-full text-left">
         <thead>
-          <tr className="border-b border-gray-200">
+          <tr className="border-b border-gray-200 text-gray-500">
             <th className="py-2">Date</th>
             <th>Service</th>
             <th>Customer</th>
@@ -95,11 +110,11 @@ const OrdersList = () => {
         <tbody>
           {orders.map((order, index) => (
             <tr key={index} className="border-b border-gray-100">
-              <td className="py-4 text-gray-500">{formatTimestamp(order.timestamp)}</td>
+              <td className="py-4 text-gray-500">{formatTimestamp(order?.createdAt)}</td>
               <td className="flex items-center space-x-2">
-                <span className="text-gray-600">{order.info.length}</span>
+                <span className="text-gray-600">{order.serviceDetails?.name}</span>
               </td>
-              <td className="text-gray-600">{order.orderBy?.firstName + order.orderBy?.lastName}</td>
+              <td className="text-gray-600">{order.userDetails?.firstName + order.userDetails?.lastName}</td>
               <td>
                 {/* Editable Status Dropdown */}
                 <select
@@ -114,9 +129,9 @@ const OrdersList = () => {
                   ))}
                 </select>
               </td>
-              <td className="flex items-center space-x-2">
-                <img src={order.info[0]?.staff.avatarUrl} alt={order.info[0]?.staff.name} className="w-8 h-8 rounded-full" />
-                <span className="text-gray-600">{order.info[0]?.staff.name}</span>
+              <td className="flex flex-col h-full items-center justify-center p-1">
+                <img src={order.staffDetails.avatar} alt={order.staffDetails?.name} className="w-8 h-8 rounded-full" />
+                <span className="text-gray-600 text-xs text-center">{order.staffDetails?.lastName + ' ' + order.staffDetails?.firstName}</span>
               </td>
             </tr>
           ))}
