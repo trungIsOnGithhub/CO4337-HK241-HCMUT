@@ -6,7 +6,7 @@ const timeOptions = ["9:00 am", "10:00 am", "11:00 am", "12:00 pm", "1:00 pm", "
 
 const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, onApplyToOtherDays }) => {
   return (
-    <div className={`p-4 rounded-md shadow-md w-full max-w-xl mt-4 ${isEnabled ? 'bg-white' : 'bg-gray-100'}`}>
+    <div className={`p-4 rounded-md shadow-md w-full mt-4 ${isEnabled ? 'bg-white' : 'bg-gray-100'}`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <FaClock className="text-blue-600" />
@@ -21,12 +21,12 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
             className="hidden"
           />
           <span
-            className={`relative inline-block w-10 h-6 transition bg-gray-300 rounded-full ${
+            className={`relative inline-block w-10 h-5 transition bg-gray-300 rounded-full ${
               isEnabled ? 'bg-blue-500' : ''
             }`}
           >
             <span
-              className={`absolute left-0 inline-block w-4 h-4 transition transform bg-white rounded-full ${
+              className={`absolute left-0 inline-block w-6 h-5 py-1 transition transform bg-white rounded-full ${
                 isEnabled ? 'translate-x-full' : ''
               }`}
             ></span>
@@ -44,7 +44,7 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
               <select
                 value={period.start}
                 onChange={(e) => onPeriodChange(day, index, 'start', e.target.value)}
-                className="flex-1 bg-transparent outline-none"
+                className="flex-1 bg-transparent outline-none text-gray-500"
                 disabled={!isEnabled}  // Disables if isEnabled is false
               >
                 {timeOptions.map((time) => (
@@ -60,7 +60,7 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
               <select
                 value={period.finish}
                 onChange={(e) => onPeriodChange(day, index, 'finish', e.target.value)}
-                className="flex-1 bg-transparent outline-none"
+                className="flex-1 bg-transparent outline-none text-gray-500"
                 disabled={!isEnabled}  // Disables if isEnabled is false
               >
                 {timeOptions.map((time) => (
@@ -153,7 +153,7 @@ const WeeklyOfficeHours = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="w-3/4 pl-8">
       {daysOfWeek.map((day) => (
         <OfficeHours
           key={day}
@@ -182,10 +182,12 @@ const ApplyToDaysModal = ({ sourceDay, onApply, onClose }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
       <div className="bg-white p-6 rounded shadow-lg w-80 transition duration-200">
-        <h3 className="text-lg font-semibold mb-4">Apply {sourceDay} Settings to Other Days</h3>
-        <div className="space-y-2">
+        <h3 className="text-md font-semibold mb-4 text-gray-500">Apply
+            <span className="border-2 border-blue-500 p-1 m-1 rounded-md">{sourceDay}</span>
+          to Other Days</h3>
+        <div className="space-y-2 border-2 p-2 rounded-md flex justify-center flex-wrap gap-6">
           {daysOfWeek.map((day) => (
-            <label key={day} className={`flex items-center ${day === sourceDay ? 'opacity-50' : ''}`}>
+            <label key={day} className={`flex items-center text-gray-500 font-semibold ${day === sourceDay ? 'opacity-50' : ''}`}>
               <input
                 type="checkbox"
                 checked={selectedDays.includes(day)}
@@ -197,7 +199,7 @@ const ApplyToDaysModal = ({ sourceDay, onApply, onClose }) => {
             </label>
           ))}
         </div>
-        <div className="mt-4 flex justify-end space-x-2">
+        <div className="mt-4 flex justify-end space-x-2 gap-4">
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">Cancel</button>
           <button
             onClick={() => onApply(selectedDays)}

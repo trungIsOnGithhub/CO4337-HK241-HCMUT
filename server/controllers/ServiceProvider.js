@@ -150,7 +150,7 @@ const updateServiceProvider = asyncHandler(async(req, res)=>{
         success: response ? true : false,
         updatedServiceProvider: response ? response : "Cannot update a Service Provider",
         mes: response ? 'Success Updated' : 'Failed to Update'
-    })
+    });
 })
 
 const getServiceProvider = asyncHandler(async(req, res)=>{
