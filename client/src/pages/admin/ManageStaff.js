@@ -107,24 +107,24 @@ const ManageProduct = () => {
         </div>
         <div className='w-[95%] h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
           <div className='w-full h-fit flex justify-between items-center'>
-            <h1 className='text-[#00143c] font-medium text-[16px]'>{`Bookings (${counts})`}</h1>
+            <h1 className='text-[#00143c] font-medium text-[16px]'>{`Staffs Count: (${counts})`}</h1>
             <Button style={'px-4 py-2 rounded-md text-[#00143c] bg-[#fff] font-semibold w-fit h-fit flex gap-2 items-center border border-[#b3b9c5]'}><TfiExport className='text-lg font-bold' /> Export Data</Button>
           </div>
           <div className='w-full h-[48px] mx-[-6px] mt-[-6px] mb-[10px] flex'>
-            <div className='w-[62%] h-[36px] m-[6px] flex'>
-              <form className='flex-1' >
-                <InputFormm
-                  id='q'
-                  register={register}
-                  errors={errors}
-                  fullWidth
-                  placeholder= 'Search booking by service, customer, staff ...'
-                  style={'w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'}
-                  styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
-                >
-                </InputFormm>
-              </form>
-            </div>
+              <div className='w-[62%] h-[36px] m-[6px] flex'>
+                <form className='flex-1' >
+                  <InputFormm
+                    id='q'
+                    register={register}
+                    errors={errors}
+                    fullWidth
+                    placeholder= 'Search booking by service, customer, staff ...'
+                    style={'w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'}
+                    styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
+                  >
+                  </InputFormm>
+                </form>
+              </div>
             {/* <div className="relative w-[25%] h-[36px] m-[6px]">
               <div className="relative" onClick={handleInputClick}>
                 <input
@@ -179,8 +179,7 @@ const ManageProduct = () => {
                 <span>Filters</span>
               </Button>
             </div>
-          </div>
-          <div className='text-[#99a1b1]'>
+            <div className='text-[#99a1b1]'>
             <div className='w-full flex gap-1 border-b border-[##dee1e6] p-[8px]'>
               <span className='w-[10%]'>Avatar</span>
               <span className='w-[25%]'>Email Address</span>
@@ -198,9 +197,11 @@ const ManageProduct = () => {
                       {el?.email}
                     </div>
                   </span>
-                  <span className='w-[15%] py-2 text-[#00143c] text-sm line-clamp-1'>{`${el?.firstName} ${el?.firstName}`}</span>
+                  <span className='w-[15%] py-2 text-[#00143c] text-sm line-clamp-1'>{`${el?.firstName} ${el?.lastName}`}</span>
                   <span className='w-[10%] px-2 py-2 text-[#00143c] text-sm line-clamp-1'>{`${el?.mobile}`}</span>
-                  <span className='w-[10%] px-2 py-2 text-[#00143c] text-sm line-clamp-1'>{`${el?.mobile}`}</span>
+                  <span className='w-[10%] px-2 py-2 text-[#00143c] text-sm line-clamp-1'>
+                    
+                  </span>
                   {/* <span className='w-[15%] px-2 py-2 text-[#00143c]'>Status</span>
                   <span className='w-[20%] px-4 py-2 text-[#00143c] flex items-center'>
                     <img className='w-[32px] h-[32px] rounded-full ml-[-10px] mr-[0px]' src={el?.staffDetails?.avatar}/>
@@ -212,6 +213,7 @@ const ManageProduct = () => {
           </div>
           <div className='text-[#00143c] flex-1 flex items-end'>
             <Pagination totalCount={counts} />
+          </div>
           </div>
         </div>
       </div>
