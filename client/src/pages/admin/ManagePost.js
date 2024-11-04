@@ -3,7 +3,7 @@ import { createSearchParams, useSearchParams } from 'react-router-dom';
 import { apiGetAllBlogs } from 'apis/blog';
 import moment from 'moment';
 import { Button, Pagination } from 'components';
-import { FiCalendar, FiDollarSign } from 'react-icons/fi';
+import { FiCalendar, FiDollarSign, FiEdit, FiEye, FiEyeOff, FiThumbsDown, FiThumbsUp, FiTrash2 } from 'react-icons/fi';
 import { FaPlus, FaTags } from "react-icons/fa";
 import { AiOutlineUser, AiOutlineTeam } from 'react-icons/ai';
 import path from 'ultils/path';
@@ -12,6 +12,7 @@ import { formatPrice, formatPricee } from 'ultils/helper';
 import {useSelector, useDispatch} from 'react-redux';
 import { toast } from 'react-toastify';
 import bgImage from '../../assets/clouds.svg'
+import clsx from 'clsx';
 
 const ManagePost = ({ dispatch, navigate }) => {
   const [params] = useSearchParams();
@@ -43,6 +44,8 @@ const ManagePost = ({ dispatch, navigate }) => {
     fetchPost(searchParams);
   }, [params]);
 
+  console.log(post)
+
   return (
     <div className='w-full h-full relative'>
       <div className='inset-0 absolute z-0'>
@@ -59,15 +62,37 @@ const ManagePost = ({ dispatch, navigate }) => {
           </div>
           <div className='text-[#99a1b1]'>
             <div className='w-full flex gap-1 border-b border-[##dee1e6] py-1'>
-              <span className='w-[30%]'>Blog</span>
-              <span className='w-[10%]'>Category</span>
-              <span className='w-[20%]'>Engagement</span>
-              <span className='w-[20%]'>Views</span>
-              <span className='w-[20%]'>Actions</span>
+              <span className='w-[30%] flex justify-center'>Blog</span>
+              <span className='w-[10%] flex justify-center'>Category</span>
+              <span className='w-[20%] flex justify-center'>Engagement</span>
+              <span className='w-[10%] flex justify-center'>Views</span>
+              <span className='w-[10%] flex justify-center'>Status</span>
+              <span className='w-[20%] flex justify-center'>Actions</span>
             </div>
             <div>
               {post?.map((el, index) => (
-               <></>
+               <div key={index} className='w-full flex border-b border-[#f4f6fa] gap-1'>
+                <div className='w-[30%] px-2 py-2 text-[#00143c] flex items-center gap-1'>
+                  <img className='w-12 h-12 object-cover rounded-md' src={el?.thumb}/>
+                  <span className='ml-2 line-clamp-1'>{el?.title}</span>
+                </div>
+                <div className='w-[10%] px-2 py-2 text-[#00143c] flex items-center justify-center'>
+                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-[#0a66c2]">
+                    {el?.category}
+                  </span>
+                </div>
+                <div className='w-[20%] flex justify-center items-center gap-2 px-2 py-2 text-[#00143c]'>
+                  <div className='flex items-center text-green-600'><FiThumbsUp className="h-4 w-4 mr-1" /></div>
+                  <div className='flex items-center text-red-600'><FiThumbsDown className="h-4 w-4 mr-1" /></div>
+                </div>
+                <div className='w-[10%] px-2 py-2 text-[#00143c] flex justify-center items-center'>{el?.numberView}</div>
+                <div className='w-[10%] px-2 py-2 text-[#00143c] flex justify-center items-center'>{el?.isHidden ? 'Hidden' : 'Visible'}</div>
+                <div className='w-[20%] px-2 py-2 text-[#00143c] flex justify-center items-center gap-2'>
+                  <span className='text-blue-600 hover:text-blue-900'><FiEdit className="h-5 w-5" /></span>
+                  <span className={clsx(!el?.isHidden ? "text-green-600 hover:text-green-900" : "text-gray-600 hover:text-gray-900")}>{!el.isHidden ? <FiEye className="h-5 w-5" /> : <FiEyeOff className="h-5 w-5" />}</span>
+                  <span className='text-red-600 hover:text-red-900'><FiTrash2 className='h-5 w-5'/></span>
+                </div>
+               </div>
               ))}
             </div>
           </div>
