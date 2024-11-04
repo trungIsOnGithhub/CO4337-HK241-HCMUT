@@ -3,9 +3,10 @@ import { useSelector } from 'react-redux'
 import React, { useEffect, useState } from 'react';
 import { FaClock, FaTrashAlt } from 'react-icons/fa';
 import { apiGetOneStaff } from 'apis/staff';
+import bgImage from '../../assets/clouds.svg'
 
 const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-const timeOptions = ["9:00 am", "10:00 am", "11:00 am", "12:00 pm", "1:00 pm", "2:00 pm", "3:00 pm", "4:00 pm", "5:00 pm", "6:00 pm", "7:00 pm", "8:00 pm"];
+// const timeOptions = ["9:00 am", "10:00 am", "11:00 am", "12:00 pm", "1:00 pm", "2:00 pm", "3:00 pm", "4:00 pm", "5:00 pm", "6:00 pm", "7:00 pm", "8:00 pm"];
 
 const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, onApplyToOtherDays }) => {
   const [newShiftStart, setNewShiftStart] = useState("00:00"); // format of html time input
@@ -218,20 +219,30 @@ const ManageStaffShift = ({ staffId, setManageStaffShift }) => {
   };
 
   return (
-    <div className="w-3/4 pl-8">
-    <span className='text-[#0a66c2] text-lg hover:underline cursor-pointer p-8 bg-blue-500' onClick={()=>setManageStaffShift(false)}>Cancel</span>
-      {daysOfWeek.map((day) => (
-        <OfficeHours
-          key={day}
-          day={day}
-          periods={officeHours[day]?.periods || []}
-          isEnabled={true}
-          onPeriodChange={handlePeriodChange}
-          onToggleChange={handleToggleChange}
-          onApplyToOtherDays={handleApplyToOtherDays}
-        />
-      ))}
-      {showModal && <ApplyToDaysModal sourceDay={sourceDay} onApply={handleModalApply} onClose={() => setShowModal(false)} />}
+    <div className="w-full h-full relative">
+      <div className='inset-0 absolute z-0'>
+        <img src={bgImage} className='w-full h-full object-cover'/>
+      </div>
+      <div className="relative z-10"> {/* Thêm lớp này để đảm bảo dòng chữ không bị che mất */}
+        <div className='w-full h-20 flex justify-between p-4'>
+          <span className='text-[#00143c] text-3xl font-semibold'>Manage Staff Shift</span>
+        </div>
+          <div className="w-3/4 pl-8">
+          <span className='text-[#0a66c2] text-lg hover:underline cursor-pointer p-8 bg-blue-500' onClick={()=>setManageStaffShift(false)}>Cancel</span>
+            {daysOfWeek.map((day) => (
+              <OfficeHours
+                key={day}
+                day={day}
+                periods={officeHours[day]?.periods || []}
+                isEnabled={true}
+                onPeriodChange={handlePeriodChange}
+                onToggleChange={handleToggleChange}
+                onApplyToOtherDays={handleApplyToOtherDays}
+              />
+            ))}
+            {showModal && <ApplyToDaysModal sourceDay={sourceDay} onApply={handleModalApply} onClose={() => setShowModal(false)} />}
+          </div>
+        </div>
     </div>
   );
 };
