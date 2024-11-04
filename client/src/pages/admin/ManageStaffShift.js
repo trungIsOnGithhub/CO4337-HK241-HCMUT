@@ -66,7 +66,7 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
                 id="startShift"
                 placeholder={"..."}
                 value={newShiftStart}
-                className="form-input text-gray-600 my-auto"
+                className="form-input text-gray-600 my-auto rounded-md"
                 onChange={(event) => {setNewShiftStart(event.target.value)}}
               />
 
@@ -94,7 +94,7 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
                 id="endShift"
                 placeholder={"..."}
                 value={newShiftEnd}
-                className="form-input text-gray-600 my-auto"
+                className="form-input text-gray-600 my-auto rounded-md"
                 onChange={(event) => {setNewShiftEnd(event.target.value)}}
               />
             </div>
@@ -147,21 +147,20 @@ const ManageStaffShift = ({ staffId, setManageStaffShift }) => {
       return;
     }
     const fetchStaffData = async () => {
+      console.log(staffId, '_______|||||');
+      setOfficeHours({
+        "Monday": {periods: [{start: "11:00", end: "18:00"}, {start: "20:00", end: "22:00"}], isEnabled: true},
+        "Tuesday":  {periods: [{start: "08:00", end: "21:00"}], isEnabled: true},
+        "Wednesday":  {periods: [{start: "08:00", end: "21:00"}], isEnabled: true},
+        "Thursday":  {periods: [{start: "08:00", end: "21:00"}], isEnabled: true},
+        "Friday":  {periods: [], isEnabled: true},
+        "Saturday": {periods: [], isEnabled: true},
+        "Sunday": {periods: [], isEnabled: true}
+      });
+  
       let response = await apiGetOneStaff(staffId);
 
-      if (response?.success && response?.staff) {
-        console.log(response)
-        // setCurrentStaff(response.staff);
-        // setOfficeHours(response.staff?.shifts);
-        setOfficeHours({
-          "monday": {periods: [{start: "11:00", end: "18:00"}, {start: "20:00", end: "22:00"}], isEnabled: true},
-          "tuesday":  {periods: [{start: "08:00", end: "21:00"}], isEnabled: true}
-        });
-        // console.log(response.staff?.shifts);
-      }
-      else {
-        Swal.fire('Error Ocurred!!', 'Cannot Get Staff Shift Data!!', 'error')
-      }
+ 
     }
 
     fetchStaffData();
@@ -183,6 +182,9 @@ const ManageStaffShift = ({ staffId, setManageStaffShift }) => {
     // console.log("++++", officeHours);
     setOfficeHours((prev) => {
       const updatedDay = { ...prev[day] };
+
+      console.log('=====', prev);
+
       if (field === 'add') {
         updatedDay.periods.push({ start: '9:00 am', finish: '5:00 pm' });
       } else if (field === 'delete') {
@@ -226,9 +228,9 @@ const ManageStaffShift = ({ staffId, setManageStaffShift }) => {
       <div className="relative z-10"> {/* Thêm lớp này để đảm bảo dòng chữ không bị che mất */}
         <div className='w-full h-20 flex justify-between p-4'>
           <span className='text-[#00143c] text-3xl font-semibold'>Manage Staff Shift</span>
+          <span className='text-[#0a66c2] text-lg hover:underline cursor-pointer p-2 bg-red-400 rounded-md' onClick={()=>setManageStaffShift(false)}>Cancel</span>
         </div>
           <div className="w-3/4 pl-8">
-          <span className='text-[#0a66c2] text-lg hover:underline cursor-pointer p-8 bg-blue-500' onClick={()=>setManageStaffShift(false)}>Cancel</span>
             {daysOfWeek.map((day) => (
               <OfficeHours
                 key={day}

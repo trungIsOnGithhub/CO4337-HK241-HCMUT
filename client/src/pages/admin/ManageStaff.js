@@ -35,6 +35,7 @@ const ManageProduct = () => {
   const [update, setUpdate] = useState(false)
   const [manageStaffShift, setManageStaffShift] = useState(false)
   const [currentStaffId, setCurrentStaffId] = useState("");
+  const [searchTerm, setSearchTerm] = useState(""); 
 
   const handleDeleteStaff = async(pid) => {
     Swal.fire({
@@ -67,33 +68,44 @@ const ManageProduct = () => {
   };
   const fetchStaff = async(params) => {
     const response = await apiGetAllStaffs({...params, limit: process.env.REACT_APP_LIMIT})
-    console.log('---------', response);
+    // console.log('---------', response);
     if(response.success){ 
       setStaffs(response.staffs)
       setCounts(response.counts)
     }
   }
 
-  const queryDebounce = useDebounce(watch('q'),800)
-  
-  useEffect(() => {
-    const searchParams = Object.fromEntries([...params]) 
-    fetchStaff(searchParams)
-  }, [params, update])
+  const staffDataEffectHandler = () => {
+    const searchParams = Object.fromEntries([...params]);
 
-  useEffect(() => {
-    if(queryDebounce) {
-      navigate({
-        pathname: location.pathname,
-        search: createSearchParams({q:queryDebounce}).toString()
-      })
+    if (searchTerm?.length > 1) {
+      // searchParams['firstName'] = searchTerm;
+      // searchParams['lastName'] = searchTerm;
+      // searchParams['email'] = searchTerm;
+      // searchParams['phone'] = searchTerm;
+      searchParams['q'] = searchTerm;
     }
-    else{
-      navigate({
-        pathname: location.pathname,
-      })
-    }
-  }, [queryDebounce])
+
+    console.log('____________', searchParams);
+
+    fetchStaff(searchParams);
+  }
+  
+  useEffect(staffDataEffectHandler, [params, update])
+
+  // useEffect(() => {
+  //   if(queryDebounce) {
+  //     navigate({
+  //       pathname: location.pathname,
+  //       search: createSearchParams({q:queryDebounce}).toString()
+  //     })
+  //   }
+  //   else{
+  //     navigate({
+  //       pathname: location.pathname,
+  //     })
+  //   }
+  // }, [queryDebounce])
   
   
   return (
@@ -105,9 +117,18 @@ const ManageProduct = () => {
         <div className='w-full h-20 flex justify-between p-4'>
           <span className='text-[#00143c] text-3xl font-semibold'>Manage Staff</span>
         </div>
+
+        {editStaff && <div className='absolute inset-0 bg-zinc-900 h-[200%] z-50 flex-auto'>
+          <UpdateStaff editStaff={editStaff} render={render} setEditStaff={setEditStaff}/>
+        </div>}
+        {manageStaffShift &&
+        <div className='absolute inset-0 bg-zinc-900 h-[360%] z-50 flex-auto'>
+          <ManageStaffShift staffId={currentStaffId} setManageStaffShift={setManageStaffShift}/>
+        </div>} 
+
         <div className='w-[95%] h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
           <div className='w-full h-fit flex justify-between items-center'>
-            <h1 className='text-[#00143c] font-medium text-[16px]'>{`Staffs Count: (${counts})`}</h1>
+            <h1 className='text-[#00143c] font-medium text-[16px]'>{`Total Staffs: (${counts})`}</h1>
             <Button style={'px-4 py-2 rounded-md text-[#00143c] bg-[#fff] font-semibold w-fit h-fit flex gap-2 items-center border border-[#b3b9c5]'}><TfiExport className='text-lg font-bold' /> Export Data</Button>
           </div>
           <div className='w-full h-[48px] mx-[-6px] mt-[-6px] mb-[10px] flex'>
@@ -115,15 +136,24 @@ const ManageProduct = () => {
                 <form className='flex-1' >
                   <InputFormm
                     id='q'
-                    register={register}
+                    register={() => {}}
                     errors={errors}
                     fullWidth
-                    placeholder= 'Search booking by service, customer, staff ...'
+                    placeholder= 'Search staff by name or email or phones...'
                     style={'w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'}
                     styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
+                    onChange={event => setSearchTerm(event.target.value)}
                   >
                   </InputFormm>
                 </form>
+              </div>
+              <div className='h-[36px] m-[6px]'>
+                <Button
+                  handleOnclick={() => { staffDataEffectHandler() }}
+                  style={'w-full px-4 py-2 bg-[#dee1e6] rounded-md text-[#00143c] flex gap-1 items-center justify-center font-semibold'}>
+                  <span className='font-bold text-xl'><RxMixerVertical /></span>
+                  <span>Filters</span>
+                </Button>
               </div>
             {/* <div className="relative w-[25%] h-[36px] m-[6px]">
               <div className="relative" onClick={handleInputClick}>
@@ -173,19 +203,14 @@ const ManageProduct = () => {
                 </div>
               )} */}
             </div>
-            <div className='w-[10%] h-[36px] m-[6px]'>
-              <Button style={'w-full px-4 py-2 bg-[#dee1e6] rounded-md text-[#00143c] flex gap-1 items-center justify-center font-semibold'}>
-                <span className='font-bold text-xl'><RxMixerVertical /></span>
-                <span>Filters</span>
-              </Button>
-            </div>
+
             <div className='text-[#99a1b1]'>
             <div className='w-full flex gap-1 border-b border-[##dee1e6] p-[8px]'>
-              <span className='w-[10%]'>Avatar</span>
-              <span className='w-[25%]'>Email Address</span>
-              <span className='w-[25%]'>Full Name</span>
-              <span className='w-[20%]'>Phone</span>
-              <span className='w-[20%]'>Action</span>
+              <span className='w-[10%] text-center'>Avatar</span>
+              <span className='w-[25%] text-center'>Email Address</span>
+              <span className='w-[25%] text-center'>Full Name</span>
+              <span className='w-[20%] text-center'>Phone</span>
+              <span className='w-[20%] text-center'>Action</span>
             </div>
 
             <div>
@@ -197,10 +222,19 @@ const ManageProduct = () => {
                       {el?.email}
                     </div>
                   </span>
-                  <span className='w-[15%] py-2 text-[#00143c] text-sm line-clamp-1'>{`${el?.firstName} ${el?.lastName}`}</span>
-                  <span className='w-[10%] px-2 py-2 text-[#00143c] text-sm line-clamp-1'>{`${el?.mobile}`}</span>
-                  <span className='w-[10%] px-2 py-2 text-[#00143c] text-sm line-clamp-1'>
-                    
+                  <span className='w-[25%] py-2 text-[#00143c] text-sm line-clamp-1 text-center'>{`${el?.firstName} ${el?.lastName}`}</span>
+                  <span className='w-[20%] px-2 py-2 text-[#00143c] text-sm line-clamp-1 text-center'>{`${el?.mobile}`}</span>
+                  <span className='w-[20%] px-2 py-2 text-[#00143c] text-sm line-clamp-1 text-center'>
+                      <span onClick={() => setEditStaff(el)} 
+                        className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'>
+                          <MdModeEdit size={24}/>
+                      </span>
+                      <span onClick={() => handleDeleteStaff(el._id)} 
+                      className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>
+                      <span onClick={() => { setManageStaffShift(true); setCurrentStaffId(el?._id) } } 
+                      className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5 pb-0.5'>
+                      <FaCalendarCheck size={"20"}/>
+                    </span>
                   </span>
                   {/* <span className='w-[15%] px-2 py-2 text-[#00143c]'>Status</span>
                   <span className='w-[20%] px-4 py-2 text-[#00143c] flex items-center'>

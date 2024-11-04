@@ -25,6 +25,10 @@ const getAllStaffsByAdmin = asyncHandler(async (req, res) => {
     const {_id} = req.user
     const {provider_id} = await User.findById({_id}).select('provider_id')
     const queries = { ...req.query };
+
+    // console.log('=======', _id);
+    console.log('=======', req);
+
     // Loại bỏ các trường đặc biệt ra khỏi query
     const excludeFields = ['limit', 'sort', 'page', 'fields'];
     excludeFields.forEach((el) => delete queries[el]);
