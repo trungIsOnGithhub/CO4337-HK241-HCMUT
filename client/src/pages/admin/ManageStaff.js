@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react'
-import { InputForm, Pagination, Variant} from 'components'
+import { InputForm, Pagination, Variant, Button, InputFormm } from 'components'
 import { useForm } from 'react-hook-form'
 import {apiGetAllStaffs, apiDeleteStaff} from 'apis/staff'
 // import moment from 'moment'
@@ -11,6 +11,17 @@ import icons from 'ultils/icon'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
 import { FaCalendarCheck } from "react-icons/fa";
+import bgImage from '../../assets/clouds.svg'
+// import { createSearchParams, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { apiGetOrdersByAdmin } from 'apis/order';
+import moment from 'moment';
+import { FiCalendar, FiChevronLeft, FiChevronRight, FiX } from 'react-icons/fi';
+// import path from 'ultils/path';
+// import withBaseComponent from 'hocs/withBaseComponent';
+// import { formatPrice, formatPricee } from 'ultils/helper';
+import { TfiExport } from "react-icons/tfi";
+import { BsCalendar } from "react-icons/bs";
+import { RxMixerVertical } from 'react-icons/rx';
 
 const ManageProduct = () => {
   const {MdModeEdit, MdDelete} = icons
@@ -51,10 +62,13 @@ const ManageProduct = () => {
 
   const handleSearchProduct = (data) => {
   }
-
+  const handleInputClick = () => {
+    // setShowCalendar(!showCalendar);
+  };
   const fetchStaff = async(params) => {
     const response = await apiGetAllStaffs({...params, limit: process.env.REACT_APP_LIMIT})
-    if(response.success){
+    console.log('---------', response);
+    if(response.success){ 
       setStaffs(response.staffs)
       setCounts(response.counts)
     }
@@ -83,75 +97,133 @@ const ManageProduct = () => {
   
   
   return (
-    <div className='w-full flex flex-col gap-4 relative'>
-      {editStaff &&  
-      <div className='absolute inset-0 bg-zinc-900 h-[200%] z-50 flex-auto'>
-        <UpdateStaff editStaff={editStaff} render={render} setEditStaff={setEditStaff}/>
-      </div>}
-      {manageStaffShift &&  
-      <div className='absolute inset-0 bg-zinc-900 h-[360%] z-50 flex-auto'>
-        {/* <ManageStaffShift staffId={currentStaffId} setManageStaffShift={setManageStaffShift}/> */}
-      </div>}
-      <div className='h-[69px] w-full'>
+    <div className="w-full h-full relative">
+      <div className='inset-0 absolute z-0'>
+        <img src={bgImage} className='w-full h-full object-cover'/>
       </div>
-      <div className='p-4 border-b w-full flex justify-between items-center fixed top-0 bg-black'>
-        <h1 className='text-3xl font-bold tracking-tight'>Manage Staffs</h1>
-      </div>
+      <div className="relative z-10"> {/* Thêm lớp này để đảm bảo dòng chữ không bị che mất */}
+        <div className='w-full h-20 flex justify-between p-4'>
+          <span className='text-[#00143c] text-3xl font-semibold'>Manage Staff</span>
+        </div>
+        <div className='w-[95%] h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
+          <div className='w-full h-fit flex justify-between items-center'>
+            <h1 className='text-[#00143c] font-medium text-[16px]'>{`Bookings (${counts})`}</h1>
+            <Button style={'px-4 py-2 rounded-md text-[#00143c] bg-[#fff] font-semibold w-fit h-fit flex gap-2 items-center border border-[#b3b9c5]'}><TfiExport className='text-lg font-bold' /> Export Data</Button>
+          </div>
+          <div className='w-full h-[48px] mx-[-6px] mt-[-6px] mb-[10px] flex'>
+            <div className='w-[62%] h-[36px] m-[6px] flex'>
+              <form className='flex-1' >
+                <InputFormm
+                  id='q'
+                  register={register}
+                  errors={errors}
+                  fullWidth
+                  placeholder= 'Search booking by service, customer, staff ...'
+                  style={'w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'}
+                  styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
+                >
+                </InputFormm>
+              </form>
+            </div>
+            {/* <div className="relative w-[25%] h-[36px] m-[6px]">
+              <div className="relative" onClick={handleInputClick}>
+                <input
+                  type="text"
+                  readOnly
+                  value={
+                    startDate && endDate
+                      ? `${format(startDate, "MMM d, yyyy")} - ${format(endDate, "MMM d, yyyy")}`
+                      : "Select date range"
+                  }
+                  className="w-full px-4 py-2 border rounded-lg cursor-pointer focus:outline-none text-[#00143c] text-sm"
+                  aria-label="Date range picker"
+                />
+                {startDate && endDate ? (
+                  <FiX
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#00143c] cursor-pointer"
+                    onClick={handleClearDates}
+                  />
+                ) : (
+                  <FiCalendar className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#00143c] cursor-pointer" />
+                )}
+              </div> */}
 
-      <div className='flex w-full justify-end items-center px-4 '>
-        <form className='w-[45%]' onSubmit={handleSubmit(handleSearchProduct)}>
-          <InputForm
-            id='q'
-            register={register}
-            errors={errors}
-            fullWidth
-            placeholder= 'Search staffs by name or email address ...'
-          >
-            
-          </InputForm>
-        </form>
+              {/* {error && <p className="text-[#0a66c2] mt-2 text-xs font-medium">{error}</p>}
+
+              {showCalendar && (
+                <div className="absolute w-fit right-[-100px] z-10 mt-2 px-4 py-3 bg-white rounded-lg shadow-xl border animate-fade-in-down">
+                  <div className="flex gap-4">
+                    <Calendar month={currentMonth} />
+                    <Calendar month={addMonths(currentMonth, 1)} />
+                  </div>
+                  <div className="mt-3 flex justify-end">
+                    <button
+                      onClick={handleConfirm}
+                      disabled={!startDate || !endDate}
+                      className={`
+                        px-4 py-2 rounded-lg transition-all
+                        ${startDate && endDate
+                          ? "text-white bg-[#005aee] hover:bg-blue-600"
+                          : "bg-gray-200 text-gray-500 cursor-not-allowed"}
+                      `}
+                    >
+                      Confirm
+                    </button>
+                  </div>
+                </div>
+              )} */}
+            </div>
+            <div className='w-[10%] h-[36px] m-[6px]'>
+              <Button style={'w-full px-4 py-2 bg-[#dee1e6] rounded-md text-[#00143c] flex gap-1 items-center justify-center font-semibold'}>
+                <span className='font-bold text-xl'><RxMixerVertical /></span>
+                <span>Filters</span>
+              </Button>
+            </div>
+          </div>
+          <div className='text-[#99a1b1]'>
+            <div className='w-full flex gap-1 border-b border-[##dee1e6] p-[8px]'>
+              <span className='w-[10%]'>Avatar</span>
+              <span className='w-[25%]'>Email Address</span>
+              <span className='w-[25%]'>Full Name</span>
+              <span className='w-[20%]'>Phone</span>
+              <span className='w-[20%]'>Action</span>
+            </div>
+
+            <div>
+              {staffs?.map((el,index) => (
+                <div key={index} className='w-full flex border-b border-[#f4f6fa] gap-1 h-[56px] px-[8px] py-[12px]'>
+                  <span className='w-[10%] py-2 text-[#00143c]'><img src={el.avatar} alt='thumb' className='w-12 h-12 object-cover'></img></span>
+                  <span className='w-[25%] py-2 text-[#00143c] text-sm flex justify-start font-medium'>
+                    <div className='pl-[4px] flex items-center'>
+                      {el?.email}
+                    </div>
+                  </span>
+                  <span className='w-[15%] py-2 text-[#00143c] text-sm line-clamp-1'>{`${el?.firstName} ${el?.firstName}`}</span>
+                  <span className='w-[10%] px-2 py-2 text-[#00143c] text-sm line-clamp-1'>{`${el?.mobile}`}</span>
+                  <span className='w-[10%] px-2 py-2 text-[#00143c] text-sm line-clamp-1'>{`${el?.mobile}`}</span>
+                  {/* <span className='w-[15%] px-2 py-2 text-[#00143c]'>Status</span>
+                  <span className='w-[20%] px-4 py-2 text-[#00143c] flex items-center'>
+                    <img className='w-[32px] h-[32px] rounded-full ml-[-10px] mr-[0px]' src={el?.staffDetails?.avatar}/>
+                  </span> */}
+
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className='text-[#00143c] flex-1 flex items-end'>
+            <Pagination totalCount={counts} />
+          </div>
+        </div>
       </div>
-      <table className='table-auto p-0'>
-        <thead className='font-bold bg-blue-500 text-[13px] text-white'>
-          <tr className='border border-gray-500'>
-            <th className='text-center py-2'>#</th>
-            <th className='text-center py-2'>Avatar</th>            
-            <th className='text-center py-2'>Email Address</th>
-            <th className='text-center py-2'>First Name</th>
-            <th className='text-center py-2'>Last Name</th>
-            <th className='text-center py-2'>Phone</th>
-            <th className='text-center py-2'>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {staffs?.map((el,idx)=>(
-            <tr key={el._id} className='border border-gray-500'>
-              <td className='text-center py-2'>{((+params.get('page')||1)-1)*+process.env.REACT_APP_LIMIT + idx + 1}</td>
-              <td className='text-center py-2 flex justify-center'><img src={el.avatar} alt='thumb' className='w-12 h-12 object-cover'></img></td>
-              <td className='text-center py-2'>{el.email}</td>
-              <td className='text-center py-2'>{el.firstName}</td>
-              <td className='text-center py-2'>{el.lastName}</td>
-              <td className='text-center py-2'>{el.mobile}</td>
-              <td className='text-center py-2'>
-                <span onClick={() => setEditStaff(el)} 
-                className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdModeEdit
-                size={24}/></span>
-                <span onClick={() => handleDeleteStaff(el._id)} 
-                className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>
-                <span onClick={() => { setManageStaffShift(true); setCurrentStaffId(el?._id) } } 
-                className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5 pb-0.5'>
-                  <FaCalendarCheck size={"20"}/>
-                </span>
-              </td>  
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className='w-full flex justify-end'>
-        <Pagination totalCount={counts} />
-      </div>
-    </div>
   )
 }
-
+        {/* <div className='absolute inset-0 bg-zinc-900 h-[200%] z-50 flex-auto'>
+          <UpdateStaff editStaff={editStaff} render={render} setEditStaff={setEditStaff}/>
+        </div>}
+        {manageStaffShift &&
+        <div className='absolute inset-0 bg-zinc-900 h-[360%] z-50 flex-auto'>
+          <ManageStaffShift staffId={currentStaffId} setManageStaffShift={setManageStaffShift}/>
+        </div>} 
+        
+        */}
 export default ManageProduct

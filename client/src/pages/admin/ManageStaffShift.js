@@ -2,6 +2,7 @@ import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux'
 import React, { useEffect, useState } from 'react';
 import { FaClock, FaTrashAlt } from 'react-icons/fa';
+import { apiGetOneStaff } from 'apis/staff';
 
 const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 const timeOptions = ["9:00 am", "10:00 am", "11:00 am", "12:00 pm", "1:00 pm", "2:00 pm", "3:00 pm", "4:00 pm", "5:00 pm", "6:00 pm", "7:00 pm", "8:00 pm"];
@@ -65,7 +66,7 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
                 placeholder={"..."}
                 value={newShiftStart}
                 className="form-input text-gray-600 my-auto"
-                onChange={(event) => {setNewShiftEnd(event.target.value)}}
+                onChange={(event) => {setNewShiftStart(event.target.value)}}
               />
 
             </div>
@@ -132,44 +133,41 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
   );
 };
 
-const ManageStaffShift = () => {
-  const {current} = useSelector(state => state.user);
-
-  const fetchCurrentProviderWorkingHours = async () => {
-    if (!current?.provider_id?.time) {
-      Swal.fire("Error Occured!!", "Cannot Fetched Working Hours Data!", "error");
-      return;
-    }
-
-    console.log("=========", current?.provider_id?.time)
-  
-    setOfficeHours(
-      daysOfWeek.reduce((acc, day) => {
-        const respKeyIndex = day.toLowerCase();
-
-        let periodsData = [];
-        if (current.provider_id.time[`start${respKeyIndex}`] &&
-            current.provider_id.time[`end${respKeyIndex}`] )
-        {
-          periodsData = [{
-            start: current.provider_id.time[`start${respKeyIndex}`],
-            finish: current.provider_id.time[`end${respKeyIndex}`]
-          }];
-        }
-
-        acc[day] = {
-          isEnabled: true,
-          periods: periodsData
-        };
-
-        return acc;
-      }, {})
-    )
-  };
+const ManageStaffShift = ({ staffId, setManageStaffShift }) => {
+  // const {current} = useSelector(state => state.user);
+  const [currentStaff, setCurrentStaff] = useState(null);
+  const [currentStaffShifts, setCurrentStaffShifts] = useState(null);
 
   useEffect(() => {
-    fetchCurrentProviderWorkingHours();
-  }, []);
+    // console.log('_++++_+_+_+_+_+_+_+__+');
+
+    if (!staffId?.length) {
+      Swal.fire('Error Ocurred!!', 'Cannot Get Staff Shift Data!!', 'error')
+      return;
+    }
+    const fetchStaffData = async () => {
+      let response = await apiGetOneStaff(staffId);
+
+      if (response?.success && response?.staff) {
+        console.log(response)
+        // setCurrentStaff(response.staff);
+        // setOfficeHours(response.staff?.shifts);
+        setOfficeHours({
+          "monday": {periods: [{start: "11:00", end: "18:00"}, {start: "20:00", end: "22:00"}], isEnabled: true},
+          "tuesday":  {periods: [{start: "08:00", end: "21:00"}], isEnabled: true}
+        });
+        // console.log(response.staff?.shifts);
+      }
+      else {
+        Swal.fire('Error Ocurred!!', 'Cannot Get Staff Shift Data!!', 'error')
+      }
+    }
+
+    fetchStaffData();
+  }, [staffId]);
+
+
+  // };
 
   const [officeHours, setOfficeHours] = useState(
     daysOfWeek.reduce((acc, day) => {
@@ -221,12 +219,13 @@ const ManageStaffShift = () => {
 
   return (
     <div className="w-3/4 pl-8">
+    <span className='text-[#0a66c2] text-lg hover:underline cursor-pointer p-8 bg-blue-500' onClick={()=>setManageStaffShift(false)}>Cancel</span>
       {daysOfWeek.map((day) => (
         <OfficeHours
           key={day}
           day={day}
-          periods={officeHours[day].periods}
-          isEnabled={officeHours[day].isEnabled}
+          periods={officeHours[day]?.periods || []}
+          isEnabled={true}
           onPeriodChange={handlePeriodChange}
           onToggleChange={handleToggleChange}
           onApplyToOtherDays={handleApplyToOtherDays}
