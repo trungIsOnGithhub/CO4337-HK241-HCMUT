@@ -497,6 +497,7 @@ const getAllOrderSpecificMonth = async (month, year, spid) => {
         'info.0.provider': spid
     })
     .populate('info.service')
+    .populate('info.staff')
     .populate('orderBy');
 }
 const getCustomerDataByMonth = asyncHandler(async (req, res) => {
@@ -894,6 +895,13 @@ const getOccupancyByServices = asyncHandler(async (req, res) => {
         // allServiceInOrders[idx].;
         // allServiceInOrders[idx].
     }
+
+    // desc sort then take only top 3
+    allServiceInOrders.sort((a,b) => {
+        return (a.revenue > b.revenue) ? -1 : ((b.revenue > a.revenue) ? 1 : 0)
+    });
+    allServiceInOrders = allServiceInOrders.slice(0, 3);
+
     return res.json({
         success: true,
         performance: allServiceInOrders
@@ -923,6 +931,7 @@ const getOccupancyByStaffs = asyncHandler(async (req, res) => {
                 if (!item.staff || !item.staff?._id || !item.service) continue;
 
                 if (allStaffInOrders.filter(staff => staff._id === item.staff?._id).length === 0) {
+                    console.log('---------JJJJJJJJ', item.staff);
                     allStaffInOrders.push(item.staff);
                 }
                 sumWorkedHourByStaff[item.staff?._id] = (sumWorkedHourByStaff[item.staff?._id] || 0) + item.service?.duration;
@@ -931,6 +940,8 @@ const getOccupancyByStaffs = asyncHandler(async (req, res) => {
             }
         }
     });
+
+    console.log('----:::::::', allStaffInOrders);
 
     const serviceProviderInfo = await ServiceProvider.findById(spid);
     let totalWorkingHoursOfProviderPerWeek = 0;
@@ -945,7 +956,7 @@ const getOccupancyByStaffs = asyncHandler(async (req, res) => {
 
     // let numDaysInMonth = new Date(currYear, currMonth, 0).getDate();
     for (const idx in allStaffInOrders) {
-        const serviceId = allStaffInOrders[idx]._id;
+        const staffId = allStaffInOrders[idx]._id;
 
         allStaffInOrders[idx] = {
             ...(allStaffInOrders[idx].toObject()),
@@ -954,6 +965,12 @@ const getOccupancyByStaffs = asyncHandler(async (req, res) => {
             occupancy: sumWorkedHourByStaff[staffId] * 100 / totalWorkingHoursOfProviderPerWeek * 4
         }
     }
+
+    // desc sort then take only top 3
+    allStaffInOrders.sort((a,b) => {
+        return (a.revenue > b.revenue) ? -1 : ((b.revenue > a.revenue) ? 1 : 0);
+    });
+    allStaffInOrders = allStaffInOrders.slice(0, 3);
 
     return res.json({
         success: true,

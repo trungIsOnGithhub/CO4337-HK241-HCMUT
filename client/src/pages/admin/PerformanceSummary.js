@@ -151,12 +151,12 @@ function PerformanceSummary({ providerId }) {
             <div className="flex items-center mb-3">
               {/* Service Image */}
               <img
-                src={service.thumb}
-                alt={`${service.name} icon`}
+                src={service.avatar}
+                alt={`${service.firstName} ${service.lastName} avatar`}
                 className="w-10 h-10 rounded-full mr-4"
               />
               <div>
-                <h3 className="text-gray-800 font-semibold">{service.name}</h3>
+                <h3 className="text-gray-800 font-semibold">{`${service.firstName} ${service.lastName}`}</h3>
               </div>
             </div>
             <div className="text-sm text-gray-600">
