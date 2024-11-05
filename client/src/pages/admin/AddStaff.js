@@ -30,7 +30,7 @@ const AddStaff = () => {
     }, [watch('avatar')]);
 
     const handleAddStaff = async (data) => {
-        data.provider_id = current.provider_id;
+        data.provider_id = current?.provider_id?._id;
         const formData = new FormData();
         for (let i of Object.entries(data)) {
             formData.append(i[0], i[1]);
