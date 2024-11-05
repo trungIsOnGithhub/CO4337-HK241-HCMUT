@@ -110,8 +110,7 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
   );
 };
 
-const ManageStaffShift = ({ staffId, setManageStaffShift }) => {
-  // const {current} = useSelector(state => state.user);
+const ManageStaffShift = ({ staffId, setManageStaffShift }) => {  
   const [currentStaff, setCurrentStaff] = useState(null);
   // const [currentStaffShifts, setCurrentStaffShifts] = useState(null);
 
@@ -170,11 +169,15 @@ const ManageStaffShift = ({ staffId, setManageStaffShift }) => {
   };
 
   const handleToggleChange = (day) => {
-    setOfficeHours(prev => {
+    setOfficeHours((prev) => {
       if (!prev[day]) {
         prev[day] = { periods: {start: "00:00", end: "00:00" }, isEnabled: true };
-      }
-      
+      } 
+      console.log(day, '--------', {
+        ...prev,
+        [day]: { ...prev[day], isEnabled: !prev[day].isEnabled },
+      });
+
       return {
         ...prev,
         [day]: { ...prev[day], isEnabled: !prev[day].isEnabled },
@@ -204,27 +207,29 @@ const ManageStaffShift = ({ staffId, setManageStaffShift }) => {
       Swal.fire('Error Ocurred!!', 'Data Unavailable To Update Staff!', 'error');
       return;
     }
-    let swalResult = Swal.fire({
+    let swalResult = await Swal.fire({
       title: "Confirm Shift Modified?",
       text: 'Modify Staff Shift May Affect Customer Order That Is Waiting!',
       icon: 'warning',
       showConfirmButton: true,
       showCancelButton: true,
-      confirmButtonText: 'Delete',
+      confirmButtonText: 'Confirm',
       cancelButtonText: 'Not now',                
     });
 
     console.log("++++", officeHours);
 
-    let resp = await apiUpdateStaffShift({staffId, newShifts:officeHours});
+    if (swalResult.isConfirmed) {
+      let resp = await apiUpdateStaffShift({staffId, newShifts:officeHours});
 
-    if (resp.success && resp?.staff?.shifts) {
-      setOfficeHours(resp.staff.shifts);
-      Swal.fire('Success', 'Modified Staff Shift Successfully!', 'success');
-      return;
+      if (resp.success && resp?.staff?.shifts) {
+        setOfficeHours(resp.staff.shifts);
+        Swal.fire('Success', 'Modified Staff Shift Successfully!', 'success');
+        return;
+      }
+
+      Swal.fire('Error Ocurred!!', 'Cannot Update Staff Shift!!', 'error');
     }
-
-    Swal.fire('Error Ocurred!!', 'Cannot Update Staff Shift!!', 'error');
   };
 
   return (
@@ -237,20 +242,37 @@ const ManageStaffShift = ({ staffId, setManageStaffShift }) => {
           <span className='text-[#00143c] text-3xl font-semibold'>Manage Staff Shift</span>
           <span className='text-white text-md hover:underline cursor-pointer p-2 bg-red-400 rounded-md'
             onClick={()=>setManageStaffShift(false)}>
-            Cancel
+            Back to Manage Staff
           </span>
           <span className='text-white text-md hover:underline cursor-pointer p-2 bg-teal-500 rounded-md'
             onClick={handleSubmitStaffShift}>
             Submit Changes
           </span>
         </div>
+
+        <div className='m-3'>
+            <div className='w-full flex gap-1 border text-slate-700'>
+              <span className='w-[30%] text-center'>Email Address</span>
+              <span className='w-[30%] text-center'>Full Name</span>
+              <span className='w-[30%] text-center'>Phone</span>
+            </div>
+            <div className='w-full flex gap-1 border-b p-[8px]'>
+                <div className='w-full flex border-2 gap-1 h-[56px] px-[8px] py-[12px] bg-white'>
+                  {/* <span className='w-[25%] py-2 text-[#00143c]'><img src={currentStaff?.avatar} alt='thumb' className='w-12 h-12 object-cover'></img></span> */}
+                  <span className='w-[30%] py-2 text-[#00143c] text-sm line-clamp-1 text-center font-semibold'>{  currentStaff?.email}</span>
+                  <span className='w-[30%] py-2 text-[#00143c] text-sm line-clamp-1 text-center font-semibold'>{`${currentStaff?.firstName} ${currentStaff?.lastName}`}</span>
+                  <span className='w-[30%] px-2 py-2 text-[#00143c] text-sm line-clamp-1 text-center font-semibold'>{`${currentStaff?.mobile}`}</span>
+                </div>
+            </div>
+        </div>
+
           <div className="w-1/2 flex-col justify-center mx-auto">
             {daysOfWeek.map((day) => (
               <OfficeHours
                 key={day}
                 day={day}
                 periods={officeHours[day]?.periods || {}}
-                isEnabled={officeHours[day]?.isEnabled || true}
+                isEnabled={typeof(officeHours[day]?.isEnabled) === 'boolean' ? officeHours[day]?.isEnabled : true}
                 onPeriodChange={handlePeriodChange}
                 onToggleChange={handleToggleChange}
                 onApplyToOtherDays={handleApplyToOtherDays}
