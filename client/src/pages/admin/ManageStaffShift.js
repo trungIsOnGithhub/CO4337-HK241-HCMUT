@@ -9,8 +9,8 @@ const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Sat
 // const timeOptions = ["9:00 am", "10:00 am", "11:00 am", "12:00 pm", "1:00 pm", "2:00 pm", "3:00 pm", "4:00 pm", "5:00 pm", "6:00 pm", "7:00 pm", "8:00 pm"];
 
 const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, onApplyToOtherDays }) => {
-  const [newShiftStart, setNewShiftStart] = useState("00:00"); // format of html time input
-  const [newShiftEnd, setNewShiftEnd] = useState("00:00"); // format of html time input
+  // const [newShiftStart, setNewShiftStart] = useState("00:00"); // format of html time input
+  // const [newShiftEnd, setNewShiftEnd] = useState("00:00"); // format of html time input
 
   return (
     <div className={`p-4 rounded-md shadow-md w-full mt-4 ${isEnabled ? 'bg-white' : 'bg-gray-100'}`}>
@@ -24,7 +24,7 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
           <input
             type="checkbox"
             checked={isEnabled}
-            onChange={() => onToggleChange(day)}
+            onChange={() => {console.log("day::::", day); onToggleChange(day)}}
             className="hidden"
           />
           <span
@@ -42,32 +42,21 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
       </div>
 
       {/* Time Inputs, disabled if isEnabled is false */}
-      {periods.map((period, index) => (
-        <div className="flex gap-4 mt-4" key={index}>
+      {isEnabled &&
+        <div className="flex gap-4 mt-4">
           <div className="flex flex-col w-1/2">
             <label className="text-sm font-medium text-gray-600">Start</label>
             <div className="flex items-center px-3 py-2 mt-1 bg-gray-50 border border-gray-300 rounded-md">
               <FaClock className="mr-2 text-gray-500" />
-              {/* <select
-                value={period.start}
-                onChange={(e) => onPeriodChange(day, index, 'start', e.target.value)}
-                className="flex-1 bg-transparent outline-none text-gray-500"
-                disabled={!isEnabled}  // Disables if isEnabled is false
-              >
-                {timeOptions.map((time) => (
-                  <option key={time} value={time}>{time}</option>
-                ))}
-              </select> */}
-
 
               <input
                 name="startShift"
                 type="time"
                 id="startShift"
                 placeholder={"..."}
-                value={newShiftStart}
+                value={periods[day]?.start || "00:00"}
                 className="form-input text-gray-600 my-auto rounded-md"
-                onChange={(event) => {setNewShiftStart(event.target.value)}}
+                onChange={(event) => { onPeriodChange('start', event.target.value); }}
               />
 
             </div>
@@ -76,41 +65,30 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
             <label className="text-sm font-medium text-gray-600">Finish</label>
             <div className="flex items-center px-3 py-2 mt-1 bg-gray-50 border border-gray-300 rounded-md">
               <FaClock className="mr-2 text-gray-500" />
-              {/* <select
-                value={period.finish}
-                onChange={(e) => onPeriodChange(day, index, 'finish', e.target.value)}
-                className="flex-1 bg-transparent outline-none text-gray-500"
-                disabled={!isEnabled}  // Disables if isEnabled is false
-              >
-                {timeOptions.map((time) => (
-                  <option key={time} value={time}>{time}</option>
-                ))}
-              </select> */}
-
 
               <input
                 name="endShift"
                 type="time"
                 id="endShift"
                 placeholder={"..."}
-                value={newShiftEnd}
+                value={periods[day]?.end || "00:00"}
                 className="form-input text-gray-600 my-auto rounded-md"
-                onChange={(event) => {setNewShiftEnd(event.target.value)}}
+                onChange={(event) => { onPeriodChange('end', event.target.value); }}
               />
             </div>
           </div>
-          <button
+
+          {/* <button
             className="flex items-center justify-center w-10 h-10 mt-6 text-gray-500 transition bg-gray-100 rounded hover:bg-gray-200"
-            onClick={() => onPeriodChange(day, index, 'delete')}
+            onClick={() => onPeriodChange(day, 'delete')}
             disabled={!isEnabled}  // Disables delete if isEnabled is false
           >
             <FaTrashAlt />
-          </button>
+          </button> */}
         </div>
-      ))}
+      }
 
-      {/* Add Period Button */}
-      <div className="flex items-center mt-4">
+      {/* {isEnabled && <div className="flex items-center mt-4">
         <button
           onClick={() => onPeriodChange(day, periods.length, 'add')}
           className="flex items-center px-4 py-2 text-sm font-medium text-blue-600 transition bg-blue-50 rounded hover:bg-blue-100"
@@ -118,10 +96,9 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
         >
           + Add Period
         </button>
-      </div>
+      </div> } */}
 
-      {/* Apply to Other Days Link */}
-      <div className="flex justify-end mt-4">
+      {isEnabled && <div className="flex justify-end mt-4">
         <button
           onClick={() => onApplyToOtherDays(day)}
           className="text-sm font-medium text-blue-600 hover:underline"
@@ -129,7 +106,7 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
         >
           Apply to Other Days
         </button>
-      </div>
+      </div> }
     </div>
   );
 };
@@ -149,13 +126,13 @@ const ManageStaffShift = ({ staffId, setManageStaffShift }) => {
     const fetchStaffData = async () => {
       console.log(staffId, '_______|||||');
       setOfficeHours({
-        "Monday": {periods: [{start: "11:00", end: "18:00"}, {start: "20:00", end: "22:00"}], isEnabled: true},
-        "Tuesday":  {periods: [{start: "08:00", end: "21:00"}], isEnabled: true},
-        "Wednesday":  {periods: [{start: "08:00", end: "21:00"}], isEnabled: true},
-        "Thursday":  {periods: [{start: "08:00", end: "21:00"}], isEnabled: true},
-        "Friday":  {periods: [], isEnabled: true},
-        "Saturday": {periods: [], isEnabled: true},
-        "Sunday": {periods: [], isEnabled: true}
+        "Monday": {periods: {start: "11:00", end: "18:00"} , isEnabled: true},
+        "Tuesday":  {periods: {start: "08:00", end: "21:00"}, isEnabled: true},
+        "Wednesday":  {periods: {start: "08:00", end: "21:00"}, isEnabled: true},
+        "Thursday":  {periods: {start: "08:00", end: "21:00"}, isEnabled: true},
+        "Friday":  {periods: {}, isEnabled: true},
+        "Saturday": {periods: {}, isEnabled: true},
+        "Sunday": {periods: {}, isEnabled: true}
       });
   
       let response = await apiGetOneStaff(staffId);
@@ -178,20 +155,21 @@ const ManageStaffShift = ({ staffId, setManageStaffShift }) => {
   const [showModal, setShowModal] = useState(false);
   const [sourceDay, setSourceDay] = useState(null);
 
-  const handlePeriodChange = (day, index, field, value) => {
+  const handlePeriodChange = (day, field, value) => {
     // console.log("++++", officeHours);
     setOfficeHours((prev) => {
       const updatedDay = { ...prev[day] };
 
       console.log('=====', prev);
 
-      if (field === 'add') {
-        updatedDay.periods.push({ start: '9:00 am', finish: '5:00 pm' });
-      } else if (field === 'delete') {
-        updatedDay.periods.splice(index, 1);
-      } else {
-        updatedDay.periods[index][field] = value;
-      }
+      // if (field === 'add') {
+      //   updatedDay.periods.push({ start: '9:00 am', finish: '5:00 pm' });
+      // } else
+      // if (field === 'delete') {
+      //   updatedDay.periods.splice(index, 1);
+      // } else {
+        updatedDay.periods[field] = value;
+      // }
       return { ...prev, [day]: updatedDay };
     });
   };
@@ -221,22 +199,22 @@ const ManageStaffShift = ({ staffId, setManageStaffShift }) => {
   };
 
   return (
-    <div className="w-full h-full relative">
+    <div className="w-full h-full">
       <div className='inset-0 absolute z-0'>
         <img src={bgImage} className='w-full h-full object-cover'/>
       </div>
-      <div className="relative z-10"> {/* Thêm lớp này để đảm bảo dòng chữ không bị che mất */}
+      <div className="relative z-10 flex-col justify-center"> {/* Thêm lớp này để đảm bảo dòng chữ không bị che mất */}
         <div className='w-full h-20 flex justify-between p-4'>
           <span className='text-[#00143c] text-3xl font-semibold'>Manage Staff Shift</span>
           <span className='text-[#0a66c2] text-lg hover:underline cursor-pointer p-2 bg-red-400 rounded-md' onClick={()=>setManageStaffShift(false)}>Cancel</span>
         </div>
-          <div className="w-3/4 pl-8">
+          <div className="w-3/4 pl-8 flex-col justify-center">
             {daysOfWeek.map((day) => (
               <OfficeHours
                 key={day}
                 day={day}
-                periods={officeHours[day]?.periods || []}
-                isEnabled={true}
+                periods={officeHours[day]?.periods}
+                isEnabled={officeHours[day]?.isEnabled}
                 onPeriodChange={handlePeriodChange}
                 onToggleChange={handleToggleChange}
                 onApplyToOtherDays={handleApplyToOtherDays}
