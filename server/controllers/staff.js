@@ -3,7 +3,7 @@ const User = require('../models/user')
 const Staff = require('../models/staff')
 
 const addStaff = asyncHandler(async(req, res)=>{
-
+    console.log('---|||', req.body);
     const {firstName, lastName, email, mobile, provider_id} = req.body
     if(!firstName || !lastName || !mobile || !email || !provider_id){
         throw new Error("Missing input")

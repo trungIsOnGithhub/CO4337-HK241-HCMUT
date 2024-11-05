@@ -13,15 +13,16 @@ import { toast } from 'react-toastify'
 import { FaCalendarCheck } from "react-icons/fa";
 import bgImage from '../../assets/clouds.svg'
 // import { createSearchParams, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { apiGetOrdersByAdmin } from 'apis/order';
-import moment from 'moment';
-import { FiCalendar, FiChevronLeft, FiChevronRight, FiX } from 'react-icons/fi';
+// import { apiGetOrdersByAdmin } from 'apis/order';
+// import moment from 'moment';
+// import { FiCalendar, FiChevronLeft, FiChevronRight, FiX } from 'react-icons/fi';
 // import path from 'ultils/path';
 // import withBaseComponent from 'hocs/withBaseComponent';
 // import { formatPrice, formatPricee } from 'ultils/helper';
 import { TfiExport } from "react-icons/tfi";
 import { BsCalendar } from "react-icons/bs";
 import { RxMixerVertical } from 'react-icons/rx';
+import { FaBahai } from "react-icons/fa";
 
 const ManageProduct = () => {
   const {MdModeEdit, MdDelete} = icons
@@ -90,6 +91,12 @@ const ManageProduct = () => {
 
     fetchStaff(searchParams);
   }
+
+  const resetParam = () => {
+    const searchParams = {};
+
+    fetchStaff(searchParams);
+  }
   
   useEffect(staffDataEffectHandler, [params, update])
 
@@ -128,7 +135,7 @@ const ManageProduct = () => {
 
         <div className='w-[95%] h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
           <div className='w-full h-fit flex justify-between items-center'>
-            <h1 className='text-[#00143c] font-medium text-[16px]'>{`Total Staffs: (${counts})`}</h1>
+            <h1 className='text-[#00143c] font-medium text-[16px]'>{`Total Current Staffs: (${counts})`}</h1>
             <Button style={'px-4 py-2 rounded-md text-[#00143c] bg-[#fff] font-semibold w-fit h-fit flex gap-2 items-center border border-[#b3b9c5]'}><TfiExport className='text-lg font-bold' /> Export Data</Button>
           </div>
           <div className='w-full h-[48px] mx-[-6px] mt-[-6px] mb-[10px] flex'>
@@ -147,12 +154,18 @@ const ManageProduct = () => {
                   </InputFormm>
                 </form>
               </div>
-              <div className='h-[36px] m-[6px]'>
+              <div className='h-[36px] m-[6px] flex justify-start gap-4'>
                 <Button
                   handleOnclick={() => { staffDataEffectHandler() }}
                   style={'w-full px-4 py-2 bg-[#dee1e6] rounded-md text-[#00143c] flex gap-1 items-center justify-center font-semibold'}>
                   <span className='font-bold text-xl'><RxMixerVertical /></span>
                   <span>Filters</span>
+                </Button>
+                <Button
+                  handleOnclick={() => { resetParam() }}
+                  style={'w-full px-4 py-2 bg-[#dee1e6] rounded-md text-[#00143c] flex gap-1 items-center justify-center font-semibold'}>
+                  <span className='font-bold text-xl'><FaBahai /></span>
+                  <span>Reset</span>
                 </Button>
               </div>
             {/* <div className="relative w-[25%] h-[36px] m-[6px]">

@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { apiAddStaff } from 'apis';
 import { HashLoader } from 'react-spinners';
 import { getCurrent } from 'store/user/asyncAction';
-import bgImage from '../../assets/clouds.svg'
+import bgImage from '../../assets/clouds.svg';
 import { useDispatch, useSelector } from 'react-redux';
 
 const AddStaff = () => {
@@ -40,14 +40,17 @@ const AddStaff = () => {
             return;
         }
         if (data.avatar) formData.append('avatar', data.avatar[0]);
+
+        console.log('------AADADADA', formData);
+
         setIsLoading(true);
         const response = await apiAddStaff(formData);
         setIsLoading(false);
         if (response.success) {
-            toast.success(response.mes);
+            toast.success("Create Staff Succesfully!");
             reset();
         } else {
-            toast.error(response.mes);
+            toast.error("Error Create Staff!");
         }
     };
 
@@ -82,7 +85,7 @@ const AddStaff = () => {
                             label='Last Name'
                             register={register}
                             errors={errors}
-                            id='firstName'
+                            id='lastName'
                             validate={{
                                 required: 'Need fill this field'
                             }}
