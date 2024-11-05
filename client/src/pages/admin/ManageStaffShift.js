@@ -2,7 +2,7 @@ import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux'
 import React, { useEffect, useState } from 'react';
 import { FaClock, FaTrashAlt } from 'react-icons/fa';
-import { apiGetOneStaff } from 'apis/staff';
+import { apiGetOneStaff, apiUpdateStaffShift } from 'apis/staff';
 import bgImage from '../../assets/clouds.svg'
 
 const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -54,11 +54,10 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
                 type="time"
                 id="startShift"
                 placeholder={"..."}
-                value={periods[day]?.start || "00:00"}
+                value={periods?.start || "00:00"}
                 className="form-input text-gray-600 my-auto rounded-md"
-                onChange={(event) => { onPeriodChange('start', event.target.value); }}
+                onChange={(event) => { onPeriodChange(day, 'start', event.target.value); }}
               />
-
             </div>
           </div>
           <div className="flex flex-col w-1/2">
@@ -71,9 +70,9 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
                 type="time"
                 id="endShift"
                 placeholder={"..."}
-                value={periods[day]?.end || "00:00"}
+                value={periods?.end || "00:00"}
                 className="form-input text-gray-600 my-auto rounded-md"
-                onChange={(event) => { onPeriodChange('end', event.target.value); }}
+                onChange={(event) => { onPeriodChange(day, 'end', event.target.value); }}
               />
             </div>
           </div>
@@ -114,7 +113,7 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
 const ManageStaffShift = ({ staffId, setManageStaffShift }) => {
   // const {current} = useSelector(state => state.user);
   const [currentStaff, setCurrentStaff] = useState(null);
-  const [currentStaffShifts, setCurrentStaffShifts] = useState(null);
+  // const [currentStaffShifts, setCurrentStaffShifts] = useState(null);
 
   useEffect(() => {
     // console.log('_++++_+_+_+_+_+_+_+__+');
@@ -124,20 +123,19 @@ const ManageStaffShift = ({ staffId, setManageStaffShift }) => {
       return;
     }
     const fetchStaffData = async () => {
-      console.log(staffId, '_______|||||');
-      setOfficeHours({
-        "Monday": {periods: {start: "11:00", end: "18:00"} , isEnabled: true},
-        "Tuesday":  {periods: {start: "08:00", end: "21:00"}, isEnabled: true},
-        "Wednesday":  {periods: {start: "08:00", end: "21:00"}, isEnabled: true},
-        "Thursday":  {periods: {start: "08:00", end: "21:00"}, isEnabled: true},
-        "Friday":  {periods: {}, isEnabled: true},
-        "Saturday": {periods: {}, isEnabled: true},
-        "Sunday": {periods: {}, isEnabled: true}
-      });
-  
+      // console.log(staffId, '_______|||||');
+
       let response = await apiGetOneStaff(staffId);
 
- 
+      if (response?.success && response?.staff) {
+        console.log(response)
+        setCurrentStaff(response.staff);
+        setOfficeHours(response.staff?.shifts || {});
+        // console.log(Object.values(response.staff?.shifts));
+      }
+      else {
+        Swal.fire('Error Ocurred!!', 'Cannot Get Staff Shift Data!!', 'error')
+      }
     }
 
     fetchStaffData();
@@ -146,39 +144,42 @@ const ManageStaffShift = ({ staffId, setManageStaffShift }) => {
 
   // };
 
-  const [officeHours, setOfficeHours] = useState(
-    daysOfWeek.reduce((acc, day) => {
-      acc[day] = { isEnabled: true, periods: [{ start: '9:00 am', finish: '5:00 pm' }] };
-      return acc;
-    }, {})
-  );
+  const [officeHours, setOfficeHours] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [sourceDay, setSourceDay] = useState(null);
 
   const handlePeriodChange = (day, field, value) => {
-    // console.log("++++", officeHours);
     setOfficeHours((prev) => {
-      const updatedDay = { ...prev[day] };
-
-      console.log('=====', prev);
+      if (!prev[day]) {
+        prev[day] = { periods: {start: "00:00", end: "00:00" }, isEnabled: true };
+      }
+      const updatedDay = { ...prev[day] }; 
+      console.log('=====}}}}}}', updatedDay, day);
+      updatedDay.periods[field] = value;
 
       // if (field === 'add') {
       //   updatedDay.periods.push({ start: '9:00 am', finish: '5:00 pm' });
       // } else
       // if (field === 'delete') {
       //   updatedDay.periods.splice(index, 1);
-      // } else {
-        updatedDay.periods[field] = value;
+      // // } else {
+      //   updatedDay.periods[field] = value;
       // }
       return { ...prev, [day]: updatedDay };
     });
   };
 
   const handleToggleChange = (day) => {
-    setOfficeHours((prev) => ({
-      ...prev,
-      [day]: { ...prev[day], isEnabled: !prev[day].isEnabled },
-    }));
+    setOfficeHours(prev => {
+      if (!prev[day]) {
+        prev[day] = { periods: {start: "00:00", end: "00:00" }, isEnabled: true };
+      }
+      
+      return {
+        ...prev,
+        [day]: { ...prev[day], isEnabled: !prev[day].isEnabled },
+      };
+    });
   };
 
   const handleApplyToOtherDays = (day) => {
@@ -198,23 +199,58 @@ const ManageStaffShift = ({ staffId, setManageStaffShift }) => {
     setShowModal(false);
   };
 
+  const handleSubmitStaffShift = async () => {
+    if (!staffId?.length) {
+      Swal.fire('Error Ocurred!!', 'Data Unavailable To Update Staff!', 'error');
+      return;
+    }
+    let swalResult = Swal.fire({
+      title: "Confirm Shift Modified?",
+      text: 'Modify Staff Shift May Affect Customer Order That Is Waiting!',
+      icon: 'warning',
+      showConfirmButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Not now',                
+    });
+
+    console.log("++++", officeHours);
+
+    let resp = await apiUpdateStaffShift({staffId, newShifts:officeHours});
+
+    if (resp.success && resp?.staff?.shifts) {
+      setOfficeHours(resp.staff.shifts);
+      Swal.fire('Success', 'Modified Staff Shift Successfully!', 'success');
+      return;
+    }
+
+    Swal.fire('Error Ocurred!!', 'Cannot Update Staff Shift!!', 'error');
+  };
+
   return (
-    <div className="w-full h-full">
+    <div>
       <div className='inset-0 absolute z-0'>
         <img src={bgImage} className='w-full h-full object-cover'/>
       </div>
-      <div className="relative z-10 flex-col justify-center"> {/* Thêm lớp này để đảm bảo dòng chữ không bị che mất */}
-        <div className='w-full h-20 flex justify-between p-4'>
+      <div className="relative flex-col justify-center items-center"> {/* Thêm lớp này để đảm bảo dòng chữ không bị che mất */}
+        <div className='flex justify-start gap-5 p-4'>
           <span className='text-[#00143c] text-3xl font-semibold'>Manage Staff Shift</span>
-          <span className='text-[#0a66c2] text-lg hover:underline cursor-pointer p-2 bg-red-400 rounded-md' onClick={()=>setManageStaffShift(false)}>Cancel</span>
+          <span className='text-white text-md hover:underline cursor-pointer p-2 bg-red-400 rounded-md'
+            onClick={()=>setManageStaffShift(false)}>
+            Cancel
+          </span>
+          <span className='text-white text-md hover:underline cursor-pointer p-2 bg-teal-500 rounded-md'
+            onClick={handleSubmitStaffShift}>
+            Submit Changes
+          </span>
         </div>
-          <div className="w-3/4 pl-8 flex-col justify-center">
+          <div className="w-1/2 flex-col justify-center mx-auto">
             {daysOfWeek.map((day) => (
               <OfficeHours
                 key={day}
                 day={day}
-                periods={officeHours[day]?.periods}
-                isEnabled={officeHours[day]?.isEnabled}
+                periods={officeHours[day]?.periods || {}}
+                isEnabled={officeHours[day]?.isEnabled || true}
                 onPeriodChange={handlePeriodChange}
                 onToggleChange={handleToggleChange}
                 onApplyToOtherDays={handleApplyToOtherDays}

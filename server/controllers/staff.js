@@ -18,7 +18,7 @@ const addStaff = asyncHandler(async(req, res)=>{
         success: response ? true : false,
         mes: response ? 'Created successfully' : "Cannot create new staff"
     })
-})
+});
 
 // get all staffs
 const getAllStaffsByAdmin = asyncHandler(async (req, res) => {
@@ -27,7 +27,7 @@ const getAllStaffsByAdmin = asyncHandler(async (req, res) => {
     const queries = { ...req.query };
 
     // console.log('=======', _id);
-    console.log('=======', req);
+    // console.log('=======', req);
 
     // Loại bỏ các trường đặc biệt ra khỏi query
     const excludeFields = ['limit', 'sort', 'page', 'fields'];
@@ -152,27 +152,29 @@ const updateStaffWork = asyncHandler(async(req, res)=>{
     }
 })
 
-const deleteStaffShift = asyncHandler(async(req, res)=>{
-    const {service, provider, staff, duration, time, date} = req.body?.info[0];
-    if (!service || !provider || !staff || !time || !date || !duration) {
-        throw new Error("Missing input");
-    } else {
-        const response = await Staff.findByIdAndUpdate(staff, {$push: {work: {service, provider, time, date, duration}}}, {new: true});
-        return res.status(200).json({
-            success: response ? true : false,
-            mes: response ? 'Updated staff' : "Something went wrong"
-        });
-    }
-})
+// const deleteStaffShift = asyncHandler(async(req, res)=>{
+//     const {service, provider, staff, duration, time, date} = req.body?.info[0];
+//     if (!service || !provider || !staff || !time || !date || !duration) {
+//         throw new Error("Missing input");
+//     } else {
+//         const response = await Staff.findByIdAndUpdate(staff, {$push: {work: {service, provider, time, date, duration}}}, {new: true});
+//         return res.status(200).json({
+//             success: response ? true : false,
+//             mes: response ? 'Updated staff' : "Something went wrong"
+//         });
+//     }
+// })
 
 const updateStaffShift = asyncHandler(async(req, res)=>{
     const {staffId, newShifts} = req.body;
-
     if (!staffId || !newShifts) {
         throw new Error("Missing input");
     }
 
+    console.log("---|" + staffId + "|---");
+
     const response = await Staff.findByIdAndUpdate(staffId, {$set: {shifts: newShifts}}, {new: true});
+
     return res.status(200).json({
         success: response ? true : false,
         staff: response
