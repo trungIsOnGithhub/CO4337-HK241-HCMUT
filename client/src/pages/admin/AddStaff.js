@@ -1,11 +1,12 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { InputForm, Button, Loading } from 'components';
+import { InputForm, Button, Loading, InputFormm } from 'components';
 import { useForm } from 'react-hook-form';
 import { validate, getBase64 } from 'ultils/helper';
 import { toast } from 'react-toastify';
 import { apiAddStaff } from 'apis';
 import { HashLoader } from 'react-spinners';
 import { getCurrent } from 'store/user/asyncAction';
+import bgImage from '../../assets/clouds.svg'
 import { useDispatch, useSelector } from 'react-redux';
 
 const AddStaff = () => {
@@ -51,14 +52,19 @@ const AddStaff = () => {
     };
 
     return (
-        <div className='w-full'>
-            <h1 className='h-[75px] flex justify-between items-center text-3xl font-bold px-4 border-b'>
-                <span>Add Staff</span>
-            </h1>
+        <div className='w-full h-full relative'>
+        <div className='inset-0 absolute z-0'>
+          <img src={bgImage} className='w-full h-full object-cover'/>
+        </div>
+        <div className='relative z-10 w-full'>
+          <div className='w-full h-fit flex justify-between p-4'>
+            <span className='text-[#00143c] text-3xl h-fit font-semibold'>Add Blog</span>
+          </div>
             <div className='p-4 '>
                 <form onSubmit={handleSubmit(handleAddStaff)}>
                     <div className='w-full my-6 flex gap-4'>
-                        <InputForm 
+
+                        <InputFormm
                             label='First Name'
                             register={register}
                             errors={errors}
@@ -68,21 +74,27 @@ const AddStaff = () => {
                             }}
                             style='flex-auto'
                             placeholder='First Name ...'
+                            styleLabel={'text-[#00143c] font-medium mb-1'}
+                            styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none rounded-md border-[#dee1e6]'}
                         />
-                        <InputForm 
+
+                        <InputFormm
                             label='Last Name'
                             register={register}
                             errors={errors}
-                            id='lastName'
+                            id='firstName'
                             validate={{
                                 required: 'Need fill this field'
                             }}
                             style='flex-auto'
-                            placeholder='Last Name ...'
+                            placeholder='First Name ...'
+                            styleLabel={'text-[#00143c] font-medium mb-1'}
+                            styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none rounded-md border-[#dee1e6]'}
                         />
+
                     </div>
                     <div className='w-full my-6 flex gap-4'>
-                        <InputForm 
+                        <InputFormm
                             label='Email Address'
                             register={register}
                             errors={errors}
@@ -96,8 +108,10 @@ const AddStaff = () => {
                             }} 
                             style='flex-auto'
                             placeholder='Email Address ...'
+                            styleLabel={'text-[#00143c] font-medium mb-1'}
+                            styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none rounded-md border-[#dee1e6]'}
                         />
-                        <InputForm 
+                        <InputFormm
                             label='Phone Number'
                             register={register}
                             errors={errors}
@@ -111,9 +125,11 @@ const AddStaff = () => {
                             }} 
                             style='flex-auto'
                             placeholder='Phone Number ...'
+                            styleLabel={'text-[#00143c] font-medium mb-1'}
+                            styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none rounded-md border-[#dee1e6]'}
                         />
                     </div>
-                    <div className='flex flex-col gap-2 mt-8'>
+                    <div className='flex flex-col gap-2 mt-8 text-gray-600'>
                         <label className='font-semibold' htmlFor='avatar'>Upload Avatar</label>
                         <input 
                             {...register('avatar', {required: 'Need upload avatar'})}
@@ -140,6 +156,7 @@ const AddStaff = () => {
                   </div>
                 )}
             </div>
+        </div>
         </div>
     );
 };
