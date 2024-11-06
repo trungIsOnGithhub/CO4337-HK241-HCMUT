@@ -23,6 +23,7 @@ import { TfiExport } from "react-icons/tfi";
 import { BsCalendar } from "react-icons/bs";
 import { RxMixerVertical } from 'react-icons/rx';
 import { FaBahai } from "react-icons/fa";
+import { utils, writeFile } from 'xlsx';
 
 const ManageProduct = () => {
   const {MdModeEdit, MdDelete} = icons
@@ -37,6 +38,16 @@ const ManageProduct = () => {
   const [manageStaffShift, setManageStaffShift] = useState(false)
   const [currentStaffId, setCurrentStaffId] = useState("");
   const [searchTerm, setSearchTerm] = useState(""); 
+
+  const exportExcelFile = useCallback(() => {
+    /* generate worksheet from state */
+    const ws = utils.json_to_sheet([{name:"trung"}]);
+    /* create workbook and append worksheet */
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, "Staff");
+    /* export to XLSX */
+    writeFile(wb, "SheetJSReactAoO.xlsx");
+  });
 
   const handleDeleteStaff = async(pid) => {
     Swal.fire({
@@ -136,7 +147,9 @@ const ManageProduct = () => {
         <div className='w-[95%] h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
           <div className='w-full h-fit flex justify-between items-center'>
             <h1 className='text-[#00143c] font-medium text-[16px]'>{`Total Current Staffs: (${counts})`}</h1>
-            <Button style={'px-4 py-2 rounded-md text-[#00143c] bg-[#fff] font-semibold w-fit h-fit flex gap-2 items-center border border-[#b3b9c5]'}><TfiExport className='text-lg font-bold' /> Export Data</Button>
+            <Button style={'px-4 py-2 rounded-md text-[#00143c] bg-[#fff] font-semibold w-fit h-fit flex gap-2 items-center border border-[#b3b9c5]'}
+              handleOnclick={exportExcelFile}
+            ><TfiExport className='text-lg font-bold' /> Export Data</Button>
           </div>
           <div className='w-full h-[48px] mx-[-6px] mt-[-6px] mb-[10px] flex'>
               <div className='w-[62%] h-[36px] m-[6px] flex'>
