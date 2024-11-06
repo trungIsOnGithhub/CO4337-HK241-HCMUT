@@ -27,8 +27,8 @@ import { utils, writeFile } from 'xlsx';
 
 const ManageProduct = () => {
   const {MdModeEdit, MdDelete} = icons
-  const navigate = useNavigate()
-  const location = useLocation()
+  // const navigate = useNavigate()
+  // const location = useLocation()
   const [params] = useSearchParams()
   const {register,formState:{errors}, handleSubmit, watch} = useForm()
   const [staffs, setStaffs] = useState(null)
@@ -39,10 +39,23 @@ const ManageProduct = () => {
   const [currentStaffId, setCurrentStaffId] = useState("");
   const [searchTerm, setSearchTerm] = useState(""); 
 
-  const exportExcelFile = useCallback(() => {
-    /* generate worksheet from state */
-    const ws = utils.json_to_sheet([{name:"trung"}]);
-    /* create workbook and append worksheet */
+  const exportExcelFile = useCallback((...propsToExport) => {
+    const jsonData = [];
+
+    staffs?.forEach(staff => {
+      const newObjStaff = {};
+
+      for (const prop in propsToExport) {
+        if (staff[prop]) {
+          newObjectStaff[prop] = jsonData[prop];
+        }
+      }
+
+      jsonData.push(newObjectStaff);
+    })
+
+    const ws = utils.json_to_sheet(jsonData);
+
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, "Staff");
     /* export to XLSX */
