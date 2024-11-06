@@ -3,7 +3,7 @@ import { InputForm, Pagination, Variant, Button, InputFormm } from 'components'
 import { useForm } from 'react-hook-form'
 import {apiGetAllStaffs, apiDeleteStaff} from 'apis/staff'
 // import moment from 'moment'
-import { useSearchParams, createSearchParams, useNavigate, useLocation} from 'react-router-dom'
+import { useSearchParams, createSearchParams, useNavigate, useLocation, json} from 'react-router-dom'
 import useDebounce from 'hook/useDebounce'
 import UpdateStaff from './UpdateStaff'
 import ManageStaffShift from './ManageStaffShift'
@@ -39,28 +39,7 @@ const ManageProduct = () => {
   const [currentStaffId, setCurrentStaffId] = useState("");
   const [searchTerm, setSearchTerm] = useState(""); 
 
-  const exportExcelFile = useCallback((...propsToExport) => {
-    const jsonData = [];
-
-    staffs?.forEach(staff => {
-      const newObjStaff = {};
-
-      for (const prop in propsToExport) {
-        if (staff[prop]) {
-          newObjectStaff[prop] = jsonData[prop];
-        }
-      }
-
-      jsonData.push(newObjectStaff);
-    })
-
-    const ws = utils.json_to_sheet(jsonData);
-
-    const wb = utils.book_new();
-    utils.book_append_sheet(wb, ws, "Staff");
-    /* export to XLSX */
-    writeFile(wb, "SheetJSReactAoO.xlsx");
-  });
+  const [showExportExcelModal, setShowExportExcelModal] = useState(false);
 
   const handleDeleteStaff = async(pid) => {
     Swal.fire({
@@ -86,11 +65,11 @@ const ManageProduct = () => {
     setUpdate(!update)
    })
 
-  const handleSearchProduct = (data) => {
-  }
-  const handleInputClick = () => {
-    // setShowCalendar(!showCalendar);
-  };
+  // const handleSearchProduct = (data) => {
+  // }
+  // const handleInputClick = () => {
+  //   // setShowCalendar(!showCalendar);
+  // };
   const fetchStaff = async(params) => {
     const response = await apiGetAllStaffs({...params, limit: process.env.REACT_APP_LIMIT})
     // console.log('---------', response);
@@ -160,9 +139,15 @@ const ManageProduct = () => {
         <div className='w-[95%] h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
           <div className='w-full h-fit flex justify-between items-center'>
             <h1 className='text-[#00143c] font-medium text-[16px]'>{`Total Current Staffs: (${counts})`}</h1>
+
             <Button style={'px-4 py-2 rounded-md text-[#00143c] bg-[#fff] font-semibold w-fit h-fit flex gap-2 items-center border border-[#b3b9c5]'}
-              handleOnclick={exportExcelFile}
-            ><TfiExport className='text-lg font-bold' /> Export Data</Button>
+              handleOnclick={() => { setShowExportExcelModal(true); }}
+            ><TfiExport className='text-lg font-bold' />Export Data</Button>
+            { showExportExcelModal &&
+              <DataExportSheetModal rawData={staffs}
+                onClose={() => { setShowExportExcelModal(false); }}
+                propsToExport={["firstName", "lastName", "phone", "email"]} /> }
+
           </div>
           <div className='w-full h-[48px] mx-[-6px] mt-[-6px] mb-[10px] flex'>
               <div className='w-[62%] h-[36px] m-[6px] flex'>
@@ -256,11 +241,7 @@ const ManageProduct = () => {
               {staffs?.map((el,index) => (
                 <div key={index} className='w-full flex border-b border-[#f4f6fa] gap-1 h-[56px] px-[8px] py-[12px]'>
                   <span className='w-[10%] py-2 text-[#00143c]'><img src={el.avatar} alt='thumb' className='w-12 h-12 object-cover'></img></span>
-                  <span className='w-[25%] py-2 text-[#00143c] text-sm flex justify-start font-medium'>
-                    <div className='pl-[4px] flex items-center'>
-                      {el?.email}
-                    </div>
-                  </span>
+                  <span className='w-[25%] py-2 text-[#00143c] text-sm line-clamp-1 text-center font-semibold'>{el?.email}</span>
                   <span className='w-[25%] py-2 text-[#00143c] text-sm line-clamp-1 text-center'>{`${el?.firstName} ${el?.lastName}`}</span>
                   <span className='w-[20%] px-2 py-2 text-[#00143c] text-sm line-clamp-1 text-center'>{`${el?.mobile}`}</span>
                   <span className='w-[20%] px-2 py-2 text-[#00143c] text-sm line-clamp-1 text-center'>
@@ -292,13 +273,95 @@ const ManageProduct = () => {
       </div>
   )
 }
-        {/* <div className='absolute inset-0 bg-zinc-900 h-[200%] z-50 flex-auto'>
-          <UpdateStaff editStaff={editStaff} render={render} setEditStaff={setEditStaff}/>
-        </div>}
-        {manageStaffShift &&
-        <div className='absolute inset-0 bg-zinc-900 h-[360%] z-50 flex-auto'>
-          <ManageStaffShift staffId={currentStaffId} setManageStaffShift={setManageStaffShift}/>
-        </div>} 
-        
-        */}
+
+const DataExportSheetModal = ({ rawData, onClose, propsToExport }) => {
+  const [fileType, setFileType] = useState('xlsx');
+  const [sheetName, setSheetName] = useState('My Data Sheet');
+  const [workbookName, setWorkbookName] = useState('My Workbook');
+
+  const exportExcelFile = () => {
+    // console.log("========>>>", rawData);
+    if (!rawData) return;
+
+    const jsonData = [];
+
+    rawData.forEach(item => {
+      // console.log(">>>>>>>>", item);
+      const newObj = {};
+
+      for (const prop of propsToExport) {
+        console.log(":???????" + prop)
+        if (item[prop]) {
+          newObj[prop] = item[prop];
+        }
+      }
+
+      jsonData.push(newObj);
+
+      // console.log('=========||||', jsonData);
+    })
+
+    const ws = utils.json_to_sheet(jsonData);
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, sheetName);
+    writeFile(wb, `${workbookName}.${fileType}`);
+  };
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
+      <div className="bg-white p-6 rounded shadow-lg w-80 transition duration-200">
+        <h3 className="text-lg font-semibold mb-4 text-gray-500 text-center">
+          Configure your Export File
+        </h3>
+        <div className="space-y-2 border-2 p-2 rounded-md flex justify-center flex-wrap gap-1">
+          <label htmlFor='sh' className='text-gray-500 text-sm'>Sheet Name</label>
+          <InputFormm
+            id='sh'
+            register={() => {}}
+            errors={() => {}}
+            fullWidth
+            placeholder= 'Sheet Name...'
+            defaultValue={sheetName}
+            style={'w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'}
+            styleInput={'w-[100%] bg-[#f4f6fa]   text-[#99a1b1]'}
+            onChange={event => setSheetName(event.target.value)}
+          >
+          </InputFormm>
+
+          <label htmlFor='wb' className='text-gray-500 text-sm'>Workbook Name</label>
+          <InputFormm
+            id='wb'
+            register={() => {}}
+            errors={() => {}}
+            fullWidth
+            placeholder= 'Workbook Name...'
+            defaultValue={workbookName}
+            style={'w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'}
+            styleInput={'w-[100%] bg-[#f4f6fa] text-[#99a1b1]'}
+            onChange={event => setWorkbookName(event.target.value)}
+          >
+          </InputFormm>
+
+          <label htmlFor='wb' className='text-gray-500 text-sm'>File Type</label>
+          <select className='w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center text-gray-500'
+            onChange={event => setFileType(event.target.value)}
+          >
+            <option value="xlsx">xlsx</option>
+            <option value="csv">csv</option>
+          </select>
+        </div>
+        <div className="mt-4 flex justify-end space-x-2 gap-4">
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 bg-red-400 p-2 rounded-md text-white">Cancel</button>
+          <button
+            onClick={() => { exportExcelFile(); onClose(); }}
+            className={`text-blue-600 hover:underline opacity-50 bg-blue-500 p-2 rounded-md text-white`}
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default ManageProduct
