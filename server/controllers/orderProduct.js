@@ -46,7 +46,7 @@ const getOrdersProductByAdmin = asyncHandler(async (req, res) => {
             match: { provider: provider_id },
             populate: {
                 path: 'product',
-                select: 'title color thumb category provider_id'
+                select: 'title color thumb category provider_id quantity soldQuantity'
             },
         });
 

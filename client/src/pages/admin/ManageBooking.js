@@ -246,6 +246,8 @@ const ManageBooking = () => {
         <div className='w-full h-20 flex justify-between p-4'>
           <span className='text-[#00143c] text-3xl font-semibold'>Manage Booking</span>
         </div>
+
+
         <div className='w-[95%] h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
           <div className='w-full h-fit flex justify-between items-center'>
             <h1 className='text-[#00143c] font-medium text-[16px]'>{`Bookings (${counts})`}</h1>
