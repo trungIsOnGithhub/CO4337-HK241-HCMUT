@@ -33,6 +33,11 @@ export const apiUpdateBlog = (data, id) => axios({
     data
 })
 
+export const apiUpdateViewBlog = (id) => axios({
+    url: '/blog/update_view_blog/'+id,
+    method: 'post',
+})
+
 export const apiRatingBlog = (data) => axios({
     url: '/blog/rating_blog',
     method: 'put',

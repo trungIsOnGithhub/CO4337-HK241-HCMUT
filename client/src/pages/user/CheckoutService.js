@@ -22,6 +22,8 @@ const CheckoutService = ({ dispatch, navigate }) => {
   const priceFromURL = searchParams.get('price');
   const couponCodeFromURL = searchParams.get('couponCode');
 
+  console.log(couponCodeFromURL)
+
   const fetchCheckoutData = async () => {
     dispatch(getCurrent());
   };

@@ -1,7 +1,7 @@
 import React, {useState,useEffect} from 'react'
 import { Button, MultiSelect } from '../../components'
 import { useSearchParams, useNavigate, createSearchParams } from 'react-router-dom'
-import { apiGetOneBlog, apiGetTopBlogs, apiLikeBlog, apiDislikeBlog } from '../../apis/blog'
+import { apiGetOneBlog, apiGetTopBlogs, apiLikeBlog, apiDislikeBlog, apiUpdateViewBlog } from '../../apis/blog'
 import { apiCreateNewBlogComment, apiCreateReplyComment, apiGetAllBlogComment, apiGetAllReplyComment, apiReactComment } from '../../apis/blogComments'
 import DOMPurify from 'dompurify';
 import path from 'ultils/path';
@@ -115,6 +115,13 @@ const ViewBlog = () => {
       fetchPostData(searchParams);
     }, [params]);
 
+    const updateViewBlog = async(bid) => {
+      await apiUpdateViewBlog(bid)
+    }
+    useEffect(() => {
+      updateViewBlog(params?.get('id'));
+    }, []);
+    
     const backToHomepage = () => {
         navigate({
             pathname: `/${path.BLOGS}`

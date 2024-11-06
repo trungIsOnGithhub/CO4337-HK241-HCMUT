@@ -54,7 +54,7 @@ const ServiceInformation = ({totalRatings, ratings, nameProduct, sid, reRender})
 
     return (
     <div className=''>
-        <div className='flex items-center gap-2 relative bottom-[-1px]'>
+        {/* <div className='flex items-center gap-2 relative bottom-[-1px]'>
             {tabs.map(el=>(
                 <span 
                     onClick={()=>{setActiveTab(el.id)}}
@@ -62,11 +62,11 @@ const ServiceInformation = ({totalRatings, ratings, nameProduct, sid, reRender})
                     {el.name}
                 </span>
             ))}
-        </div>
-        <div className='w-full border p-4'>
+        </div> */}
+        {/* <div className='w-full border p-4'>
             {tabs.some(el => el.id === activeTab) && tabs[activeTab-1]?.content}
            
-        </div>
+        </div> */}
         <div className='flex py-8 flex-col w-main'>
             <div className='flex border'>
             <div className='flex-4 flex flex-col items-center justify-center '>

@@ -11,6 +11,8 @@ import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
 import { VariantProduct } from '.'
 import bgImage from '../../assets/clouds.svg'
+import { FaCirclePlus } from 'react-icons/fa6'
+import { FaPlus } from 'react-icons/fa'
 
 
 const ManageProduct = () => {
@@ -23,8 +25,6 @@ const ManageProduct = () => {
   const [counts, setCounts] = useState(0)
   const [editProduct, setEditProduct] = useState(null)
   const [update, setUpdate] = useState(false)
-  const [variant, setVariant] = useState(null)
-  const [showProductName, setShowProductName] = useState(null)
   const handleDeleteProduct = async(pid) => {
     Swal.fire({
       title: 'Are you sure',
@@ -49,9 +49,6 @@ const ManageProduct = () => {
   const render = useCallback(() => { 
     setUpdate(!update)
    })
-
-  const handleSearchProduct = (data) => {
-  }
 
   const fetchProduct = async(params) => {
     const response = await apiGetProductByAdmin({...params, limit: process.env.REACT_APP_LIMIT})
@@ -126,6 +123,10 @@ const ManageProduct = () => {
     const item = data.find(el => el.cate === category);
     return item ? item.color : 'rgba(0, 0, 0, 0.1)'; // Màu mặc định nếu không tìm thấy
   };
+
+  const handleNavigateAddVariant = (productId) => {
+    navigate(`/admin/add_variant_product/${productId}`)
+  }
   
   return (
     <div className="w-full h-full relative">
@@ -180,8 +181,8 @@ const ManageProduct = () => {
                       className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdModeEdit size={24}/></span>
                       <span onClick={() => handleDeleteProduct(el._id)} 
                       className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>
-                      <span onClick={() => setVariant(el)} 
-                      className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><FaCopy size={22}/></span>
+                      <span onClick={() => handleNavigateAddVariant(el?._id)} 
+                      className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><FaPlus size={24}/></span>
                     </span>
                   </div>
                 ))

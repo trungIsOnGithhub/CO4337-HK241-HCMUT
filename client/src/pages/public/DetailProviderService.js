@@ -12,7 +12,6 @@ import path from 'ultils/path'
 
 const DetailProviderService = () => {
   const {prid, sid} = useParams()
-  const [variable, setVariable] = useState("")
   const [providerData, setProviderData] = useState(null)
   const [serviceData, setServiceData] = useState(null)
   const navigate = useNavigate()
@@ -70,13 +69,13 @@ const DetailProviderService = () => {
     <div className='w-full'>
       <div className={clsx('w-full fixed top-0 left-0 h-[86px] flex justify-center z-[100]', providerData?.theme === 'dark' && 'bg-[#212529] text-white')}>
         <div className='w-[90%] h-full flex gap-10 items-center text-[15px]'>
-          <span onClick={()=>{setVariable('service')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'service' && 'border-b-2 border-[#15a9e8]')}>Service</span>
-          <span onClick={()=>{setVariable('book')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'book' && 'border-b-2 border-[#15a9e8]')}>Book Now</span>
-          <span onClick={()=>{setVariable('product')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'product' && 'border-b-2 border-[#15a9e8]')}>Product</span>
-          <span onClick={()=>{setVariable('blog')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'blog' && 'border-b-2 border-[#15a9e8]')}>Blog</span>
-          <span onClick={()=>{setVariable('find-us')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'find-us' && 'border-b-2 border-[#15a9e8]')}>Find us</span>
-          <span onClick={()=>{setVariable('faq')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'faq' && 'border-b-2 border-[#15a9e8]')}>FAQ</span>
-          <span onClick={()=>{setVariable('chat')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'chat' && 'border-b-2 border-[#15a9e8]')}>Chat</span>
+          <span onClick={()=>{navigate(`/detail_provider/${providerData?._id}/service`)}} className={clsx('font-semibold cursor-pointer capitalize')}>Service</span>
+          <span onClick={()=>{navigate(`/detail_provider/${providerData?._id}/book`)}} className={clsx('font-semibold cursor-pointer capitalize')}>Book Now</span>
+          <span onClick={()=>{navigate(`/detail_provider/${providerData?._id}/product`)}} className={clsx('font-semibold cursor-pointer capitalize')}>Product</span>
+          <span onClick={()=>{navigate(`/detail_provider/${providerData?._id}/blog`)}} className={clsx('font-semibold cursor-pointer capitalize')}>Blog</span>
+          <span onClick={()=>{navigate(`/detail_provider/${providerData?._id}/find-us`)}} className={clsx('font-semibold cursor-pointer capitalize')}>Find us</span>
+          <span onClick={()=>{navigate(`/detail_provider/${providerData?._id}/faq`)}} className={clsx('font-semibold cursor-pointer capitalize')}>FAQ</span>
+          <span onClick={()=>{navigate(`/detail_provider/${providerData?._id}/chat`)}} className={clsx('font-semibold cursor-pointer capitalize')}>Chat</span>
         </div>
       </div>
       <div className='w-full h-[86px]'></div>

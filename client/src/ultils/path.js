@@ -41,6 +41,7 @@ const path = {
     MANAGE_BOOKING: 'manage_booking',
     MANAGE_BOOKING_DETAIL: 'manage_booking_dt',
     CREATE_PRODUCT: 'create_product',
+    ADD_VARIANT_PRODUCT: 'add_variant_product/:product_id',
     ADD_STAFF: 'add_staff',
     ADD_SERVICE: 'add_service',
     STAFF_CALENDAR: 'staff_calendar',

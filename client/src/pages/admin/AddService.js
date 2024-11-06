@@ -86,7 +86,11 @@ const AddService = () => {
       for(let i of Object.entries(finalPayload)){
         formData.append(i[0],i[1])
       }
+
+      formData.delete('thumb')
       if(finalPayload.thumb) formData.append('thumb', finalPayload.thumb[0])
+
+      formData.delete('images')
       if(finalPayload.images) {
         for (let image of finalPayload.images) formData.append('images', image)
       }
@@ -269,6 +273,7 @@ const AddService = () => {
               <input 
                 {...register('thumb', {required: 'Need upload thumb'})}
                 type='file' 
+                accept="image/*"
                 id='thumb'
                 className='text-[#00143c]'
               />
@@ -286,6 +291,7 @@ const AddService = () => {
               <input 
                 {...register('images', {required: 'Need upload image of service'})}
                 type='file' 
+                accept="image/*"
                 id='images' 
                 multiple
                 className='text-[#00143c]'

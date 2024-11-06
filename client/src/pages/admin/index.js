@@ -1,5 +1,6 @@
 export {default as AdminLayout} from './AdminLayout'
 export {default as CreateProduct} from './CreateProduct'
+export {default as AddVariantProduct} from './AddVariantProduct'
 export {default as DashBoard} from './DashBoard'
 export {default as ManageOrder} from './ManageOrder'
 export {default as ManageBooking} from './ManageBooking'

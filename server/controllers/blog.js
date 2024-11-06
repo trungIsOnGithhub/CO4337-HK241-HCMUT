@@ -243,7 +243,6 @@ const dislikeBlog = asyncHandler(async(req, res)=>{
 
 })
 
-const excludeField = '-refresh_token -password -role -createdAt -updatedAt'
 const getBlog = asyncHandler(async(req, res)=>{
     const {bid} = req.params
     if(!bid) {
@@ -393,6 +392,20 @@ const getTopTags = asyncHandler(async(req, res)=>{
     })
 })
 
+const updateViewBlog = asyncHandler(async(req, res)=>{
+    const {bid} = req.params
+    if(!bid) {
+        throw new Error("Missing input")
+    }
+    const blog = await Blog.findById(bid)
+    blog.numberView = (blog.numberView || 0) + 1
+    await blog.save()
+    return res.status(200).json({
+        success: blog ? true : false,
+        blog: blog
+    })
+})
+
 module.exports = {
     updateBlog,
     getAllBlogs,
@@ -406,5 +419,6 @@ module.exports = {
     createNewPostTag,
     getBlogsBySearchTerm,
     getTopBlogs,
-    getTopTags
+    getTopTags,
+    updateViewBlog
 }

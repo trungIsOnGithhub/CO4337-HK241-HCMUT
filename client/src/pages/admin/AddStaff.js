@@ -38,6 +38,8 @@ const AddStaff = () => {
             toast.error('No Provider Specified With Current User!!');
             return;
         }
+
+        formData.delete('avatar')
         if (data.avatar) formData.append('avatar', data.avatar[0]);
         setIsLoading(true);
         const response = await apiAddStaff(formData);
@@ -119,6 +121,7 @@ const AddStaff = () => {
                             {...register('avatar', {required: 'Need upload avatar'})}
                             type='file' 
                             id='avatar'
+                            accept="image/*"
                         />
                         {errors['avatar'] && <small className='text-xs text-red-500'>{errors['avatar']?.message}</small>}
                     </div>
