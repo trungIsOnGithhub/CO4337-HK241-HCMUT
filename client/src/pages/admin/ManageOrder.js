@@ -276,7 +276,7 @@ const ManageOrder = () => {
 
             </div>
             <div className='w-[10%] h-[36px] m-[6px]'>
-              <Button style={'w-full px-4 py-2 bg-[#dee1e6] rounded-md text-[#00143c] flex gap-1 items-center justify-center font-semibold'}>
+              <Button style={'w-fit px-4 py-2 bg-[#dee1e6] rounded-md text-[#00143c] flex gap-1 items-center justify-center font-semibold'}>
                 <span className='font-bold text-xl'><RxMixerVertical /></span>
                 <span>Filters</span>
               </Button>

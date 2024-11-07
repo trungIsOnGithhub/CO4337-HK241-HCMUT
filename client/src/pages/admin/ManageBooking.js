@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { apiGetOrdersByAdmin } from 'apis/order';
-import moment from 'moment';
+// import moment from 'moment';
 import { Button, InputFormm, Pagination } from 'components';
 import { FiCalendar, FiChevronLeft, FiChevronRight, FiX } from 'react-icons/fi';
-import path from 'ultils/path';
-import withBaseComponent from 'hocs/withBaseComponent';
-import { formatPrice, formatPricee } from 'ultils/helper';
+// import path from 'ultils/path';
+// import withBaseComponent from 'hocs/withBaseComponent';
+// import { formatPrice, formatPricee } from 'ultils/helper';
 import bgImage from '../../assets/clouds.svg'
 import { TfiExport } from "react-icons/tfi";
 import { useForm } from 'react-hook-form';
-import { BsCalendar } from "react-icons/bs";
+// import { BsCalendar } from "react-icons/bs";
 import { RxMixerVertical } from 'react-icons/rx';
 import { GoPlusCircle } from "react-icons/go";
 import { format, isValid, isBefore, isAfter, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths } from "date-fns";
 import useDebounce from 'hook/useDebounce';
+import icons from 'ultils/icon';
+import ViewOrderDetail from './ViewOrderDetail';
 
 const ManageBooking = () => {
+  const {MdModeEdit, MdDelete} = icons;
   const [params] = useSearchParams();
   const [booking, setBookings] = useState(null);
   const [counts, setCounts] = useState(0);
@@ -25,8 +28,10 @@ const ManageBooking = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate()
-  const location = useLocation()
+  // const navigate = useNavigate();
+  // const location = useLocation();
+  const [viewOrder, setViewOrder] = useState(false);
+  const [chosenBookingId, setChosenBookingId] = useState('');
 
   const handleInputClick = () => {
     setShowCalendar(!showCalendar);
@@ -57,12 +62,15 @@ const ManageBooking = () => {
             limit: process.env.REACT_APP_LIMIT
         });
 
+        console.log('----??????', response);
+
         if (response?.success) {
             setBookings(response?.orders);
             setCounts(response?.counts);
         }
     } else {
         const response = await apiGetOrdersByAdmin({ ...params, limit: process.env.REACT_APP_LIMIT });
+        console.log('----??????', response);
         if (response?.success) {
             setBookings(response?.orders);
             setCounts(response?.counts);
@@ -215,21 +223,21 @@ const ManageBooking = () => {
   };
 
 
-  const queryDebounce = useDebounce(watch('q'),800)
+  // const queryDebounce = useDebounce(watch('q'),800)
 
-  useEffect(() => {
-    if(queryDebounce) {
-      navigate({
-        pathname: location.pathname,
-        search: createSearchParams({q:queryDebounce}).toString()
-      })
-    }
-    else{
-      navigate({
-        pathname: location.pathname,
-      })
-    }
-  }, [queryDebounce])
+  // useEffect(() => {
+  //   if(queryDebounce) {
+  //     navigate({
+  //       pathname: location.pathname,
+  //       search: createSearchParams({q:queryDebounce}).toString()
+  //     })
+  //   }
+  //   else{
+  //     navigate({
+  //       pathname: location.pathname,
+  //     })
+  //   }
+  // }, [queryDebounce])
 
   useEffect(() => {
     if(startDate && endDate){
@@ -247,6 +255,7 @@ const ManageBooking = () => {
           <span className='text-[#00143c] text-3xl font-semibold'>Manage Booking</span>
         </div>
 
+        {viewOrder && <ViewOrderDetail bookingId={chosenBookingId} onClose={() => {setViewOrder(false);}}/>}
 
         <div className='w-[95%] h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
           <div className='w-full h-fit flex justify-between items-center'>
@@ -348,7 +357,13 @@ const ManageBooking = () => {
                   <span className='w-[20%] px-4 py-2 text-[#00143c] flex items-center'>
                     <img className='w-[32px] h-[32px] rounded-full ml-[-10px] mr-[0px]' src={el?.staffDetails?.avatar}/>
                   </span>
-                  <span className='w-[5%] px-2 py-2 text-[#00143c] font-bold text-xl'><GoPlusCircle /></span>
+                  <span className='w-[5%] px-2 py-2 text-[#00143c] font-bold text-xl'>
+                    <GoPlusCircle />
+                    <span onClick={() => {setChosenBookingId(el?._id); setViewOrder(true)}}
+                      className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'>
+                        <MdModeEdit size={24}/>
+                    </span>
+                  </span>
                 </div>
               ))}
             </div>
