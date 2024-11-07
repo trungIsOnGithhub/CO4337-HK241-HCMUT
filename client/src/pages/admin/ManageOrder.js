@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { apiGetOrdersProductByAdmin } from 'apis/orderProduct';
 import { FiCalendar, FiUser, FiBriefcase, FiClock, FiDollarSign, FiChevronLeft, FiChevronRight, FiX  } from 'react-icons/fi';
 // import { FaTags } from "react-icons/fa";
 // import path from 'ultils/path';
 import { formatPrice, formatPricee } from 'ultils/helper';
 import bgImage from '../../assets/clouds.svg';
 import { createSearchParams, useSearchParams, useLocation, useNavigate } from 'react-router-dom';
-import { apiGetOrdersByAdmin } from 'apis/order';
+import { apiGetOrdersProductByAdmin } from 'apis/orderProduct';
 // import moment from 'moment';
 import { Button, InputFormm, Pagination } from 'components';
 // import path from 'ultils/path';
@@ -28,8 +27,10 @@ const ManageOrder = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate()
-  const location = useLocation()
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleInputClick = () => {
     setShowCalendar(!showCalendar);
@@ -45,7 +46,7 @@ const ManageOrder = () => {
     return isAfter(date, startDate) && isBefore(date, endDate);
   };
 
-  const fetchBooking = async (params) => {
+  const fetchBooking = async () => {
     if (startDate && endDate) {
         const startDateUTC = new Date(Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()));
         const endDateUTC = new Date(Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 23, 59, 59));
@@ -53,8 +54,10 @@ const ManageOrder = () => {
         const startDateISO = startDateUTC.toISOString();
         const endDateISO = endDateUTC.toISOString();
 
-        const response = await apiGetOrdersByAdmin({
-            ...params,
+        console.log(`....${startDateISO}|||||${endDateISO}........`)
+
+        const response = await apiGetOrdersProductByAdmin({
+            searchTerm,
             startDate: startDateISO,
             endDate: endDateISO,
             limit: process.env.REACT_APP_LIMIT
@@ -65,7 +68,7 @@ const ManageOrder = () => {
             setCounts(response?.counts);
         }
     } else {
-        const response = await apiGetOrdersByAdmin({ ...params, limit: process.env.REACT_APP_LIMIT });
+        const response = await apiGetOrdersProductByAdmin({ ...params, limit: process.env.REACT_APP_LIMIT });
         if (response?.success) {
             setOrders(response?.orders);
             setCounts(response?.counts);
@@ -74,8 +77,8 @@ const ManageOrder = () => {
   };
 
   useEffect(() => {
-    const searchParams = Object.fromEntries([...params]);
-    fetchBooking(searchParams);
+    // const searchParams = Object.fromEntries([...params]);
+    fetchBooking();
   }, [params, startDate, endDate]);
 
 
@@ -169,8 +172,6 @@ const ManageOrder = () => {
       </div>
     );
   };
-
-
   const queryDebounce = useDebounce(watch('q'),800)
 
   useEffect(() => {
@@ -214,12 +215,13 @@ const ManageOrder = () => {
               <form className='flex-1' >
                 <InputFormm
                   id='q'
-                  register={register}
-                  errors={errors}
+                  register={()=>{}}
+                  errors={()=>{}}
                   fullWidth
-                  placeholder= 'Search booking by service, customer, staff ...'
+                  placeholder= 'Search order by customer name, email'
                   style={'w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'}
                   styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
+                  onChange={() => {}}
                 >
                 </InputFormm>
               </form>

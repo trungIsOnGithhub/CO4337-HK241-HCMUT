@@ -414,4 +414,3 @@ module.exports = {
     getOneOrderByAdmin,
     updateEmailByBookingId
 }
-
