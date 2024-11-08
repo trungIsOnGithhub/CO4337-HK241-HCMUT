@@ -130,20 +130,19 @@ const Blogs = () => {
 
   console.log(currBlogList)
   return (
-    <div className='w-main mb-8 h-[500px] flex flex-col gap-4'>
-      <InputFormm
-        id='q'
-        register={register}
-        errors={errors}
-        fullWidth
-        placeholder= 'Search blog by title name, tag ...'
-        style={'w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'}
-        styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
-      >
-      </InputFormm>
-      
+    <div className='w-main mb-8 flex flex-col gap-4 overflow-y-auto'>
       <div className="grid grid-cols-4 gap-8">
-          <div className="col-span-3">
+          <div className="col-span-3 max-h-[500px] overflow-y-auto">
+            <InputFormm
+              id='q'
+              register={register}
+              errors={errors}
+              fullWidth
+              placeholder= 'Search blog by title name, tag ...'
+              style={'w-full bg-[#f4f6fa] min-h-10 rounded-md pl-2 flex items-center mb-4'}
+              styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
+            >
+            </InputFormm>
             <div className="space-y-6">
               {currBlogList.length === 0 ? (
                 <div className="bg-white rounded-lg shadow-md p-6 text-center">

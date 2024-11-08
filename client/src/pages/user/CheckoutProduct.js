@@ -31,7 +31,7 @@ const CheckoutProduct = ({dispatch, navigate}) => {
   const totalSavingPrice = JSON.parse(sessionStorage.getItem('totalSavings'));
   const totalShippingPrice = JSON.parse(sessionStorage.getItem('totalShippingPrice'));
 
-  console.log(providerSelectedDiscount)
+  console.log(providerProductDetails)
 
   const [selectedPayment, setSelectedPayment] = useState("");
   const paymentMethods = [
