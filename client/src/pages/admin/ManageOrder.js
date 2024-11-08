@@ -207,7 +207,7 @@ const ManageOrder = () => {
 
         <div className='w-[95%] h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
           <div className='w-full h-fit flex justify-between items-center'>
-            <h1 className='text-[#00143c] font-medium text-[16px]'>{`Bookings (${counts})`}</h1>
+            <h1 className='text-[#00143c] font-medium text-[16px]'>{`Total Orders (${counts})`}</h1>
             <Button style={'px-4 py-2 rounded-md text-[#00143c] bg-[#fff] font-semibold w-fit h-fit flex gap-2 items-center border border-[#b3b9c5]'}><TfiExport className='text-lg font-bold' /> Export Data</Button>
           </div>
           <div className='w-full h-[48px] mx-[-6px] mt-[-6px] mb-[10px] flex'>
@@ -284,23 +284,24 @@ const ManageOrder = () => {
           </div>
           <div className='text-[#99a1b1]'>
             <div className='w-full flex gap-1 border-b border-[##dee1e6] p-[8px]'>
+              <span className='w-[20%] text-center'>Date</span>
               <span className='w-[15%] text-center'>Time</span>
-              <span className='w-[25%] text-center'>Created Date</span>
               <span className='w-[20%] text-center'>Customer</span>
-              <span className='w-[10%] text-center'>Number of Items</span>
+              <span className='w-[15%] text-center'>Number Items</span>
               <span className='w-[15%] text-center'>Status</span>
               {/* <span className='w-[20%]'>Employee</span> */}
-              <span className='w-[15%]'>Note</span>
+              <span className='w-[15%]'>Action</span>
             </div>
             <div>
               {orders?.map((el,index) => (
                 <div key={index} className='w-full flex border-b border-[#f4f6fa] gap-1 h-[56px] px-[8px] py-[12px]'>
+                  <span className='w-[15%] py-2 text-[#00143c] text-center'>{el?.info[0]?.date}</span>
                   <span className='w-[15%] py-2 text-[#00143c] text-center'>{el?.info[0]?.time}</span>
-                  <span className='w-[25%] py-2 text-[#00143c] text-sm flex justify-start font-medium'>
+                  {/* <span className='w-[25%] py-2 text-[#00143c] text-sm flex justify-start font-medium'>
                     <div className='pl-[4px] flex items-center' style={{borderLeft: `4px solid` }}>
                       {el?.createdAt}
                     </div>
-                  </span>
+                  </span> */}
                   <span className='w-[20%] py-2 text-[#00143c] text-sm line-clamp-1 text-center'>{`${el?.orderBy?.lastName} ${el?.orderBy?.firstName}`}</span>
                   <span className='w-[10%] px-2 py-2 text-[#00143c] text-sm line-clamp-1 text-center'>{el?.info?.length  || 0}</span>
                   <span className='w-[15%] px-2 py-2 text-[#00143c] text-center'>{el?.status}</span>

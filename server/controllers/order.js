@@ -38,7 +38,7 @@ const updateStatus = asyncHandler(async(req, res)=>{
     const response = await Order.findByIdAndUpdate(oid, {status}, {new: true})
     return res.status(200).json({
         success: response ? true : false,
-        response: response ? response : "Something went wrong"
+        order: response ? response : "Something went wrong"
     })
 })
 

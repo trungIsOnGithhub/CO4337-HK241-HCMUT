@@ -55,6 +55,9 @@ const ManageBooking = () => {
         const startDateISO = startDateUTC.toISOString();
         const endDateISO = endDateUTC.toISOString();
 
+        console.log('--->', startDateISO);
+        console.log('--->', endDateISO);
+
         const response = await apiGetOrdersByAdmin({
             ...params,
             startDate: startDateISO,
@@ -255,11 +258,11 @@ const ManageBooking = () => {
           <span className='text-[#00143c] text-3xl font-semibold'>Manage Booking</span>
         </div>
 
-        {viewOrder && <div className='absolute inset-0 bg-zinc-900 h-[200%] z-50 flex-auto'>
+        {viewOrder && <div className='inset-0 z-50 flex-auto'>
           <ViewOrderDetail bookingId={chosenBookingId} onClose={() => {setViewOrder(false);}}/>
         </div>}
 
-        <div className='w-[95%] h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
+        {!viewOrder && <div className='w-[95%] h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
           <div className='w-full h-fit flex justify-between items-center'>
             <h1 className='text-[#00143c] font-medium text-[16px]'>{`Bookings (${counts})`}</h1>
             <Button style={'px-4 py-2 rounded-md text-[#00143c] bg-[#fff] font-semibold w-fit h-fit flex gap-2 items-center border border-[#b3b9c5]'}><TfiExport className='text-lg font-bold' /> Export Data</Button>
@@ -335,31 +338,33 @@ const ManageBooking = () => {
             </div>
           </div>
           <div className='text-[#99a1b1]'>
-            <div className='w-full flex gap-1 border-b border-[##dee1e6] p-[8px]'>
-              <span className='w-[10%]'>Time</span>
+            <div className='w-full flex gap-1 border-b border-[##dee1e6] p-[8px] [&>*]:text-center'>
+              <span className='w-[25%]'>Date Time</span>
+              {/* <span className='w-[10%]'>Time</span> */}
               <span className='w-[25%]'>Service</span>
               <span className='w-[15%]'>Customer</span>
-              <span className='w-[10%]'>Duration</span>
               <span className='w-[15%]'>Status</span>
-              <span className='w-[20%]'>Employee</span>
-              <span className='w-[5%]'>Note</span>
+              <span className='w-[15%]'>Employee</span>
+              <span className='w-[5%]'>Action</span>
             </div>
             <div>
               {booking?.map((el,index) => (
-                <div key={index} className='w-full flex border-b border-[#f4f6fa] gap-1 h-[56px] px-[8px] py-[12px]'>
-                  <span className='w-[10%] py-2 text-[#00143c]'>{el?.info[0]?.time}</span>
+                <div key={index} className='w-full flex border-b border-[#f4f6fa] gap-1 h-[56px] px-[8px] py-[12px] [&>*]:text-center'>
+                  <span className='w-[25%] px-2 py-2 text-[#00143c] line-clamp-1'>{el?.info[0]?.date}, {el?.info[0]?.time}</span>
+                  {/* <span className='w-[10%] py-2 text-[#00143c]'>{el?.info[0]?.time}</span> */}
                   <span className='w-[25%] py-2 text-[#00143c] text-sm flex justify-start font-medium'>
                     <div className='pl-[4px] flex items-center' style={{borderLeft: `4px solid ${getColorByCategory(el?.serviceDetails?.category)}` }}>
                       {el?.serviceDetails?.name}
                     </div>
                   </span>
                   <span className='w-[15%] py-2 text-[#00143c] text-sm line-clamp-1'>{`${el?.userDetails?.lastName} ${el?.userDetails?.firstName}`}</span>
-                  <span className='w-[10%] px-2 py-2 text-[#00143c] text-sm line-clamp-1'>{`${el?.serviceDetails?.duration}min`}</span>
-                  <span className='w-[15%] px-2 py-2 text-[#00143c]'>Status</span>
-                  <span className='w-[20%] px-4 py-2 text-[#00143c] flex items-center'>
-                    <img className='w-[32px] h-[32px] rounded-full ml-[-10px] mr-[0px]' src={el?.staffDetails?.avatar}/>
+                  <span className={`w-[15%] px-2 py-2 ${el?.status ==='Successful' ? 'text-teal-500' :
+                    el?.status ==='Canceled' ? 'text-red-500' : 'text-orange-400' }`}>{el?.status}</span>
+                  <span className='w-[20%] px-4 py-2 text-[#00143c] flex items-center justify-center'>
+                    {/* <img className='w-[32px] h-[32px] rounded-full ml-[-10px] mr-[0px]' src={el?.staffDetails?.avatar}/> */}
+                    <span className='text-gray-500'>{`${el?.staffDetails.firstName} ${el?.staffDetails.lastName}`}</span>
                   </span>
-                  <span className='w-[5%] px-2 py-2 text-[#00143c] font-bold text-xl'>
+                  <span className='font-bold text-xl flex justify-center'>
                     <GoPlusCircle />
                     <span onClick={() => {setChosenBookingId(el?._id); setViewOrder(true)}}
                       className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'>
@@ -373,7 +378,9 @@ const ManageBooking = () => {
           <div className='text-[#00143c] flex-1 flex items-end'>
             <Pagination totalCount={counts} />
           </div>
-        </div>
+        </div> }
+
+
       </div>
     </div>
   );

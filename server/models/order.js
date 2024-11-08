@@ -13,7 +13,7 @@ var orderSchema = new mongoose.Schema({
     status:{
         type: String,
         default: 'Cancelled',
-        enum: ['Cancelled', 'Successful']
+        enum: ['Cancelled', 'Successful', 'Pending']
     },
     total:{
         type: Number
