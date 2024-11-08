@@ -10,6 +10,12 @@ export const apiGetCouponsByServiceId = (serviceId) => axios({
     method: 'get',
 })
 
+export const apiGetCouponsByProductsId = (data) => axios({
+    url: '/coupon/getCouponsByProductsId/',
+    method: 'post',
+    data
+})
+
 export const apiGetAllCouponsByProviderId = (providerId) => axios({
     url: '/coupon/getCouponsByProviderId/'+ providerId,
     method: 'get',

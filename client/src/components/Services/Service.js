@@ -26,66 +26,39 @@ const Service = ({serviceData, fullWidth = false, clientDistance = null}) => {
   const dispatch = useDispatch()
   const location = useLocation()
 
-  console.log(serviceData)
+  const handleNavigateLearnMoreService = ( ) => {
+    navigate(`/service/${serviceData?.sv?.category?.toLowerCase()}/${serviceData?.sv?._id}/${serviceData?.sv?.name}`)
+  }
 
+  const handleNavigateBookService = () => {
+    if(!current){
+      return Swal.fire({
+        name: "You haven't logged in",
+        text: 'Please login and try again',
+        icon: 'warning',
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Go to Login',
+        cancelButtonText: 'Not now',                
+      }).then((rs)=>{
+        if(rs.isConfirmed){
+          navigate({
+            pathname: `/${path.LOGIN}`,
+            search: createSearchParams({
+              redirect: location.pathname}).toString(),
+          })
+        }
+      })
+    }
+    else{
+      navigate({
+        pathname:  `/${path.BOOKING}`,
+        search: createSearchParams({sid: serviceData?.sv?._id}).toString()
+    })
+    }
+  }
 
   return (
-    // <div className={'text-base px-[10px]' + (fullWidth ? 'w-full' : '')}>
-    //   <div 
-    //     onClick={()=> navigate(`/service/${serviceData?.sv?.category?.toLowerCase()}/${serviceData?._id}/${serviceData.name}`)}
-    //     className={isNotBorder ? 'w-full p-[15px] flex flex-col items-center cursor-pointer' : 'w-full border p-[15px] flex flex-col items-center cursor-pointer'} 
-    //     onMouseEnter = {e => {
-    //       // e.stopPropagation();
-    //       setIsShowOption(true)
-    //     }}
-    //     onMouseLeave = {e => {
-    //       e.stopPropagation();
-    //       setIsShowOption(false)
-    //     }}
-    //   >
-    //     <div className='w-full relative'>
-    //     {isShowOption && <div className='absolute bottom-[-10px] left-0 right-0 flex justify-center gap-2 animate-slide-top'>
-    //         {
-    //           current?.wishlist?.some(el => el._id === serviceData._id) ? 
-    //           <span title='Wishlist' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Heart')}}><SelectOption icon={<FaHeart color='#ff1493'/>}/></span>
-    //           :
-    //           <span title='Add to WishList' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Heart')}}><SelectOption icon={<FaHeart />}/></span>
-    //         }
-    //         {
-    //           current?.cart?.some(el => el?.product?._id === serviceData._id) ? 
-    //           <span title='Added'><SelectOption icon={<BsCartCheckFill color='green' />}/></span>
-    //           :
-    //           <span title='Add to Cart' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Cart')}}><SelectOption icon={<FaCartPlus />}/></span>
-    //         }
-    //         <span title='Quick View' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Eye')}}><SelectOption icon={<FaEye />}/></span>
-    //       </div>}
-    //       <img src={serviceData?.thumb||'https://nayemdevs.com/wp-content/uploads/2020/03/default-product-image.png'} 
-    //       className='w-[243px] h-[243px] object-cover'/>
-    //     </div>
-    //     <div className='flex flex-col mt-[15px] items-start gap-1 w-full'>
-    //       <span className='flex h-4'>{renderStarfromNumber(serviceData?.totalRatings)?.map((el,index)=>(
-    //         <span key={index}>{el}</span>
-    //       ))}</span>
-    //       <span className='line-clamp-1 text-base font-semibold'>{serviceData?.name}</span>
-    //       <span className='font-bold text-sm'>{serviceData?.duration} minutes</span>
-    //       <span>{`${formatPrice(serviceData?.price)} VND`}</span>
-    //       <span
-    //         style={{
-    //           textAlign: 'right',
-    //           color: 'blue',
-    //           width: '100%'
-    //         }}
-    //       >{`${serviceData?.category}`}</span>
-    //       { clientDistance && !isNaN(clientDistance) && <span
-    //         style={{
-    //           textAlign: 'center',
-    //           color: 'red',
-    //           width: '100%'
-    //         }}
-    //       >{`${Math.floor(clientDistance/1000.0)}km from current location!`}</span>}
-    //     </div>
-    //   </div>
-    // </div>
     <div className='cursor-pointer w-full h-fit rounded-md relative shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300'>
         <div className='w-full h-[150px]'>
             <img className='h-full w-full object-cover rounded-t-md' src={serviceData?.sv?.thumb} alt={serviceData?.sv?.name} />
@@ -97,8 +70,8 @@ const Service = ({serviceData, fullWidth = false, clientDistance = null}) => {
                 <span className='text-[14px] text-[#868e96] flex items-center gap-2'><span className='flex gap-1 items-center'><MdOutlineCategory /> Category</span> <span className='font-medium'>{`${serviceData?.sv?.category}`}</span></span>
             </div>
             <div className='flex justify-between'>
-            <Button style={'px-[23px] rounded-md text-black border border-[#868e96] w-fit h-[40px]'}> Learn more</Button>
-            <Button style={'px-[23px] rounded-md text-white bg-[#0a66c2] w-fit h-[40px]'}> Book now</Button>
+            <Button handleOnclick={handleNavigateLearnMoreService} style={'px-[23px] rounded-md text-black border border-[#868e96] w-fit h-[40px] hover:bg-gray-400'}>Learn more</Button>
+            <Button handleOnclick={handleNavigateBookService} style={'px-[23px] rounded-md text-white bg-[#0a66c2] w-fit h-[40px] hover:bg-blue-400'}>Book now</Button>
             </div>
         </div>
         <div className='absolute right-2 top-2 w-fit h-fit px-[8px] py-[4px] bg-[#0a66c2] text-white rounded-md'>

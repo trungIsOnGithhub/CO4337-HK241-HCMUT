@@ -14,7 +14,7 @@ const createNewBlogPost = asyncHandler(async(req, res)=>{
     if(!title || !content){
         throw new Error ("Missing input")
     }
-    const response = await Blog.create({...req.body, owner: _id})
+    const response = await Blog.create({...req.body, author: _id})
 
     return res.status(200).json({
         success: response ? true : false,
@@ -73,18 +73,18 @@ const getAllBlogs = asyncHandler(async (req, res)=>{
 
     console.log('aaaa')
     console.log(req.body)
-    const { provider_id, title, sortBy, provinces } = req.body;
+    const { title, sortBy, provinces } = req.body;
 
     const searchFilter = {};
-    if (provider_id) {
-        searchFilter.provider_id = provider_id;
-    }
     if (title) {
         searchFilter.title = title;
     }
     let response = await Blog.find(searchFilter).populate({
         path: 'provider_id',
         select: 'bussinessName province',
+    }).populate({
+        path: 'author',
+        select: 'firstName lastName',
     });
 
     if (sortBy?.length) {
@@ -243,7 +243,6 @@ const dislikeBlog = asyncHandler(async(req, res)=>{
 
 })
 
-const excludeField = '-refresh_token -password -role -createdAt -updatedAt'
 const getBlog = asyncHandler(async(req, res)=>{
     const {bid} = req.params
     if(!bid) {
@@ -393,6 +392,20 @@ const getTopTags = asyncHandler(async(req, res)=>{
     })
 })
 
+const updateViewBlog = asyncHandler(async(req, res)=>{
+    const {bid} = req.params
+    if(!bid) {
+        throw new Error("Missing input")
+    }
+    const blog = await Blog.findById(bid)
+    blog.numberView = (blog.numberView || 0) + 1
+    await blog.save()
+    return res.status(200).json({
+        success: blog ? true : false,
+        blog: blog
+    })
+})
+
 module.exports = {
     updateBlog,
     getAllBlogs,
@@ -406,5 +419,6 @@ module.exports = {
     createNewPostTag,
     getBlogsBySearchTerm,
     getTopBlogs,
-    getTopTags
+    getTopTags,
+    updateViewBlog
 }

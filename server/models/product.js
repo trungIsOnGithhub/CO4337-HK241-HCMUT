@@ -41,7 +41,11 @@ var productSchema = new mongoose.Schema({
     },
     color:{
         type:String,
-        // required:true,
+        required:true,
+    },
+    colorCode: {
+        type:String,
+        required:true,
     },
     rating:[
         {
@@ -58,18 +62,29 @@ var productSchema = new mongoose.Schema({
     },
     variants: [
         {
+            title: String,
             color: String,
             price: Number,
+            quantity: Number,
+            colorCode: String,
             thumb: String,
             image: Array,
-            title: String,
-            sku: String
+            soldQuantity:{
+                type:Number,
+                default:0
+            },
         }
     ],
     provider_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Service_Provider',
     },
+    specifications: [
+        {
+            key: { type: String, required: true }, // Tên thông số
+            value: { type: String, required: true } // Giá trị của thông số
+        }
+    ],
 },{
     timestamps: true
 });

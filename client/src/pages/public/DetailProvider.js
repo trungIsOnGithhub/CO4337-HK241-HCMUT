@@ -56,24 +56,7 @@ const DetailProvider = () => {
     const sid = searchParams.get('sid'); 
     const [variable, setVariable] = useState('')
     const [detailService, setDetailService] = useState(null)
-
-    const intervalRef = useRef(null);
-
-    useEffect(() => {
-      const fetchServiceData = async() => {
-        const response = await apiGetOneService(sid)
-        if(response?.success){
-          setDetailService(response?.service)
-          setDuration(response?.service?.duration)
-        }
-      }
-      fetchServiceData()
-    }, [sid])
-    
-    useEffect(() => {
-      setVariable(v)
-    }, [v])
-
+    const currentUser = useSelector(state => state.user.current);
     const [service, setService] = useState(null)
     const [product, setProduct] = useState(null)
     
@@ -96,6 +79,32 @@ const DetailProvider = () => {
     )
     const [timeOptions, setTimeOptions] = useState([]);
     const [timeOptionsDateTime, setTimeOptionsDateTime] = useState([]);
+    const [type, setType] = useState('Week')
+    const [datetime, setDatetime] = useState(null)
+    const [displayTime, setDisplayTime] = useState(new Date())
+    const [selectedTime, setSelectedTime] = useState(null)
+    const intervalRef = useRef(null);
+    const [flashSale, setFlashSale] = useState([])
+    const [currentFlashSaleIndex, setCurrentFlashSaleIndex] = useState(0); // Thêm state để theo dõi chỉ số hiện tại
+    const [showSort, setShowSort] = useState(false)
+    const [showWorkingHours, setShowWorkingHours] = useState(false)
+
+    useEffect(() => {
+      const fetchServiceData = async() => {
+        const response = await apiGetOneService(sid)
+        if(response?.success){
+          setDetailService(response?.service)
+          setDuration(response?.service?.duration)
+        }
+      }
+      fetchServiceData()
+    }, [sid])
+    
+    useEffect(() => {
+      console.log(v)
+      setVariable(v)
+    }, [v])
+
     const parseTimee = (time) => {
       const [hour, minute] = time.split(':').map(Number);
       return hour * 60 + minute;
@@ -233,12 +242,7 @@ const DetailProvider = () => {
       }, 10000);
   
       return () => clearInterval(intervalRef.current);
-    }, [providerData, duration, bookingDateTime]);
-
-
-    const [flashSale, setFlashSale] = useState([])
-    const [currentFlashSaleIndex, setCurrentFlashSaleIndex] = useState(0); // Thêm state để theo dõi chỉ số hiện tại
-    
+    }, [providerData, duration, bookingDateTime]);    
 
     useEffect(() => {
       if(mapContainer.current && variable === 'find-us'){
@@ -338,6 +342,14 @@ const DetailProvider = () => {
           // }
         }
         fetchData()
+        setBooking(null)
+        setBookingDateTime(null)
+        setSelectedStaff({
+          time: null,
+          date: null,
+          staff: null
+          })
+        setDetailService(null)
     }, [variable, prid]);
 
     const fetchServiceByProviderId = async (queries) =>{
@@ -386,31 +398,6 @@ const DetailProvider = () => {
       
     };
 
-    // const handleChooseBlogPost = (id) => { 
-    //   navigate({
-    //     pathname: `/${path.VIEW_POST}`,
-    //     search: createSearchParams({id}).toString()
-    //   })
-    //  }
-    // const handleViewBlogListOnMainPage = () => {
-    //   navigate(`/${path.BLOGS}`,{ state: { searchKey: providerData?.bussinessName } })
-    // }
-    // const [currBlogList, setCurrBlogList] = useState([]);
-    // const fetchCurrentBlogList = async (search, selectedTags) => {
-    //   // setIsLoading(true);
-    //   let response = await apiGetAllBlogs({ title: '',  limit: process.env.REACT_APP_LIMIT, sortBy:[2], provider_id: providerData?.id });
-    //   if(response?.success && response?.blogs){
-    //     setCurrBlogList(response.blogs);
-    //     // setIsLoading(false);
-    //   }
-    //   else {
-
-    //   }
-    // }
-    // useEffect(() => {
-    //   fetchCurrentBlogList();
-    // }, []);
-
     const switchToChatWithProvider = async (event) => {
       if (!current?.chat_users?.includes(providerData.owner)) {
         let openSwalResult = await Swal.fire({
@@ -440,11 +427,6 @@ const DetailProvider = () => {
         navigate(`/${path.CHAT}`,{ state: { currenRedirectedChatUserId: providerData.owner } })
       }
     }
-
-  
-
-    const [showSort, setShowSort] = useState(false)
-    const [showWorkingHours, setShowWorkingHours] = useState(false)
 
     const handleShowDistance = () => {
       if ("geolocation" in navigator) {
@@ -484,8 +466,18 @@ const DetailProvider = () => {
       }
     }, [booking])
 
+    const canUseDiscount = (coupon) => {
+      if (!currentUser) return false;
+      
+      const userUsage = coupon.usedBy.find(usage => usage.user.toString() === currentUser._id);
+      
+      return coupon.noLimitPerUser || !userUsage || userUsage.usageCount < coupon.limitPerUser;
+    };
+  
+    const usableDiscountCodes = voucher?.filter(canUseDiscount);
+
     useEffect(() => {
-      const coupon = voucher?.find(el => el?.code === selectedVoucher?.code)
+      const coupon = usableDiscountCodes?.find(el => el?.code === selectedVoucher?.code)
       if(coupon?.discount_type === 'percentage'){
         const percent = coupon?.percentageDiscount?.find(e => e.id === detailService?._id)?.value
         const discountPrice = Math.round(detailService?.price * (100-percent)/100)
@@ -507,35 +499,57 @@ const DetailProvider = () => {
     }
     
     const handleCheckOut = async() => {
-      const finalPrice = +discountValue > 0 ? +discountValue : +detailService?.price;
-      const date = moment(new Date()).format("DD/MM/YYYY");
-      const [day, month, year] = date.split('/');
-      const formattedDate = `${year}-${month}-${day}`;
-      const dateTime = new Date(`${formattedDate}T${selectedStaff?.time}:00Z`);
+      if(!bookingDateTime){
+        const finalPrice = +discountValue > 0 ? +discountValue : +detailService?.price;
+        const date = moment(new Date()).format("DD/MM/YYYY");
+        const [day, month, year] = date.split('/');
+        const formattedDate = `${year}-${month}-${day}`;
+        const dateTime = new Date(`${formattedDate}T${selectedStaff?.time}:00Z`);
+        console.log(dateTime)
 
-      await apiUpdateCartService({
-        service: detailService?._id, 
-        provider: providerData?._id, 
-        staff: selectedStaff?.staff?._id, 
-        time: selectedStaff?.time,
-        duration: detailService?.duration,
-        date: new Date().toLocaleDateString(),
-        dateTime: dateTime,
-        price: finalPrice,
-      })
-
-      if(selectedVoucher){
-        window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}&couponCode=${selectedVoucher?.code}`, '_blank');
+        console.log(selectedStaff)
+        await apiUpdateCartService({
+          service: detailService?._id, 
+          provider: providerData?._id, 
+          staff: selectedStaff?.staff?._id, 
+          time: selectedStaff?.time,
+          duration: detailService?.duration,
+          date: new Date().toLocaleDateString(),
+          dateTime: dateTime,
+          price: finalPrice,
+        })
+        if(selectedVoucher){
+          window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}&couponCode=${selectedVoucher?.code}`, '_blank');
+        }
+        else {
+          window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}`, '_blank');
+        }
       }
-      else {
-        window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}`, '_blank');
+      else{
+        const finalPrice = +discountValue > 0 ? +discountValue : +detailService?.price;
+        const date = moment(new Date(datetime)).format("DD/MM/YYYY");
+        const [day, month, year] = date.split('/');
+        const formattedDate = `${year}-${month}-${day}`;
+        const dateTime = new Date(`${formattedDate}T${selectedTime}:00Z`);
+
+        await apiUpdateCartService({
+          service: detailService?._id, 
+          provider: providerData?._id, 
+          staff: selectedStaff?.staff?._id, 
+          time: selectedTime,
+          duration: detailService?.duration,
+          date: date,
+          dateTime: dateTime,
+          price: finalPrice,
+        })
+        if(selectedVoucher){
+          window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}&couponCode=${selectedVoucher?.code}`, '_blank');
+        }
+        else {
+          window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}`, '_blank');
+        }
       }
     }
-
-    const [type, setType] = useState('Week')
-    const [datetime, setDatetime] = useState(null)
-    const [displayTime, setDisplayTime] = useState(new Date())
-    const [selectedTime, setSelectedTime] = useState(null)
 
     const currentWeek = Array.from({ length: 7 }, (_, index) => {
       const date = addDays(displayTime, index);
@@ -755,7 +769,7 @@ const DetailProvider = () => {
       <div className={clsx('w-full fixed top-0 left-0 h-[86px] flex justify-center z-[100]', providerData?.theme === 'dark' && 'bg-[#212529] text-white')}>
         <div className='w-[90%] h-full flex gap-10 items-center text-[15px]'>
           <span onClick={()=>{navigate(`/detail_provider/${providerData?._id}/service`)}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'service' && 'border-b-2 border-[#15a9e8]')}>Service</span>
-          <span onClick={()=>{navigate(`/detail_provider/${providerData?._id}/book`)}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'book' && 'border-b-2 border-[#15a9e8]')}>Book Now</span>
+          <span onClick={()=>{navigate(`/detail_provider/${providerData?._id}/book`); setBooking(null); setBookingDateTime(null); setDetailService(null); setSelectedStaff({time: null,date: null,staff: null}) }} className={clsx('font-semibold cursor-pointer capitalize', variable === 'book' && 'border-b-2 border-[#15a9e8]')}>Book Now</span>
           <span onClick={()=>{navigate(`/detail_provider/${providerData?._id}/product`)}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'product' && 'border-b-2 border-[#15a9e8]')}>Product</span>
           <span onClick={()=>{navigate(`/detail_provider/${providerData?._id}/blog`)}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'blog' && 'border-b-2 border-[#15a9e8]')}>Blog</span>
           <span onClick={()=>{navigate(`/detail_provider/${providerData?._id}/find-us`)}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'find-us' && 'border-b-2 border-[#15a9e8]')}>Find us</span>
@@ -963,10 +977,10 @@ const DetailProvider = () => {
                   </div>
                   {showVoucher && 
                     (
-                      voucher?.length > 0 
+                      usableDiscountCodes?.length > 0 
                       ? 
                       <div className='flex flex-col gap-1 w-1/2 p-[6px] bg-white h-fit max-h-[180px] overflow-y-scroll scrollbar-thin'>
-                        {voucher?.map((el, index) => (
+                        {usableDiscountCodes?.map((el, index) => (
                           <div onClick={()=>handleSelectedVoucher(el)} key={index} className={clsx('w-full flex items-center cursor-pointer', el?._id === selectedVoucher?._id ? 'bg-gray-400' : 'hover:bg-gray-200')}>
                             <div className='w-[20%]'>
                               <img src={el?.image} className='w-[80px] h-[60px] object-cover rounded-sm'/>

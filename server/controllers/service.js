@@ -15,7 +15,10 @@ const createService = asyncHandler(async(req, res)=>{
     const thumb = req.files?.thumb[0]?.path
     const image = req.files?.images?.map(el => el.path)
 
-    if(!name || !price || !description || !assigned_staff || !category || !hour || !minute || !provider_id){
+    if(!category){
+        throw new Error("Missing category")
+    }
+    if(!name || !price || !description || !assigned_staff || !hour || !minute || !provider_id){
         throw new Error("Missing input")
     }
     req.body.duration = +hour*60 + +minute
@@ -326,10 +329,8 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
         const limit = +req.query.limit || process.env.LIMIT_PRODUCT
         const skip = (page-1)*limit
 
-        console.log(page, limit, skip)
         // queryCommand.skip(skip).limit(limit)
         const results = services.slice(+skip, (+skip) + (+limit))
-        console.log(results)
 
         const counts = services.length;
         return res.status(200).json({
@@ -346,6 +347,7 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
 })
 
 const getOneService = asyncHandler(async(req, res)=>{
+    console.log('aaaa')
     const {sid} = req.params
 
     const service = await Service.findById(sid).populate({

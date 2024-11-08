@@ -203,6 +203,39 @@
 //   }
 
 
+  const handleCustomizationChange = (e) => {
+    const { name, value } = e.target;
+    setCustomization(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+
+  const handleIconToggle = (iconId) => {
+    setCustomization((prev) => {
+      const newSelectedIcons = prev.selectedIcons.includes(iconId)
+        ? prev.selectedIcons.filter((id) => id !== iconId)
+        : [...prev.selectedIcons, iconId];
+      return { ...prev, selectedIcons: newSelectedIcons };
+    });
+  };
+
+
+  const downloadImage = async() => {
+    if (voucherRef.current) {
+      const canvas = await html2canvas(voucherRef.current);
+      const image = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = image;
+      link.download = `${voucherName || "voucher"}.png`;
+      link.click();
+    }
+  };
+
+  const calculateIconGrid = () => {
+    const containerWidth = 480;
+    const containerHeight = 300;
   
 //   return (
 //     <div className='w-full'>

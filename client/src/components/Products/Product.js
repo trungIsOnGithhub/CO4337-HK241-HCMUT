@@ -78,50 +78,12 @@ const Product = ({productData, isNew, normal, isNotBorder}) => {
     }
   } // handleClickOptions
 
+  const handleNavigateLearnMoreProduct = ( ) => {
+    navigate(`/product/${productData.category?.toLowerCase()}/${productData?._id}/${productData?.title}`)
+    console.log(productData)
+  }
+
   return (
-    // <div className='w-full text-base px-[10px]'>
-    //   <div 
-    //     onClick={()=> navigate(`/product/${productData?.category?.toLowerCase()}/${productData?._id}/${productData.title}`)}
-    //     className={isNotBorder ? 'w-full p-[15px] flex flex-col items-center cursor-pointer' : 'w-full border p-[15px] flex flex-col items-center cursor-pointer'} 
-    //     onMouseEnter = {e => {
-    //       // e.stopPropagation();
-    //       setIsShowOption(true)
-    //     }}
-    //     onMouseLeave = {e => {
-    //       e.stopPropagation();
-    //       setIsShowOption(false)
-    //     }}
-    //   >
-    //     <div className='w-full relative'>
-    //       {isShowOption && <div className='absolute bottom-[-10px] left-0 right-0 flex justify-center gap-2 animate-slide-top'>
-    //         {
-    //           current?.wishlist?.some(el => el._id === productData._id) ? 
-    //           <span title='Wishlist' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Heart')}}><SelectOption icon={<FaHeart color='#ff1493'/>}/></span>
-    //           :
-    //           <span title='Add to WishList' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Heart')}}><SelectOption icon={<FaHeart />}/></span>
-    //         }
-    //         {
-    //           current?.cart?.some(el => el?.product?._id === productData._id) ? 
-    //           <span title='Added'><SelectOption icon={<BsCartCheckFill color='green' />}/></span>
-    //           :
-    //           <span title='Add to Cart' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Cart')}}><SelectOption icon={<FaCartPlus />}/></span>
-    //         }
-    //         <span title='Quick View' onClick={(e)=>{e.stopPropagation(); handleClickOptions('Eye')}}><SelectOption icon={<FaEye />}/></span>
-    //       </div>}
-    //       <img src={productData?.thumb||'https://nayemdevs.com/wp-content/uploads/2020/03/default-product-image.png'} 
-    //       className='w-[243px] h-[243px] object-cover'/>
-    //       {!normal && <img src={isNew? label : label_trend} className={`absolute top-[-12px] left-[-25px] ${isNew ? 'w-[70px]' : 'w-[100px]'} h-[25px] object-cover`}></img>&&
-    //       <span className='font-bold absolute top-[-12px] left-[-16px] text-white'>{isNew?'New':'Trending'}</span>}
-    //     </div>
-    //     <div className='flex flex-col mt-[15px] items-start gap-1 w-full'>
-    //       <span className='flex h-4'>{renderStarfromNumber(productData?.totalRatings)?.map((el,index)=>(
-    //         <span key={index}>{el}</span>
-    //       ))}</span>
-    //       <span className='line-clamp-1'>{productData?.title}</span>
-    //       <span>{`${formatPrice(productData?.price)} VND`}</span>
-    //     </div>
-    //   </div>
-    // </div>
     <div className='cursor-pointer w-full h-fit rounded-md relative shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300'>
         <div className='w-full h-[200px]'>
             <img className='h-full w-full object-contain rounded-t-md' src={productData?.thumb} alt={productData?.name} />
@@ -136,8 +98,8 @@ const Product = ({productData, isNew, normal, isNotBorder}) => {
                 <span className='text-[14px] text-[#868e96] flex items-center gap-2'><span className='flex gap-1 items-center'><MdOutlineCategory /> Category</span> <span className='font-medium'>{`${productData?.category}`}</span></span>
             </div>
             <div className='flex justify-between'>
-            <Button style={'px-[23px] rounded-md text-black border border-[#868e96] w-fit h-[40px]'}> Learn more</Button>
-            <Button style={'px-[23px] rounded-md text-white bg-[#0a66c2] w-fit h-[40px]'}> Buy now</Button>
+            <Button handleOnclick={handleNavigateLearnMoreProduct} style={'px-[10px] rounded-md text-black border border-[#868e96] w-fit h-[40px] hover:bg-gray-400'}>Learn more</Button>
+            <Button style={'px-[10px] rounded-md text-white bg-[#0a66c2] w-fit h-[40px] hover:bg-blue-400 flex items-center gap-1'}><FaCartPlus /> Add to cart</Button>
             </div>
         </div>
         <div className='absolute right-2 top-2 w-fit h-fit px-[8px] py-[4px] bg-[#0a66c2] text-white rounded-md'>

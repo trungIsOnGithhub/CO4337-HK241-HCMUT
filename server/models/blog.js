@@ -46,6 +46,10 @@ var blogSchema = new mongoose.Schema({
     author:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
+    },
+    isHidden:{
+        type: Boolean,
+        default: false
     }
 },{
     timestamps: true,

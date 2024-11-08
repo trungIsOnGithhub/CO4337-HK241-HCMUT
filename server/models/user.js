@@ -43,6 +43,7 @@ var userSchema = new mongoose.Schema({
         product: {type:mongoose.Types.ObjectId, ref: 'Product'},
         quantity: {type: Number},
         color: {type: String},
+        colorCode: {type: String},
         price: {type: Number},
         thumb: {type: String},
         title: {type: String},  
@@ -51,7 +52,16 @@ var userSchema = new mongoose.Schema({
     address:{
         type: String,
     },
+    latitude: {
+        type: Number,
+        required: true,
+    },
+    longitude: {
+        type: Number,
+        required: true,
+    },
     wishlist: [{type: mongoose.Types.ObjectId, ref: 'Service'}],
+    wishlistProduct: [{type: mongoose.Types.ObjectId, ref: 'Product'}],
     isBlocked: {
         type: Boolean,
         default: false,

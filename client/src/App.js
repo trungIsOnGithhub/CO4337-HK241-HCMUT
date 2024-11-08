@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {Route, Routes, useLocation} from 'react-router-dom'
-import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageSaleEvent, ManagePostDetail, EditPostDetail, AddPost, ManageChat, ManageThemeAndAppearance, ManageHeroSection, ManageFooterSection, ManageServicePage, ManageSetting, WeeklyOfficeHours } from 'pages/admin'
+import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageSaleEvent, ManagePostDetail, EditPostDetail, AddPost, ManageChat, ManageThemeAndAppearance, ManageHeroSection, ManageFooterSection, ManageServicePage, ManageSetting, WeeklyOfficeHours, AddVariantProduct } from 'pages/admin'
 import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct, ViewBlog, DetailProvider } from 'pages/public'
 
 import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct, Calendarr} from 'pages/user'
@@ -27,7 +27,7 @@ function App() {
     
     <div className="w-screen h-screen relative">
       {isShowCart && 
-        <div onClick={()=>dispatch(showCart())} className='absolute inset-0 bg-overlay z-50 flex justify-end'>
+        <div onClick={()=>dispatch(showCart())} className='absolute inset-0 bg-overlay z-[999] flex justify-end'>
         <Cart />
         </div>
       }
@@ -68,6 +68,7 @@ function App() {
         <Route path={path.MANAGE_STAFF} element={<ManageStaff/>}/>
         <Route path={path.MANAGE_SERVICE} element={<ManageService/>}/>
         <Route path={path.CREATE_PRODUCT} element={<CreateProduct/>}/>
+        <Route path={path.ADD_VARIANT_PRODUCT} element={<AddVariantProduct/>}/>
         <Route path={path.ADD_STAFF} element={<AddStaff/>}/>
         <Route path={path.ADD_SERVICE} element={<AddService/>}/>
         <Route path={path.STAFF_CALENDAR} element={<StaffCalendar/>}/>

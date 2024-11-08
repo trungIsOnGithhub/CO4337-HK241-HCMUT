@@ -1,6 +1,6 @@
 import path from './path'
 import icons from './icon'
-import { FaUserGear } from "react-icons/fa6";
+import { FaCartShopping, FaUserGear } from "react-icons/fa6";
 import { BsFillTagsFill } from "react-icons/bs";
 import { SlCalender } from "react-icons/sl";
 import { FaMoneyBillTrendUp } from "react-icons/fa6";
@@ -415,7 +415,7 @@ export const userSidebar = [
         type: 'single',
         text: 'My cart',
         path: `/${path.USER}/${path.MYCART}`,
-        icon: <MdGroups size={20}/>,
+        icon: <FaCartShopping size={20}/>,
         visibleForRole: [202],
     },
     {
