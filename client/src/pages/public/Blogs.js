@@ -1,6 +1,6 @@
 import React, {useState, useCallback, useEffect } from 'react'
-import { InputFormm, MultiSelect, Select } from 'components';
-import { apiGetAllBlogs, apiGetAllPostTags, apiSearchBlogByParams, apiGetTopTags } from 'apis/blog';
+import { InputFormm, NewInputSelect, Pagination } from 'components';
+import { apiGetAllBlogs, apiGetAllPostTags, apiSearchBlogByParams, apiGetTopBlogsWithSelectedTags } from 'apis/blog';
 import Button from 'components/Buttons/Button';
 import { HashLoader } from 'react-spinners';
 import path from 'ultils/path';
@@ -12,11 +12,12 @@ import { tinh_thanhpho } from 'tinh_thanhpho';
 import { useForm } from 'react-hook-form';
 import { FiClock, FiEye, FiTag, FiUser } from 'react-icons/fi';
 import { formatDistanceToNow } from 'date-fns';
+import { FaSearch, FaSortAmountDown } from "react-icons/fa";
 
 const Blogs = () => {
   const location = useLocation();
   useEffect(() => {
-    console.log('=========', location?.state);
+    // ;console.log('=========', location?.state);
     if (location?.state?.searchKey) {
       setSearchTerm(location.state.searchKey);
     }
@@ -26,15 +27,35 @@ const Blogs = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [tags, setTags] = useState([]);
+  const [sort, setSort] = useState([]);
+  const [counts, setCounts] = useState(0);
   const [selectedSort, setSelectedSort] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [provinceFilter, setProvinceFilter] = useState([]);
   const handleSortByChange = () => {};
   const [topTags, setTopTags] = useState([]);
 
+  const sortOptions = [
+    {
+      id: 1,
+      value: 'createdAt',
+      text: 'Latest Created'
+    },
+    {
+      id: 2,
+      value: '-createdAt',
+      text: ' Created'
+    },
+    {
+      id: 3,
+      value: 'likes',
+      text: 'Popular'
+    },
+  ] 
+
   const provinces = Object.entries(tinh_thanhpho).map(pair => {
     return {
-      label: pair[1].name,
+      text: pair[1].name,
       value: pair[1].name
     }
   });
@@ -46,6 +67,9 @@ const Blogs = () => {
         setTags(response?.tags)
       }
     }
+
+    const resp = await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
+    console.log(resp.blogs);
   }
   useEffect(() => {
     fetchTags();
@@ -53,31 +77,41 @@ const Blogs = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [currBlogList, setCurrBlogList] = useState([]);
-  const fetchCurrentBlogList = async (search, selectedTags) => {
+
+  const fetchCurrentBlogList = async () => {
     setIsLoading(true);
-    let response = await apiGetAllBlogs({ title: searchTerm,  limit: process.env.REACT_APP_LIMIT, sortBy: selectedSort, provinces: provinceFilter });
+    // let response = await apiSearchBlogByParams({
+    //   searchTerm,
+    //   pageSize: parseInt(process.env.REACT_APP_LIMIT),
+    //   selectedSort,
+    //   selectedTags,
+    //   page: 1
+    // });
+    let response = await await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
     if(response?.success && response?.blogs){
+      console.log('>>>>>>>>>>>>>>', response.blogs.length);
       setCurrBlogList(response.blogs);
-      setIsLoading(false);
+      setCounts(response.counts);
     }
     else {
-
+      Swal.fire("Error Occured!", "Cannot fetch Blog Data", "error");
     }
+    setIsLoading(false);
   }
-  useEffect(() => {
-    fetchCurrentBlogList();
-  }, [selectedSort,provinceFilter]);
+  // useEffect(() => {
+  //   fetchCurrentBlogList();
+  // }, [selectedSort, selectedTags, searchTerm]);
 
   const fetchTopTags = async () => {
     // setIsLoading(true);
-    let response = await apiGetTopTags({ limit: 5 });
-    if(response?.success && response?.tags){
-      setTopTags(response.tags);
-      // setIsLoading(false);
-    }
-    else {
+    // let response = await apiGetTopTags({ limit: 5 });
+    // if(response?.success && response?.tags){
+    //   setTopTags(response.tags);
+    //   // setIsLoading(false);
+    // }
+    // else {
 
-    }
+    // }
   }
   useEffect(() => {
     fetchTopTags();
@@ -107,43 +141,64 @@ const Blogs = () => {
       setIsLoading(false);
     }
     else {
-      Swal.fire('Error Ocurred!!', 'Cannot Find Post Blogs!!', 'error');
+      Swal.fire('Error Ocurred!!', 'Cannot Find Blogs!!', 'error');
       setIsLoading(false);
     }
-  }, [searchTerm]);
-  const multiSearchBySelectedTags = useCallback(async () => {
-    let response = await apiSearchBlogByParams({ selectedTags })
+  }, [searchTerm, selectedTags, selectedSort])
+  // const multiSearchBySelectedTags = useCallback(async () => {
+  //   let response = await apiSearchBlogByParams({ selectedTags, selectedSort, searchTerm });
 
-    if (response && response.success) {
-      setCurrBlogList(response.blogs);
-      setIsLoading(false);
-    }
-    else {
-      Swal.fire('Error Ocurred!!', 'Cannot create new Post Tag!!', 'error');
-      setIsLoading(false);
-    }
-  }, [selectedTags]);
+  //   if (response && response.success) {
+  //     setCurrBlogList(response.blogs);
+  //     setIsLoading(false);
+  //   }
+  //   else {
+  //     Swal.fire('Error Ocurred!!', 'Cannot create new Post Tag!!', 'error');
+  //     setIsLoading(false);
+  //   }
+  // }, [selectedTags]);
 
   
   const {register,formState:{errors}, handleSubmit, watch} = useForm()
   const [selectedTag, setSelectedTag] = useState(null);
 
-  console.log(currBlogList)
+  // console.log(currBlogList)
   return (
-    <div className='w-main mb-8 flex flex-col gap-4 overflow-y-auto'>
-      <div className="grid grid-cols-4 gap-8">
-          <div className="col-span-3 max-h-[500px] overflow-y-auto">
+    <div className='w-main mb-8 mt-4 flex flex-col gap-4 overflow-y-auto'>
+      <div className="grid grid-cols-4 gap-4">
+          <div className='col-span-4 flex justify-center items-center gap-2'>
             <InputFormm
               id='q'
               register={register}
               errors={errors}
               fullWidth
               placeholder= 'Search blog by title name, tag ...'
-              style={'w-full bg-[#f4f6fa] min-h-10 rounded-md pl-2 flex items-center mb-4'}
+              style={'w-full bg-[#f4f6fa] min-h-10 rounded-md pl-2 flex items-center'}
               styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
+              onChange={(event) => {setSearchTerm(event.target.value)}}
             >
             </InputFormm>
-            <div className="space-y-6">
+
+            <span className='flex'>
+              <FaSortAmountDown />
+              <NewInputSelect value={selectedSort} options={sortOptions} changeValue={(value) => {setSelectedSort(value);}} />
+            </span>
+
+            <Button
+              handleOnclick={() => { console.log('::::::::::::'); fetchCurrentBlogList();}}
+            >
+              <span className="flex justify-center gap-2 items-center">
+                <FaSearch /><span>Search</span>
+              </span>
+            </Button>
+          </div>
+
+          <div className="col-span-3 max-h-[500px] overflow-y-auto scrollbar-thin">
+
+          {currBlogList?.length &&
+              <Pagination totalCount={counts}/>}
+    
+            <div className="space-y-6 mt-3">
               {currBlogList.length === 0 ? (
                 <div className="bg-white rounded-lg shadow-md p-6 text-center">
                   <p className="text-gray-600">No blog posts found matching your search criteria.</p>
@@ -201,12 +256,14 @@ const Blogs = () => {
                 ))
               )}
             </div>
+            <div className='w-main m-auto my-4 flex justify-end'>
+            </div>
           </div>
 
           {/* Tags - Right Side */}
           <div className="col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Tags</h2>
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Top Tags</h2>
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag) => (
                   <button

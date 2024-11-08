@@ -79,7 +79,7 @@ export const apiGetTopTags = (data) => axios({
     data
 })
 
-export const apiGetTopBlogs = (data) => axios({
+export const apiGetTopBlogsWithSelectedTags = (data) => axios({
     url: '/blog/top_blogs',
     method: 'post',
     data

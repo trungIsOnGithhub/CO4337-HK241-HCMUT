@@ -302,8 +302,8 @@ const createNewPostTag = asyncHandler(async(req, res)=>{
 })
 
 const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
-    let { searchTerm, selectedTags } = req.query;
-
+    let { searchTerm, selectedTags, selectedSort,
+            page, pageSize } = req.query;
 
     if (!searchTerm) {
         searchTerm = '';
@@ -311,10 +311,13 @@ const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
     if (!selectedTags) {
         selectedTags = [];
     }
+    if (!selectedSort) {
+        selectedSort = "";
+    }
 
     // Loại bỏ các trường đặc biệt ra khỏi query
-    const excludeFields = ['limit', 'sort', 'page', 'fields'];
-    excludeFields.forEach((el) => delete req.query[el]);
+    // const excludeFields = ['limit', 'sort', 'page', 'fields'];
+    // excludeFields.forEach((el) => delete req.query[el]);
 
     // Format lại các toán tử cho đúng cú pháp của mongoose
     // let queryString = JSON.stringify(queries);
@@ -327,38 +330,71 @@ const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
     if(searchTerm?.length){
         queryFinish = {
             $or: [
-                {title: {$regex: searchTerm, $options: 'i' }},
-                {author: {$regex: searchTerm, $options: 'i' }},
-                {'provider_id.bussinessName': {$regex: searchTerm, $options: 'i' }},
-                {'provider_id.province': {$regex: searchTerm, $options: 'i' }},
-                {tags: {$regex: searchTerm, $options: 'i' }}
+                {title: {$match: searchTerm}},
+                // {author: {$regex: searchTerm}}
+                {'provider_id.bussinessName': {$regex: searchTerm, $options: 'i' }}
+                // {'provider_id.province': {$regex: searchTerm, $options: 'i' }}
             ]
         }
     }
 
     const qr = { ...queryFinish }
 
-    let queryCommand = Blog.find({}).populate({
+    let queryCommand = Blog.find(qr).populate({
         path: 'provider_id',
         select: 'bussinessName province',
-    }).find(qr);
+    });
 
     let blogs = await queryCommand;
 
-    blogs = blogs.filter(blog => {
-        for (const tag of selectedTags) {
-            if (blog?.tags.includes(tag)) {
-                return true;
+    console.log(blogs.length);
+
+    if (selectedTags?.length) {
+        blogs = blogs.filter(blog => {
+            for (const tag of selectedTags) {
+                if (blog?.tags.includes(tag)) {
+                    return true;
+                }
             }
-        }
-        return false;
-    })
+            return false;
+        });    
+    }
+
+    let fieldToSort = selectedSort;
+    if (selectedSort.indexOf('-') === 0) {
+        fieldToSort = selectedSort.slice(1);
+    }
+    if (selectedSort?.length && selectedSort.indexOf('-') === 0) {
+        blogs = blogs.sort(function(x, y) {
+            if (x[fieldToSort] > y[fieldToSort])
+              return -1;
+            if (x[fieldToSort] < y.createdAt)
+              return 1;
+            return 0;
+        });
+    }
+    else if (selectedSort?.length) {
+        blogs = blogs.sort(function(x, y) {
+            if (x.createdAt < y.createdAt)
+              return -1;
+            if (x.createdAt > y.createdAt)
+              return 1;
+            return 0;
+        });
+    }
+    
+
+    const startIdx = page * pageSize;
+    console.log('-->', page, pageSize);
+    const endIdx = startIdx + pageSize;
+    blogs = blogs.slice(startIdx, endIdx);
 
     return res.status(200).json({
-        success: blogs?.length ? true : false,
-        blogs: blogs?.length ? blogs : "Cannot Find Post Blogs"
+        success: blogs ? true : false,
+        counts: blogs.length,
+        blogs: blogs ? blogs : "Cannot Find Post Blogs"
     })
-})
+});
 
 const getTopBlogs = asyncHandler(async(req, res)=>{
     let { limit } = req.body
@@ -379,16 +415,16 @@ const getTopBlogs = asyncHandler(async(req, res)=>{
     })
 })
 
-const getTopTags = asyncHandler(async(req, res)=>{
-    let { limit } = req.body
+const getTopBlogWithSelectedTags = asyncHandler(async(req, res)=>{
+    let { limit, selectedTags } = req.body
     if(!limit){
         limit = 5;
     }
-    const response = await PostTag.find({}).limit(5)
+    const response = await Blog.find({tags: { $in: selectedTags }}).sort({ likes: -1 }).limit(limit);
 
     return res.status(200).json({
         success: response ? true : false,
-        tags: response ? response : "Cannot Get Post Tags!"
+        blogs: response ? response : "Cannot Get Post Tags!"
     })
 })
 
@@ -418,7 +454,7 @@ module.exports = {
     createNewBlogPost,
     createNewPostTag,
     getBlogsBySearchTerm,
-    getTopBlogs,
+    getTopBlogWithSelectedTags,
     getTopTags,
     updateViewBlog
 }
