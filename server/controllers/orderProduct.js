@@ -35,7 +35,8 @@ const createNewOrder = asyncHandler(async (req, res) => {
     // Cập nhật số lượng sản phẩm trong kho
     for (const product of products) {
         await Product.findByIdAndUpdate(product.product, {
-            $inc: { quantity: -product.quantity }
+            $inc: { quantity: -product.quantity },
+            $inc: {soldQuantity: product.quantity}
         });
     }
 
