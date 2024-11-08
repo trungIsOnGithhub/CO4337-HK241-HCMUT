@@ -65,15 +65,15 @@ const ViewOrderDetail = ({ bookingId, onClose }) => {
     }
 
     return (
-        <div className="p-6 max-w-4xl mx-auto bg-white rounded-md shadow-lg">
-            <h2 className="text-2xl font-semibold mb-6 text-gray-500">Edit Appointment</h2>
+        <div className="p-6 max-w-4xl mx-auto bg-white rounded-md shadow-lg [&>*]:text-gary-500">
+            <h2 className="text-2xl font-semibold mb-6">Edit Appointment</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Left Section */}
                 <div className="space-y-4">
                     {/* Service Section */}
                     <div>
-                        <label className="block font-semibold mb-1 text-gray-500">Service</label>
+                        <label className="block font-semibold mb-1">Service</label>
                         <div className="flex items-center bg-gray-100 p-4 rounded-md">
                             <img src={orderData?.info[0]?.service?.thumb} alt="Service" className="w-12 h-12 rounded-full mr-4" />
                             <div>
@@ -85,7 +85,7 @@ const ViewOrderDetail = ({ bookingId, onClose }) => {
                     
                     {/* Employee Dropdown */}
                     <div>
-                        <label className="block font-semibold mb-1 text-gray-500">Employee</label>
+                        <label className="block font-semibold mb-1">Employee</label>
                         <select
                             className="w-full p-2 border rounded-md"
                             disabled={!isEditMode}
@@ -101,7 +101,7 @@ const ViewOrderDetail = ({ bookingId, onClose }) => {
                     {/* Date and Time */}
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block font-semibold mb-1 text-gray-500">Date</label>
+                            <label className="block font-semibold mb-1">Date</label>
                             <input
                                 type="date"
                                 className="w-full p-2 border rounded-md"
@@ -111,7 +111,7 @@ const ViewOrderDetail = ({ bookingId, onClose }) => {
                             />
                         </div>
                         <div>
-                            <label className="block font-semibold mb-1 text-gray-500">Time</label>
+                            <label className="block font-semibold mb-1">Time</label>
                             <input
                                 type="time"
                                 className="w-full p-2 border rounded-md"
@@ -124,7 +124,7 @@ const ViewOrderDetail = ({ bookingId, onClose }) => {
                     
                     {/* Location */}
                     <div>
-                        <label className="block font-semibold mb-1 text-gray-500">Location</label>
+                        <label className="block font-semibold mb-1">Location</label>
                         <select
                             className="w-full p-2 border rounded-md"
                             disabled={!isEditMode}

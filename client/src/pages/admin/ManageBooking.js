@@ -255,7 +255,9 @@ const ManageBooking = () => {
           <span className='text-[#00143c] text-3xl font-semibold'>Manage Booking</span>
         </div>
 
-        {viewOrder && <ViewOrderDetail bookingId={chosenBookingId} onClose={() => {setViewOrder(false);}}/>}
+        {viewOrder && <div className='absolute inset-0 bg-zinc-900 h-[200%] z-50 flex-auto'>
+          <ViewOrderDetail bookingId={chosenBookingId} onClose={() => {setViewOrder(false);}}/>
+        </div>}
 
         <div className='w-[95%] h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
           <div className='w-full h-fit flex justify-between items-center'>
