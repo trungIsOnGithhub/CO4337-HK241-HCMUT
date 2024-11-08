@@ -336,23 +336,23 @@
 //     }
 //   };
 
-  const handleFixedAmountInputChangeProduct = (productId, value) => {
-    const numericValue = parseFloat(value);
-    if (!isNaN(numericValue)) {
-      setFixedAmountProduct(prev => {
-        return prev.map(item =>
-          item.id === productId ? { ...item, value: numericValue } : item
-        );
-      });
-    }
-    else{
-      setFixedAmountProduct(prev => {
-        return prev.map(item =>
-          item.id === productId ? { ...item, value: 0 } : item
-        );
-      });
-    }
-  };
+  // const handleFixedAmountInputChangeProduct = (productId, value) => {
+  //   const numericValue = parseFloat(value);
+  //   if (!isNaN(numericValue)) {
+  //     setFixedAmountProduct(prev => {
+  //       return prev.map(item =>
+  //         item.id === productId ? { ...item, value: numericValue } : item
+  //       );
+  //     });
+  //   }
+  //   else{
+  //     setFixedAmountProduct(prev => {
+  //       return prev.map(item =>
+  //         item.id === productId ? { ...item, value: 0 } : item
+  //       );
+  //     });
+  //   }
+  // };
 
 
 //   const handleEventVoucherType = (type) => {
