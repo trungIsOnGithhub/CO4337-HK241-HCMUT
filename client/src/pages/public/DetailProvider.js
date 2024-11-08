@@ -474,7 +474,7 @@ const DetailProvider = () => {
       return coupon.noLimitPerUser || !userUsage || userUsage.usageCount < coupon.limitPerUser;
     };
   
-    const usableDiscountCodes = voucher.filter(canUseDiscount);
+    const usableDiscountCodes = voucher?.filter(canUseDiscount);
 
     useEffect(() => {
       const coupon = usableDiscountCodes?.find(el => el?.code === selectedVoucher?.code)

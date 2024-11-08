@@ -14,7 +14,7 @@ const colourStyles = {
   multiValue: (styles, { data }) => {
     return {
       ...styles,
-      backgroundColor: '#36A2EB', // Màu xanh
+      backgroundColor: '#0a66c2', // Màu xanh
       color: '#FFF', // Màu văn bản trắng
     };
   },

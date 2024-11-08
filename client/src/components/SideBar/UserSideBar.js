@@ -8,8 +8,8 @@ import { useSelector } from 'react-redux'
 import avatarDefault from '../../assets/avatarDefault.png'
 import { FaHome } from "react-icons/fa";
 
-const activeStyle = 'px-4 py-2 flex items-center gap-2 text-gray-100 bg-blue-500'
-const notActiveStyle = 'px-4 py-2 flex items-center gap-2 hover:bg-blue-100'
+const activeStyle = 'px-4 py-2 flex items-center gap-2 text-gray-100 bg-[#0a66c2]'
+const notActiveStyle = 'px-4 py-2 flex items-center gap-2 hover:bg-blue-200'
 
 const {FaCaretDown, FaCaretRight} = icons
 const UserSideBar = () => {
@@ -24,7 +24,7 @@ const UserSideBar = () => {
     }
   }
   return (
-    <div className='bg-white h-full py-4 w-[250px] flex-none border-r border-gray-500'>
+    <div className='bg-white h-full py-4 w-[250px] flex-none border-r border-[#0a66c2]'>
         <div className='w-full flex flex-col items-center justify-center py-4'>
             <img src={current?.avatar || avatarDefault} alt='logo' className='w-16 h-16 object-cover'></img>
             <span>{`${current?.lastName} ${current?.firstName}`}</span>

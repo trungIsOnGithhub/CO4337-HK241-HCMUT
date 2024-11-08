@@ -322,7 +322,7 @@ const DetailService = ({isQuickView, data}) => {
           <img
             src={currentImageIndex === 0 ? serviceData?.thumb : serviceData?.image[currentImageIndex - 1]}
             alt={`Service preview ${currentImageIndex + 1}`}
-            className="w-[600px] h-[500px] object-cover rounded-lg transition-transform duration-300 hover:scale-[1.02]"
+            className="w-[600px] h-[500px] object-contain rounded-lg transition-transform duration-300 hover:scale-[1.02]"
           />
           <button
             onClick={prevImage}

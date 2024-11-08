@@ -6,7 +6,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { apiCreateNewCoupon, apiGetServiceByAdmin } from 'apis';
+import { apiCreateNewCoupon, apiGetProductByAdmin, apiGetServiceByAdmin } from 'apis';
 import { Slider } from '@mui/material';
 import moment from 'moment'
 import { useSelector } from 'react-redux';
@@ -32,9 +32,15 @@ const AddVoucher = () => {
   const { register, formState: { errors }, reset, handleSubmit, watch, setValue } = useForm();
   const [expirationDate, setExpirationDate] = useState({});
   const [services, setServices] = useState([]);
+  const [products, setProducts] = useState([]);
   const [selectedService, setSelectedService] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState([])
   const [percentageDiscount, setPercentageDiscount] = useState([]);
   const [fixedAmount, setFixedAmount] = useState([]);
+
+  const [percentageDiscountProduct, setPercentageDiscountProduct] = useState([]);
+  const [fixedAmountProduct, setFixedAmountProduct] = useState([]);
+
   const [exprDate, setExprdate] = useState(null)
   const {current} = useSelector(state => state.user)
   const [voucherName, setVoucherName] = useState("")
@@ -82,6 +88,9 @@ const AddVoucher = () => {
           discount_type: voucherType,
           percentageDiscount: voucherType === 'percentage' ? percentageDiscount : [],
           fixedAmount: voucherType === 'fixed' ? fixedAmount : [],
+          products: selectedProduct,
+          percentageDiscountProduct: voucherType === 'percentage' ? percentageDiscountProduct : [],
+          fixedAmountProduct: voucherType === 'fixed' ? fixedAmountProduct : [],
         };
         couponData.providerId = current?.provider_id?._id
 
@@ -99,6 +108,10 @@ const AddVoucher = () => {
         formData.delete('percentageDiscount'); // Xóa giá trị cũ nếu có
         formData.delete('fixedAmount');
         formData.delete('services');
+        formData.delete('products');
+        formData.delete('percentageDiscountProduct');
+        formData.delete('fixedAmountProduct');
+
         if(couponData.percentageDiscount) {
           couponData.percentageDiscount.forEach((item, index) => {
             formData.append(`percentageDiscount[${index}][id]`, item.id); // Append id
@@ -114,6 +127,22 @@ const AddVoucher = () => {
         if(couponData.services) {
           for (let service of couponData.services) formData.append('services', service)
         }
+        if(couponData.products) {
+          for (let product of couponData.products) formData.append('products', product)
+        }
+        if(couponData.percentageDiscountProduct) {
+          couponData.percentageDiscountProduct.forEach((item, index) => {
+            formData.append(`percentageDiscountProduct[${index}][id]`, item.id); // Append id
+            formData.append(`percentageDiscountProduct[${index}][value]`, item.value); // Append value
+          });
+        }
+        if(couponData.fixedAmountProduct) {
+          couponData.fixedAmountProduct.forEach((item, index) => {
+            formData.append(`fixedAmountProduct[${index}][id]`, item.id); // Append id
+            formData.append(`fixedAmountProduct[${index}][value]`, item.value); // Append value
+          });
+        }
+
         //Call API to create a new coupon
         const response = await apiCreateNewCoupon(formData);
         if (response?.success) {
@@ -128,6 +157,9 @@ const AddVoucher = () => {
           })
           setPercentageDiscount([])
           setFixedAmount([])
+          setPercentageDiscountProduct([])
+          setFixedAmountProduct([])
+          setSelectedProduct([])
         } else {
           toast.error('Failed to create voucher.');
         }
@@ -147,6 +179,9 @@ const AddVoucher = () => {
           discount_type: voucherType,
           percentageDiscount: voucherType === 'percentage' ? percentageDiscount : [],
           fixedAmount: voucherType === 'fixed' ? fixedAmount : [],
+          products: selectedProduct,
+          percentageDiscountProduct: voucherType === 'percentage' ? percentageDiscountProduct : [],
+          fixedAmountProduct: voucherType === 'fixed' ? fixedAmountProduct : [],
         };
         couponData.providerId = current?.provider_id?._id
         for(let i of Object.entries(couponData)){
@@ -162,6 +197,12 @@ const AddVoucher = () => {
 
         formData.delete('percentageDiscount'); // Xóa giá trị cũ nếu có
         formData.delete('fixedAmount');
+        formData.delete('services');
+        formData.delete('products');
+        formData.delete('percentageDiscountProduct');
+        formData.delete('fixedAmountProduct');
+
+
         if(couponData.percentageDiscount) {
           couponData.percentageDiscount.forEach((item, index) => {
             formData.append(`percentageDiscount[${index}][id]`, item.id); // Append id
@@ -174,8 +215,25 @@ const AddVoucher = () => {
             formData.append(`fixedAmount[${index}][value]`, item.value); // Append value
           });
         }
+        if(couponData.services) {
+          for (let service of couponData.services) formData.append('services', service)
+        }
+        if(couponData.products) {
+          for (let product of couponData.products) formData.append('products', product)
+        }
+        if(couponData.percentageDiscountProduct) {
+          couponData.percentageDiscountProduct.forEach((item, index) => {
+            formData.append(`percentageDiscountProduct[${index}][id]`, item.id); // Append id
+            formData.append(`percentageDiscountProduct[${index}][value]`, item.value); // Append value
+          });
+        }
+        if(couponData.fixedAmountProduct) {
+          couponData.fixedAmountProduct.forEach((item, index) => {
+            formData.append(`fixedAmountProduct[${index}][id]`, item.id); // Append id
+            formData.append(`fixedAmountProduct[${index}][value]`, item.value); // Append value
+          });
+        }
         // for (let [key, value] of formData.entries()) {
-        //   console.log(`${key}:`, value);
         // }
 
         //Call API to create a new coupon
@@ -190,6 +248,11 @@ const AddVoucher = () => {
           setPreview({
             thumb: null
           })
+          setPercentageDiscount([])
+          setFixedAmount([])
+          setPercentageDiscountProduct([])
+          setFixedAmountProduct([])
+          setSelectedProduct([])
         } else {
           toast.error('Failed to create voucher.');
         }
@@ -230,6 +293,7 @@ const AddVoucher = () => {
 
   useEffect(() => {
     fetchAllServiceByAdmin();
+    fetchAllProductByAdmin();
   }, []);
 
   const fetchAllServiceByAdmin = async () => {
@@ -239,48 +303,91 @@ const AddVoucher = () => {
     }
   };
 
+  const fetchAllProductByAdmin = async () => {
+    const response = await apiGetProductByAdmin({ limit: 999 });
+    if (response?.success) {
+      setProducts(response?.products);
+    }
+  };
+
   const options = services?.map((service) => ({
     label: service?.name,
     value: service?._id
   }));
 
-  const handleSelectServiceChange = useCallback(selectedOptions => {
+  const optionsProduct = products?.map((product) => ({
+    label: product?.title,
+    value: product?._id
+  }));
+
+  const handleSelectServiceChange = (selectedOptions) => {
     // Update selected services
     setSelectedService(selectedOptions);
 
-    // Update percentageDiscount state
-    if(voucherType === 'percentage'){
+    // Update percentageDiscount state if voucherType is 'percentage'
+    if (voucherType === 'percentage') {
       setPercentageDiscount(prev => {
         // Remove services that are no longer selected
         const updated = prev.filter(item => selectedOptions.some(opt => opt === item.id));
-  
+
         // Add new services with default value 0
         selectedOptions.forEach(option => {
           if (!updated.find(item => item.id === option)) {
             updated.push({ id: option, value: 0 });
           }
         });
-  
+
         return updated;
       });
     }
-    // Update fixedAmount state
-    if(voucherType === 'fixed'){
+
+    // Update fixedAmount state if voucherType is 'fixed'
+    if (voucherType === 'fixed') {
+      console.log('abc');
       setFixedAmount(prev => {
         // Remove services that are no longer selected
         const updated = prev.filter(item => selectedOptions.some(opt => opt === item.id));
-  
+
         // Add new services with default value 0
         selectedOptions.forEach(option => {
           if (!updated.find(item => item.id === option)) {
             updated.push({ id: option, value: 0 });
           }
         });
-  
+
         return updated;
       });
     }
-  }, [voucherType]);
+  };
+
+
+  const handleSelectProductChange = selectedOptions => {
+    setSelectedProduct(selectedOptions);
+    console.log(selectedOptions);
+    if (voucherType === 'percentage') {
+      setPercentageDiscountProduct(prev => {
+        const updated = prev.filter(item => selectedOptions.some(opt => opt === item.id));
+        selectedOptions.forEach(option => {
+          if (!updated.find(item => item.id === option)) {
+            updated.push({ id: option, value: 0 });
+          }
+        });
+        return updated;
+      });
+    }
+    if (voucherType === 'fixed') {
+      console.log('tesstt');
+      setFixedAmountProduct(prev => {
+        const updated = prev.filter(item => selectedOptions.some(opt => opt === item.id));
+        selectedOptions.forEach(option => {
+          if (!updated.find(item => item.id === option)) {
+            updated.push({ id: option, value: 0 });
+          }
+        });
+        return updated;
+      });
+    }
+  };
 
   const marks = (price) => {
     return [
@@ -304,6 +411,17 @@ const AddVoucher = () => {
     });
   };
 
+  const handleSliderChangeProduct = (productId) => (event, newValue) => {
+    setFixedAmountProduct(prev => {
+      const updated = prev.map(item =>
+        item.id === productId ? { ...item, value: newValue } : item
+      );
+      return updated;
+    });
+  };
+
+
+
   const handlePercentChange = (serviceId) => (event) => {
     const value = parseFloat(event.target.value);
     if (value < 0 || value > 100) return; // Validate ngay khi nhập
@@ -313,6 +431,20 @@ const AddVoucher = () => {
       );
       if (!updated.find(item => item.id === serviceId)) {
         updated.push({ id: serviceId, value: value });
+      }
+      return updated;
+    });
+  };
+
+  const handlePercentChangeProduct = (productId) => (event) => {
+    const value = parseFloat(event.target.value);
+    if (value < 0 || value > 100) return; // Validate ngay khi nhập
+    setPercentageDiscountProduct(prev => {
+      const updated = prev.map(item =>
+        item.id === productId ? { ...item, value: value } : item
+      );
+      if (!updated.find(item => item.id === productId)) {
+        updated.push({ id: productId, value: value });
       }
       return updated;
     });
@@ -336,15 +468,37 @@ const AddVoucher = () => {
     }
   };
 
+  const handleFixedAmountInputChangeProduct = (productId, value) => {
+    const numericValue = parseFloat(value);
+    if (!isNaN(numericValue)) {
+      setFixedAmountProduct(prev => {
+        return prev.map(item =>
+          item.id === productId ? { ...item, value: numericValue } : item
+        );
+      });
+    }
+    else{
+      setFixedAmountProduct(prev => {
+        return prev.map(item =>
+          item.id === productId ? { ...item, value: 0 } : item
+        );
+      });
+    }
+  };
+
 
   const handleEventVoucherType = (type) => {
     if(type === 'fixed' && voucherType === 'percentage') {
       setFixedAmount(percentageDiscount)
       setPercentageDiscount([])
+      setFixedAmountProduct(percentageDiscountProduct)
+      setPercentageDiscountProduct([])
     }
     if(type === 'percentage' && voucherType === 'fixed'){
       setPercentageDiscount(fixedAmount?.map(item => ({ id: item.id, value: 0 })));
       setFixedAmount([]);
+      setPercentageDiscountProduct(fixedAmountProduct?.map(item => ({ id: item.id, value: 0 })));
+      setFixedAmountProduct([])
     }
     setVoucherType(type)
   }
@@ -417,6 +571,9 @@ const AddVoucher = () => {
       thumb: null
     })
   };
+
+  console.log(fixedAmount)
+  console.log(fixedAmountProduct)
 
   return (
     <div className='w-full h-full relative'>
@@ -775,18 +932,6 @@ const AddVoucher = () => {
                 <label htmlFor='noLimitPerUser' className='ml-2 text-[#00143c] italic'>Voucher has no limit per user</label>
               </div>
             </div>
-            <div className='w-full my-6 flex gap-4 items-start'>
-              <MultiSelect
-                labelStyle={'text-[#00143c] font-medium'}
-                title='Services'
-                id='service' 
-                require={true}
-                options={options}
-                onChangee={handleSelectServiceChange}
-                values={selectedService}
-                style={'w-full flex flex-col gap-1'}
-              />
-            </div>
             <div className='w-full my-6 flex gap-4'>
               <label className='block flex-1'>
                 <span className='text-[#00143c] font-medium mb-[8px] block'>Type</span>
@@ -801,7 +946,20 @@ const AddVoucher = () => {
                 </select>
               </label>
             </div>
-            {voucherType === 'percentage' && (
+
+            <div className='w-full my-6 flex gap-4 items-start'>
+              <MultiSelect
+                labelStyle={'text-[#00143c] font-medium'}
+                title='Services'
+                id='service' 
+                require={true}
+                options={options}
+                onChangee={handleSelectServiceChange}
+                values={selectedService}
+                style={'w-full flex flex-col gap-1'}
+              />
+            </div>
+            {voucherType === 'percentage' && selectedService.length > 0 && (
               <div className='w-full my-6 flex flex-col gap-4'>
                 {selectedService.map((service) => (
                   <div key={service} className='w-[80%]'>
@@ -832,7 +990,7 @@ const AddVoucher = () => {
             {voucherType === 'fixed' && selectedService.length > 0 && (
               <div className='w-full my-6 flex flex-col gap-4'>
                 {selectedService.map((service) => (
-                  <div key={service.value} className='w-[80%] flex flex-col items-start text-[#00143c] font-medium'>
+                  <div key={service} className='w-[80%] flex flex-col items-start text-[#00143c] font-medium'>
                     <label className='block mb-2'>{services.find(s => s._id === service)?.name}</label>
                     <div className='p-2 flex w-full justify-between items-center gap-16 text-[#00143c]'>
                       <Slider
@@ -880,6 +1038,102 @@ const AddVoucher = () => {
                 ))}
               </div>
             )}
+
+
+            <div className='w-full my-6 flex gap-4 items-start'>
+              <MultiSelect
+                labelStyle={'text-[#00143c] font-medium'}
+                title='Products'
+                id='product' 
+                require={true}
+                options={optionsProduct}
+                onChangee={handleSelectProductChange}
+                values={selectedProduct}
+                style={'w-full flex flex-col gap-1'}
+              />
+            </div>
+            {voucherType === 'percentage' && selectedProduct?.length > 0 && (
+              <div className='w-full my-6 flex flex-col gap-4'>
+                {selectedProduct.map((product) => (
+                  <div key={product} className='w-[80%]'>
+                    <label htmlFor={`percentageDiscountProduct-${product}`} className='block mb-2 text-[#00143c] font-medium'>
+                      Percentage Discount of {products.find(s => s._id === product)?.title}
+                    </label>
+                    <input
+                      id={`percentageDiscountProduct-${product}`}
+                      type='number'
+                      step='0.01'
+                      min='0'
+                      max='100'
+                      className='w-full p-2 border border-gray-300 text-black outline-none'
+                      placeholder='Percentage Discount ...'
+                      onChange={handlePercentChangeProduct(product)}
+                      value={percentageDiscountProduct.find(item => item.id === product)?.value || ''}
+                      required
+                    />
+                    {errors[`percentageDiscountProduct-${product}`] && (
+                      <small className="text-xs text-red-500">
+                        {errors[`percentageDiscountProduct-${product}`].message}
+                      </small>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {voucherType === 'fixed' && selectedProduct?.length > 0 && (
+              <div className='w-full my-6 flex flex-col gap-4'>
+                {selectedProduct?.map((product) => (
+                  <div key={product} className='w-[80%] flex flex-col items-start text-[#00143c] font-medium'>
+                    <label className='block mb-2'>{products.find(s => s._id === product)?.title}</label>
+                    <div className='p-2 flex w-full justify-between items-center gap-16 text-[#00143c]'>
+                      <Slider
+                        defaultValue={0}
+                        min={0}
+                        max={products.find(s => s._id === product)?.price}
+                        step={1}
+                        aria-label="Custom marks"
+                        valueLabelDisplay="auto"
+                        color="secondary"
+                        marks={marks(products.find(s => s._id === product)?.price)}
+                        onChange={handleSliderChangeProduct(product)}
+                        value={fixedAmountProduct.find(item => item.id === product)?.value || 0}
+                        sx={{
+                          '& .MuiSlider-markLabel': {
+                            color: '#00143c',
+                            paddingLeft: '20px',
+                          },
+                          '& .MuiSlider-thumb': {
+                            backgroundColor: '#36A2EB', // Màu của núm kéo
+                            boxShadow: 'none'
+                          },
+                          '& .MuiSlider-track': {
+                            backgroundColor: '#36A2EB', // Màu của thanh kéo
+                            height: '8px',
+                          },
+                          '& .MuiSlider-rail': {
+                            backgroundColor: '#36A2EB', // Màu của đường ray thanh kéo
+                            height: '8px',
+                          },
+                          '& .MuiSlider-mark': {
+                            backgroundColor: 'transparent', // Hoặc bất kỳ màu nào bạn muốn
+                          },
+                        }}
+                      />
+                      <input
+                        type="number"
+                        className="border border-[#dee1e6] rounded p-1 w-32 ml-2 text-[#00143c] outline-none text-center bg-blue-200 "
+                        placeholder="Enter amount"
+                        onChange={(e) => handleFixedAmountInputChangeProduct(product, e.target.value)}
+                        value={fixedAmountProduct.find(item => item.id === product)?.value || ''}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}            
+
+
 
             <Button type='submit' style={'w-fit flex gap-1 items-center bg-[#005aee] px-4 py-2 rounded-md text-white shadow-inner mx-auto mb-4'}>
               Create a new voucher

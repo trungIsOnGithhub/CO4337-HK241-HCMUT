@@ -16,15 +16,18 @@ const createNewCoupon = asyncHandler(async (req, res) => {
         limitPerUser,
         noLimitPerUser,
         services,
-        providerId
+        providerId,
+        products,
+        fixedAmountProduct,
+        percentageDiscountProduct
     } = req.body;
+
     if(noUsageLimit === 'true') noUsageLimit = true
     else if(noUsageLimit === 'false') noUsageLimit = false
 
     if(noLimitPerUser === 'true') noLimitPerUser = true
     else if(noLimitPerUser === 'false') noLimitPerUser = false
 
-    console.log(req.body);
 
     const image = req.files?.image[0]?.path
     // Validate required fields
@@ -53,7 +56,10 @@ const createNewCoupon = asyncHandler(async (req, res) => {
         usageCount: 0, // Khởi tạo giá trị mặc định
         usedBy: [], // Khởi tạo mảng rỗng
         providerId,
-        image
+        image,
+        products,
+        fixedAmountProduct,
+        percentageDiscountProduct
     });
 
     // Save the coupon to the database
@@ -82,6 +88,23 @@ const getCouponsByServiceId = asyncHandler(async (req, res) => {
     }
 
     return res.status(200).json({ success: true, coupons });
+});
+
+const getCouponsByProductId = asyncHandler(async (req, res) => {
+    console.log(req.body)
+    const { productIds } = req.body;
+    if (!Array.isArray(productIds) || productIds.length === 0) {
+        return res.status(400).json({ message: 'Product IDs must be a non-empty array.' });
+    }
+    const coupons = await Coupon.find({
+        products: { $in: productIds }
+    });
+
+    res.status(200).json({
+        success: true,
+        coupons
+    });
+
 });
 
 const validateAndUseCoupon = asyncHandler(async (req, res) => {
@@ -176,4 +199,4 @@ const getAllCouponsByAdmin = asyncHandler(async (req, res) => {
     return res.status(200).json({ success: true, coupons });
 });
 
-module.exports = { createNewCoupon, getCouponsByServiceId, validateAndUseCoupon, updateCouponUsage, getCouponsByProviderId, getAllCouponsByAdmin };
+module.exports = { createNewCoupon, getCouponsByServiceId, validateAndUseCoupon, updateCouponUsage, getCouponsByProviderId, getAllCouponsByAdmin, getCouponsByProductId};

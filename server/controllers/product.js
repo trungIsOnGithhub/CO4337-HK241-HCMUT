@@ -314,12 +314,16 @@ const addVariant = asyncHandler(async (req, res) => {
         return res.status(404).json({ success: false, mes: "Product not found" });
     }
 
+    if(product?.colorCode === colorCode){
+        return res.status(400).json({ success: false, mes: "Color already exists" });
+    }
+
     const isDuplicate = product.variants.some(
-        variant => variant.title === title || variant.colorCode === colorCode
+        variant => variant?.colorCode === colorCode
     );
 
     if (isDuplicate) {
-        return res.status(400).json({ success: false, mes: "Title or Color already exists" });
+        return res.status(400).json({ success: false, mes: "Color already exists" });
     }
 
     // Nếu không trùng, thêm variant mới

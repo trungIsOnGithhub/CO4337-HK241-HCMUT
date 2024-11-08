@@ -7,26 +7,44 @@ const Coupon = require('../models/coupon')
 const asyncHandler = require('express-async-handler')
 const Staff = require('../models/staff')
 
-const createNewOrder = asyncHandler(async(req, res)=>{
-    const {_id} = req.user
-    const {products, total, address} = req.body
-    if(address){
-        await User.findByIdAndUpdate(_id, {address, cart_product:[]})
+const createNewOrder = asyncHandler(async (req, res) => {
+    const { _id } = req.user; // Lấy ID của người dùng từ request
+    const { products, shippingPrice, totalProductPrice, savingPrice, totalPrice, statusPayment, statusShipping, provider, discountCode} = req.body;
+
+    if (!products || products.length === 0) {
+        return res.status(400).json({
+            success: false,
+            message: "No products in the order"
+        });
     }
 
-    const response = await OrderProduct.create({products, total, orderBy: _id, status: 'Successful'})
-    if (response) {
-        for (const product of products) {
-            await Product.findByIdAndUpdate(product?.product, {
-                $inc: { quantity: -product.quantity }
-            });
-        }
+    // Tạo một đơn hàng mới
+    const newOrder = await OrderProduct.create({
+        products,
+        shippingPrice,
+        totalProductPrice,
+        totalPrice,
+        savingPrice,
+        statusPayment: statusPayment || 'Pending',
+        statusShipping: statusShipping || 'Pending',
+        orderBy: _id,
+        provider,
+        discountCode
+    });
+
+    // Cập nhật số lượng sản phẩm trong kho
+    for (const product of products) {
+        await Product.findByIdAndUpdate(product.product, {
+            $inc: { quantity: -product.quantity }
+        });
     }
+
+    await User.findByIdAndUpdate(_id, {cart_product:[]})
     return res.status(200).json({
-        success: response ? true : false,
-        rs: response ? response : "Something went wrong",
-    })
-})
+        success: true,
+        order: newOrder
+    });
+});
 
 const getOrdersProductByAdmin = asyncHandler(async (req, res) => {
     const { _id } = req.user;

@@ -9,6 +9,7 @@ router.post('/', [verifyAccessToken, isAdmin], uploader.fields([
     },
 ]), ctrls.createNewCoupon)
 router.get('/getCouponsByServiceId/:serviceId', ctrls.getCouponsByServiceId)
+router.post('/getCouponsByProductsId', ctrls.getCouponsByProductId)
 router.get('/getCouponsByProviderId/:providerId', ctrls.getCouponsByProviderId)
 router.get('/getAllCouponsByAdmin', [verifyAccessToken, isAdmin], ctrls.getAllCouponsByAdmin)
 router.post('/validate', verifyAccessToken, ctrls.validateAndUseCoupon)

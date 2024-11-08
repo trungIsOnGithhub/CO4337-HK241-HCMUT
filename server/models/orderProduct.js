@@ -3,20 +3,37 @@ const mongoose = require('mongoose'); // Erase if already required
 // Declare the Schema of the Mongo model
 var orderProductSchema = new mongoose.Schema({
     products: [{
-        product: {type:mongoose.Types.ObjectId, ref: 'Product'},
+        productId: {type:mongoose.Types.ObjectId, ref: 'Product'},
         quantity: {type: Number},
         color: {type: String},
-        price: {type: Number},
+        colorCode: {type: String},
+        originalPrice: {type: Number},
+        discountPrice: {type: Number},
         thumb: {type: String},
         title: {type: String},
     }],
-    status:{
-        type: String,
-        default: 'Cancelled',
-        enum: ['Cancelled', 'Successful']
-    },
-    total:{
+    shippingPrice: {
         type: Number
+    },
+    totalProductPrice:{
+        type: Number
+    },
+    totalPrice:{
+        type: Number
+    },
+    savingPrice:{
+        type: Number,
+        default: 0
+    },
+    statusPayment:{
+        type: String,
+        default: 'Pending',
+        enum: ['Pending', 'Successful']
+    },
+    statusShipping:{
+        type: String,
+        default: 'Pending',
+        enum: ['Pending', 'Shipping', 'Delivered']
     },
     orderBy:{
         type: mongoose.Types.ObjectId, 
@@ -25,7 +42,11 @@ var orderProductSchema = new mongoose.Schema({
     provider: {
         type: mongoose.Types.ObjectId,
         ref: 'Service_Provider'
-    }
+    },
+    discountCode: {
+        type:mongoose.Types.ObjectId, 
+        ref: 'Coupon'
+    },
 },{
     timestamps: true
 });

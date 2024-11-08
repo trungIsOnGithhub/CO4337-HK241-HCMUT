@@ -12,7 +12,7 @@ import clsx from 'clsx';
 import { set } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
-import { apiUpdateCartProduct } from 'apis';
+import { apiUpdateCartProduct, apiUpdateWishlistProduct } from 'apis';
 import path from 'ultils/path';
 import withBaseComponent from 'hocs/withBaseComponent';
 import { toast } from 'react-toastify';
@@ -39,24 +39,29 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
   const params =useParams()
   const [product, setProduct] = useState(null)
   const [quantity, setQuantity] = useState(1)
-  const [productCate, setProductCate] = useState(null)
   
   const [category, setCategory] = useState(null)
   
-  const [variant, setVariant] = useState(null)
-  const [currentImage, setCurrentImage] = useState(null)
+  const [variantt, setVariantt] = useState(null)
   
   const [sid, setSid] = useState(null)
   
   const [update, setUpdate] = useState(false)
+  const [currentProduct, setCurrentProduct] = useState({
+    title:'',
+    color: '',
+    price: 0,
+    quantity: 0,
+    colorCode: '',
+    thumb:'',
+    image: [],
+  })
+
   const reRender = useCallback(() => {
     setUpdate(!update)
   },[update])
 
-  const [rating, setRating] = useState(0);
-  const [commentRating, setCommentRating] = useState(0);
   const [selectedColor, setSelectedColor] = useState("");
-  const [hover, setHover] = useState(null);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [error, setError] = useState("");
@@ -105,8 +110,7 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
     }
   };
 
-  const images = [ product?.thumb, ...(Array.isArray(product?.image) ? product.image : [])] || []
-  console.log(images)
+  const images = [ currentProduct?.thumb, ...(Array.isArray(currentProduct?.image) ? currentProduct.image : [])] || []
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   };
@@ -115,22 +119,28 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
     setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   };
 
-  
-  const [currentProduct, setCurrentProduct] = useState({
-    name:'',
-    thumb:'',
-    images: [],
-    price:'',
-    color: ''
-  })
   useEffect(() => {
     if(sid){
       fetchProductData()
-      fetchProductCate()
     }
     window.scrollTo(0,0)
     nameRef.current?.scrollIntoView({block: 'center'})
   }, [sid])
+
+  useEffect(() => {
+    if(!variantt){
+      setCurrentProduct({
+        title: product?.title,
+        thumb: product?.thumb,
+        image: product?.image,
+        price: product?.price,
+        colorCode: product?.colorCode,
+        color: product?.color,
+        quantity: product?.quantity
+      })
+      setSelectedColor(product?.colorCode)
+    }
+  }, [product]);
   
   useEffect(() => {
     if(data){
@@ -146,13 +156,15 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
 
   
   useEffect(() => {
-    if(variant){
+    if(variantt){
       setCurrentProduct({
-        title: product?.variants?.find(el => el.sku === variant)?.title,
-        color: product?.variants?.find(el => el.sku === variant)?.color,
-        thumb: product?.variants?.find(el => el.sku === variant)?.thumb,
-        images: product?.variants?.find(el => el.sku === variant)?.image,
-        price: product?.variants?.find(el => el.sku === variant)?.price,
+        title: product?.variants?.find(el => el?._id === variantt)?.title,
+        color: product?.variants?.find(el => el?._id === variantt)?.color,
+        price: product?.variants?.find(el => el?._id === variantt)?.price,
+        quantity: product?.variants?.find(el => el?._id === variantt)?.quantity,
+        thumb: product?.variants?.find(el => el?._id === variantt)?.thumb,
+        image: product?.variants?.find(el => el?._id === variantt)?.image,
+        colorCode: product?.variants?.find(el => el?._id === variantt)?.colorCode
       })
     }
     else{
@@ -160,103 +172,143 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
         title: product?.title,
         color: product?.color,
         thumb: product?.thumb,
-        images: product?.image,
+        image: product?.image,
         price: product?.price,
+        colorCode: product?.colorCode,
+        quantity: product?.quantity
       })
     }
-  }, [variant])
+    setCurrentImageIndex(0)
+  }, [variantt])
   
   const fetchProductData = async ()=>{
     const response = await apiGetOneProduct(sid)
     if(response.success){
       setProduct(response?.product)
-      setCurrentImage(response?.product?.thumb)
-      setCurrentProduct({
-        title: response?.product?.title,
-        thumb: response?.product?.thumb,
-        images: response?.product?.image,
-        price: response?.product?.price,
-        description: response?.product?.description,
-      })
     }
   }
 
-  const fetchProductCate = async ()=>{
-    const response = await apiGetProduct({category})
-    if(response.success){
-      setProductCate(response.products)
+
+  // useEffect(() => {
+  //   if(sid){
+  //     fetchProductData()
+  //   }
+  // }, [update])
+
+  // const handleAddtoCart = async() => { 
+  //   if(!current){
+  //     return Swal.fire({
+  //       name: "You haven't logged in",
+  //       text: 'Please login and try again',
+  //       icon: 'warning',
+  //       showConfirmButton: true,
+  //       showCancelButton: true,
+  //       confirmButtonText: 'Go to Login',
+  //       cancelButtonText: 'Not now',                
+  //     }).then((rs)=>{
+  //       if(rs.isConfirmed){
+  //         navigate({
+  //           pathname: `/${path.LOGIN}`,
+  //           search: createSearchParams({
+  //             redirect: location.pathname}).toString(),
+  //         })
+  //       }
+  //     })
+  //   }
+  //   const response = await apiUpdateCartProduct({
+  //       pid: sid, 
+  //       color: currentProduct?.color || product?.color, 
+  //       quantity, 
+  //       price: currentProduct?.price || product?.price, 
+  //       thumb: currentProduct?.thumb || product?.thumb,
+  //       title: currentProduct?.title || product?.title,
+  //       provider:product?.provider_id,
+  //     })
+  //   if(response.success){
+  //     toast.success(response.mes)
+  //     dispatch(getCurrent())
+  //   }
+  //   else{
+  //     toast.error(response.mes)
+  //   }
+  //  }
+
+  const handleWishlist = async() => {
+    if(!isLogin){
+      Swal.fire({
+          text: 'Login to add wishlist',
+          cancelButtonText: 'Cancel',
+          confirmButtonText: 'Go login',
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          title: 'Oops!',
+          showCancelButton: true,
+      }).then((rs)=>{
+          if(rs.isConfirmed){
+              navigate(`/${path.LOGIN}`)
+          }
+      })
+    }
+    else{
+      const response = await apiUpdateWishlistProduct({pid: product?._id})
+      if(response.success){
+        dispatch(getCurrent())
+        toast.success(response.mes)
+      }
+      else{
+        toast.error(response.mes)
+      }
     }
   }
 
   useEffect(() => {
-    if(sid){
-      fetchProductData()
+    if(current?.wishlistProduct?.some(el => el === product?._id)){
+      setIsWishlisted(true)
     }
-  }, [update])
-  
-  const handleClickImage = (e,el) => {
-    e.stopPropagation();
-    setCurrentImage(el)
-    setCurrentProduct(prev => ({
-      ...prev,
-      thumb: el
-    }))
+    else{
+      setIsWishlisted(false)
+    }
+  }, [current, product]);
+
+  const handleAddProductToCart = async() => {
+    if(!isLogin){
+      Swal.fire({
+          text: 'Login to review',
+          cancelButtonText: 'Cancel',
+          confirmButtonText: 'Go login',
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          title: 'Oops!',
+          showCancelButton: true,
+      }).then((rs)=>{
+          if(rs.isConfirmed){
+              navigate(`/${path.LOGIN}`)
+          }
+      })
+    }
+    else{
+      const response = await apiUpdateCartProduct({
+        pid: product?._id, 
+        quantity: quantity, 
+        color: currentProduct?.color, 
+        colorCode: currentProduct?.colorCode || "#000000",
+        price: currentProduct?.price, 
+        thumb: currentProduct?.thumb, 
+        title: currentProduct?.title, 
+        provider: product?.provider_id
+      })
+      if(response.success){
+        toast.success(response.mes)
+        dispatch(getCurrent())
+      }
+      else{
+        toast.error(response.mes)
+      }
+    }
   }
 
-  const editQuantity = useCallback((number)=>{
-    if(!Number(number)||Number(number)<1) {
-      return
-    }
-    else{
-      setQuantity(Number(number))
-    }
-  },[quantity])
-  const handleChange = useCallback((flag)=>{
-    if(flag==='minus'){
-      if(quantity>=2) setQuantity(prev => prev-1)
-    }
-    else{
-      setQuantity(prev => prev+1)
-    }
-  },[quantity])
-
-  const handleAddtoCart = async() => { 
-    if(!current){
-      return Swal.fire({
-        name: "You haven't logged in",
-        text: 'Please login and try again',
-        icon: 'warning',
-        showConfirmButton: true,
-        showCancelButton: true,
-        confirmButtonText: 'Go to Login',
-        cancelButtonText: 'Not now',                
-      }).then((rs)=>{
-        if(rs.isConfirmed){
-          navigate({
-            pathname: `/${path.LOGIN}`,
-            search: createSearchParams({
-              redirect: location.pathname}).toString(),
-          })
-        }
-      })
-    }
-    const response = await apiUpdateCartProduct({
-        pid: sid, 
-        color: currentProduct?.color || product?.color, 
-        quantity, 
-        price: currentProduct?.price || product?.price, 
-        thumb: currentProduct?.thumb || product?.thumb,
-        title: currentProduct?.title || product?.title,
-        provider:product?.provider_id,
-      })
-    if(response.success){
-      toast.success(response.mes)
-      dispatch(getCurrent())
-    }
-    else{
-      toast.error(response.mes)
-    }
-   }
+  
+  console.log(current)
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 p-4 md:p-8">
       <div className="w-main mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
@@ -266,7 +318,7 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
             <img
               src={images[currentImageIndex]}
               alt="Product"
-              className="w-[600px] h-[500px] object-contain cursor-pointer"
+              className="w-[600px] h-[500px] object-contain cursor-pointer shadow-xl"
               // onClick={() => setShowModal(true)}
               onError={(e) => {
                 e.target.src = "https://images.unsplash.com/photo-1522338140262-f46f5913618a";
@@ -284,13 +336,18 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
             >
               <FaChevronRight className="text-gray-800" />
             </button>
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-              {images.map((_, index) => (
-                <button
+            <div className='flex gap-2 max-w-[600px] justify-center overflow-x-auto mt-4 scrollbar-thin'>
+              {images.map((image, index) => (
+                <img
                   key={index}
+                  src={image}
+                  alt={`Thumbnail ${index + 1}`}
+                  className={`w-20 h-20 object-cover cursor-pointer rounded-lg ${currentImageIndex === index ? "border-2 border-[#0a66c2]" : "border border-gray-400"}`}
                   onClick={() => setCurrentImageIndex(index)}
-                  className={`w-3 h-3 rounded-full ${currentImageIndex === index ? "bg-[#0a66c2]" : "bg-gray-300"}`}
-                ></button>
+                  onError={(e) => {
+                    e.target.src = "https://images.unsplash.com/photo-1522338140262-f46f5913618a";
+                  }}
+                />
               ))}
             </div>
           </div>
@@ -298,9 +355,9 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
           {/* Product Info */}
           <div className="md:w-1/2 p-8">
             <div className="flex justify-between items-start">
-              <h1 className="text-3xl font-bold text-gray-900">{product?.title}</h1>
+              <h1 className="text-3xl font-bold text-gray-900">{currentProduct?.title}</h1>
               <button
-                // onClick={handleWishlist}
+                onClick={handleWishlist}
                 className={`p-2 rounded-full ${isWishlisted ? "text-red-500" : "text-gray-400"} hover:bg-gray-100`}
               >
                 <FaHeart size={24} />
@@ -308,19 +365,17 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
             </div>
 
             <div className="mt-4 flex items-center gap-2">
-              {[...Array(5)].map((_, index) => (
-                <FaStar
-                  key={index}
-                  className={`cursor-pointer ${(hover || rating) > index ? "text-yellow-400" : "text-gray-300"}`}
-                  size={24}
-                  onClick={() => setRating(index + 1)}
-                  onMouseEnter={() => setHover(index + 1)}
-                  onMouseLeave={() => setHover(null)}
-                />
-              ))}
+              <div className="flex items-center justify-center gap-1 my-2 text-xl">
+                {[...Array(5)].map((_, index) => (
+                  <FaStar
+                    key={index}
+                    className={index < Math.round(product?.totalRatings) ? "text-yellow-400" : "text-gray-300"}
+                  />
+                ))}
+              </div>
             </div>
             <div className="mt-6">
-              <p className="text-3xl font-bold text-[#0a66c2]">{`${formatPrice(formatPricee(product?.price))} VNĐ`}</p>
+              <p className="text-3xl font-bold text-[#0a66c2]">{`${formatPrice(formatPricee(currentProduct?.price))} VNĐ`}</p>
               <p className="text-sm text-gray-500 mt-1">Free shipping on orders over $100</p>
             </div>
 
@@ -331,15 +386,12 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
               </div>
               <div className="flex items-center gap-4">
                 <BsBoxSeam className="text-gray-600" size={20} />
-                <span className="text-gray-600">In Stock: {product?.quantity} items</span>
+                <span className="text-gray-600">In Stock: {currentProduct?.quantity} items</span>
               </div>
               <div className="flex items-center gap-4">
                 <IoColorPaletteOutline className="text-gray-600" size={20} />
                 <div className='flex gap-4 items-center'>
-                  <span className="text-gray-600">Color: </span>
-                  <div className='flex flex-wrap gap-1 items-center'>
-                    <div className="w-8 h-8 rounded-full border-2 border-[#0a66c2]" style={{ backgroundColor: product?.colorCode }}></div>
-                  </div>
+                  <span className="text-gray-600">{`Color: ${currentProduct?.color}`}</span>
                 </div>
               </div>
               <div className="flex items-center gap-4">
@@ -350,21 +402,27 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
 
             <div className="mt-6">
               <h3 className="text-lg font-semibold mb-3">Select Color</h3>
-              <div className="flex flex-wrap gap-3">
-                {/* {colorVariants.map((variant) => (
-                  <button
-                    key={variant.name}
-                    onClick={() => setSelectedColor(variant.name)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 ${selectedColor === variant.name ? "border-pink-500" : "border-gray-300"} hover:border-pink-500 transition-colors`}
-                  >
+              <div className='flex flex-wrap gap-1 items-center'>
+                <div onClick={()=>{setVariantt(null); setSelectedColor(product?.colorCode)}} className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded-lg border-2 ${selectedColor === product?.colorCode ? "border-[#0a66c2]" : "border-gray-300"} hover:border-[#0a66c2] transition-colors`}>
                     <span
                       className="w-6 h-6 rounded-full border border-gray-300"
-                      style={{ backgroundColor: variant.color }}
+                      style={{ backgroundColor: product?.colorCode }}
                     ></span>
-                    <span className="text-gray-700">{variant.name}</span>
-                    <span className="text-gray-500 text-sm">${variant.price}</span>
-                  </button>
-                ))} */}
+                    <span className="text-gray-700">{product?.color}</span>
+                    <span className="text-gray-500 text-sm">{`${formatPrice(formatPricee(product?.price))} VNĐ`}</span>
+                </div>
+                {
+                  product?.variants?.map((variant) => (
+                    <div onClick={()=>{setVariantt(variant?._id); setSelectedColor(variant?.colorCode)}}  className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded-lg border-2 ${selectedColor === variant?.colorCode ? "border-[#0a66c2]" : "border-gray-300"} hover:border-[#0a66c2] transition-colors`}>
+                      <span
+                        className="w-6 h-6 rounded-full border border-gray-300"
+                        style={{ backgroundColor: variant?.colorCode }}
+                      ></span>
+                      <span className="text-gray-700">{variant?.color}</span>
+                      <span className="text-gray-500 text-sm">{`${formatPrice(formatPricee(variant?.price))} VNĐ`}</span>
+                    </div>
+                  ))
+                }
               </div>
             </div>
 
@@ -386,7 +444,7 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
                     +
                   </button>
                 </div>
-                <button className="flex-1 bg-[#0a66c2] text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                <button onClick={handleAddProductToCart} className="flex-1 bg-[#0a66c2] text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium">
                   Add to Cart
                 </button>
               </div>

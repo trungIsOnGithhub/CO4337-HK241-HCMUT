@@ -39,6 +39,27 @@ var couponSchema = new mongoose.Schema({
             min: 0,
         },
     }],
+    percentageDiscountProduct: [{
+        id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product' // Assuming you have a Product model
+        },
+        value: {
+            type: Number,
+            min: 0,
+            max: 100,
+        },
+    }],
+    fixedAmountProduct: [{
+        id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product' // Assuming you have a Product model
+        },
+        value: {
+            type: Number,
+            min: 0,
+        },
+    }],
     expirationDate: {
         type: {
             date: String,
@@ -66,7 +87,11 @@ var couponSchema = new mongoose.Schema({
     },
     services: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Service' // Assuming you have a Service model
+        ref: 'Service'
+    }],
+    products: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product' 
     }],
     usageCount: {
         type: Number,

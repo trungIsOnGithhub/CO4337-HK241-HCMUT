@@ -28,7 +28,7 @@ function App() {
     
     <div className="w-screen h-screen relative">
       {isShowCart && 
-        <div onClick={()=>dispatch(showCart())} className='absolute inset-0 bg-overlay z-50 flex justify-end'>
+        <div onClick={()=>dispatch(showCart())} className='absolute inset-0 bg-overlay z-[999] flex justify-end'>
         <Cart />
         </div>
       }
