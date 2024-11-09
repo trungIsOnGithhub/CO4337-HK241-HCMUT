@@ -1,7 +1,7 @@
 import React, {useState,useEffect} from 'react'
 import { Button, MultiSelect } from '../../components'
 import { useSearchParams, useNavigate, createSearchParams } from 'react-router-dom'
-import { apiGetOneBlog, apiGetTopBlogs, apiLikeBlog, apiDislikeBlog, apiUpdateViewBlog } from '../../apis/blog'
+import { apiGetOneBlog, apiGetTopBlogs, apiLikeBlog, apiDislikeBlog, apiUpdateViewBlog, apiGetTopBlogsWithSelectedTags } from '../../apis/blog'
 import { apiCreateNewBlogComment, apiCreateReplyComment, apiGetAllBlogComment, apiGetAllReplyComment, apiReactComment } from '../../apis/blogComments'
 import DOMPurify from 'dompurify';
 import path from 'ultils/path';
@@ -49,15 +49,20 @@ const ViewBlog = () => {
 
     const fetchCurrentBlogList = async () => {
       // setIsLoading(true);
-      let response = await apiGetTopBlogs({ limit: 5 });
-      if(response?.success && response?.blogs){
-        setCurrBlogList(response.blogs);
-        // setIsLoading(false);
-      }
-      else {
-  
+      if (post?.tags) {
+        let response = await apiGetTopBlogsWithSelectedTags({ selectedTags: post.tags });
+        if(response?.success && response?.blogs){
+          setCurrBlogList(response.blogs);
+          // setIsLoading(false);
+        }
+        else {
+          Swal.fire("Error Occured!", "Cannot Fetch Top Related Blogs!", "error");
+        }
       }
     }
+    // const fetchSuggestedBlogs = async () => {
+    //   let response = await ;
+    // };
     useEffect(() => {
       fetchCurrentBlogList();
     }, []);

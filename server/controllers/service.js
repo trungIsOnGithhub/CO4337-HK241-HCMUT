@@ -8,6 +8,7 @@ const makeSku = require('uniqid')
 const Order = require('../models/order')
 const esIndexNameList = require('../services/constant');
 const esDBModule = require('../services/es');
+const ES_CONSTANT = require('../services/constant');
 
 const createService = asyncHandler(async(req, res)=>{
     const {name, price, description, category, assigned_staff, hour, minute, provider_id,  elastic_query} = req.body
@@ -85,10 +86,11 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
     }
 
     const columnNamesToMatch = ["name", "providername", "province"];
-    const columnNamesToGet = ["id", "name", "providername", "category", "price", "thumb"];
+    const columnNamesToGet = ["id", "title", "providername", "authorname", "numberView"];
 
     let services = [];
     services = await esDBModule.fullTextSearchAdvanced(
+        ES_CONSTANT.SERVICES,
         searchTerm,
         columnNamesToMatch,
         columnNamesToGet,

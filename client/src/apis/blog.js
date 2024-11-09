@@ -96,3 +96,9 @@ export const apiSearchBlogsAdvanced = (data) => axios({
     method: 'post',
     data
 })
+
+export const apiSearchBlogAdvanced = (data) => axios({
+    url: '/blog/advanced_search',
+    method: 'post',
+    data
+})

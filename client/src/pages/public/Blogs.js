@@ -1,6 +1,6 @@
 import React, {useState, useCallback, useEffect } from 'react'
 import { InputFormm, NewInputSelect, Pagination } from 'components';
-import { apiGetAllBlogs, apiGetAllPostTags, apiSearchBlogByParams, apiGetTopBlogsWithSelectedTags } from 'apis/blog';
+import { apiGetAllBlogs, apiSearchBlogAdvanced, apiGetAllPostTags, apiSearchBlogByParams } from 'apis/blog';
 import Button from 'components/Buttons/Button';
 import { HashLoader } from 'react-spinners';
 import path from 'ultils/path';
@@ -68,8 +68,8 @@ const Blogs = () => {
       }
     }
 
-    const resp = await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
-    console.log(resp.blogs);
+    // const resp = await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
+    // console.log(resp.blogs);
   }
   useEffect(() => {
     fetchTags();
@@ -80,16 +80,19 @@ const Blogs = () => {
 
   const fetchCurrentBlogList = async () => {
     setIsLoading(true);
-    // let response = await apiSearchBlogByParams({
-    //   searchTerm,
-    //   pageSize: parseInt(process.env.REACT_APP_LIMIT),
-    //   selectedSort,
-    //   selectedTags,
-    //   page: 1
-    // });
-    let response = await await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
+
+    const sortBy = selectedSort
+    let response = await apiSearchBlogAdvanced({
+      searchTerm,
+      limit: parseInt(process.env.REACT_APP_LIMIT),
+      sortBy,
+      selectedTags,
+      offset: 1
+      // categories
+    });
+    // let response = await await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
     if(response?.success && response?.blogs){
-      console.log('>>>>>>>>>>>>>>', response.blogs.length);
+      console.log('Blog Response: >>>>>>>>>>>>>>', response.blogs.length, response.blogs[0]);
       setCurrBlogList(response.blogs);
       setCounts(response.counts);
     }
@@ -133,18 +136,18 @@ const Blogs = () => {
       search: createSearchParams({id}).toString()
     })
    }
-  const multiSearchByTerm = useCallback(async () => {
-    let response = await apiSearchBlogByParams({ searchTerm })
+  // const multiSearchByTerm = useCallback(async () => {
+  //   let response = await apiSearchBlogByParams({ searchTerm })
 
-    if (response && response.success) {
-      setCurrBlogList(response.blogs);
-      setIsLoading(false);
-    }
-    else {
-      Swal.fire('Error Ocurred!!', 'Cannot Find Blogs!!', 'error');
-      setIsLoading(false);
-    }
-  }, [searchTerm, selectedTags, selectedSort])
+  //   if (response && response.success) {
+  //     setCurrBlogList(response.blogs);
+  //     setIsLoading(false);
+  //   }
+  //   else {
+  //     Swal.fire('Error Ocurred!!', 'Cannot Find Blogs!!', 'error');
+  //     setIsLoading(false);
+  //   }
+  // }, [searchTerm, selectedTags, selectedSort])
   // const multiSearchBySelectedTags = useCallback(async () => {
   //   let response = await apiSearchBlogByParams({ selectedTags, selectedSort, searchTerm });
 
@@ -206,7 +209,7 @@ const Blogs = () => {
               ) : (
                 currBlogList.map((blog) => (
                   <div
-                    onClick={() => handleChooseBlogPost(blog?._id)}
+                    onClick={() => handleChooseBlogPost(blog?._id || blog?.id)}
                     key={blog.id}
                     className="cursor-pointer bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:transform hover:scale-[1.02]"
                   >

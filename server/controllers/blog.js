@@ -2,6 +2,8 @@ const Blog = require('../models/blog')
 const PostTag = require('../models/postTag')
 const asyncHandler = require('express-async-handler');
 const User = require('../models/user');
+const ES_CONSTANT = require('../advanced/constant');
+const esDBModule = require('../advanced/es');
 
 const createNewBlogPost = asyncHandler(async(req, res)=>{
     const {_id} = req.user
@@ -69,12 +71,12 @@ const getAllBlogTags = asyncHandler(async (req,res) => {
     }) 
 });
 
-const searchBlogsAdvanced = asyncHandler(async (req, res)=>{
-    return res.status(200).json({
-        success: response ? true : false,
-        blogs: []
-    });
-});
+// const searchBlogsAdvanced = asyncHandler(async (req, res)=>{
+//     return res.status(200).json({
+//         success: response ? true : false,
+//         blogs: []
+//     });
+// });
 
 const getAllBlogs = asyncHandler(async (req, res)=>{
 
@@ -403,24 +405,97 @@ const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
     })
 });
 
-const getTopBlogs = asyncHandler(async(req, res)=>{
-    let { limit } = req.body
-    if(!limit){
-        limit = 5;
+// const getTopBlogs = asyncHandler(async(req, res)=>{
+//     let { limit } = req.body
+//     if(!limit){
+//         limit = 5;
+//     }
+//     let response = await Blog.find({});
+//     response.sort((a,b) => a.likes.length - b.likes.length);
+//     response.slice(0, 5);
+//     // .aggregate([
+//     //     {$unwind: "$likes"}, 
+//     //     {$group: {_id:"$_id", likes: {$push:"$answers"}, size: {$sum:1}}}, 
+//     //     {$sort:{size:1}}]).limit(5);
+
+//     return res.status(200).json({
+//         success: response ? true : false,
+//         blogs: response ? response : "Cannot Get Blogs!"
+//     })
+// })
+
+
+const searchBlogAdvanced = asyncHandler(async (req, res) => {
+    console.log("INCOMING REQUESTS:", req.body);
+
+    let { searchTerm, limit, offset, categories, sortBy,
+        clientLat, clientLon, distanceText } = req.body;
+
+    if ( (typeof(offset) != "number") ||
+        !limit || offset < 0 || limit > 20)
+    {
+        return res.status(400).json({
+            success: false,
+            searched: [],
+            msg: "Bad Request"
+        });
     }
-    let response = await Blog.find({});
-    response.sort((a,b) => a.likes.length - b.likes.length);
-    response.slice(0, 5);
-    // .aggregate([
-    //     {$unwind: "$likes"}, 
-    //     {$group: {_id:"$_id", likes: {$push:"$answers"}, size: {$sum:1}}}, 
-    //     {$sort:{size:1}}]).limit(5);
+
+    let sortOption = [];
+    let geoSortOption = null;
+    if (sortBy?.indexOf("-numberView") > -1) {
+        sortOption.push({numberView: {order : "desc"}});
+    }
+    else if (sortBy?.indexOf("numberView") > -1) {
+        sortOption.push({numberView : {order : "asc"}});
+    }
+    if (sortBy?.indexOf("-likes") > -1) {
+        sortOption.push({likes: {order : "desc"}});
+    }
+    else if (sortBy?.indexOf("price") > -1) {
+        sortOption.push({likes : {order : "asc"}});
+    }
+
+    // if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
+
+    let categoriesIncluded = [];
+    if (categories?.length) {
+        categoriesIncluded = categories.split(',');
+    }
+
+    let geoLocationQueryOption = null;
+    if ( clientLat <= 180 && clientLon <= 180 &&
+        clientLat >= -90 && clientLon >= -90 &&
+        /[1-9][0-9]*(km|m)/.test(distanceText) )
+    {
+        geoLocationQueryOption = { distanceText,  clientLat, clientLon };
+    }
+
+    const columnNamesToMatch = ["title", "category", "providername", "authorname"];
+    const columnNamesToGet = ["id", "title", "providername", "authorname", "numberView", "provider_id", "likes", "dislikes"];
+
+    let blogs = [];
+    blogs = await esDBModule.fullTextSearchAdvanced(
+        ES_CONSTANT.BLOGS,
+        searchTerm,
+        columnNamesToMatch,
+        columnNamesToGet,
+        limit, offset,
+        sortOption,
+        geoLocationQueryOption,
+        geoSortOption,
+        categoriesIncluded
+    );
+    blogs = blogs?.hits;
+
+    // console.log("Query Input Parameter: ", blogs);
+    // console.log("REAL DATA RETURNED: ", blogs);
 
     return res.status(200).json({
-        success: response ? true : false,
-        blogs: response ? response : "Cannot Get Blogs!"
-    })
-})
+        success: blogs ? true : false,
+        blogs
+    });
+});
 
 const getTopBlogWithSelectedTags = asyncHandler(async(req, res)=>{
     let { limit, selectedTags } = req.body
@@ -463,6 +538,6 @@ module.exports = {
     getBlogsBySearchTerm,
     getTopBlogWithSelectedTags,
     // getTopTags,
-    updateViewBlog,
+    searchBlogAdvanced
     // searchBlogsAdvanced
 }
