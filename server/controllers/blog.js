@@ -462,6 +462,7 @@ module.exports = {
     createNewPostTag,
     getBlogsBySearchTerm,
     getTopBlogWithSelectedTags,
-    getTopTags,
-    updateViewBlog
+    // getTopTags,
+    updateViewBlog,
+    // searchBlogsAdvanced
 }

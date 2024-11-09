@@ -21,9 +21,9 @@ router.post('/like', [verifyAccessToken], ctrls.likeBlog)
 router.post('/dislike', [verifyAccessToken], ctrls.dislikeBlog)
 router.put('/upload_image/:bid', [verifyAccessToken, isAdmin],uploader.single('image'), ctrls.uploadImage)
 router.post('/top_blogs', ctrls.getTopBlogWithSelectedTags)
-router.post('/top_tags', ctrls.getTopTags)
-router.post('/advanced_search', ctrls.searchBlogsAdvanced)
-router.post('/update_view_blog/:bid', ctrls.updateViewBlog)
+// router.post('/top_tags', ctrls.getTopTags)
+// router.post('/advanced_search', ctrls.searchBlogsAdvanced)
+// router.post('/update_view_blog/:bid', ctrls.updateViewBlog)
 
 // router.post('/add_comment', ctrls.addBlogComments)
 module.exports = router

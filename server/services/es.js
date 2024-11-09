@@ -48,6 +48,9 @@ async function setUpElasticConnection() {
                 category: {
                     type: "text"
                 },
+                providername: {
+                    type: "text"
+                },
                 province: {
                     type: "text"
                 },
@@ -63,24 +66,50 @@ async function setUpElasticConnection() {
               },
             },
         });
-        console.log('CREATE SERVICES RESPONSE', response);
+        console.log('CREATE SERVICES IDX RESPONSE', response);
     }
 
     if (! (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.BLOGS })) ) {
         const response = await esClient.indices.create({
             index: ELASTIC_INDEX_NAME_MAP.BLOGS,
-            settings: {
-              number_of_shards: 1, // default only 1 shard
-            },
+            // settings: {
+            //   number_of_shards: 1, // default only 1 shard
+            // },
             mappings: {
               properties: {
-                field1: {
-                  type: "text",
+                title: {
+                    type: "text"
+                },
+                category: {
+                    type: "text"
+                },
+                // content:{
+                //     type:Array,
+                //     required:true
+                // },
+                providername: {
+                    type: "text"
+                },
+                // tags:{
+                //     type:Array,
+                //     required:true
+                // },
+                numberView: {
+                    type: "integer"
+                },
+                likes: {
+                    type: "integer"
+                },
+                dislikes: {
+                    type: "integer"
+                },
+                authorname: {
+                    type: "text"
                 },
               },
             },
         });
-        console.log('CREATE BLOGS RESPONSE', response);
+        console.log('CREATE BLOGS IDX RESPONSE', response);
     }
 }
 
@@ -91,13 +120,13 @@ async function resetElasticConnection(indexToDelete) {
     console.log(`DELETE ${indexToDelete} RESPONSE1`, deleteResponse1);
 }
 
-async function fullTextSearchAdvanced(searchTerm, fieldNameArrayToMatch,
+async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMatch,
                 fieldNameArrayToGet, limit, offset, elasticSortScheme,
                 geoFilter, geoSort, categoriesIncluded) {
     const esClient = initializeElasticClient();
 
     const queryObject = {
-        index: ELASTIC_INDEX_NAME_MAP.SERVICES,
+        index: indexName,
         track_scores: true,
         query: {
             bool: {},
@@ -218,9 +247,8 @@ const queryElasticDB = async function(indexName, queryOptionsObject) {
     });
 };
 
-const multiFunc = async function(init, reset) {
+const multiFunc = async function(indexName, init, reset) {
     // const esClient = initializeElasticClient();
-    const indexName = ELASTIC_INDEX_NAME_MAP.SERVICES;
     if (init) {
         // console.log("INDEX NAME: " + indexName);
         // // const oldIndexName = "sampleindex";
@@ -347,33 +375,47 @@ const multiFunc = async function(init, reset) {
     console.log("TEST ALL DOC QUERY INNER", qAllTest?.hits?.hits,"TEST ALL DOC QUERY INNER");
     console.log("*****************************************");
 
-    const q1 = await fullTextSearchAdvanced("vung tau",
-        ["name", "category", "providername", "province"],
-        ["id", "name", "providername", "category"], 10, 0,
-		[ {price : {order : "asc"}} ],
-        { distanceText: "2000km", clientLat: 45, clientLon: 45 },
-        { unit: "km", order: "desc" }, []);
+    // const q1 = await fullTextSearchAdvanced(ELASTIC_INDEX_NAME_MAP.SERVICES,
+    //     "vung tau",
+    //     ["name", "category", "providername", "province"],
+    //     ["id", "name", "providername", "category"], 10, 0,
+	// 	[ {price : {order : "asc"}} ],
+    //     { distanceText: "2000km", clientLat: 45, clientLon: 45 },
+    //     { unit: "km", order: "desc" }, []);
 
-    // searchTerm, fieldNameArrayToMatch, fieldNameArrayToGet, limit, offset, elasticSortScheme, geoFilter
-    const hitsRecord = q1?.hits?.hits?.map(record => {
+    // // searchTerm, fieldNameArrayToMatch, fieldNameArrayToGet, limit, offset, elasticSortScheme, geoFilter
+    // const hitsRecord = q1?.hits?.hits?.map(record => {
+    //     return {
+    //         score: record._score,
+    //         source: JSON.stringify(record._source),
+    //         sort: JSON.stringify(record.sort)
+    //     };
+    // });
+    // console.log('++++++++++++++', q1?.hits , '=======================');
+    // console.log("~~~~~~~~", hitsRecord, "**********");
+
+
+    const q2 = await fullTextSearchAdvanced(ELASTIC_INDEX_NAME_MAP.BLOGS,
+        "du lich",
+        ["title", "category", "providername", "authorname"],
+        ["id", "title", "providername", "authorname", "numberView"], 10, 0,
+        [ {numberView : "desc"}, {likes: "desc"} ],
+        {},
+        {}, []);
+    const hitsRecord2 = q2?.hits?.hits?.map(record => {
         return {
             score: record._score,
-            source: JSON.stringify(record._source),
-            sort: JSON.stringify(record.sort)
+            source: JSON.stringify(record._source)
         };
     });
-    console.log('++++++++++++++', q1?.hits , '=======================');
-    console.log("~~~~~~~~", hitsRecord, "**********");
-
-//     // if (q1?.id) {
-//     //     const q2 = await deleteEs(indexName, q1?.id);
-//     // }
+    console.log('++++++++++++++', q2?.hits , '=======================');
+    console.log("~~~~~~~~", hitsRecord2, "**********");
 };
 
 (async function () {
-// COMMENT THIS WHEN RUN MIGRATE OR ANY OTHE FILE INCLUDED THIS
-    // await multiFunc(false, true);
-    await multiFunc(true, false);
+    // COMMENT THIS WHEN RUN MIGRATE OR ANY OTHE FILE INCLUDED THIS
+    // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, false, true);
+    // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, true, false);
     // await multiFunc(false, false);
 })();
 
