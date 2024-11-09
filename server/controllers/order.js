@@ -38,7 +38,7 @@ const updateStatus = asyncHandler(async(req, res)=>{
     const response = await Order.findByIdAndUpdate(oid, {status}, {new: true})
     return res.status(200).json({
         success: response ? true : false,
-        response: response ? response : "Something went wrong"
+        order: response ? response : "Something went wrong"
     })
 })
 
@@ -115,101 +115,153 @@ const getUserOrder = asyncHandler(async(req, res)=>{
     }
 })
 
-const getOrdersByAdmin = asyncHandler(async(req, res)=>{
-    const {_id} = req.user
-    const {provider_id} = await User.findById({_id}).select('provider_id')
+const getOrdersByAdmin = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    const { provider_id } = await User.findById({ _id }).select('provider_id');
     const queries = { ...req.query };
 
-    // Loại bỏ các trường đặc biệt ra khỏi query
-    const excludeFields = ['limit', 'sort', 'page', 'fields'];
+    // Remove special query fields
+    const excludeFields = ['limit', 'sort', 'page', 'fields', 'q'];
     excludeFields.forEach((el) => delete queries[el]);
 
-    // Format lại các toán tử cho đúng cú pháp của mongoose
+    // Format query operators for MongoDB
     let queryString = JSON.stringify(queries);
     queryString = queryString.replace(
         /\b(gte|gt|lt|lte)\b/g,
         (matchedEl) => `$${matchedEl}`
     );
-
-    // chuyen tu chuoi json sang object
     const formatedQueries = JSON.parse(queryString);
-    //Filtering
-    // let queryFinish = {}
-    // if(queries?.q){
-    //     delete formatedQueries.q
-    //     queryFinish = {
-    //         $or: [
-    //             {color: {$regex: queries.q, $options: 'i' }},
-    //             // {title: {$regex: queries.q, $options: 'i' }},
-    //             // {category: {$regex: queries.q, $options: 'i' }},
-    //             // {brand: {$regex: queries.q, $options: 'i' }},
-               
-    //         ]
-    //     }
-    // }
-    const qr = {...formatedQueries, 'info.provider': provider_id};
-    let queryCommand =  Order.find(qr).populate({
-        path: 'orderBy',
-        select: 'firstName lastName avatar email mobile',
-    }).populate({
-        path: 'info',
-        populate:{
-            path: 'service',
-            select: 'name price duration thumb'
-        },
-    }).populate({
-        path: 'info',
-        populate:{
-            path: 'provider',
-            select: 'bussinessName address'
-        },
-    }).populate({
-        path: 'info',
-        populate:{
-            path: 'staff',
-            select: 'firstName lastName'
-        },
-    })
+
+    let qr = { ...formatedQueries, 'info.provider': provider_id };
+    
+    const {startDate, endDate} = req.query;
+    const aggregationPipeline = [];
+
+    // Trường hợp 1: Có startDate và endDate
+    if (startDate && endDate) {
+        aggregationPipeline.push({
+            $match: {
+                'info.dateTime': {
+                    $gte: new Date(startDate),
+                    $lte: new Date(endDate)
+                },
+                'info.provider': provider_id
+            }
+        });
+
+        delete formatedQueries.startDate;
+        delete formatedQueries.endDate;
+        qr = {
+            ...formatedQueries,
+            'info.provider': provider_id,
+            'info.dateTime': {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            }
+        };
+    }
+    else {
+        aggregationPipeline.push({ $match: qr });
+    }
+
+    // Tiến hành tìm kiếm với các điều kiện đã định nghĩa
     try {
-        // sorting
-        if(req.query.sort){
-            const sortBy = req.query.sort.split(',').join(' ')
-            queryCommand.sort(sortBy)
+        // Populate service details
+        aggregationPipeline.push(
+            { $lookup: {
+                from: "services",
+                localField: "info.service",
+                foreignField: "_id",
+                as: "serviceDetails"
+            }},
+            { $unwind: "$serviceDetails" },
+
+            // Populate user (orderBy) details
+            { $lookup: {
+                from: "users",
+                localField: "orderBy",
+                foreignField: "_id",
+                as: "userDetails"
+            }},
+            { $unwind: "$userDetails" },
+
+            // Populate staff details
+            { $lookup: {
+                from: "staffs",
+                localField: "info.staff",
+                foreignField: "_id",
+                as: "staffDetails"
+            }},
+            { $unwind: "$staffDetails" }
+        );
+
+        // Apply search filter if search term is provided
+        if (req.query.q) {
+            aggregationPipeline.push({
+                $match: {
+                    $or: [
+                        { "serviceDetails.name": { $regex: req.query.q, $options: "i" } },
+                        { $expr: { $regexMatch: { input: { $concat: ["$userDetails.firstName", " ", "$userDetails.lastName"] }, regex: req.query.q, options: 'i' } } },
+                        { $expr: { $regexMatch: { input: { $concat: ["$userDetails.lastName", " ", "$userDetails.firstName"] }, regex: req.query.q, options: 'i' } } },
+                        { $expr: { $regexMatch: { input: { $concat: ["$userDetails.firstName", "", "$userDetails.lastName"] }, regex: req.query.q, options: 'i' } } },
+                        { $expr: { $regexMatch: { input: { $concat: ["$userDetails.lastName", "", "$userDetails.firstName"] }, regex: req.query.q, options: 'i' } } },
+                        { $expr: { $regexMatch: { input: { $concat: ["$staffDetails.firstName", " ", "$staffDetails.lastName"] }, regex: req.query.q, options: 'i' } } },
+                        { $expr: { $regexMatch: { input: { $concat: ["$staffDetails.lastName", " ", "$staffDetails.firstName"] }, regex: req.query.q, options: 'i' } } },
+                        { $expr: { $regexMatch: { input: { $concat: ["$staffDetails.firstName", "", "$staffDetails.lastName"] }, regex: req.query.q, options: 'i' } } },
+                        { $expr: { $regexMatch: { input: { $concat: ["$staffDetails.lastName", "", "$staffDetails.firstName"] }, regex: req.query.q, options: 'i' } } }
+                    ]
+                }
+            });
         }
 
-        //filtering
-        if(req.query.fields){
-            const fields = req.query.fields.split(',').join(' ')
-            queryCommand.select(fields)
+        // Sorting
+        if (req.query.sort) {
+            aggregationPipeline.push({
+                $sort: req.query.sort.split(',').reduce((acc, sortBy) => {
+                    const [field, order] = sortBy.split(':');
+                    acc[field] = order === 'desc' ? -1 : 1;
+                    return acc;
+                }, {})
+            });
         }
 
-        //pagination
-        //limit: so object lay ve 1 lan goi API
-        //skip: n, nghia la bo qua n cai dau tien
-        //+2 -> 2
-        //+dgfbcxx -> NaN
-        const page = +req.query.page || 1
-        const limit = +req.query.limit || process.env.LIMIT_PRODUCT
-        const skip = (page-1)*limit
-        queryCommand.skip(skip).limit(limit)
+        // Project specific fields (field selection)
+        if (req.query.fields) {
+            aggregationPipeline.push({
+                $project: req.query.fields.split(',').reduce((acc, field) => {
+                    acc[field.trim()] = 1;
+                    return acc;
+                }, {})
+            });
+        }
 
+        // Pagination
+        const limit = +req.query.limit || process.env.LIMIT_PRODUCT;
+        const page = +req.query.page || 1;
+        aggregationPipeline.push(
+            { $skip: (page - 1) * limit },
+            { $limit: limit }
+        );
 
-        const orders = await queryCommand
-        const counts = await Order.countDocuments(qr);
+        const orders = await Order.aggregate(aggregationPipeline);
+
+        const counts = await Order.countDocuments(qr); // Counts for pagination
+
         return res.status(200).json({
             success: true,
             counts: counts,
-            order: orders,
-            });
-        
+            orders: orders,
+        });
+
     } catch (error) {
-        // Xử lý lỗi nếu có
+        console.error(error); // Log the error for debugging
         return res.status(500).json({
             success: false,
             error: 'Cannot get orders',
         });
     }
-})
+});
+
 
 const getOneOrderByAdmin = asyncHandler(async(req, res)=>{
     const {bookingid} = req.params
@@ -244,9 +296,12 @@ const getOneOrderByAdmin = asyncHandler(async(req, res)=>{
     })
 })
 
+
 const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
-    const { provider_id, assigned_staff_ids, service_ids } = req.body;
-    console.log('======', req.body);
+    const {_id} = req.user
+    const {provider_id} = await User.findById({_id}).select('provider_id')
+
+    const { assigned_staff_ids, service_ids } = req.body;
 
     if (!provider_id || typeof(service_ids.length) !== 'number' || typeof(assigned_staff_ids.length) !== 'number') {
         return res.status(400).json({
@@ -255,69 +310,75 @@ const getOrdersForStaffCalendar = asyncHandler(async(req, res) => {
         });
     }
 
-    // const service_obj_ids = service_ids.map(objIdStr => new mongoose.Types.ObjectId(objIdStr))
 
-    // const providerObjectId = new mongoose.Types.ObjectId(provider_id)
-    // console.log('======||', providerObjectId);
-    let orders = await Order.aggregate([
-        {
-            $match: {
-                'info.provider': provider_id
-            }
-        },
-        {
-            $lookup: {
-                from: 'services',
-                localField: 'info.service',
-                foreignField: '_id',
-                as: 'service'
-            }
-        },
-        {
-            $unwind: "$service"
-        },
-        // {
-        //     $match
-        // }
-        // {
-        //     $match: {
-        //         "$$this.service._id": { $in: service_obj_ids }
-        //     }
-        // },
-        // {
-        //     $lookup: {
-        //         from: 'staffs',
-        //         localField: 'info.staff',
-        //         foreignField: '_id',
-        //         as: 'staffs'
-        //     }
-        // }
-    ])
-
-    if (!orders || typeof(orders.length) !== 'number') {
-        return res.status(500).json({
-            success: false,
-            error: 'Cannot Get Order'
+    if(assigned_staff_ids.length === 0 && service_ids.length === 0){
+        const orders = await Order.find({
+            'info.provider': provider_id
+        }).select('info.date info.time info.staff info.service total status').populate({
+            path: 'info.service',
+            select: 'name duration thumb category'
+        }).populate({
+            path: 'info.staff',
+            select: 'firstName lastName avatar'
+        })
+    
+        return res.status(200).json({
+            success: true,
+            orders
         });
     }
-
-    // temp
-    // orders = orders.filter(order => {
-    //     return service_ids.includes(order.service._id.toString())
-    // })
-    // orders = orders.filter(order => {
-    //     const thisOrderStaffs = order?.staffs || [];
-    //     for (const staff of thisOrderStaffs) {
-    //         if (assigned_staff_ids.includes(staff._id.toString()))
-    //             return true;
-    //     }
-    //     return false;
-    // })
-
-    res.status(200).json({
-        success: true,
-        order: orders,
-    })
+    else if(assigned_staff_ids.length === 0){
+        const orders = await Order.find({
+            'info.provider': provider_id,
+            'info.service': { $in: service_ids }
+        }).select('info.date info.time info.staff info.service total status').populate({
+            path: 'info.service',
+            select: 'name duration thumb category'
+        }).populate({
+            path: 'info.staff',
+            select: 'firstName lastName avatar'
+        })
+    
+        return res.status(200).json({
+            success: true,
+            orders
+        });
+    }
+    else if(service_ids.length === 0){
+        const orders = await Order.find({
+            'info.provider': provider_id,
+            'info.staff': { $in: assigned_staff_ids }
+        }).select('info.date info.time info.staff info.service total status').populate({
+            path: 'info.service',
+            select: 'name duration thumb category'
+        }).populate({
+            path: 'info.staff',
+            select: 'firstName lastName avatar'
+        })
+    
+        return res.status(200).json({
+            success: true,
+            orders
+        });
+    }
+    else {
+        const orders = await Order.find({
+            'info.provider': provider_id,
+            'info.staff': { $in: assigned_staff_ids },
+            'info.service': { $in: service_ids }
+        }).select('info.date info.time info.staff info.service total status').populate({
+            path: 'info.service',
+            select: 'name duration thumb category'
+        }).populate({
+            path: 'info.staff',
+            select: 'firstName lastName avatar'
+        })
+    
+        return res.status(200).json({
+            success: true,
+            orders
+        });
+    }
 })
 
 const updateEmailByBookingId = asyncHandler(async(req,res) => {

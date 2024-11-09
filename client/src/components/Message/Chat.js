@@ -43,7 +43,7 @@ const Chat = () => {
       if(current){
         const response = await apiGetAllContact(current._id)
         console.log('||||||||||==================', response);
-        console.log(location?.state?.currenRedirectedChatUserId, '|||||||||||++++++++++++++++');
+        // console.log(location?.state?.currenRedirectedChatUserId, '|||||||||||++++++++++++++++');
         setContacts(response)
 
         if (location?.state?.currenRedirectedChatUserId) {

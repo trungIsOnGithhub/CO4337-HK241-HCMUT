@@ -1,138 +1,246 @@
-import React, { useState, useEffect } from 'react';
-import { InputForm, Button, Loading } from 'components';
-import { useForm } from 'react-hook-form';
-import { validate, getBase64 } from 'ultils/helper';
-import { toast } from 'react-toastify';
-import { apiAddStaff, apiGetServiceProvidersGivenQnA, apiAddServiceProvidersGivenQnA } from 'apis';
-import { HashLoader } from 'react-spinners';
-import { getCurrent } from 'store/user/asyncAction';
-import { useDispatch, useSelector } from 'react-redux';
-import { FaPlus, FaRegTrashAlt } from 'react-icons/fa';
-import Swal from 'sweetalert2';
+import React, { useState } from "react";
+import { apiAddServiceProvidersGivenQnA } from 'apis';
+import { FiEdit2, FiTrash2, FiPlus, FiX, FiCheck, FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import bgImage from '../../assets/clouds.svg';
+import {useDispatch, useSelector} from 'react-redux';
+import Swal from "sweetalert2";
 
 const ManageChat = () => {
-    const { current } = useSelector(state => state.user);
-    const dispatch = useDispatch();
-    const { register, formState: { errors } } = useForm();
-    const [preview, setPreview] = useState({ avatar: null });
-    const [isLoading, setIsLoading] = useState(false);
-    const [allQnADataInput, setAllQnADataInput] = useState(current?.provider_id?.chatGivenQuestions || []);
-
-    const handleSubmit = async () => {
-        console.log(allQnADataInput,"===========");
-        if (!allQnADataInput && !current?.provider_id?._id) {
-            return;
+  const { current } = useSelector(state => state.user);
+  const [qaItems, setQaItems] = useState(
+    current?.provider_id?.chatGivenQuestions.map(
+        (ele, idx) => {
+            return {
+                ...ele,
+                id: idx+1
+            };
         }
+    )
+    || []);
 
-        let response = await apiAddServiceProvidersGivenQnA({qna: allQnADataInput, provider_id: current?.provider_id?._id});
-        if (!response.success || !response.qna) {
-            Swal.fire('Error Ocurred!!', 'Cannot Add Question And Answer!!', 'error');
+  const [allQnADataInput, setAllQnADataInput] = useState();
+
+  const [newQuestion, setNewQuestion] = useState("");
+  const [newAnswer, setNewAnswer] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [errors, setErrors] = useState({ question: "", answer: "" });
+  const [expandedId, setExpandedId] = useState(null);
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!newQuestion.trim()) {
+      newErrors.question = "Question is required";
+    } else if (newQuestion.length > 200) {
+      newErrors.question = "Question must be less than 200 characters";
+    }
+
+    if (!newAnswer.trim()) {
+      newErrors.answer = "Answer is required";
+    } else if (newAnswer.length > 1000) {
+      newErrors.answer = "Answer must be less than 1000 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (validateForm()) {
+      if (editingId) {
+        setQaItems(qaItems.map(item =>
+          item.id === editingId ? { ...item, question: newQuestion, answer: newAnswer } : item
+        ));
+
+        // toast.success("Q&A pair updated successfully!");
+      } else {
+        setQaItems([...qaItems, { id: Date.now(), question: newQuestion, answer: newAnswer }]);
+        // toast.success("New Q&A pair added successfully!");
+      }
+
+    let resp = await apiAddServiceProvidersGivenQnA({
+        provider_id: current.provider_id._id,
+        qna: qaItems
+    });
+
+    if (resp.success && resp.qna) {
+        if (editingId) {
+            toast.success("Q&A pair updated successfully!");
         }
         else {
-            Swal.fire('Sucessful!!', 'Added Sucessfully!!', 'success');
+            toast.success("New Q&A pair added successfully!");
         }
-        console.log("...................", allQnADataInput);
-    };
+    }
+    else {
+        toast.success("Error ocurred!!");
+    }
+      
+      setNewQuestion("");
+      setNewAnswer("");
+      setEditingId(null);
+    }
+  };
 
-    // const getQnAInputData = async () => {
-    //     let response = await apiGetServiceProvidersGivenQnA({provi);
+  const handleEdit = (item) => {
+    console.log('=====', item);
+    setNewQuestion(item.question);
+    setNewAnswer(item.answer);
+    setEditingId(item.id);
+  };
 
-    //     if (!response.success || !response.qna) {
-    //         Swal.fire('Error Ocurred!!', 'Cannot Get Data of Question And Answer!!', 'error');
-    //     }
-    //     else {
-    //         setAllQnADataInput(response.qna);
-    //     }
-    // }
+  const handleDelete = async (id) => {
+    const rs = await Swal.fire({
+        name: "Confirm delete",
+        text: 'Do you want to delete this ',
+        icon: 'warning',
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Not now',                
+      })
 
-    const handleQnAFormChange = (index, inputEvent) => {
-        const newQnAData = [...allQnADataInput];
-        // if (!newQnAData[index]) {
-            // newQnAData[index] = {question: '', answer: ''}
-        // }
-        console.log(newQnAData, "+++++++++++++++++");
-        newQnAData[index][inputEvent.target.name] = inputEvent.target.value;
-        console.log(newQnAData, "-------------------");
-        setAllQnADataInput(newQnAData);
-    };
+    if(rs.isConfirmed){
+        setQaItems(qaItems.filter(item => item.id !== id));
 
-    useEffect(() => {
-        dispatch(getCurrent());
-        console.log(current, "current user")
-    }, []);
+        let resp = await apiAddServiceProvidersGivenQnA({
+            provider_id: current.provider_id._id,
+            qna: qaItems
+        });
+    
+        if (resp.success && resp.qna) {
+            toast.success("Q&A pair deleted successfully!");
+        }
+        else {
+            toast.success("Error ocurred!!");
+        }
+    }
 
-    const handleAddNewQnA = () => {
-        const newQnAData = [...allQnADataInput, {question: '', name: ''} ];
-        // newQnAData[index][event.target.name] = event.target.value;
-        setAllQnADataInput(newQnAData);
-    };
+  };
 
-    const handleRemoveQnA = (index) => {
-        const newQnAData = [...allQnADataInput];
-        newQnAData.splice(index, 1);
-        console.log(allQnADataInput, "------------");
-        setAllQnADataInput(newQnAData);
-    };
-
-    return (
-        <div className='w-full'>
-            <h1 className='h-[75px] flex justify-between items-center text-3xl font-bold px-4 border-b'>
-                <span>Manage Chat</span>
-            </h1>
-            <div className='flex justify-end'>
-                <Button 
-                    className="mt-2"
-                    handleOnclick={ handleAddNewQnA }
-                >
-                    <FaPlus
-                        class="inline mr-2 mb-1"
-                    />Add New Given Q&A
-                </Button>
+  return (
+    <div className="min-h-screen md:p-8">
+        <div className='inset-0 absolute z-0'>
+            <img src={bgImage} className='w-full h-full object-cover'/>
+        </div>
+        <div className="relative z-10"> 
+            <ToastContainer position="top-right" autoClose={3000} />
+            <div className='w-full h-20 flex justify-between'>
+                <span className='text-[#00143c] text-3xl font-semibold'>Manage Chat</span>
             </div>
-            <div className='p-4 '>
-                {/* <form onSubmit={handleSubmit} action="POST"> */}
-                    {
-                        allQnADataInput.map((dataInput, index) => (
-                            <div className='w-full my-6 flex gap-4' key={index}>
-                                <input
-                                    className='flex-auto text-black pl-2 rounded-md'
-                                    name='question'
-                                    onChange={event => handleQnAFormChange(index, event)}
-                                    value={dataInput.question}
-                                    placeholder='Commonly Asked Question About Your Service...'
-                                />
-                                <input
-                                    className='flex-auto text-black pl-2 rounded-md'
-                                    name='answer'
-                                    onChange={event => handleQnAFormChange(index, event)}
-                                    value={dataInput.answer}
-                                    placeholder='Answer To Commonly Asked Service Question...'
-                                />
-                                <Button className="p-0 h-3" handleOnclick={ () => {handleRemoveQnA(index)} }><FaRegTrashAlt className='p-0'/></Button>
-                            </div>
-                        ))
-                    }
+            
+            <div className="max-w-6xl mx-auto space-y-8">
+                {/* <h1 className="text-4xl font-bold text-[#0a66c2] text-center mb-8 transition-all hover:scale-105">Q&A Admin Interface</h1> */}
 
-                    {/* {preview.avatar && (
-                        <div className='my-4'>
-                            <img src={preview.avatar} alt='avatar' className='w-[200px] object-contain' />
-                        </div>
-                    )} */}
-                    <div className='mt-8'>
-                        <Button handleOnclick={handleSubmit}>
-                            Save Changes
-                        </Button>
+                {/* Form Section */}
+                <div className="bg-white rounded-xl shadow-lg p-6 border-2 [&>*]:text-gray-500">
+                <h2 className="text-2xl font-semibold mb-6 text-gray-700">{editingId ? "Edit Q&A Pair" : "Add New Q&A Pair"}</h2>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div>
+                    <label htmlFor="question" className="block font-medium text-gray-700">Question</label>
+                    <input
+                        type="text"
+                        id="question"
+                        value={newQuestion}
+                        onChange={(e) => setNewQuestion(e.target.value)}
+                        className={`mt-1 block w-full rounded-md border shadow-sm p-1 ${errors.question ? "border-red-500" : "border-gray-300"} transition-all`}
+                        placeholder="Enter your question"
+                        aria-label="Question input"
+                    />
+                    {errors.question && <p className="mt-1 text-sm text-red-500">{errors.question}</p>}
                     </div>
-                {/* </form> */}
-                {/* Loading spinner */}
-                {isLoading && (
-                  <div className='flex justify-center z-50 w-full h-full fixed top-0 left-0 items-center bg-overlay'>
-                      <HashLoader className='z-50' color='#3B82F6' loading={isLoading} size={80} />
-                  </div>
-                )}
+
+                    <div>
+                    <label htmlFor="answer" className="block text-sm font-medium text-gray-700">Answer</label>
+                    <textarea
+                        id="answer"
+                        value={newAnswer}
+                        onChange={(e) => setNewAnswer(e.target.value)}
+                        className={`mt-1 p-1 block w-full rounded-md border shadow-sm focus:border-[#0a66c2] ${errors.answer ? "border-red-500" : "border-gray-300"} transition-all`}
+                        rows="4"
+                        placeholder="Enter your answer"
+                        aria-label="Answer input"
+                    />
+                    {errors.answer && <p className="mt-1 text-sm text-red-500">{errors.answer}</p>}
+                    </div>
+
+                    <button
+                    type="submit"
+                    className="inline-flex items-center p-2 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-[#0a66c2] hover:bg-[#0a66c2]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0a66c2] transition-all transform hover:scale-105"
+                    aria-label={editingId ? "Update Q&A pair" : "Add new Q&A pair"}
+                    >
+                    {editingId ? <FiCheck className="mr-2" /> : <FiPlus className="mr-2" />}
+                    {editingId ? "Update" : "Add"}
+                    </button>
+                </form>
+                </div>
+
+                {/* Existing Q&A Section */}
+                <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-[#0a66c2]/20">
+                <h2 className="text-2xl font-semibold mb-6 text-gray-700">Existing Q&A Pairs</h2>
+                <div className="space-y-4">
+                    {qaItems.map((item) => (
+                    <div key={item.id} className="border-2 border-gray-100 rounded-lg p-4">
+                        <div className="flex justify-between items-start">
+                        <h3 className="text-lg font-medium text-gray-800">{item.question}</h3>
+                        <div className="flex space-x-2">
+                            <button
+                            onClick={() => handleEdit(item)}
+                            className="p-2 text-gray-600 hover:text-[#0a66c2] transition-colors rounded-full"
+                            aria-label="Edit Q&A pair"
+                            >
+                            <FiEdit2 />
+                            </button>
+                            <button
+                            onClick={() => handleDelete(item.id)}
+                            className="p-2 text-gray-600 hover:text-red-600 transition-colors rounded-full hover:bg-red-50"
+                            aria-label="Delete Q&A pair"
+                            >
+                            <FiTrash2 />
+                            </button>
+                        </div>
+                        </div>
+                        <p className="mt-2 text-gray-600">{item.answer}</p>
+                    </div>
+                    ))}
+                </div>
+                </div>
+
+                {/* Preview Section */}
+                <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-[#0a66c2]/20 hover:border-[#0a66c2]/40 transition-all">
+                <h2 className="text-2xl font-semibold mb-6 text-gray-700">User Preview</h2>
+                <div className="space-y-4">
+                    {qaItems.map((item) => (
+                    <div key={item.id} className="border-2 border-gray-100 rounded-lg hover:border-[#0a66c2]/20 transition-all">
+                        <button
+                        onClick={() => setExpandedId(expandedId === item.id ? null : item.id)}
+                        className="w-full flex justify-between items-center text-left p-4 hover:bg-[#0a66c2]/5 transition-colors rounded-lg"
+                        aria-expanded={expandedId === item.id}
+                        aria-controls={`answer-${item.id}`}
+                        >
+                        <span className="font-medium text-gray-800">{item.question}</span>
+                        {expandedId === item.id ? 
+                            <FiChevronUp className="text-[#0a66c2]" /> : 
+                            <FiChevronDown className="text-[#0a66c2]" />
+                        }
+                        </button>
+                        {expandedId === item.id && (
+                        <div
+                            id={`answer-${item.id}`}
+                            className="px-4 pb-4 text-gray-600 transition-all duration-300 animate-fadeIn"
+                        >
+                            {item.answer}
+                        </div>
+                        )}
+                    </div>
+                    ))}
+                </div>
+                </div>
             </div>
         </div>
-    );
-}
+    </div>
+  );
+};
 
-export default ManageChat
+export default ManageChat;

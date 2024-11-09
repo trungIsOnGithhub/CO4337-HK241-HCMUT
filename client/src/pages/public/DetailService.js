@@ -2,8 +2,8 @@ import React ,{useState, useEffect, useCallback, memo, useRef}from 'react'
 import {createSearchParams, useLocation, useNavigate, useParams} from 'react-router-dom'
 import { apiGetOneProduct, apiGetProduct } from '../../apis/product'
 import { apiModifyUser } from '../../apis/user'
-import { apiGetOneService, apiGetServicePublic } from '../../apis/service'
-import {Breadcrumb, Button, SelectQuantity, ServiceExtra, ServiceInformation, CustomSliderService} from '../../components'
+import { apiGetOneService, apiGetServicePublic, apiRatingService } from '../../apis/service'
+import {Breadcrumb, Button, SelectQuantity, ServiceExtra, ServiceInformation, CustomSliderService, ServiceCard} from '../../components'
 import Slider from "react-slick";
 import { formatPrice, formatPricee, renderStarfromNumber } from '../../ultils/helper';
 import {productExtra} from '../../ultils/constant'
@@ -16,6 +16,9 @@ import path from 'ultils/path';
 import withBaseComponent from 'hocs/withBaseComponent';
 import { FaLocationDot } from "react-icons/fa6";
 import Mapbox from 'components/Map/Mapbox'
+import { FaClock, FaMapMarkerAlt, FaPhone, FaStar } from 'react-icons/fa'
+import { MdDirections, MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md'
+import avatarDefault from "../../assets/avatarDefault.png";
 
 const settings = {
   dots: false,
@@ -31,11 +34,17 @@ const DetailService = ({isQuickView, data}) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const nameRef = useRef()
+
+  const {isLogin} = useSelector(state => state.user)
   const {current} = useSelector(state => state.user)
   const params =useParams()
-  const [product, setProduct] = useState(null)
+  const [serviceData, setServiceData] = useState(null)
   const [quantity, setQuantity] = useState(1)
   const [productCate, setProductCate] = useState(null)
+  const [newReview, setNewReview] = useState({
+    comment: "",
+    rating: 0,
+  });
   
   const [category, setCategory] = useState(null)
   
@@ -54,13 +63,6 @@ const DetailService = ({isQuickView, data}) => {
     setUpdate(!update)
   },[update])
   
-  const [currentProduct, setCurrentProduct] = useState({
-    name:'',
-    thumb:'',
-    images: [],
-    price:'',
-    description: []
-  })
   useEffect(() => {
     if(sid){
       fetchServiceData()
@@ -70,13 +72,13 @@ const DetailService = ({isQuickView, data}) => {
     nameRef.current?.scrollIntoView({block: 'center'})
   }, [sid])
 
-  useEffect(() => {
-    apiRecordInteraction({
-        user_id: current._id,
-        type: 2,
-        provider_id: providerId
-    })
-  }, [providerId])
+  // useEffect(() => {
+  //   apiRecordInteraction({
+  //       user_id: current._id,
+  //       type: 2,
+  //       provider_id: providerId
+  //   })
+  // }, [providerId])
   
   useEffect(() => {
     if(data){
@@ -90,42 +92,16 @@ const DetailService = ({isQuickView, data}) => {
 
   }, [data, params])
 
-  
-  useEffect(() => {
-    if(variant){
-      setCurrentProduct({
-        name: product?.variants?.find(el => el.sku === variant)?.title,
-        thumb: product?.variants?.find(el => el.sku === variant)?.thumb,
-        images: product?.variants?.find(el => el.sku === variant)?.image,
-        price: product?.variants?.find(el => el.sku === variant)?.price,
-        description: product?.variants?.find(el => el.sku === variant)?.description,
-      })
-    }
-    else{
-      setCurrentProduct({
-        name: product?.title,
-        thumb: product?.thumb,
-        images: product?.image,
-        price: product?.price,
-        description: product?.description
-      })
-    }
-  }, [variant])
+
   
   const fetchServiceData = async ()=>{
     const response = await apiGetOneService(sid)
     if(response?.success){
-      setProduct(response?.service)
+      setServiceData(response?.service)
       
       setCurrentImage(response?.service?.thumb)
-      setCurrentProduct({
-        name: response?.service?.name,
-        thumb: response?.service?.thumb,
-        images: response?.service?.image,
-        price: response?.service?.price,
-        description: response?.service?.description,
-      })
-      setProviderId(response?.service.provider_id)
+      
+      setProviderId(response?.service?.provider_id)
     }
   }
 
@@ -142,14 +118,14 @@ const DetailService = ({isQuickView, data}) => {
     }
   }, [update])
   
-  const handleClickImage = (e,el) => {
-    e.stopPropagation();
-    setCurrentImage(el)
-    setCurrentProduct(prev => ({
-      ...prev,
-      thumb: el
-    }))
-  }
+  // const handleClickImage = (e,el) => {
+  //   e.stopPropagation();
+  //   setCurrentImage(el)
+  //   setCurrentService(prev => ({
+  //     ...prev,
+  //     thumb: el
+  //   }))
+  // }
 
   const editQuantity = useCallback((number)=>{
     if(!Number(number)||Number(number)<1) {
@@ -223,8 +199,8 @@ const DetailService = ({isQuickView, data}) => {
 
   const showRoute = (userLat, userLng) => {
     // Logic to display the route from user's location to the service provider's location
-    const providerLat = product?.provider_id?.latitude; // Assuming you have the provider's latitude
-    const providerLng = product?.provider_id?.longitude; // Assuming you have the provider's longitude
+    const providerLat = serviceData?.provider_id?.latitude; // Assuming you have the provider's latitude
+    const providerLng = serviceData?.provider_id?.longitude; // Assuming you have the provider's longitude
     setUserLocation({ latitude: userLat, longitude: userLng });
     setProviderLocation({ latitude: providerLat, longitude: providerLng });
     setShowMap(true);
@@ -232,168 +208,376 @@ const DetailService = ({isQuickView, data}) => {
   };
   const handleGetDirections = () => {
     if(!showMap){
-      Swal.fire({
-        title: 'Chia sẻ vị trí',
-        text: "Bạn có muốn chia sẻ vị trí hiện tại của mình để xem đường đi?",
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Chia sẻ',
-        cancelButtonText: 'Không'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          if ("geolocation" in navigator) {
-              navigator.geolocation.getCurrentPosition(position => {
-              const { latitude, longitude } = position.coords;
-              // Call the function to show the route using latitude and longitude
-              showRoute(latitude, longitude);
-            }, () => {
-              Swal.fire('Không thể lấy vị trí của bạn.');
-            });
-          } else {
-            Swal.fire('Geolocation không khả dụng.');
-          }
-        }
-      });
+      if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(position => {
+          const { latitude, longitude } = position.coords;
+          // Call the function to show the route using latitude and longitude
+          showRoute(latitude, longitude);
+        }, () => {
+          Swal.fire('Không thể lấy vị trí của bạn.');
+        });
+      } else {
+        Swal.fire('Geolocation không khả dụng.');
+      }
     }
     else{
       setShowMap(false)
     }
   };
 
+  const nextImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev === serviceData?.image?.length ? 0 : prev + 1
+    );
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? serviceData?.image?.length : prev - 1
+    );
+  };
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [error, setError] = useState("");
+
+  const validateReview = () => {
+    if (newReview.rating === 0) {
+      setError("Please select a rating between 1 and 5 stars");
+      return false;
+    }
+    if (!newReview.comment.trim()) {
+      setError("Please enter a comment");
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmitReview = async(e) => {
+    if(!isLogin){
+      Swal.fire({
+          text: 'Login to review',
+          cancelButtonText: 'Cancel',
+          confirmButtonText: 'Go login',
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          title: 'Oops!',
+          showCancelButton: true,
+      }).then((rs)=>{
+          if(rs.isConfirmed){
+              navigate(`/${path.LOGIN}`)
+          }
+      })
+    }
+    else{
+      e.preventDefault();
+      setError("");
+      if (validateReview()) {
+        await apiRatingService({star: newReview?.rating, comment: newReview?.comment, sid: serviceData?._id, updatedAt:Date.now() })
+        setNewReview({ comment: "", rating: 0});
+        fetchServiceData()
+      }
+    }
+  };
+
+  const handleNavigateBookService = () => {
+    if(!current){
+      return Swal.fire({
+        name: "You haven't logged in",
+        text: 'Please login and try again',
+        icon: 'warning',
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Go to Login',
+        cancelButtonText: 'Not now',                
+      }).then((rs)=>{
+        if(rs.isConfirmed){
+          navigate({
+            pathname: `/${path.LOGIN}`,
+            search: createSearchParams({
+              redirect: location.pathname}).toString(),
+          })
+        }
+      })
+    }
+    else{
+      navigate({
+        pathname:  `/${path.BOOKING}`,
+        search: createSearchParams({sid: sid}).toString()
+    })
+    }
+  }
+  console.log(serviceData)
+
   return (
-    <div className={clsx('w-full')}> 
-      {!isQuickView && <div className='h-[81px] flex items-center justify-center bg-gray-100'>
-        <div ref={nameRef} className='w-main'>
-          <h3 className='font-semibold  uppercase '>{currentProduct?.name || product?.name}</h3>
-          <Breadcrumb name={currentProduct?.name || product?.name} category={category} />
-        </div>
-      </div>}
-      <div onClick={e => e.stopPropagation()} className={clsx('bg-white m-auto mt-4 flex', isQuickView ? 'max-w-[900px] gap-16 p-8 max-h-[90vh] overflow-y-auto': 'w-main')}>
-        <div className={clsx('flex flex-col gap-4', isQuickView ? 'w-1/2' : 'w-2/5')}>
-          <div className='h-[458px] w-[458px] border overflow-hidden flex items-center justify-center'>
-            <img src={currentProduct?.thumb || currentImage} className='w-full h-full object-contain'></img>
-          </div>
-          {/* <img src={product?.image} alt='product' className='border h-[458px] w-[458px] object-cover' /> */}
-          <div className='w-[458px]'>
-            <Slider className='image_slider flex gap-2'{...settings}>
-
-
-              {currentProduct?.images?.length > 0 && currentProduct?.images?.map(el => (
-                <div key={el}>
-                  <img onClick={e=> handleClickImage(e,el)} src={el} alt="sup_product" className='cursor-pointer border h-[141px] w-[141px] object-cover'/>
-                </div>
-              ))}
-            </Slider>
-          </div>
-        </div>
-        <div className={clsx('pr-[24px] flex flex-col gap-4', isQuickView  ? 'w-1/2' : 'w-2/5')}>
-          <div className='flex items-center justify-between'>
-            <h2 className='text-[30px] font-semibold'>
-              {`${formatPrice(formatPricee(currentProduct?.price || product?.price))} VNĐ`}
-            </h2>
-            <span className='text-sm text-main'>
-              {`(Booking: ${product?.bookingQuantity})`}
-            </span>
-          </div>
-          <div className='flex items-center gap-1'>
-            {renderStarfromNumber(product?.totalRatings)?.map((el, index)=>(
-              <span key={index}>{el}</span>
+   <div className='w-full'>
+    <div className='h-[81px] flex items-center justify-center bg-gray-100'>
+      <div ref={nameRef} className='w-main'>
+        <h3 className='font-semibold uppercase '>{serviceData?.name}</h3>
+        <Breadcrumb name={serviceData?.name} category={category} />
+      </div>
+    </div>
+    <div className="max-w-7xl mx-auto p-6 bg-white rounded-xl shadow-lg mt-4">
+      <div className="grid lg:grid-cols-2 gap-8 mt-4">
+        {/* Image Carousel Section */}
+        <div className="relative group">
+          <img
+            src={currentImageIndex === 0 ? serviceData?.thumb : serviceData?.image[currentImageIndex - 1]}
+            alt={`Service preview ${currentImageIndex + 1}`}
+            className="w-[600px] h-[500px] object-contain rounded-lg transition-transform duration-300 hover:scale-[1.02]"
+          />
+          <button
+            onClick={prevImage}
+            aria-label="Previous image"
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100"
+          >
+            <MdKeyboardArrowLeft size={24} />
+          </button>
+          <button
+            onClick={nextImage}
+            aria-label="Next image"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100"
+          >
+            <MdKeyboardArrowRight size={24} />
+          </button>
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+            {[...(Array.isArray(serviceData?.image) ? serviceData.image : []), serviceData?.thumb].map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentImageIndex(index)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  currentImageIndex === index
+                    ? "bg-white scale-125"
+                    : "bg-white/50 hover:bg-white/75"
+                }`}
+                aria-label={`Go to image ${index + 1}`}
+              />
             ))}
           </div>
-          <ul className='text-sm text-gray-500 list-square pl-4'>
-            {currentProduct?.description?.length > 1 
-              &&
-            currentProduct?.description?.map(el=>(
-              <li className=' leading-6' key={el}>{el}</li>
-            )) }
-            {currentProduct?.description?.length === 1 
-              &&
-            <div className='text-sm line-clamp-[10] mb-8' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(currentProduct?.description[0])}}></div>}
-          </ul>
+        </div>
 
-          <div className='my-4 flex flex-col gap-4'>
-            <span className='font-bold'>
-              Other options
-            </span>
-            <div className='flex flex-wrap items-center w-full gap-2'>
-              <div 
-              onClick={() =>  setVariant(null)} 
-              className= {clsx('flex items-center gap-2 p-2 border cursor-pointer rounded-md', variant === null && 'border-gray-500 shadow-md rounded-md')}>
-                <img src={product?.thumb} alt='thumb' className='w-16 h-16 border rounded-md object-cover'></img>
-                <span className='flex flex-col'>
-                  <span>{product?.name}</span>
-                  <span className='text-sm '>{`${formatPrice(formatPricee(product?.price))} VNĐ`}</span>
-                </span>
-              </div>
-              {
-                product?.variants?.map(el=>(
-                  <div 
-                  key={el?.sku}
-                  onClick={() =>  setVariant(el?.sku)} 
-                  className= {clsx('flex items-center gap-2 p-2 border cursor-pointer rounded-md', variant === el?.sku && 'border-gray-500 shadow-md rounded-md')}>
-                    <img src={el?.thumb} alt='thumb' className='w-16 h-16 border rounded-md object-cover'></img>
-                    <span className='flex flex-col'>
-                      <span>{el?.name}</span>
-                      <span className='text-sm '>{`${formatPrice(formatPricee(el?.price))} VNĐ`}</span>
-                    </span>
-                  </div>
-                ))
+        {/* Service Details Section */}
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+              {serviceData?.name}
+            </h1>
+            <p className="text-2xl text-[#0a66c2] font-semibold">
+            {`${formatPrice(formatPricee(serviceData?.price))} VNĐ`}
+            </p>
+          </div>
 
-              }
+          {
+            serviceData?.description?.length === 1 
+              &&
+            <div className='text-base leading-6 line-clamp-[10] mb-8' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(serviceData?.description[0])}}></div>
+          }
+          
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 text-gray-700">
+              <FaClock className="text-blue-600" />
+              <span className='text-[#0a66c2]'>{`${serviceData?.duration} minutes`}</span>
+            </div>
+            <div className="flex items-center gap-3 text-gray-700">
+              <FaPhone className="text-blue-600" />
+              <span className='text-[#0a66c2]'>{serviceData?.contact || 8888}</span>
+            </div>
+            <div className="flex items-center gap-3 text-gray-700">
+              <FaMapMarkerAlt className="text-blue-600" />
+              <span className='text-[#0a66c2]'>{serviceData?.provider_id?.address}</span>
             </div>
           </div>
 
-          <div className='flex flex-col gap-8'>
-            {/* <div className='flex items-center gap-4'>
-              <span className='font-semibold'>Quantity: </span>
-              <SelectQuantity quantity={quantity} editQuantity={editQuantity} handleChange={handleChange} />
-            </div> */}
-            <div className='flex gap-4'>
-            <Button handleOnclick={handleBookService} style={`px-4 py-2 rounded-md text-white font-semibold my-2 bg-blue-500 w-fit`}>
-              Book now
-            </Button>
-            <Button handleOnclick={handleAddtoWishlist}>
-              Add to wishlist
-            </Button>
-            </div>
-          </div>
+          <button
+            onClick={handleNavigateBookService}
+            className="w-full bg-[#0a66c2] text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transform transition-all duration-300 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            aria-label="Book this service"
+          >
+            Book Now
+          </button>
         </div>
-        {!isQuickView && 
-          <div className='w-1/5'> 
-            {productExtra.map(el =>(
-              <ServiceExtra key={el.id} name={el.name} icon={el.icon} sup={el.sup}/>
-            ))}
+      </div>
+
+      {/* Directions Section */}
+      <div className="mt-12 p-6 bg-gray-50 rounded-lg">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-semibold text-gray-800">Directions</h2>
+          <button
+            onClick={handleGetDirections}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-300"
+          >
+            <MdDirections className="text-xl" />
+            Get Directions
+          </button>
+        </div>
+        <div className="flex items-start gap-3">
+          <FaMapMarkerAlt className="text-blue-600 mt-1" />
+          <p className="text-gray-600">{serviceData?.provider_id?.address}</p>
+        </div>
+        {
+          showMap && 
+          <div className='w-full h-[500px] m-auto mt-[8px]'>
+            <Mapbox userCoords={userLocation} providerCoords={providerLocation} />
           </div>
         }
       </div>
 
-      <div className='w-main m-auto mt-[8px] cursor-pointer'>
-        <div className='flex items-center gap-2 bg-green-800 text-white p-2 rounded-md w-fit' onClick={handleGetDirections}>
-          <span className='text-xl font-semibold'><FaLocationDot /></span>
-          <span className='font-semibold text-xl'>Chỉ đường</span>
+      {/* Thumbnail Gallery */}
+      <div className="mt-8">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Gallery</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <button
+            onClick={() => setCurrentImageIndex(0)}
+            className="relative group overflow-hidden rounded-lg"
+          >
+            <img
+              src={serviceData?.thumb}
+              alt="Main gallery image"
+              className="w-full h-36 object-cover transition-transform duration-300 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
+          </button>
+          {serviceData?.image.map((img, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentImageIndex(index + 1)}
+              className="relative group overflow-hidden rounded-lg"
+            >
+              <img
+                src={img}
+                alt={`Gallery image ${index + 1}`}
+                className="w-full h-36 object-cover transition-transform duration-300 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
+            </button>
+          ))}
         </div>
       </div>
 
-      {
-        showMap && 
-        <div className='w-main h-[500px] m-auto mt-[8px]'>
-          <Mapbox userCoords={userLocation} providerCoords={providerLocation} />
-        </div>
-      }
+      {/* Reviews Section */}
+      <div className="mt-12">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Customer Reviews</h2>
 
-      {!isQuickView && <div className='w-main m-auto mt-[8px]'>
-        <ServiceInformation ratings={product?.rating} totalRatings={product?.totalRatings} nameProduct={product?.name} sid={product?._id} reRender={reRender}/>
-      </div>}
-
-      {!isQuickView && 
-      <>
-        <div className='w-main m-auto mt-[8px]'>
-          <h3 className='text-[20px] font-semibold py-[15px] border-b-2 border-gray-500 shadow-sm'>OTHER CUSTOMERS ALSO BUY:</h3>
-          <CustomSliderService products={productCate} normal={true}/>
+        <div className="bg-gray-50 p-6 rounded-lg mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <div className="text-center">
+              <div className="text-4xl font-bold text-gray-800">{serviceData?.totalRating?.toFixed(1)}</div>
+              <div className="flex items-center justify-center gap-1 my-2">
+                {[...Array(5)].map((_, index) => (
+                  <FaStar
+                    key={index}
+                    className={index < Math.round(serviceData?.totalRatings) ? "text-yellow-400" : "text-gray-300"}
+                  />
+                ))}
+              </div>
+              <div className="text-sm text-gray-600">{serviceData?.rating?.length} reviews</div>
+            </div>
+            
+            <div className="flex-1 ml-8">
+              {[5, 4, 3, 2, 1].map(rating => (
+                <div key={rating} className="flex items-center gap-4 mb-2">
+                  <div className="flex items-center gap-1 w-24">
+                    <span className="text-sm">{rating}</span>
+                    <FaStar className="text-yellow-400" />
+                  </div>
+                  <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-yellow-400"
+                      style={{
+                        width: `${serviceData?.rating?.length === 0 ? 0 : (serviceData?.rating?.filter(el => el?.star === rating).length / serviceData?.rating?.length) * 100}%`
+                      }}
+                    />
+                  </div>
+                  <div className="w-16 text-sm text-gray-600">
+                    {serviceData?.rating?.filter(el => el?.star === rating).length} reviews
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-        <div className='h-[100px] w-full'></div>
-      </>}
+
+        <form onSubmit={handleSubmitReview} className="mb-8 bg-gray-50 p-6 rounded-lg">
+          <h3 className="text-xl font-semibold mb-4">Write a Review</h3>
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
+              {error}
+            </div>
+          )}
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Rating
+              </label>
+              <div className="flex gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setNewReview({ ...newReview, rating: star })}
+                    className="focus:outline-none"
+                  >
+                    <FaStar
+                      className={star <= newReview.rating ? "text-yellow-400" : "text-gray-300"}
+                      size={24}
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-1">
+                Your Review
+              </label>
+              <textarea
+                id="comment"
+                rows="4"
+                value={newReview.comment}
+                onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md outline-none"
+                required
+              ></textarea>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-300"
+            >
+              Submit Review
+            </button>
+          </div>
+        </form>
+
+        <div className="space-y-6">
+          {serviceData?.rating?.map((review) => (
+            <div key={review.id} className="bg-gray-50 p-6 rounded-lg">
+              <div className="flex items-center gap-4 mb-4">
+                <img
+                  src={review?.postedBy?.avatar || avatarDefault}
+                  alt={'avatar_user'}
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+                <div>
+                  <h3 className="font-semibold text-gray-800">{`${review?.postedBy?.lastName} ${review?.postedBy?.firstName}`}</h3>
+                  <div className="flex items-center gap-1">
+                    {[...Array(5)].map((_, index) => (
+                      <FaStar
+                        key={index}
+                        className={index < review?.star ? "text-yellow-400" : "text-gray-300"}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <span className="ml-auto text-sm text-gray-500">
+                  {new Date(review?.updatedAt).toLocaleDateString()}
+                </span>
+              </div>
+              <p className="text-gray-600">{review?.comment}</p>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
+   </div>
   )
 }
 

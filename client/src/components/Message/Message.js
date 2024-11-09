@@ -32,7 +32,7 @@ const Message = () => {
   return (
     <div className='w-[300px] h-[350px] bg-slate-200 border border-gray-400 rounded-md message_box overflow-hidden shadow-lg'>
       <div className='flex justify-between items-center px-4 py-2 border-b-2 border-gray-400 h-[50px]'>
-        <h3 className='font-bold text-xl text-main'>Tin nhắn: </h3>
+        <h3 className='font-bold text-xl text-[#0a66c2]'>Tin nhắn: </h3>
         <span className='text-gray-500 text-sm cursor-pointer' onClick={() => { navigate('/chat') }}>Xem tất cả</span>
       </div>
     

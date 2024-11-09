@@ -1,6 +1,6 @@
 import path from './path'
 import icons from './icon'
-import { FaUserGear } from "react-icons/fa6";
+import { FaCartShopping, FaUserGear } from "react-icons/fa6";
 import { BsFillTagsFill } from "react-icons/bs";
 import { SlCalender } from "react-icons/sl";
 import { FaMoneyBillTrendUp } from "react-icons/fa6";
@@ -10,6 +10,8 @@ import { CiDiscount1 } from "react-icons/ci";
 import { IoIosSettings } from "react-icons/io";
 import { FaCalendarAlt } from 'react-icons/fa';
 import { MdHistory } from "react-icons/md";
+import { MdOutlineColorLens } from "react-icons/md";
+
 export const navigation = [
     {
         id: 1,
@@ -153,37 +155,37 @@ export const sorts = [
     {
         id:1,
         value: '-sold',
-        text: 'Best selling'
+        text: 'Best sell'
     },
     {
         id:2,
         value: 'title',
-        text: 'Alphabetically, A-Z'
+        text: 'A-Z'
     },
     {
         id:3,
         value: '-title',
-        text: 'Alphabetically, Z-A'
+        text: 'Z-A'
     },
     {
         id:4,
         value: 'price',
-        text: 'Price, low to high'
+        text: 'Price'
     },
     {
         id:5,
         value: '-price',
-        text: 'Price, high to low'
+        text: 'Price'
     },
     {
         id:6,
         value: 'createdAt',
-        text: 'Date, old to new'
+        text: 'Date'
     },
     {
         id:7,
         value: '-createdAt',
-        text: 'Date, new to old'
+        text: 'Date'
     }, 
 ]
 
@@ -314,7 +316,7 @@ export const adminSidebar = [
     {
         id: 10,
         type: 'parent',
-        text: 'Manage Customer Program',
+        text: 'Customer Programs',
         submenu:[
             {
                 text: 'Add Vourcher Code',
@@ -350,6 +352,30 @@ export const adminSidebar = [
         path: `/${path.ADMIN}/${path.SETTING}`,
         icon: <IoIosSettings size={20}/>
     },
+    {
+        id: 13,
+        type: 'parent',
+        text: 'Customize',
+        submenu:[
+            {
+                text: 'Theme and Appearance',
+                path: `/${path.ADMIN}/${path.THEMEANDAPPEARANCE}`
+            },
+            {
+                text: 'Hero Section',
+                path: `/${path.ADMIN}/${path.HEROSECTION}`
+            },
+            {
+                text: 'Footer Section',
+                path: `/${path.ADMIN}/${path.FOOTERSECTION}`
+            },
+            {
+                text: 'Service Page',
+                path: `/${path.ADMIN}/${path.SERVICEPAGE}`
+            },
+        ],
+        icon: <MdOutlineColorLens size={20}/>
+    }
 ]
 
 export const roles = [
@@ -389,7 +415,7 @@ export const userSidebar = [
         type: 'single',
         text: 'My cart',
         path: `/${path.USER}/${path.MYCART}`,
-        icon: <MdGroups size={20}/>,
+        icon: <FaCartShopping size={20}/>,
         visibleForRole: [202],
     },
     {

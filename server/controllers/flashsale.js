@@ -13,7 +13,8 @@ const createNewFlashSaleEvent = asyncHandler(async (req, res) => {
         duration,
         usageLimit,
         services,
-        providerId
+        providerId,
+        name
     } = req.body;
 
     // Validate required fields
@@ -32,7 +33,8 @@ const createNewFlashSaleEvent = asyncHandler(async (req, res) => {
         usageLimit,
         services,
         usageCount: services.map(serviceId => ({ id: serviceId, value: 0 })), // Khởi tạo giá trị mặc định
-        providerId
+        providerId,
+        name
     });
 
     // Save the flashsale event to the database
@@ -130,10 +132,12 @@ const getFlashSaleEventByProviderId = asyncHandler(async (req, res) => {
 const getAllFlashSalesByAdmin = asyncHandler(async (req, res) => { 
     const {_id} = req.user
     const {provider_id} = await User.findById({_id}).select('provider_id')
-    console.log(provider_id)
 
     let queryCommand =  FlashSale.find({
         providerId: provider_id
+    }).populate({
+        path: 'services',
+        select: 'name price thumb description'
     })
     try {
         const flashsales = await queryCommand

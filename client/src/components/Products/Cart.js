@@ -2,7 +2,8 @@ import { apiRemoveCartProduct} from 'apis'
 import Button from 'components/Buttons/Button'
 import withBaseComponent from 'hocs/withBaseComponent'
 import React, { memo } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { showCart } from 'store/app/appSlice'
 import { getCurrent } from 'store/user/asyncAction'
@@ -11,7 +12,9 @@ import icons from 'ultils/icon'
 import path from 'ultils/path'
 
 const {IoCloseSharp, FaTrashCan} = icons
-const Cart = ({dispatch, navigate}) => {
+const Cart = () => {
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
     const {current, currentCartProduct} = useSelector(state => state.user)
     const removeCart = async(pid, color) => {
         const response = await apiRemoveCartProduct(pid,color)
@@ -34,7 +37,7 @@ const Cart = ({dispatch, navigate}) => {
                     <div className='flex gap-2'>
                         <img src={el?.thumb} alt='thumb' className='w-16 h-16 object-cover'></img>
                         <div className='flex flex-col gap-1'>
-                            <span className='text-sm font-semibold'>{el?.title}</span>
+                            <span className='text-sm font-semibold line-clamp-1'>{el?.title}</span>
                             <span className='text-[10px] font-extralight'>{`Quantity: ${el?.quantity} - Color: ${el?.color}`}</span>
                             <span className='text-sm'>{formatPrice(el?.price)+' VND'}</span>
                         </div>
@@ -55,7 +58,7 @@ const Cart = ({dispatch, navigate}) => {
             <Button 
             handleOnclick={()=>{dispatch(showCart())
                                 navigate(`/${path.USER}/${path.MYCART}`)}} 
-            style='rounded-none w-full bg-main py-2'>
+            style='rounded-none w-full bg-[#0a66c2] py-2'>
                 Shopping Cart
             </Button>
         </div>
@@ -63,4 +66,4 @@ const Cart = ({dispatch, navigate}) => {
   )
 }
 
-export default withBaseComponent(memo(Cart))
+export default memo(Cart)

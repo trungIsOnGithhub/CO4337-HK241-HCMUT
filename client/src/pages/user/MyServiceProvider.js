@@ -1,4 +1,4 @@
-import clsx from 'clsx'
+// import clsx from 'clsx'
 import { Button, InputForm } from 'components'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
@@ -11,7 +11,6 @@ import { toast } from 'react-toastify'
 import { getBase64 } from 'ultils/helper'
 import { useSearchParams } from 'react-router-dom'
 import withBaseComponent from 'hocs/withBaseComponent'
-import {InputField, Loading} from '../../components'
 import Swal from "sweetalert2";
 
 const MyServiceProvider = ({navigate, dispatch}) => {

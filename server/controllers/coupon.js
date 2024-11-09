@@ -1,9 +1,10 @@
 const Coupon = require('../models/coupon');
 const asyncHandler = require('express-async-handler');
+const User = require('../models/user')
 
 // Handler to create a new coupon
 const createNewCoupon = asyncHandler(async (req, res) => {
-    const {
+    let {
         name,
         code,
         discount_type,
@@ -15,9 +16,20 @@ const createNewCoupon = asyncHandler(async (req, res) => {
         limitPerUser,
         noLimitPerUser,
         services,
-        providerId
+        providerId,
+        products,
+        fixedAmountProduct,
+        percentageDiscountProduct
     } = req.body;
 
+    if(noUsageLimit === 'true') noUsageLimit = true
+    else if(noUsageLimit === 'false') noUsageLimit = false
+
+    if(noLimitPerUser === 'true') noLimitPerUser = true
+    else if(noLimitPerUser === 'false') noLimitPerUser = false
+
+
+    const image = req.files?.image[0]?.path
     // Validate required fields
     if (!name || !code || !discount_type || !expirationDate || !providerId) {
         return res.status(400).json({ message: 'Name, code, discount_type, and expirationDate are required fields.' });
@@ -36,14 +48,18 @@ const createNewCoupon = asyncHandler(async (req, res) => {
         percentageDiscount,
         fixedAmount,
         expirationDate,
-        usageLimit: noUsageLimit ? 0 : usageLimit,
+        usageLimit: noUsageLimit ? 0 : +usageLimit,
         noUsageLimit,
-        limitPerUser: noLimitPerUser ? 0 : limitPerUser,
+        limitPerUser: noLimitPerUser ? 0 : +limitPerUser,
         noLimitPerUser,
         services,
         usageCount: 0, // Khởi tạo giá trị mặc định
         usedBy: [], // Khởi tạo mảng rỗng
-        providerId
+        providerId,
+        image,
+        products,
+        fixedAmountProduct,
+        percentageDiscountProduct
     });
 
     // Save the coupon to the database
@@ -72,6 +88,23 @@ const getCouponsByServiceId = asyncHandler(async (req, res) => {
     }
 
     return res.status(200).json({ success: true, coupons });
+});
+
+const getCouponsByProductId = asyncHandler(async (req, res) => {
+    console.log(req.body)
+    const { productIds } = req.body;
+    if (!Array.isArray(productIds) || productIds.length === 0) {
+        return res.status(400).json({ message: 'Product IDs must be a non-empty array.' });
+    }
+    const coupons = await Coupon.find({
+        products: { $in: productIds }
+    });
+
+    res.status(200).json({
+        success: true,
+        coupons
+    });
+
 });
 
 const validateAndUseCoupon = asyncHandler(async (req, res) => {
@@ -107,6 +140,7 @@ const validateAndUseCoupon = asyncHandler(async (req, res) => {
 });
 
 const updateCouponUsage = asyncHandler(async (req, res) => {
+    console.log('Updating coupon usage')
     const { couponCode, userId } = req.body;
 
     const coupon = await Coupon.findOne({ code: couponCode });
@@ -150,4 +184,19 @@ const getCouponsByProviderId = asyncHandler(async (req, res) => {
     return res.status(200).json({ success: true, coupons });
 });
 
-module.exports = { createNewCoupon, getCouponsByServiceId, validateAndUseCoupon, updateCouponUsage, getCouponsByProviderId };
+const getAllCouponsByAdmin = asyncHandler(async (req, res) => {
+    const {_id} = req.user
+    const {provider_id} = await User.findById({_id}).select('provider_id')
+
+    
+    const coupons = await Coupon.find({ providerId: provider_id })
+        .populate('services', 'name thumb'); // Populate trường services với thông tin name
+
+    if (coupons.length === 0) {
+        return res.status(404).json({ message: 'No coupons found for the given provider ID.' });
+    }
+
+    return res.status(200).json({ success: true, coupons });
+});
+
+module.exports = { createNewCoupon, getCouponsByServiceId, validateAndUseCoupon, updateCouponUsage, getCouponsByProviderId, getAllCouponsByAdmin, getCouponsByProductId};

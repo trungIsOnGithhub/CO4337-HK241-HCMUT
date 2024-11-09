@@ -9,6 +9,10 @@ const makeToken = require('uniqid')
 const {users} = require('../ultils//constant')
 const mongoose = require('mongoose');
 
+const makeTokenNumber = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString(); // Tạo mã 6 chữ số
+};
+
 // const register = asyncHandler(async(req, res)=>{
 //     const {email, password, firstName, lastName} = req.body
 //     if(!email || !password || !firstName || !lastName){
@@ -32,7 +36,11 @@ const mongoose = require('mongoose');
 
 const register = asyncHandler(async(req, res) => {
     const {email, password, firstName, lastName, mobile, role} = req.body;
+    const avatar = req.files?.avatar[0]?.path
 
+    if(avatar){
+        req.body.avatar = avatar
+    }
     if(req.body?.role && req.body.role !== 202 && req.body.role !== 1411) {
         return res.status(400).json({
             success: false,
@@ -55,16 +63,29 @@ const register = asyncHandler(async(req, res) => {
         throw new Error("User has existed already")
     }
     else{
-        const token = makeToken()
+        const token = makeTokenNumber()
         const email_edit = btoa(email) + '@' + token
         const newUser = await User.create({
-            email:email_edit,password,firstName,lastName,mobile
+            email:email_edit,password,firstName,lastName,mobile, avatar
         })
         // res.cookie('dataregister', {...req.body, token}, {httpOnly: true, maxAge: 15*60*1000})
 
-        if(newUser){
-            const html = `<h2>Register code: </h2><br /><blockquote>${token}</blockquote>`
-            await sendMail({email, html, subject: 'Complete Registration'})
+        if (newUser) {
+            const html = `
+                <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; padding: 20px; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);">
+                    <h2 style="color: #0a66c2; text-align: center;">Complete Your Registration</h2>
+                    <p style="font-size: 16px;">Hello,</p>
+                    <p style="font-size: 16px;">Thank you for registering with us! To complete your registration, please use the following verification code:</p>
+                    <div style="text-align: center; margin: 20px 0;">
+                        <span style="font-size: 24px; font-weight: bold; color: #0a66c2; padding: 10px 20px; background-color: #f7f7f7; border: 2px solid #0a66c2; border-radius: 8px; display: inline-block;">
+                            ${token}
+                        </span>
+                    </div>
+                    <p style="font-size: 16px;">This code is valid for 15 minutes. If you didn’t request this, please ignore this email.</p>
+                    <p style="font-size: 16px;">Best regards,<br>Your Company Team</p>
+                </div>
+            `;
+            await sendMail({ email, html, subject: 'Complete Registration' });
         }
         setTimeout(async()=>{
             await User.deleteOne({email: email_edit})
@@ -155,6 +176,12 @@ const getOneUser = asyncHandler(async(req, res)=>{
             select: 'firstName lastName'
         },
     }).populate('provider_id')
+    .populate({
+        path: 'cart_product',
+        populate:{
+            path: 'provider'
+        }
+    })
 
     return res.status(200).json({
         success: user? true : false,
@@ -354,7 +381,11 @@ const getAllCustomers = asyncHandler(async (req, res) => {
         formatedQueries['$or'] = [
             { firstName: { $regex: req.query.q, $options: 'i' } },
             { lastName: { $regex: req.query.q, $options: 'i' } },
-            { email: { $regex: req.query.q, $options: 'i' } }
+            { email: { $regex: req.query.q, $options: 'i' } },
+            { $expr: { $regexMatch: { input: { $concat: ["$firstName", " ", "$lastName"] }, regex: req.query.q, options: 'i' } } },
+            { $expr: { $regexMatch: { input: { $concat: ["$lastName", " ", "$firstName"] }, regex: req.query.q, options: 'i' } } },
+            { $expr: { $regexMatch: { input: { $concat: ["$firstName", "", "$lastName"] }, regex: req.query.q, options: 'i' } } },
+            { $expr: { $regexMatch: { input: { $concat: ["$lastName", "", "$firstName"] }, regex: req.query.q, options: 'i' } } },
         ];
     }
 
@@ -419,8 +450,10 @@ const deleteUser = asyncHandler(async (req, res) => {
 //update user
 const updateUser = asyncHandler(async (req, res) => {
     const {_id} = req.user
-    const {firstName, lastName, email, mobile, address} = req.body
-    const data = {firstName, lastName, email, mobile, address}
+    console.log(req.body)
+    const {firstName, lastName, email, mobile, address, latitude, longitude} = req.body
+    const data = {firstName, lastName, email, mobile, address, latitude, longitude}
+    
     if(req.file){
         data.avatar = req.file.path
     }
@@ -439,7 +472,6 @@ const updateUser = asyncHandler(async (req, res) => {
 //update user by admin
 const updateUserByAdmin = asyncHandler(async (req, res) => {
     const {userId} = req.params
-    console.log('++++)))))))))', req.body)
     if(!userId || Object.keys(req.body).length === 0){
         throw new Error("Missing input")
     }
@@ -485,9 +517,9 @@ const updateUserAddress = asyncHandler(async (req, res) => {
 // update cart_service
 const updateCartService = asyncHandler(async (req, res) => {
     const {_id} = req.user;
-    const {service, provider, staff, time, date, duration, price} = req.body;
+    const {service, provider, staff, time, date, duration, price, dateTime} = req.body;
     
-    if (!service || !provider || !staff || !time || !date || !duration || !price) {
+    if (!service || !provider || !staff || !time || !date || !duration || !price || !dateTime) {
         throw new Error("Missing input");
     } else {
         const user = await User.findById(_id).select('cart_service');
@@ -498,7 +530,7 @@ const updateCartService = asyncHandler(async (req, res) => {
 
         try {
             // Thêm một phần tử mới vào mảng 'cart'
-            response = await User.findByIdAndUpdate(_id, {$push: {cart_service: {service, provider, staff, time, date, duration, price}}}, {new: true});
+            response = await User.findByIdAndUpdate(_id, {$push: {cart_service: {service, provider, staff, time, date, duration, price, dateTime}}}, {new: true});
         } catch (error) {
             // Xử lý lỗi nếu có
             return res.status(500).json({ success: false, mes: "Something went wrong" });
@@ -514,16 +546,16 @@ const updateCartService = asyncHandler(async (req, res) => {
 // update cart_product
 const updateCartProduct = asyncHandler(async (req, res) => {
     const {_id} = req.user
-    const {pid, quantity = 1, color, price, thumb, title, provider} = req.body
-    if(!pid || !color || !price || !thumb|| !title|| !provider) {
+    const {pid, quantity=1, color, colorCode, price, thumb, title, provider} = req.body
+    if(!pid || !color || !price || !thumb|| !title|| !provider || !colorCode) {
         throw new Error("Missing input")
     }
     else{
         const user = await User.findById(_id).select('cart_product')
-        const alreadyProduct = user?.cart_product.find(e1 => e1.product.toString() === pid && e1.color === color)
+        const alreadyProduct = user?.cart_product?.find(el => el.product.toString() === pid && el.colorCode === colorCode)
 
         if(alreadyProduct){
-            const response = await User.updateOne({cart_product:{$elemMatch: alreadyProduct}}, {$set: {"cart_product.$.quantity": quantity, "cart_product.$.price": price, "cart_product.$.thumb": thumb, "cart_product.$.title": title,  "cart_product.$.provider": provider}},{new:true})
+            const response = await User.updateOne({cart_product:{$elemMatch: alreadyProduct}}, {$set: {"cart_product.$.quantity": quantity, "cart_product.$.price": price, "cart_product.$.thumb": thumb, "cart_product.$.title": title,  "cart_product.$.provider": provider, "cart_product.$.color": color}},{new:true})
             return res.status(200).json({
                 success: response ? true : false,
                 mes: response ? 'Updated your cart' : "Something went wrong"
@@ -532,7 +564,7 @@ const updateCartProduct = asyncHandler(async (req, res) => {
 
         // neu sp chua them vao gio hang || sp da them nhung khac color
         else {
-            const response = await User.findByIdAndUpdate(_id,{$push:{cart_product:{product:pid, quantity, color, price, thumb, title, provider}}},{new: true})
+            const response = await User.findByIdAndUpdate(_id,{$push:{cart_product:{product:pid, quantity, color, colorCode, price, thumb, title, provider}}},{new: true})
             return res.status(200).json({
                 success: response ? true : false,
                 mes: response ? 'Updated your cart' : "Something went wrong"
@@ -540,8 +572,6 @@ const updateCartProduct = asyncHandler(async (req, res) => {
         }
     }
 })
-
-
 
 
 const createUsers = asyncHandler(async(req, res)=>{
@@ -577,11 +607,41 @@ const updateWishlist = asyncHandler(async(req, res)=>{
     }
 })
 
+const updateWishlistProduct = asyncHandler(async(req, res)=>{
+    const {pid} = req.params
+
+    const {_id} = req.user
+    if(!pid) {
+        throw new Error("Missing input")
+    }
+    const user = await User.findById(_id)
+    const alreadyWishList = user?.wishlistProduct?.find(el => el.toString() === pid
+)
+    if(alreadyWishList){
+        const response = await User.findByIdAndUpdate(_id, {$pull: {wishlistProduct: pid}},{new: true})
+        return res.status(200).json({
+            success: response ? true : false,
+            mes: response ? 'Updated your wishlist successfully' : 'Something went wrong'
+        })
+    }
+    else{
+        const response = await User.findByIdAndUpdate(_id, {$push: {wishlistProduct: pid}},{new: true})
+        return res.status(200).json({
+            success: response ? true : false,
+            mes: response ? 'Updated your wishlist successfully' : 'Something went wrong'
+        })
+    }
+})
+
 const removeProductFromCart = asyncHandler(async (req, res) => {
     const {_id} = req.user
-    const {pid, color} = req.params
+    const {pid, colorCode} = req.query
+    console.log(req.query)
     const user = await User.findById(_id).select('cart_product')
-    const alreadyProduct = user?.cart_product?.find(e1 => e1?.product?.toString() === pid && e1?.color === color)
+
+    console.log(user)
+    const alreadyProduct = user?.cart_product?.find(e1 => e1?.product?.toString() === pid && e1?.colorCode === colorCode)
+    
     if(!alreadyProduct){
         return res.status(200).json({
             success: true,
@@ -589,7 +649,7 @@ const removeProductFromCart = asyncHandler(async (req, res) => {
         })
     }
     else{
-        const response = await User.findByIdAndUpdate(_id,{$pull:{cart_product:{product:pid, color}}},{new: true})
+        const response = await User.findByIdAndUpdate(_id,{$pull:{cart_product:{product:pid, colorCode}}},{new: true})
         return res.status(200).json({
             success: response ? true : false,
             mes: response ? 'Deleted successfully' : "Something went wrong"
@@ -644,5 +704,6 @@ module.exports = {
     getAllCustomers,
     removeProductFromCart,
     getAllContact,
-    addContact
+    addContact,
+    updateWishlistProduct
 }

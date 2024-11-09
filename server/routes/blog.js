@@ -7,7 +7,12 @@ const {verifyAccessToken, isAdmin} = require('../middlewares/verify_token')
 router.get('/tags', ctrls.getAllBlogTags)
 router.post('/', ctrls.getAllBlogs)
 router.get('/', ctrls.getBlogsBySearchTerm)
-router.post('/create', ctrls.createNewBlogPost)
+router.post('/create', [verifyAccessToken, isAdmin], uploader.fields([
+    {
+        name: 'thumb',
+        maxCount: 1
+    },
+]), ctrls.createNewBlogPost)
 router.post('/create_tag', ctrls.createNewPostTag)
 router.get('/:bid', ctrls.getBlog)
 router.delete('/:bid',[verifyAccessToken, isAdmin], ctrls.deleteBlog)
@@ -15,8 +20,10 @@ router.put('/:bid', [verifyAccessToken, isAdmin], ctrls.updateBlog)
 router.post('/like', [verifyAccessToken], ctrls.likeBlog)
 router.post('/dislike', [verifyAccessToken], ctrls.dislikeBlog)
 router.put('/upload_image/:bid', [verifyAccessToken, isAdmin],uploader.single('image'), ctrls.uploadImage)
-router.post('/top_blogs', ctrls.getTopBlogs)
+router.post('/top_blogs', ctrls.getTopBlogWithSelectedTags)
 router.post('/top_tags', ctrls.getTopTags)
 router.post('/advanced_search', ctrls.searchBlogsAdvanced)
+router.post('/update_view_blog/:bid', ctrls.updateViewBlog)
+
 // router.post('/add_comment', ctrls.addBlogComments)
 module.exports = router

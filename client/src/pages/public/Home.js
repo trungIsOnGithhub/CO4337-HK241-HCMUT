@@ -7,7 +7,7 @@ import { createSearchParams } from "react-router-dom";
 
 const {MdArrowForwardIos} = icons
 const Home = ({navigate}) => {
-    const newProducts = useSelector(state => {console.log(state.product?.newProducts?.map(payload => payload?.sv));return state.product?.newProducts?.map(payload => payload?.sv) || []; })
+    const newProducts = useSelector(state => {return state.product?.newProducts?.map(payload => payload?.sv) || []; })
     const {categories} = useSelector(state => state.app)
     const {isLogin, current} = useSelector(state => state.user)
 
@@ -28,13 +28,13 @@ const Home = ({navigate}) => {
             <FeaturedService />
         </div>
         <div className="my-8 w-main ">
-            <h3 className='text-[20px] font-semibold py-[15px] border-b-2 border-main'>NEW ARRIVALS</h3>
+            <h3 className='text-[20px] font-semibold py-[15px] border-b-2 border-[#0a66c2]'>NEW ARRIVALS</h3>
             <div className="mt-4 mx-[-10px]">
-                <CustomSliderService products={newProducts}/>
+                <CustomSliderService services={newProducts}/>
             </div>
         </div>
         <div className="my-8 w-main ">
-        {/* <h3 className='text-[20px] font-semibold py-[15px] border-b-2 border-main'>HOT COLLECTIONS</h3>
+        {/* <h3 className='text-[20px] font-semibold py-[15px] border-b-2 border-[#0a66c2]'>HOT COLLECTIONS</h3>
         <div className="flex flex-wrap gap-4 mt-4">
                 {categories?.filter(el => el.brand?.length>0)?.map(el =>(
                     <div key={el._id} className="w-[396px]">
@@ -46,7 +46,7 @@ const Home = ({navigate}) => {
                                     {el?.brand?.map(item => (
                                         <span  
                                         key={item} 
-                                        className="flex cursor-pointer hover:text-main hover:underline items-center gap-1 text-gray-500"
+                                        className="flex cursor-pointer hover:text-[#0a66c2] hover:underline items-center gap-1 text-gray-500"
                                         onClick={()=> navigate({
                                             pathname: `/${el?.title?.toLowerCase()}`,
                                             search: createSearchParams({
@@ -66,7 +66,7 @@ const Home = ({navigate}) => {
             </div> */}
         </div>
         <div className="my-8 w-main">
-            <h3 className='text-[20px] font-semibold py-[15px] border-b-2 border-main'>BLOG POSTS</h3>
+            <h3 className='text-[20px] font-semibold py-[15px] border-b-2 border-[#0a66c2]'>BLOG POSTS</h3>
 
         </div></>
     )

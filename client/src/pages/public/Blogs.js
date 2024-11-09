@@ -1,6 +1,6 @@
 import React, {useState, useCallback, useEffect } from 'react'
-import { MultiSelect, Select } from 'components';
-import { apiGetAllBlogs, apiGetAllPostTags, apiSearchBlogByParams, apiGetTopTags } from 'apis/blog';
+import { InputFormm, NewInputSelect, Pagination } from 'components';
+import { apiGetAllBlogs, apiGetAllPostTags, apiSearchBlogByParams, apiGetTopBlogsWithSelectedTags } from 'apis/blog';
 import Button from 'components/Buttons/Button';
 import { HashLoader } from 'react-spinners';
 import path from 'ultils/path';
@@ -9,11 +9,15 @@ import { useNavigate, createSearchParams, useLocation } from "react-router-dom";
 import { FaCheck, FaRegThumbsUp, FaRegThumbsDown, FaLocationArrow } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import { tinh_thanhpho } from 'tinh_thanhpho';
+import { useForm } from 'react-hook-form';
+import { FiClock, FiEye, FiTag, FiUser } from 'react-icons/fi';
+import { formatDistanceToNow } from 'date-fns';
+import { FaSearch, FaSortAmountDown } from "react-icons/fa";
 
 const Blogs = () => {
   const location = useLocation();
   useEffect(() => {
-    console.log('=========', location?.state);
+    // ;console.log('=========', location?.state);
     if (location?.state?.searchKey) {
       setSearchTerm(location.state.searchKey);
     }
@@ -23,15 +27,35 @@ const Blogs = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [tags, setTags] = useState([]);
+  const [sort, setSort] = useState([]);
+  const [counts, setCounts] = useState(0);
   const [selectedSort, setSelectedSort] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
   const [provinceFilter, setProvinceFilter] = useState([]);
   const handleSortByChange = () => {};
   const [topTags, setTopTags] = useState([]);
 
+  const sortOptions = [
+    {
+      id: 1,
+      value: 'createdAt',
+      text: 'Latest Created'
+    },
+    {
+      id: 2,
+      value: '-createdAt',
+      text: ' Created'
+    },
+    {
+      id: 3,
+      value: 'likes',
+      text: 'Popular'
+    },
+  ] 
+
   const provinces = Object.entries(tinh_thanhpho).map(pair => {
     return {
-      label: pair[1].name,
+      text: pair[1].name,
       value: pair[1].name
     }
   });
@@ -39,12 +63,13 @@ const Blogs = () => {
   const fetchTags = async() => {
     const response = await apiGetAllPostTags();
     if(response?.success){
-      const tagOptions = response?.tags.map((tag) => ({
-        label: tag.label,
-        value: tag.label
-      })) || [];
-      setTags(tagOptions)
+      if(response?.success){
+        setTags(response?.tags)
+      }
     }
+
+    const resp = await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
+    console.log(resp.blogs);
   }
   useEffect(() => {
     fetchTags();
@@ -52,31 +77,41 @@ const Blogs = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [currBlogList, setCurrBlogList] = useState([]);
-  const fetchCurrentBlogList = async (search, selectedTags) => {
+
+  const fetchCurrentBlogList = async () => {
     setIsLoading(true);
-    let response = await apiGetAllBlogs({ title: searchTerm,  limit: process.env.REACT_APP_LIMIT, sortBy: selectedSort, provinces: provinceFilter });
+    // let response = await apiSearchBlogByParams({
+    //   searchTerm,
+    //   pageSize: parseInt(process.env.REACT_APP_LIMIT),
+    //   selectedSort,
+    //   selectedTags,
+    //   page: 1
+    // });
+    let response = await await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
     if(response?.success && response?.blogs){
+      console.log('>>>>>>>>>>>>>>', response.blogs.length);
       setCurrBlogList(response.blogs);
-      setIsLoading(false);
+      setCounts(response.counts);
     }
     else {
-
+      Swal.fire("Error Occured!", "Cannot fetch Blog Data", "error");
     }
+    setIsLoading(false);
   }
-  useEffect(() => {
-    fetchCurrentBlogList();
-  }, [selectedSort,provinceFilter]);
+  // useEffect(() => {
+  //   fetchCurrentBlogList();
+  // }, [selectedSort, selectedTags, searchTerm]);
 
   const fetchTopTags = async () => {
     // setIsLoading(true);
-    let response = await apiGetTopTags({ limit: 5 });
-    if(response?.success && response?.tags){
-      setTopTags(response.tags);
-      // setIsLoading(false);
-    }
-    else {
+    // let response = await apiGetTopTags({ limit: 5 });
+    // if(response?.success && response?.tags){
+    //   setTopTags(response.tags);
+    //   // setIsLoading(false);
+    // }
+    // else {
 
-    }
+    // }
   }
   useEffect(() => {
     fetchTopTags();
@@ -106,150 +141,150 @@ const Blogs = () => {
       setIsLoading(false);
     }
     else {
-      Swal.fire('Error Ocurred!!', 'Cannot Find Post Blogs!!', 'error');
+      Swal.fire('Error Ocurred!!', 'Cannot Find Blogs!!', 'error');
       setIsLoading(false);
     }
-  }, [searchTerm]);
-  const multiSearchBySelectedTags = useCallback(async () => {
-    let response = await apiSearchBlogByParams({ selectedTags })
+  }, [searchTerm, selectedTags, selectedSort])
+  // const multiSearchBySelectedTags = useCallback(async () => {
+  //   let response = await apiSearchBlogByParams({ selectedTags, selectedSort, searchTerm });
 
-    if (response && response.success) {
-      setCurrBlogList(response.blogs);
-      setIsLoading(false);
-    }
-    else {
-      Swal.fire('Error Ocurred!!', 'Cannot create new Post Tag!!', 'error');
-      setIsLoading(false);
-    }
-  }, [selectedTags]);
+  //   if (response && response.success) {
+  //     setCurrBlogList(response.blogs);
+  //     setIsLoading(false);
+  //   }
+  //   else {
+  //     Swal.fire('Error Ocurred!!', 'Cannot create new Post Tag!!', 'error');
+  //     setIsLoading(false);
+  //   }
+  // }, [selectedTags]);
 
+  
+  const {register,formState:{errors}, handleSubmit, watch} = useForm()
+  const [selectedTag, setSelectedTag] = useState(null);
+
+  // console.log(currBlogList)
   return (
-    <div className='w-main mb-8'>
-    <div className='w-full flex gap-4 mt-2 mb-8'>
-      <img src="https://www.benchcraftcompany.com/images/CG5_size.jpg"
-          className='flex-1 h-[220px] w-[160px] object-cover'
-      />
-      <img src="https://www.benchcraftcompany.com/images/CG1_size.jpg"
-          className='flex-1 h-[220px] w-[160px] object-cover'
-      />
-    </div>
-    <div className='w-full flex flex-row'>
-      <div className='w-2/3 flex flex-col'>
-        <h2 className='text-xl font-semibold py-[15px] border-b-2 border-main'>Trending Blogs</h2>
-        <div className='w-2/3 p-6 bg-slate-300 m-3 rounded-md flex gap-4'>
-          <Select
-              title='Sort By'
-              label='Sort By'
-              id='sort_by'
-              errors={{}}
-              register={(a,b)=>{}}
-              options={[ {label:'Date Created',value:1}, {label:'Like',value:2}, {label:'Dislikes',value:3}]}
-              onChangee={handleSelectSortByChange}
-              values={selectedSort}
-          />
-          <MultiSelect
-              title='From Province'
-              label='From Province'
-              id='from_province'
-              options={provinces}
-              onChangee={handleSelectProvinceFilterChange}
-              values={provinceFilter}
-          />
-        </div>
+    <div className='w-main mb-8 mt-4 flex flex-col gap-4 overflow-y-auto'>
+      <div className="grid grid-cols-4 gap-4">
+          <div className='col-span-4 flex justify-center items-center gap-2'>
+            <InputFormm
+              id='q'
+              register={register}
+              errors={errors}
+              fullWidth
+              placeholder= 'Search blog by title name, tag ...'
+              style={'w-full bg-[#f4f6fa] min-h-10 rounded-md pl-2 flex items-center'}
+              styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
+              onChange={(event) => {setSearchTerm(event.target.value)}}
+            >
+            </InputFormm>
 
-        {currBlogList && currBlogList.map(
-          blog => {
-            return (
-              <div className='post-item flex flex-row justify-start p-5 hover:bg-slate-300 rounded-md gap-5 m-2'
-              onClick={() => {handleChooseBlogPost(blog?._id);}}>
-                <img src={blog?.thumb} className='gap-0.5 w-1/2 mr-5'/>
-                <div>
-                  <h3 className="font-bold text-red-500 text-lg mb-2">{blog?.title || 'Title'}</h3>
-                  <h5 className="font-semibold text-md flex mb-4"><FaLocationArrow />&nbsp;&nbsp;{blog?.provider_id?.province || 'Location'}</h5>
-                  {/* <span> */}
-                    <div className="flex flex-row justify-start gap-2 mb-4"><FaRegThumbsUp /> {blog?.likes?.length || 0}&nbsp;&nbsp;&nbsp;<FaRegThumbsDown /> {blog?.dislikes?.length || 0}</div>
-                    {/* <h5 className="font-semibold text-md"><</h5> */}
-                  {/* </span> */}
-                  <br></br>
-                  {/* {blog?.content?.length > 0 
-                  &&
-                  <div className='text-sm line-clamp-[10] mb-8' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(blog?.content[0])}}></div>} */}
+            <span className='flex'>
+              <FaSortAmountDown />
+              <NewInputSelect value={selectedSort} options={sortOptions} changeValue={(value) => {setSelectedSort(value);}} />
+            </span>
 
-                  <div className='flex flex-wrap'>
-                    {blog?.tags.map(label =>
-                        (<div className='bg-green-400 p-2 m-1 rounded-full w-fit'>
-                          {label}
-                        </div>)
-                    )}
-                  </div>
+            <Button
+              handleOnclick={() => { console.log('::::::::::::'); fetchCurrentBlogList();}}
+            >
+              <span className="flex justify-center gap-2 items-center">
+                <FaSearch /><span>Search</span>
+              </span>
+            </Button>
+          </div>
+
+          <div className="col-span-3 max-h-[500px] overflow-y-auto scrollbar-thin">
+
+          {currBlogList?.length &&
+              <Pagination totalCount={counts}/>}
+    
+            <div className="space-y-6 mt-3">
+              {currBlogList.length === 0 ? (
+                <div className="bg-white rounded-lg shadow-md p-6 text-center">
+                  <p className="text-gray-600">No blog posts found matching your search criteria.</p>
                 </div>
+              ) : (
+                currBlogList.map((blog) => (
+                  <div
+                    onClick={() => handleChooseBlogPost(blog?._id)}
+                    key={blog.id}
+                    className="cursor-pointer bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:transform hover:scale-[1.02]"
+                  >
+                    <div className="md:flex">
+                      <div className="md:flex-shrink-0">
+                        <img
+                          className="h-48 w-full md:w-48 object-cover"
+                          src={blog.thumb}
+                          alt={blog.title}
+                        />
+                      </div>
+                      <div className="p-6">
+                        <div className="flex items-center space-x-4 mb-2">
+                          <div className="flex items-center text-gray-500">
+                            <FiUser className="h-4 w-4 mr-1" />
+                            <span className="text-sm">{`${blog?.author?.lastName} ${blog?.author?.firstName}`}</span>
+                          </div>
+                          <div className="flex items-center text-gray-500">
+                            <FiClock className="h-4 w-4 mr-1" />
+                            <span className="text-sm">
+                              {formatDistanceToNow(new Date(blog?.createdAt), { addSuffix: true })}
+                            </span>
+                          </div>
+                          <div className="flex items-center text-gray-500">
+                            <FiEye className="h-4 w-4 mr-1" />
+                            <span className="text-sm">{blog?.numberView}</span>
+                          </div>
+                        </div>
+                        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                          {blog.title}
+                        </h2>
+                        <p className="text-gray-600 mb-4">{blog.excerpt}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {blog.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800"
+                            >
+                              <FiTag className="h-3 w-3 mr-1" />
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+            <div className='w-main m-auto my-4 flex justify-end'>
+            </div>
+          </div>
+
+          {/* Tags - Right Side */}
+          <div className="col-span-1">
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Top Tags</h2>
+              <div className="flex flex-wrap gap-2">
+                {tags.map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() =>
+                      setSelectedTag(selectedTag === tag?.label ? null : tag?.label)
+                    }
+                    className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 ${
+                      selectedTag === tag?.label
+                        ? "bg-indigo-600 text-white"
+                        : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                    }`}
+                  >
+                    <FiTag className="h-3 w-3 mr-1" />
+                    {tag?.label}
+                  </button>
+                ))}
               </div>
-            )
-          }
-        )}
-
-        {/* <div className='post-item flex flex-row justify-center p-5'>
-          <img src='#'  className='gap-0.5'/>
-          <h3 className='ml-5'>title 2</h3>
-        </div>
-        <div className='post-item flex flex-row justify-center p-5'>
-          <img src='#'/>
-          <h3 className='ml-5'>title 3</h3>
-        </div> */}
-      </div>
-
-      <div className='w-1/3 flex flex-col gap-4 justify-items-center justify-start items-center border-l-2 border-main pl-5'>
-        <div className="relative flex items-left h-12 rounded-lg focus-within:shadow-lg bg-white overflow-hidden border-2 w-full">
-          <div class="grid place-items-center h-full w-12 text-gray-200">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-          </div>
-
-          <input
-          class="peer h-full outline-none text-sm text-gray-700 pr-2"
-          style={{width:'90%'}}
-          type="text"
-          id="search"
-          placeholder="Find Title, Service Provider......"
-          onInput={(e) => {setSearchTerm(e.target.value)}}
-          value={searchTerm}/>
-        </div>
-        {searchTerm?.length > 0 && <Button style='px-2 rounded-md text-white bg-blue-500 font-semibold h-fit py-2 w-fit' handleOnclick={multiSearchByTerm}>Search Keyword</Button>}
-
-        <div className='w-full my-6 flex gap-4 relative' style={{zIndex:88}}>
-          <MultiSelect
-            title='Tags Of Post'
-            label='Tags Of Post'
-            id='assigned_tags'
-            options={tags}
-            onChangee={handleSelectTagChange}
-            values={selectedTags}
-          />
-          <div className='flex flex-wrap'>
-            {selectedTags?.length > 0 && <Button style='px-2 rounded-md text-white bg-blue-500 font-semibold h-fit py-2 w-fit absolute -bottom-10' handleOnclick={multiSearchBySelectedTags}>Use Select Tags</Button>}
+            </div>
           </div>
         </div>
-
-        <div className="p-2 text-center text-white bg-red-500 text-semibold w-1/2 rounded-md">Top Search:</div>
-        <div className="w-2/3 flex flex-wrap gap-4">
-        {
-          topTags?.length && topTags.map(tag =>
-            (<div className="p-2 text-center text-white bg-slate-600 text-semibold w-fit rounded-md">{tag?.label}</div>)
-          )
-        }
-        </div>
-        {/* <div className="p-2 text-center text-white bg-slate-600 text-semibold w-2/3 rounded-md">Nha Hang Gan Toi</div>
-        <div className="p-2 text-center text-white bg-slate-600 text-semibold w-2/3 rounded-md">Spa Khuyen Mai</div>
-        <div className="p-2 text-center text-white bg-slate-600 text-semibold w-2/3 rounded-md">Gym Gia Tot</div> */}
-
-      </div>
-      {isLoading && (
-        <div className='flex justify-center z-50 w-full h-full fixed top-0 left-0 items-center bg-overlay'>
-            <HashLoader className='z-50' color='#3B82F6' loading={isLoading} size={80} />
-        </div>
-      )}
-    </div>
     </div>
   )
 }

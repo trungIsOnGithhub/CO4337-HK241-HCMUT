@@ -1,27 +1,23 @@
 import React, {useEffect, useState, useCallback} from 'react'
 import { useParams, useSearchParams, createSearchParams, useNavigate } from 'react-router-dom'
-import { apiSearchServiceAdvanced, apiSearchServicePublic } from '../../apis'
-import { Breadcrumb, Service, SearchItemService, InputSelect, Pagination, InputField} from '../../components'
-import Masonry from 'react-masonry-css'
+import { apiSearchServiceAdvanced, apiSearchServicePublic, apiGetServicePublic } from '../../apis'
+// import { Breadcrumb, Service, SearchItemService, InputSelect, Pagination, InputField} from '../../components'
+// import Masonry from 'react-masonry-css'
+import { useParams, useSearchParams, createSearchParams, useNavigate} from 'react-router-dom'
+import { Breadcrumb, Service, SearchItemService, NewInputSelect, InputSelect, Pagination, InputField} from '../../components'
 import { sorts } from '../../ultils/constant'
 import clsx from 'clsx'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import withBaseComponent from 'hocs/withBaseComponent'
 import { getCurrent } from 'store/user/asyncAction'
 import { tinh_thanhpho } from 'tinh_thanhpho'
 import { apiModifyUser } from '../../apis/user'
 import Swal from "sweetalert2";
+import { FaSortAmountDown, FaMoneyCheckAlt, FaCubes  } from "react-icons/fa";
 
-const breakpointColumnsObj = {
-  default: 4,
-  1100: 3,
-  700: 2,
-  500: 1
-};
-
-const REACT_APP_PAGINATION_LIMIT_DEFAULT = 8;
-const Services = ({dispatch}) => {
+const Services = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [services, setServices] = useState(null)
   const [active, setActive] = useState(null)
   const [params, setParams] = useSearchParams();
@@ -74,6 +70,9 @@ const Services = ({dispatch}) => {
       if(response.success) setServices(response?.services || []);
     }
 
+    response = await apiGetServicePublic(queries)
+    console.log(response)
+    if(response.success) setServices(response)
     dispatch(getCurrent())
   }
 
@@ -189,7 +188,6 @@ const Services = ({dispatch}) => {
   // }, [sort]);
 
   useEffect(() => {
-    console.log('Search Filter: ', searchFilter, '++++');
   }, [searchFilter])
 
   const handleGetDirections = () => {
@@ -205,7 +203,6 @@ const Services = ({dispatch}) => {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(async (position) => {
             const { latitude, longitude } = position.coords;
-            // console.log(latitude, longitude);
             await apiModifyUser({ lastGeoLocation: {
               type: "Point",
               coordinates: [longitude, latitude]
@@ -237,20 +234,43 @@ const Services = ({dispatch}) => {
           <Breadcrumb category={category} />
         </div>
       </div>
-      <div className='w-main border p-4 flex justify-start m-auto mt-8'>
+      <div className='w-main p-2 flex justify-start m-auto mt-8'>
         <div className='flex-auto flex flex-col gap-3'>
-          <span className='font-semibold text-sm'>Filter by:</span>
+          {/* <span className='font-semibold text-sm'>Filter by:</span> */}
           <div className='flex items-center gap-4'>
-          <SearchItemService name='price' activeClick={active} changeActiveFilter={changeActive} type='input'/>
-          <SearchItemService name='category' activeClick={active} changeActiveFilter={changeActive}/>
+            <FaMoneyCheckAlt />
+            <SearchItemService name='price' activeClick={active} changeActiveFilter={changeActive} type='input'/>
+            <FaCubes />
+            <SearchItemService name='category' activeClick={active} changeActiveFilter={changeActive}/>
+            <FaSortAmountDown />
+            <NewInputSelect value={sort} options={sorts} changeValue={changeValue} />
+
+            <div className='flex justify-start m-auto'>
+                {/* <span className='font-semibold text-sm p-5'>Search By:</span> */}
+                {/* <div className='w-full'> */}
+                <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} />
+                <span className='font-semibold text-sm p-5'>Near Me Search:</span>
+                <input className='ml-3 p-5' onInput={() => {handleGetDirections()}} type="checkbox"/>
+                { nearMeOption && 
+                  <>
+                    <span className='font-semibold text-sm p-3'>Province:</span>
+                    <InputSelect
+                      value={searchFilter?.province}
+                      options={Object.entries(tinh_thanhpho).map(ele => { return {id:ele[0], text:ele[1]?.name, value:ele[0]}})}
+                      changeValue={(value) => {console.log(value); setSearchFilter(function(prev) {return {...prev, province: value};}) }}
+                    />
+                  </>
+                }
+                { nearMeOption && <InputField nameKey='maxDistance' value={searchFilter.maxDistance} setValue={setSearchFilter} placeholder={"Maximum Distance(optional)"} /> }
+                {/* </div> */}
+            </div>
           </div>
         </div>
-        <div className='flex flex-col gap-3'>
-          <span className='font-semibold text-sm'>Sort by:</span>
-          <div className='w-full'> 
-            <InputSelect value={sort} options={sorts} changeValue={changeValue} />
+        {/* <div className='flex flex-col gap-3'>
+          <div className='w-full'>
+
           </div>
-        </div>
+        </div> */}
       </div>
       <div className='w-main border p-4 flex justify-start m-auto mt-8'>
           <span className='font-semibold text-sm p-5'>Search By:</span>
@@ -281,7 +301,7 @@ const Services = ({dispatch}) => {
               <InputSelect
                 value={searchFilter?.province}
                 options={Object.entries(tinh_thanhpho).map(ele => { return {id:ele[0], text:ele[1]?.name, value:ele[0]}})}
-                changeValue={(value) => {console.log(value); setSearchFilter(function(prev) {return {...prev, province: value};}) }}
+                changeValue={(value) => {setSearchFilter(function(prev) {return {...prev, province: value};}) }}
               />
             </>
           }
@@ -299,42 +319,12 @@ const Services = ({dispatch}) => {
           }
           {/* </div> */}
         </div>
-      <div className={clsx('mt-8 w-main m-auto', isShowModal ? 'hidden' : '')}>
-        <Masonry
-          breakpointCols={breakpointColumnsObj}
-          className="my-masonry-grid flex mx-[-10px]"
-          columnClassName="my-masonry-grid_column">
-          {
-          // useAdvanced ?
-            services?.map(el => (
-              <Service 
-                key={el?._source.id} 
-                serviceData={el._source}
-                normal={true}
-              />
-            // <h1>{`---->${el?._source.name} - ${el?._source.price}`}</h1>
-            ))
-            // :
-            // (services?.map(el => (
-            //   <Service 
-            //     key={el.id} 
-            //     serviceData={el}
-            //     normal={true}
-            //   />
-            //   // <h1>{`---->${el?._source.name} - ${el?._source.price}`}</h1>
-            // )))
-          }
-          <h1 className='py-5'>----------------------</h1>
-          {/* {services?.services?.map(el => (
-            <Service 
-              key={el.sv._id}   
-              serviceData={el.sv}
-              pid= {el.sv._id}
-              normal={true}
-              clientDistance={el?.clientDistance}
-            />
-          )) || "Your Search Result Here..."} */}
-        </Masonry>
+      <div className={clsx('mt-8 w-main m-auto flex gap-4 flex-wrap', isShowModal ? 'hidden' : '')}>
+        {services?.services?.map((service, index) => (
+          <div key={index} className='w-[32%]'>
+            <Service serviceData={service}/>
+          </div>
+        ))}
       </div>
       <div className='w-main m-auto my-4 flex justify-end'>
       {
@@ -348,4 +338,4 @@ const Services = ({dispatch}) => {
   )
 }
 
-export default withBaseComponent(Services)
+export default Services

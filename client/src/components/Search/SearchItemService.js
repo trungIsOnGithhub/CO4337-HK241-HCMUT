@@ -5,6 +5,7 @@ import path from '../../ultils/path'
 import { apiGetProduct } from '../../apis'
 import useDebounce from '../../hook/useDebounce'
 import { useSelector } from 'react-redux'
+
 const {FaCaretDown} = icons
 const SearchItemService = ({name, activeClick, changeActiveFilter, type='checkbox'}) => {
 
@@ -90,8 +91,8 @@ const SearchItemService = ({name, activeClick, changeActiveFilter, type='checkbo
   return (
     <div 
     onClick={()=>changeActiveFilter(name)}
-    className='cursor-pointer text-gray-500  p-3 text-xs relative border border-gray-800 flex gap-6 justify-between items-center'>
-        <span className='capitalize'>{name}</span>
+    className='cursor-pointer bg-slate-100 p-1 text-xs relative border border-slate-600 flex gap-6 justify-center items-center rounded-lg border-2 border-slate-500'>
+        <span className='text-base text-center'>{name}</span>
         <FaCaretDown />
         {activeClick === name && <div className='absolute z-10 top-[calc(100%+1px)] left-0 w-fit p-4 border bg-white min-w-[150px]'>
             {type === 'checkbox' && 
@@ -104,7 +105,7 @@ const SearchItemService = ({name, activeClick, changeActiveFilter, type='checkbo
                     e.stopPropagation() 
                     setSelected([])
                     changeActiveFilter(null)
-                    }} className='cursor-pointer underline hover:text-main'>Reset</span>
+                    }} className='cursor-pointer underline hover:text-[#0a66c2]'>Reset</span>
                 </div>
                 <div onClick={e=> e.stopPropagation()} className='flex flex-col gap-3 mt-4'>
                 {
@@ -130,7 +131,7 @@ const SearchItemService = ({name, activeClick, changeActiveFilter, type='checkbo
                     e.stopPropagation() 
                     setPrice({from:'',to:''})
                     changeActiveFilter(null)
-                    }} className='cursor-pointer underline hover:text-main'>Reset</span>
+                    }} className='cursor-pointer underline hover:text-[#0a66c2]'>Reset</span>
                 </div>
                 <div className='flex items-center p-2 gap-2'>
                   <div className='flex items-center gap-2'>

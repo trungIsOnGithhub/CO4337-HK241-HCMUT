@@ -1,10 +1,11 @@
-import { Button, InputForm, Loading, MarkdownEditor, Select } from 'components'
+import { Button, InputForm, Loading, MarkdownEditor, Select, InputFormm } from 'components'
 import React, { memo, useCallback, useEffect, useState} from 'react'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import { validate, getBase64 } from 'ultils/helper'
 import {apiModifyStaff} from 'apis/staff'
+import bgImage from '../../assets/clouds.svg';
 import { showModal } from 'store/app/appSlice'
 
 const UpdateStaff = ({editStaff, render, setEditStaff}) => {
@@ -75,63 +76,84 @@ const UpdateStaff = ({editStaff, render, setEditStaff}) => {
   }
 
   return (
-    <div className='w-full'>
-        <h1 className='h-[75px] flex justify-between items-center text-3xl font-bold px-4 border-b'>
-          <span>Update Staff</span>
-          <span className='text-main text-lg hover:underline cursor-pointer' onClick={()=>setEditStaff(null)}>Cancel</span>
-        </h1>
+    <div className='w-full h-full relative'>
+    <div className='inset-0 absolute z-0'>
+      <img src={bgImage} className='w-full h-full object-cover'/>
+    </div>
+    <div className='relative z-10 w-full'>
+      <div className='w-full h-fit flex justify-start gap-4 p-4'>
+        <span className='text-[#00143c] text-3xl h-fit font-semibold'>Update Staff</span>
+        <span className='text-[#0a66c2] text-lg hover:underline cursor-pointer bg-red-500 rounded-md p-2' onClick={()=>setEditStaff(null)}>Back to Manage</span>
+      </div>
         <div className='p-4 '>
         <form onSubmit={handleSubmit(handleUpdateStaff)}>
           <div className='w-full my-6 flex gap-4'>
-            <InputForm
-              label = 'First Name'
-              register={register}
-              errors={errors}
-              id = 'firstName'
-              validate = {{
+          <InputFormm
+            label='First Name'
+            register={register}
+            errors={errors}
+            id='firstName'
+            validate={{
                 required: 'Need fill this field'
-              }}
-              style='flex-auto'
-              placeholder='First Name'
-            />
-            <InputForm 
-              label = 'Last Name'
-              register={register}
-              errors={errors}
-              id = 'lastName'
-              validate = {{
+            }}
+            style='flex-auto'
+            placeholder='First Name ...'
+            styleLabel={'text-[#00143c] font-medium mb-1'}
+            styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none rounded-md border-[#dee1e6]'}
+        />
+
+        <InputFormm
+            label='Last Name'
+            register={register}
+            errors={errors}
+            id='lastName'
+            validate={{
                 required: 'Need fill this field'
-              }}
-              style='flex-auto'
-              placeholder='Last Name'
-            />
+            }}
+            style='flex-auto'
+            placeholder='First Name ...'
+            styleLabel={'text-[#00143c] font-medium mb-1'}
+            styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none rounded-md border-[#dee1e6]'}
+        />
           </div>
           <div className='w-full my-6 flex gap-4'>
-            <InputForm 
-              label = 'Email Address'
-              register={register}
-              errors={errors}
-              id = 'email'
-              validate = {{
-                required: 'Need fill this field'
-              }}
-              style='flex-auto'
-              placeholder='Email Address'
-            />
-            <InputForm 
-              label = 'Phone Number'
-              register={register}
-              errors={errors}
-              id = 'mobile'
-              validate = {{
-                required: 'Need fill this field'
-              }}
-              style='flex-auto'
-              placeholder='Phone Number'
-            />
+          <InputFormm
+            label='Email Address'
+            register={register}
+            errors={errors}
+            id='email'
+            validate={{
+                required: 'Require fill', 
+                pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "invalid email address"
+                }
+            }} 
+            style='flex-auto'
+            placeholder='Email Address ...'
+            styleLabel={'text-[#00143c] font-medium mb-1'}
+            styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none rounded-md border-[#dee1e6]'}
+        />
+        <InputFormm
+            label='Phone Number'
+            register={register}
+            errors={errors}
+            id='mobile'
+            validate={{
+                required: 'Require fill', 
+                pattern: {
+                    value: /^((\+)33|0)[1-9](\d{2}){4}$/,
+                    message: "invalid phone number"
+                }
+            }} 
+            style='flex-auto'
+            placeholder='Phone Number ...'
+            styleLabel={'text-[#00143c] font-medium mb-1'}
+            styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none rounded-md border-[#dee1e6]'}
+        />
           </div>
 
-          <div className='flex flex-col gap-2 mt-8'>
+          <div className='flex flex-col gap-2 mt-8 text-gray-600'>
             <label className='font-semibold' htmlFor='avatar'>Upload Avatar</label>
             <input 
               {...register('avatar')}
@@ -155,6 +177,7 @@ const UpdateStaff = ({editStaff, render, setEditStaff}) => {
           </div>
         </form>
       </div>
+    </div>
     </div>
   )
 }

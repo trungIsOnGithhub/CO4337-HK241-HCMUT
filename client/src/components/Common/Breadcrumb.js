@@ -13,7 +13,7 @@ const Breadcrumb = ({name, category}) => {
     return (
       <div className='text-sm flex items-center gap-1'>
         {breadcrumbs?.filter(el => !el.match.route === false).map(({ match, breadcrumb },index, self) => (
-          <Link className='flex gap-1 items-center hover:text-main' key={match.pathname} to={match.pathname}>
+          <Link className='flex gap-1 items-center hover:text-[#0a66c2]' key={match.pathname} to={match.pathname}>
             <span className='capitalize'>
               {breadcrumb} 
             </span>

@@ -6,6 +6,8 @@ import { useDispatch, useSelector} from 'react-redux'
 import icons from '../../ultils/icon'
 import { logout, clearMessage } from '../../store/user/userSlice'
 import Swal from 'sweetalert2'
+import Button from 'components/Buttons/Button'
+import logoWeb from '../../assets/logoWeb.png'
 
 const {MdLogout} = icons
 const Top_Header = () => {
@@ -32,22 +34,22 @@ const Top_Header = () => {
   
   
   return (
-    <div className='h-[38px] w-full bg-main flex items-center justify-center'>
-        <div className='w-main flex items-center justify-between text-xs text-white'>
-            <span className=''>ORDER ONLINE OR CALL US (+1800) 000 8808</span>
+    <div className='w-full flex items-center justify-center h-[60px] py-2 px-6 sticky top-0 z-50 bg-white'>
+        <div className='w-main flex items-center justify-between text-xs text-[#0a66c2] '>
+            <Link to={`/${path.HOME}`} className='flex items-center py-2 gap-1 justify-center'>
+                <img src={logoWeb} className='w-12 h-12'/>
+                <span className='font-semibold text-4xl mb-1'>Biz<span className='text-blue-500'>Serv</span></span>
+            </Link>
             {isLogin && current
             ?
             <div className='flex gap-4 text-sm items-center'>
               <span>
                 {`Hello, ${current?.lastName} ${current?.firstName}`}
               </span>
-              {/* <span 
-                onClick={() => dispatch(logout())}
-                className='hover:rounded-full hover:bg-gray-200 hover:text-main cursor-pointer p-2'>
-                <MdLogout size={18}/>
-              </span> */}
-            </div>: 
-            <Link className='hover:text-gray-700' to={`/${path.LOGIN}`}>Sign In or Create Account</Link>}
+            </div>
+            : 
+            <Button style={'px-6 py-2 rounded-l-full rounded-r-full bg-white border-2 border-[#0a66c2] text-[#0a66c2]  hover:bg-[#0a66c2] hover:text-white transition-colors text-sm'} handleOnclick={() => navigate(`/${path.LOGIN}`)}>Sign In</Button>
+            }
         </div>
     </div>
   )

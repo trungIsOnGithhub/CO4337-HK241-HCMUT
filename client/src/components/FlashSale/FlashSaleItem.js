@@ -28,7 +28,7 @@ const FlashSaleItem = ({flashsaleData}) => {
   }, []);
 
   return (
-    <div className={`w-full mx-auto bg-white rounded-xl shadow-md overflow-hidden m-4 transition-all duration-300 ease-in-out transform hover:scale-105 z-[1000] border cursor-pointer ${isFlashing ? "border-main" : "border-gray-600"}`}>
+    <div className={`w-full mx-auto bg-white rounded-xl shadow-md overflow-hidden m-4 transition-all duration-300 ease-in-out transform hover:scale-105 z-[1000] border cursor-pointer ${isFlashing ? "border-[#0a66c2]" : "border-gray-600"}`}>
       <div className={`md:flex items-center p-2 gap-2`}>
         <div className="md:flex-shrink-0">
           <img
@@ -40,7 +40,7 @@ const FlashSaleItem = ({flashsaleData}) => {
         <div className="px-2 py-1 flex flex-1 flex-col items-center gap-1">
           <div
             className={`text-xl font-bold text-right ${
-              isFlashing ? "text-main" : "text-gray-600"
+              isFlashing ? "text-[#0a66c2]" : "text-gray-600"
             }`}
           >
             FLASH SALE
@@ -53,10 +53,10 @@ const FlashSaleItem = ({flashsaleData}) => {
           </h2>
           <div className="flex gap-1 items-center">
             <span className="text-gray-500 line-through mr-2 text-sm">{` ${formatPrice(formatPricee(flashsaleData?.serviceOriginalPrice))} VNĐ`}</span>
-            <div className='text-sm font-semibold w-fit text-white bg-main px-2 rounded-md'>{flashsaleData?.type === 'percentage' ? `- ${flashsaleData?.value}%` : `- ${flashsaleData?.value}VNĐ`}</div>
+            <div className='text-sm font-semibold w-fit text-white bg-[#0a66c2] px-2 rounded-md'>{flashsaleData?.type === 'percentage' ? `- ${flashsaleData?.value}%` : `- ${flashsaleData?.value}VNĐ`}</div>
           </div>
           <div>
-            <span className="text-base font-bold text-main">{` ${formatPrice(formatPricee(flashsaleData?.serviceFlashSalePrice))} VNĐ`}</span>
+            <span className="text-base font-bold text-[#0a66c2]">{` ${formatPrice(formatPricee(flashsaleData?.serviceFlashSalePrice))} VNĐ`}</span>
           </div>
         </div>
       </div>

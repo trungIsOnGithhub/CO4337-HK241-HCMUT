@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react'
-import { InputForm, Pagination} from 'components'
+import { InputForm, InputFormm, Pagination} from 'components'
 import { useForm } from 'react-hook-form'
 import { apiGetProductByAdmin, apiDeleteProduct} from 'apis/product'
 import moment from 'moment'
@@ -10,6 +10,9 @@ import icons from 'ultils/icon'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
 import { VariantProduct } from '.'
+import bgImage from '../../assets/clouds.svg'
+import { FaCirclePlus } from 'react-icons/fa6'
+import { FaPlus } from 'react-icons/fa'
 
 
 const ManageProduct = () => {
@@ -22,8 +25,6 @@ const ManageProduct = () => {
   const [counts, setCounts] = useState(0)
   const [editProduct, setEditProduct] = useState(null)
   const [update, setUpdate] = useState(false)
-  const [variant, setVariant] = useState(null)
-  const [showProductName, setShowProductName] = useState(null)
   const handleDeleteProduct = async(pid) => {
     Swal.fire({
       title: 'Are you sure',
@@ -48,9 +49,6 @@ const ManageProduct = () => {
   const render = useCallback(() => { 
     setUpdate(!update)
    })
-
-  const handleSearchProduct = (data) => {
-  }
 
   const fetchProduct = async(params) => {
     const response = await apiGetProductByAdmin({...params, limit: process.env.REACT_APP_LIMIT})
@@ -80,96 +78,121 @@ const ManageProduct = () => {
       })
     }
   }, [queryDebounce])
+
+  const data = [
+    {
+        cate: 'Hairstylist',
+        color: 'rgba(255, 0, 0, 0.5)' // Màu đỏ
+    },
+    {
+        cate: 'Barber',
+        color: 'rgba(0, 255, 0, 0.5)' // Màu xanh lá cây
+    },
+    {
+        cate: 'Nail',
+        color: 'rgba(0, 0, 255, 0.5)' // Màu xanh dương
+    },
+    {
+        cate: 'Makeup',
+        color: 'rgba(255, 255, 0, 0.5)' // Màu vàng
+    },
+    {
+        cate: 'Tattoo',
+        color: 'rgba(255, 0, 255, 0.5)' // Màu tím
+    },
+    {
+        cate: 'Massage',
+        color: 'rgba(0, 255, 255, 0.5)' // Màu cyan
+    },
+    {
+        cate: 'Gym',
+        color: 'rgba(255, 128, 0, 0.5)' // Màu cam
+    },
+    {
+        cate: 'Yoga',
+        color: 'rgba(128, 0, 255, 0.5)' // Màu violet
+    },
+    {
+        cate: 'Fitness',
+        color: 'rgba(255, 128, 128, 0.5)' // Màu hồng
+    }
+  ];
+
+
+  const getColorByCategory = (category) => {
+    const item = data.find(el => el.cate === category);
+    return item ? item.color : 'rgba(0, 0, 0, 0.1)'; // Màu mặc định nếu không tìm thấy
+  };
+
+  const handleNavigateAddVariant = (productId) => {
+    navigate(`/admin/add_variant_product/${productId}`)
+  }
   
   return (
-    <div className='w-full flex flex-col gap-4 relative'>
-      {editProduct &&  
-      <div className='absolute inset-0 bg-zinc-900 h-fit z-50 flex-auto'>
-        <UpdateProduct editProduct={editProduct} render={render} setEditProduct={setEditProduct}/>
-      </div>}
-
-      {variant &&  
-      <div className='absolute inset-0 bg-zinc-900 h-[200%] z-50 flex-auto'>
-        <VariantProduct variant={variant} render={render} setVariant={setVariant}/>
-      </div>}
-
-      <div className='h-[69px] w-full'>
+    <div className="w-full h-full relative">
+      <div className='inset-0 absolute z-0'>
+        <img src={bgImage} className='w-full h-full object-cover'/>
       </div>
-      <div className='p-4 border-b w-full flex justify-between items-center fixed top-0 bg-black'>
-        <h1 className='text-3xl font-bold tracking-tight'>ManageProduct</h1>
-      </div>
-
-      <div className='flex w-full justify-end items-center px-4 '>
-        <form className='w-[45%]' onSubmit={handleSubmit(handleSearchProduct)}>
-          <InputForm
-            id='q'
-            register={register}
-            errors={errors}
-            fullWidth
-            placeholder= 'Search product by title, description ...'
-          >
-            
-          </InputForm>
-        </form>
-      </div>
-      <table className='table-auto p-0'>
-        <thead className='font-bold bg-blue-500 text-[13px] text-white'>
-          <tr className='border border-gray-500'>
-            <th className='text-center py-2'>#</th>
-            <th className='text-center py-2'>Product</th>
-            <th className='text-center py-2'>Category</th>
-            <th className='text-center py-2'>Price</th>
-            <th className='text-center py-2'>Quantity</th>
-            <th className='text-center py-2'>Sold</th>
-            <th className='text-center py-2'>Color</th>
-            <th className='text-center py-2'>Ratings</th>
-            <th className='text-center py-2'>Vatiants</th>
-            <th className='text-center py-2'>Update</th>
-            <th className='text-center py-2'>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products?.map((el,idx)=>(
-            <tr key={el._id} className='border border-gray-500'>
-              <td className='text-center py-2'>{((+params.get('page')||1)-1)*+process.env.REACT_APP_LIMIT + idx + 1}</td>
-              <td className='text-center py-2'>
-                <div className='flex flex-col gap-2 font-semibold ml-5 pl-10 cursor-pointer relative' 
-                    onMouseEnter={() => setShowProductName(el?._id)}
-                    onMouseLeave={() => setShowProductName(null)}>
-                  <img src={el.thumb} alt='thumb' className='w-14 h-14 rounded-md object-cover border-2 border-gray-600 shadow-inner'></img>
-                {showProductName === el?._id && (
-                  <div className='absolute bg-white border-2 border-gray-400 shadow-sm p-2 top-14 left-10 rounded-md flex gap-4 z-50'>
-                    <div className='flex flex-col text-gray-700 w-[200px]'>
-                      <div><strong>Name:</strong> {el?.title}</div>
-                    </div>
+      <div className="relative z-10"> {/* Thêm lớp này để đảm bảo dòng chữ không bị che mất */}
+        <div className='w-full h-24 flex justify-between p-4'>
+          <span className='text-[#00143c] text-3xl font-semibold'>Manage Products</span>
+        </div>
+        <div className='w-[95%] h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
+          <div className='w-full h-fit flex justify-between items-center'>
+            <h1 className='text-[#00143c] font-medium text-[16px]'>{`All Products (${counts})`}</h1>
+            <form className='w-[40%]' >
+              <InputFormm
+                id='q'
+                register={register}
+                errors={errors}
+                fullWidth
+                placeholder= 'Search product by name, category ...'
+                style={'w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'}
+                styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
+              >
+              </InputFormm>
+            </form>
+          </div>
+          <div className='text-[#99a1b1]'>
+            <div className='w-full flex gap-1 border-b border-[##dee1e6] py-1'>
+              <span className='w-[30%] flex  font-medium justify-start px-[8px]'>Product</span>
+              <span className='w-[10%] flex  font-medium justify-center'>Price</span>
+              <span className='w-[10%] flex  font-medium justify-center'>Quantity</span>
+              <span className='w-[10%] flex  font-medium justify-center'>Sold</span>
+              <span className='w-[10%] flex  font-medium justify-center'>Rating</span>
+              <span className='w-[10%] flex  font-medium justify-center'>Color</span>
+              <span className='w-[20%] flex  font-medium justify-center'>Action</span>
+            </div>
+            <div>
+              {
+                products?.map((el, index)=> (
+                  <div key={index} className='w-full flex mt-[12px] rounded-[5px] gap-1 h-[64px] p-[12px]' style={{boxShadow: '0 1px 3px 0 rgba(0, 0, 0, .2)', borderLeft: `3px solid ${getColorByCategory(el?.category)}` }}>
+                    <span className='w-[30%] px-2 py-2 text-[#00143c] flex justify-start font-semibold items-center'>
+                      <img src={el?.thumb} className='w-[48px] h-[48px] mr-[10px] rounded-sm p-1 border border-[##dee1e6]'/>
+                      <div className='flex-1 max-w-[80%] line-clamp-2'>{el?.title}</div>
+                    </span>
+                    <span className='w-[10%] px-2 py-2 text-[#00143c] font-medium flex justify-center'>{el?.price}</span>
+                    <span className='w-[10%] px-2 py-2 text-[#00143c] font-medium flex justify-center'>{el?.quantity}</span>
+                    <span className='w-[10%] px-2 py-2 text-[#00143c] font-medium flex justify-center'>{el?.soldQuantity}</span>
+                    <span className='w-[10%] px-2 py-2 text-[#00143c] font-medium flex justify-center'>{el?.totalRatings}</span>
+                    <span className='w-[10%] px-2 py-2 text-[#00143c] font-medium flex justify-center'>{el?.color}</span>
+                    <span className='w-[20%] px-2 py-2 flex justify-center items-center'>
+                      <span onClick={() => setEditProduct(el)} 
+                      className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdModeEdit size={24}/></span>
+                      <span onClick={() => handleDeleteProduct(el._id)} 
+                      className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>
+                      <span onClick={() => handleNavigateAddVariant(el?._id)} 
+                      className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><FaPlus size={24}/></span>
+                    </span>
                   </div>
-                )}
-                </div>
-              </td>
-              <td className='text-center py-2'>{el.category}</td>
-              <td className='text-center py-2'>{el.price}</td>
-              <td className='text-center py-2'>{el.quantity}</td>
-              <td className='text-center py-2'>{el.soldQuantity}</td>
-              <td className='text-center py-2'>{el.color}</td>
-              <td className='text-center py-2'>{el.totalRatings}</td>
-              <td className='text-center py-2'>{el.variants?.length || 0}</td>
-              <td className='text-center py-2'>{moment(el.updatedAt).format('DD/MM/YYYY')}</td>
-              <td className='text-center py-2'>
-                <span onClick={() => setEditProduct(el)} 
-                className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdModeEdit
-                size={24}/></span>
-                <span onClick={() => handleDeleteProduct(el._id)} 
-                className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>
-                <span onClick={() => setVariant(el)} 
-                className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><FaCopy 
-                size={22}/></span>
-              </td>  
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className='w-full flex justify-end'>
-        <Pagination totalCount={counts} />
+                ))
+              }
+            </div>
+          </div>
+          <div className='text-[#00143c] flex-1 flex items-end'>
+            <Pagination totalCount={counts} />
+          </div>
+        </div>
       </div>
     </div>
   )

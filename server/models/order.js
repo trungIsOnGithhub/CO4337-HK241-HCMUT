@@ -7,12 +7,13 @@ var orderSchema = new mongoose.Schema({
         provider: {type:mongoose.Types.ObjectId, ref: 'Service_Provider'},
         staff:  {type:mongoose.Types.ObjectId, ref: 'Staff'},
         date: String,
-        time: String 
+        time: String,
+        dateTime: Date
     }],
     status:{
         type: String,
         default: 'Cancelled',
-        enum: ['Cancelled', 'Successful']
+        enum: ['Cancelled', 'Successful', 'Pending']
     },
     total:{
         type: Number
@@ -23,7 +24,7 @@ var orderSchema = new mongoose.Schema({
     },
     emails: [{
         type: String,
-        match: [/^\S+@\S+\.\S+$/, 'Invalid email format']
+        match: [/^\S+@\S+\.\S+$/, 'Invalid email format'] //add google calendar
     }]
 },{
     timestamps: true

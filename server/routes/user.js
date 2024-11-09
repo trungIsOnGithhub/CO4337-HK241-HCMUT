@@ -3,7 +3,12 @@ const ctrls = require('../controllers/user')
 const {verifyAccessToken, isAdmin} = require('../middlewares/verify_token')
 const uploader = require('../config/cloudinary.config')
 
-router.post('/register', ctrls.register)
+router.post('/register', uploader.fields([
+    {
+        name: 'avatar',
+        maxCount: 1
+    },
+]), ctrls.register)
 router.post('/mock', ctrls.createUsers)
 router.put('/final_register/:token', ctrls.finalRegister)
 router.post('/login', ctrls.login)
@@ -18,9 +23,10 @@ router.put('/current', [verifyAccessToken],uploader.single('avatar'), ctrls.upda
 router.put('/address/', [verifyAccessToken], ctrls.updateUserAddress)
 router.put('/cart_service/', [verifyAccessToken], ctrls.updateCartService)
 router.put('/cart_product/', [verifyAccessToken], ctrls.updateCartProduct)
-router.delete('/remove_cart_product/:pid/:color', [verifyAccessToken], ctrls.removeProductFromCart)
+router.delete('/remove_cart_product', [verifyAccessToken], ctrls.removeProductFromCart)
 router.delete('/:userId', [verifyAccessToken, isAdmin], ctrls.deleteUser)
 router.put('/wishlist/:sid', [verifyAccessToken], ctrls.updateWishlist)
+router.put('/wishlistProduct/:pid', [verifyAccessToken], ctrls.updateWishlistProduct)
 router.put('/:userId', [verifyAccessToken, isAdmin], ctrls.updateUserByAdmin)
 
 router.get('/getAllContact/:userId', ctrls.getAllContact)

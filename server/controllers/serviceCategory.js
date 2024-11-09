@@ -11,7 +11,6 @@ const asyncHandler = require('express-async-handler')
 // })
 
 const getAllCategory = asyncHandler(async(req, res)=>{
-
     const response = await ServiceCategory.find()
 
     return res.status(200).json({

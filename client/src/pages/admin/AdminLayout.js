@@ -12,10 +12,10 @@ const AdminLayout = () => {
   // }
   return (
     <div className='flex w-screen bg-zinc-900 min-h-screen relative text-white overflow-x-hidden'>
-      <div className='w-[300px] flex-none fixed top-0 bottom-0 z-30 overflow-y-auto scrollbar-thin'>
+      <div className='w-[280px] flex-none fixed top-0 bottom-0 z-30 overflow-y-auto scrollbar-thin'>
         <AdminSideBar />
       </div>
-      <div className='w-[300px]'>
+      <div className='w-[280px]'>
 
       </div>
       <div className='flex-auto '>

@@ -32,6 +32,7 @@ export {default as ServiceExtra} from './Services/ServiceExtra'
 export {default as ServiceInformation} from './Services/ServiceInformation'
 export {default as QuickView} from './Services/QuickView'
 export {default as OrderItem} from './Services/OrderItem'
+export {default as ServiceItem} from './Services/ServiceItem'
 
 export {default as SelectOption} from './Search/SelectOption'
 export {default as SearchItemService} from './Search/SearchItemService'
@@ -39,11 +40,13 @@ export {default as SearchItemProduct} from './Search/SearchItemProduct'
 
 export {default as Product} from './Products/Product'
 export {default as Cart} from './Products/Cart'
+export {default as ProductItem} from './Products/ProductItem'
 
 
 
 export {default as InputField} from './Input/InputField'
 export {default as InputSelect} from './Input/InputSelect'
+export {default as NewInputSelect} from './Input/NewInputSelect'
 export {default as InputForm} from './Input/InputForm'
 export {default as Select} from './Input/Select'
 export {default as MarkdownEditor} from './Input/MarkdownEditor'

@@ -6,11 +6,14 @@ const User = require('../models/user')
 
 
 const createProduct = asyncHandler(async(req, res)=>{
-    const {title, price, description, category, color, provider_id} = req.body
+    const {title, price, description, category, color, colorCode, provider_id} = req.body
     const thumb = req.files?.thumb[0]?.path
     const image = req.files?.images?.map(el => el.path)
 
-    if(!title || !price || !description || !category || !color|| !provider_id){
+    if(!category){
+        throw new Error("Missing category")
+    }
+    if(!title || !price || !description || !color|| !provider_id || !colorCode){
         throw new Error("Missing input")
     }
     req.body.slug = slugify(title)
@@ -295,22 +298,46 @@ const uploadImage = asyncHandler(async(req, res)=>{
     }
 })
 
-const addVariant = asyncHandler(async(req, res)=>{
-    const {pid} = req.params
-    const {title, price, color} = req.body
-    const thumb = req.files?.thumb[0]?.path
-    const image = req.files?.images?.map(el => el.path)
+const addVariant = asyncHandler(async (req, res) => {
+    const { pid } = req.params;
+    const { title, price, color, quantity, colorCode } = req.body;
+    const thumb = req.files?.thumb[0]?.path;
+    const image = req.files?.images?.map(el => el.path);
 
-    if(!title || !price || !color){
-        throw new Error("Missing input")
+    if (!title || !price || !color || !quantity || !colorCode) {
+        throw new Error("Missing input");
     }
-    const response = await Product.findByIdAndUpdate(pid, {$push: {variants: {color, price, title, thumb, image, sku: makeSku().toUpperCase()}}},{new: true})
+
+    // Kiểm tra xem title hoặc colorCode đã tồn tại trong variants chưa
+    const product = await Product.findById(pid);
+    if (!product) {
+        return res.status(404).json({ success: false, mes: "Product not found" });
+    }
+
+    if(product?.colorCode === colorCode){
+        return res.status(400).json({ success: false, mes: "Color already exists" });
+    }
+
+    const isDuplicate = product.variants.some(
+        variant => variant?.colorCode === colorCode
+    );
+
+    if (isDuplicate) {
+        return res.status(400).json({ success: false, mes: "Color already exists" });
+    }
+
+    // Nếu không trùng, thêm variant mới
+    const response = await Product.findByIdAndUpdate(
+        pid,
+        { $push: { variants: { title, color, price, quantity, colorCode, thumb, image } } },
+        { new: true }
+    );
+
     return res.status(200).json({
-        success: response? true : false,
-        mes: response? 'Add variant successfully' : "Cannot upload image"
-    })
-    
-})
+        success: response ? true : false,
+        mes: response ? 'Add variant successfully' : "Cannot add variant"
+    });
+});
 
 const getAllProductByProviderId = asyncHandler(async(req, res)=>{
     const {provider_id} = req.params

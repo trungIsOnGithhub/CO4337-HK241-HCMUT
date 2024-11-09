@@ -5,69 +5,132 @@ import {getNewProducts} from 'store/product/asyncAction'
 import { useDispatch, useSelector} from 'react-redux'
 import clsx from 'clsx'
 import { apiGetServicePublic } from 'apis/service'
-const tabs = [
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+
+const serviceData = [
     {
-        id: 1,
-        name: 'best seller'
+      id: 1,
+      name: "Hairstylist",
+      image: "images.unsplash.com/photo-1560869713-7d0a29430803"
     },
     {
-        id: 2,
-        name: 'new arrivals'
+      id: 2,
+      name: "Barber",
+      image: "images.unsplash.com/photo-1503951914875-452162b0f3f1"
     },
-]
+    {
+      id: 3,
+      name: "Nail",
+      image: "https://hocvienmyanh.vn/upload/images/hoc-nail-di-nuoc-ngoai-3.jpg"
+    },
+    {
+      id: 4,
+      name: "Makeup",
+      image: "images.unsplash.com/photo-1487412947147-5cebf100ffc2"
+    },
+    {
+      id: 5,
+      name: "Tattoo",
+      image: "images.unsplash.com/photo-1598371839696-5c5bb00bdc28"
+    },
+    {
+      id: 6,
+      name: "Massage",
+      image: "images.unsplash.com/photo-1600334129128-685c5582fd35"
+    },
+    {
+      id: 7,
+      name: "Fitness",
+      image: "images.unsplash.com/photo-1534258936925-c58bed479fcb"
+    },
+    {
+      id: 8,
+      name: "Gym",
+      image: "images.unsplash.com/photo-1534438327276-14e5300c3a48"
+    },
+    {
+      id: 9,
+      name: "Yoga",
+      image: "images.unsplash.com/photo-1588286840104-8957b019727f"
+    }
+  ];
 
 const BestSeller = () => {
-    const [bestSeller, setBestSeller] = useState(null)
-    const [activeTab, setActiveTab] = useState(1)
-    const [product, setProduct] = useState(null)
-    const dispatch = useDispatch()
-    const {newProducts} = useSelector(state => state.product)
     const {isShowModal} = useSelector(state => state.app)
-    const fetchProduct =  async() =>{
-        const response = await apiGetServicePublic()
-        // {sort:'-sold'}
-        // console.log('-------', response.services?.map(payload => payload?.sv), '--------');
-        if(response?.success){
-            setBestSeller(response.services?.map(payload => payload?.sv))
-            setProduct(response.services?.map(payload => payload?.sv))
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [services, setServices] = useState([])
+
+    useEffect(() => {
+        const fetchServiceData = async () => {
+            const response = await apiGetServicePublic()
+            console.log(response)
+            setServices(response.services)
         }
-        
-    }
-    useEffect(()=>{
-        fetchProduct()
-        dispatch(getNewProducts())
-    },[])
+        fetchServiceData()
+    }, [])
+    
 
-    useEffect(()=>{
-        if(activeTab===1) setProduct(bestSeller)
-        else if(activeTab===2) setProduct(newProducts)
-    },[activeTab])
-  return (
-    <div className={clsx(isShowModal ? 'hidden' : '' )} style={{marginBottom:'20px'}}>
-        <div className='flex text-[15px] ml-[-32px]'>
-            {tabs.map(el => (
-                <span 
-                    key={el.id} 
-                    className={`font-semibold uppercase px-8 border-r text-gray-400 cursor-pointer ${activeTab === el.id ? 'text-gray-900': ''}`}
-                    onClick={()=> setActiveTab(el.id)}>
-                    {el.name}
-                </span>
-            ))}
-        </div>
-        <div className='mt-4 mx-[-10px] border-t-2 border-main pt-4'>
-            <CustomSliderService products={product} activeTab={activeTab} normal={false}/>
-        </div>
-        <div className='w-full flex gap-4 mt-4'>
-            <img src="https://www.benchcraftcompany.com/images/CG5_size.jpg"
-                className='flex-1 h-[220px] w-[160px] object-cover'
-            />
-            <img src="https://www.benchcraftcompany.com/images/CG1_size.jpg"
-                className='flex-1 h-[220px] w-[160px] object-cover'
-            />
-        </div>
-    </div>
+    const nextSlide = () => {
+        setCurrentIndex((prevIndex) =>
+        prevIndex === serviceData.length - 2 ? 0 : prevIndex + 1
+        );
+    };
 
-  )
+    const prevSlide = () => {
+        setCurrentIndex((prevIndex) =>
+        prevIndex === 0 ? serviceData.length - 2 : prevIndex - 1
+        );
+    };
+    return (
+        <div className={clsx('px-8 py-4', isShowModal ? 'hidden' : '' )} style={{marginBottom:'20px'}}>
+            <div className='mx-[-10px]'>
+                <CustomSliderService services={services} normal={false}/>
+            </div>
+            <div className="relative w-full min-h-[400px]">
+                <div className="max-w-6xl mx-auto">
+                    <div className="flex flex-col md:flex-row justify-center items-center gap-6 relative">
+                    {[currentIndex, currentIndex + 1].map((index) => (
+                        <div
+                        key={serviceData[index].id}
+                        className="relative w-full md:w-1/2 h-[300px] transition-transform duration-500 ease-in-out transform hover:scale-105"
+                        >
+                        <img
+                            src={`https://${serviceData[index].image}`}
+                            alt={serviceData[index].name}
+                            className="w-full h-full object-cover rounded-lg shadow-2xl"
+                            onError={(e) => {
+                            e.target.src = "https://images.unsplash.com/photo-1560869713-7d0a29430803";
+                            }}
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-40 rounded-lg flex items-center justify-center">
+                            <h2 className="text-white text-3xl font-bold tracking-wider">
+                            {serviceData[index].name}
+                            </h2>
+                        </div>
+                        </div>
+                    ))}
+                    </div>
+
+                    <button
+                        onClick={prevSlide}
+                        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white p-3 rounded-full shadow-lg hover:bg-gray-100 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                        aria-label="Previous slide"
+                        >
+                        <FaChevronLeft className="text-gray-800 text-xl" />
+                    </button>
+
+                    <button
+                        onClick={nextSlide}
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white p-3 rounded-full shadow-lg hover:bg-gray-100 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                        aria-label="Next slide"
+                        >
+                        <FaChevronRight className="text-gray-800 text-xl" />
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    )
 }
 
 export default memo(BestSeller)

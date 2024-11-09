@@ -33,6 +33,11 @@ export const apiUpdateBlog = (data, id) => axios({
     data
 })
 
+export const apiUpdateViewBlog = (id) => axios({
+    url: '/blog/update_view_blog/'+id,
+    method: 'post',
+})
+
 export const apiRatingBlog = (data) => axios({
     url: '/blog/rating_blog',
     method: 'put',
@@ -74,7 +79,7 @@ export const apiGetTopTags = (data) => axios({
     data
 })
 
-export const apiGetTopBlogs = (data) => axios({
+export const apiGetTopBlogsWithSelectedTags = (data) => axios({
     url: '/blog/top_blogs',
     method: 'post',
     data

@@ -50,10 +50,10 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload, setIsSuccess, o
                 forceReRender={[style, currency, amount]}
                 fundingSource={undefined}
                 createOrder={(data, actions)=> actions.order.create({
-                        purchase_units: [{
-                            amount:{currency_code: currency, value: amount}
-                        }]
-                    }).then(orderId => orderId)}
+                    purchase_units: [{
+                        amount:{currency_code: currency, value: amount}
+                    }]
+                }).then(orderId => orderId)}
                     
                 onApprove={(data, actions)=>actions.order.capture().then(async(response)=>{
                     if(response.status === 'COMPLETED'){

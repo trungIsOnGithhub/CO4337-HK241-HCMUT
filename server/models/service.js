@@ -39,15 +39,11 @@ var serviceSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Staff'
     }],
-    variants: [
+    extra: [
         {
-            duration: String,
-            price: Number,
-            thumb: String,
-            image: Array,
-            name: String,
-            sku: String,
-            description:Array,
+           name: {type: String},
+           price: {type: Number},
+           thumbnail: {type: String},
         }
     ],
     rating:[
