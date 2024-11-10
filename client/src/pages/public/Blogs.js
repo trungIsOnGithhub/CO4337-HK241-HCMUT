@@ -293,19 +293,20 @@ const Blogs = () => {
                   <button
                     key={tag}
                     onClick={() =>
-                      setSelectedTag(selectedTag === tag?.label ? null : tag?.label)
+                      setSelectedTag(selectedTag === tag?._id ? null : tag?._id)
                     }
-                    className={`flex flex-col items-center px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 ${
-                      selectedTag === tag?.label
+                    className={`flex flex-col gap-1 items-center px-2 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                      selectedTag === tag?._id
                         ? "bg-indigo-600 text-white"
                         : "bg-gray-100 text-gray-800 hover:bg-gray-200"
                     }`}
                   >
-                    <FiTag className="h-3 w-3 mr-1" />
-                    {tag?.tags}
-                    <span className='flex gap-2'>
-                      <FiEye/>{tag?.tagViewCount}
-                      <FiBook/>{tag?.tagCount}
+                    <span className='flex'>
+                      <FiTag className="h-3 w-3 mr-1 mt-1"/>{tag?._id}
+                    </span>
+                    <span className='flex gap-1'>
+                      <FiEye className="h-3 w-3 mr-1 mt-1"/>{tag?.tagViewCount}
+                      <FiBook className="h-3 w-3 mr-1 mt-1"/>{tag?.tagCount}
                     </span>
                   </button>
                 ))}

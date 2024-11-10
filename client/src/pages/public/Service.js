@@ -1,11 +1,11 @@
 import React, {useEffect, useState, useCallback} from 'react'
 import { useParams, useSearchParams, createSearchParams, useNavigate} from 'react-router-dom'
-import { Breadcrumb, Service, SearchItemService, NewInputSelect, InputSelect, Pagination, InputField} from '../../components'
+import { Breadcrumb, Service, SearchItemService, NewInputSelect, InputSelect, Pagination, InputField, InputFormm} from '../../components'
 import { apiGetServicePublic } from '../../apis'
 import { sorts } from '../../ultils/constant'
 import clsx from 'clsx'
 import { useDispatch, useSelector } from 'react-redux'
-import withBaseComponent from 'hocs/withBaseComponent'
+// import withBaseComponent from 'hocs/withBaseComponent'
 import { getCurrent } from 'store/user/asyncAction'
 import { tinh_thanhpho } from 'tinh_thanhpho'
 import { apiModifyUser } from '../../apis/user'
@@ -87,9 +87,9 @@ const Services = () => {
     }
   },[active])
 
-  const changeValue = useCallback((value)=>{
-    setSort(value)
-  },[sort])
+  // const changeValue = useCallback((value)=>{
+  //   setSort(value)
+  // },[sort])
 
   useEffect(() => {
     if(sort){
@@ -147,17 +147,94 @@ const Services = () => {
         <div className='flex-auto flex flex-col gap-3'>
           {/* <span className='font-semibold text-sm'>Filter by:</span> */}
           <div className='flex items-center gap-4'>
-            <FaMoneyCheckAlt />
+            {/* <FaMoneyCheckAlt />
             <SearchItemService name='price' activeClick={active} changeActiveFilter={changeActive} type='input'/>
             <FaCubes />
             <SearchItemService name='category' activeClick={active} changeActiveFilter={changeActive}/>
             <FaSortAmountDown />
-            <NewInputSelect value={sort} options={sorts} changeValue={changeValue} />
+            <NewInputSelect value={sort} options={sorts} changeValue={changeValue} /> */}
+
+            <div className="grow flex flex-col">
+              <label className="text-gray-800 font-medium">Search&nbsp;By:&nbsp;</label>
+              <InputFormm
+                id='q'
+                register={()=>{}}
+                errors={()=>{}}
+                fullWidth
+                placeholder= 'Search blog by title name, tag ...'
+                style={'w-full bg-[#f4f6fa] min-h-10 rounded-md pl-2 flex items-center'}
+                styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
+                onChange={(event) => {}}
+              >
+              </InputFormm>
+            </div>
+
+          <span className='flex gap-1'>
+            <span className='font-semibold text-sm p-5'>Near Me Search:</span>
+            <input className='ml-3 p-5' onInput={() => {handleGetDirections()}} type="checkbox"/>
+          </span>
+
+          { nearMeOption && 
+            <>
+              <span className='font-semibold text-sm p-3'>Province:</span>
+              <InputSelect
+                value={searchFilter?.province}
+                options={Object.entries(tinh_thanhpho).map(ele => { return {id:ele[0], text:ele[1]?.name, value:ele[0]}})}
+                changeValue={(value) => {setSearchFilter(function(prev) {return {...prev, province: value};}) }}
+              />
+            </>
+          }
+          { nearMeOption && <InputField nameKey='maxDistance' value={searchFilter.maxDistance} setValue={setSearchFilter} placeholder={"Maximum Distance(optional)"} /> }
+          {/* </div> */}
+
+            <div className='flex flex-col'>
+              {/* <FaSortAmountDown />
+              <NewInputSelect value={selectedSort} options={sortOptions} changeValue={(value) => {setSelectedSort(value);}} /> */}
+              <label className="text-gray-800 font-medium">Order&nbsp;By:&nbsp;</label>
+              <select value={""}
+                onChange={(e) => setSort(e.target.value)}
+                className="border rounded-lg p-2 w-full mt-1 text-gray-800">
+                  <option value="-likes">No Order</option>
+                  <option value="-likes">Liked Most</option>
+                  <option value="-numberView">Most Viewed</option>
+                  <option value="-createdAt">Created date</option>
+              </select>
+            </div>
+            <div className='flex flex-col'>
+              {/* <FaSortAmountDown />
+              <NewInputSelect value={selectedSort} options={sortOptions} changeValue={(value) => {setSelectedSort(value);}} /> */}
+              <label className="text-gray-800 font-medium">Order&nbsp;By:&nbsp;</label>
+              <select value={""}
+                onChange={(e) => {}}
+                className="border rounded-lg p-2 w-full mt-1 text-gray-800">
+                  <option value="-likes">No Order</option>
+                  <option value="-likes">Liked Most</option>
+                  <option value="-numberView">Most Viewed</option>
+                  <option value="-createdAt">Created date</option>
+              </select>
+
+              <Button
+              handleOnclick={() => { fetchCurrentBlogList();}}
+            >
+              <span className="flex justify-center gap-2 items-center">
+                <FaSearch /><span>Search</span>
+              </span>
+            </Button>
+
+            <Button
+              handleOnclick={() => { }}
+              style="px-4 py-2 rounded-md text-white bg-slate-400 font-semibold my-2"
+            >
+              <span className="flex justify-center gap-2 items-center">
+                <FaBahai /><span>Reset</span>
+              </span>
+            </Button>
+            </div>
 
             <div className='flex justify-start m-auto'>
                 {/* <span className='font-semibold text-sm p-5'>Search By:</span> */}
                 {/* <div className='w-full'> */}
-                <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} />
+                {/* <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} />
                 <span className='font-semibold text-sm p-5'>Near Me Search:</span>
                 <input className='ml-3 p-5' onInput={() => {handleGetDirections()}} type="checkbox"/>
                 { nearMeOption && 
@@ -170,7 +247,7 @@ const Services = () => {
                     />
                   </>
                 }
-                { nearMeOption && <InputField nameKey='maxDistance' value={searchFilter.maxDistance} setValue={setSearchFilter} placeholder={"Maximum Distance(optional)"} /> }
+                { nearMeOption && <InputField nameKey='maxDistance' value={searchFilter.maxDistance} setValue={setSearchFilter} placeholder={"Maximum Distance(optional)"} /> } */}
                 {/* </div> */}
             </div>
           </div>
@@ -184,21 +261,8 @@ const Services = () => {
       <div className='w-main border p-4 flex justify-start m-auto mt-8'>
           <span className='font-semibold text-sm p-5'>Search By:</span>
           {/* <div className='w-full'> */}
-          <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} />
-          <span className='font-semibold text-sm p-5'>Near Me Search:</span>
-          <input className='ml-3 p-5' onInput={() => {handleGetDirections()}} type="checkbox"/>
-          { nearMeOption && 
-            <>
-              <span className='font-semibold text-sm p-3'>Province:</span>
-              <InputSelect
-                value={searchFilter?.province}
-                options={Object.entries(tinh_thanhpho).map(ele => { return {id:ele[0], text:ele[1]?.name, value:ele[0]}})}
-                changeValue={(value) => {setSearchFilter(function(prev) {return {...prev, province: value};}) }}
-              />
-            </>
-          }
-          { nearMeOption && <InputField nameKey='maxDistance' value={searchFilter.maxDistance} setValue={setSearchFilter} placeholder={"Maximum Distance(optional)"} /> }
-          {/* </div> */}
+          {/* <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} /> */}
+
         </div>
       <div className={clsx('mt-8 w-main m-auto flex gap-4 flex-wrap', isShowModal ? 'hidden' : '')}>
         {services?.services?.map((service, index) => (
