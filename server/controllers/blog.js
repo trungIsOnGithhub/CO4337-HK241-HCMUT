@@ -36,36 +36,37 @@ const updateBlog = asyncHandler(async(req, res)=>{
 })
 
 const getAllBlogTags = asyncHandler(async (req,res) => {
-    const response = await PostTag.find()
-    // const response = [
-    //     {
-    //         "_id": {
-    //           "$oid": "66377327edf989f1ae865513"
-    //         },
-    //         label: "Tag 68",
-    //       },
-    //       {
-    //         "_id": {
-    //           "$oid": "66377327edf989f1ae865513"
-    //         },
-    //         label: "Sample Tag 999",
-    //       },
-    //       {
-    //         "_id": {
-    //           "$oid": "66377327edf989f1ae865513"
-    //         },
-    //         label: "Label Tag 99",
-    //       },
-    //       {
-    //         "_id": {
-    //           "$oid": "66377327edf989f1ae865513"
-    //         },
-    //         label: "Tag 96",
-    //       }
-    //   ]
+    let { limit, orderBy } = req.query;
+    if (!limit) limit = 10;
+    
+    const sortObj = { tagCount: -1 };
+    if (orderBy?.indexOf('-numberView')) {
+        sortObj['tagViewCount'] = -1;
+    }
+
+    const resp = await Blog.aggregate([
+        // { $match: { isHidden: false } },
+        // { $addFields: {
+        //     numLikes: { "$size": "$likes" }
+        //     // numDislikes: { "$size": "$dislikes" }
+        // }},
+        // { $project: { _id:1, tags:1 } },
+        { $unwind: "$tags" },
+        // { $addFields: {
+        //     tagName: "$tags"
+        // }},
+        { $group: {
+            _id: "$tags",
+            tagCount: { $sum: 1 },
+            tagViewCount: { $sum: "$numberView" }
+        }},
+        // { $project: { _id:1, tags:1, tagName:1 } },
+        { $sort: sortObj }
+    ]);
+
     return res.status(200).json({
-        success: response ? true : false,
-        tags: response ? response : []
+        success: resp ? true : false,
+        tags: resp
     }) 
 });
 
@@ -347,7 +348,7 @@ const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
 
     let blogs = await queryCommand;
 
-    console.log(blogs.length);
+    // console.log(blogs.length);
 
     if (selectedTags?.length) {
         blogs = blogs.filter(blog => {
@@ -396,24 +397,24 @@ const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
     })
 });
 
-const getTopBlogs = asyncHandler(async(req, res)=>{
-    let { limit } = req.body
-    if(!limit){
-        limit = 5;
-    }
-    let response = await Blog.find({});
-    response.sort((a,b) => a.likes.length - b.likes.length);
-    response.slice(0, 5);
-    // .aggregate([
-    //     {$unwind: "$likes"}, 
-    //     {$group: {_id:"$_id", likes: {$push:"$answers"}, size: {$sum:1}}}, 
-    //     {$sort:{size:1}}]).limit(5);
+// const getTopBlogs = asyncHandler(async(req, res)=>{
+//     let { limit } = req.body
+//     if(!limit){
+//         limit = 5;
+//     }
+//     let response = await Blog.find({});
+//     response.sort((a,b) => a.likes.length - b.likes.length);
+//     response.slice(0, 5);
+//     // .aggregate([
+//     //     {$unwind: "$likes"}, 
+//     //     {$group: {_id:"$_id", likes: {$push:"$answers"}, size: {$sum:1}}}, 
+//     //     {$sort:{size:1}}]).limit(5);
 
-    return res.status(200).json({
-        success: response ? true : false,
-        blogs: response ? response : "Cannot Get Blogs!"
-    })
-})
+//     return res.status(200).json({
+//         success: response ? true : false,
+//         blogs: response ? response : "Cannot Get Blogs!"
+//     })
+// })
 
 const getTopBlogWithSelectedTags = asyncHandler(async(req, res)=>{
     let { limit, selectedTags } = req.body
@@ -455,6 +456,5 @@ module.exports = {
     createNewPostTag,
     getBlogsBySearchTerm,
     getTopBlogWithSelectedTags,
-    getTopTags,
     updateViewBlog
 }

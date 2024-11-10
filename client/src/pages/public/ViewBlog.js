@@ -1,7 +1,7 @@
 import React, {useState,useEffect} from 'react'
 import { Button, MultiSelect } from '../../components'
 import { useSearchParams, useNavigate, createSearchParams } from 'react-router-dom'
-import { apiGetOneBlog, apiGetTopBlogs, apiLikeBlog, apiDislikeBlog, apiUpdateViewBlog } from '../../apis/blog'
+import { apiGetOneBlog, apiGetTopBlogsWithSelectedTags, apiLikeBlog, apiDislikeBlog, apiUpdateViewBlog } from '../../apis/blog'
 import { apiCreateNewBlogComment, apiCreateReplyComment, apiGetAllBlogComment, apiGetAllReplyComment, apiReactComment } from '../../apis/blogComments'
 import DOMPurify from 'dompurify';
 import path from 'ultils/path';
@@ -49,7 +49,7 @@ const ViewBlog = () => {
 
     const fetchCurrentBlogList = async () => {
       // setIsLoading(true);
-      let response = await apiGetTopBlogs({ limit: 5 });
+      let response = await apiGetTopBlogsWithSelectedTags({ limit: 5, selectedTags: [] });
       if(response?.success && response?.blogs){
         setCurrBlogList(response.blogs);
         // setIsLoading(false);
