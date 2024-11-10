@@ -12,7 +12,7 @@ const Select = ({label, options=[], register, errors, id, validate, style, style
   // }, [id, value]);
   return (
     <div className={style}>
-      {label&& <label htmlFor={id} className={clsx(styleLabel)}>{label}</label>}
+      {label && <label htmlFor={id} className={clsx(styleLabel)}>{label}</label>}
       <select 
         className={styleSelect} 
         id={id} 
