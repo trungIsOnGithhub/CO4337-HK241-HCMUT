@@ -52,20 +52,107 @@ const getUserBookingsById = asyncHandler(async (req, res) => {
     return res.status(200).json({ success: true, bookings: filteredBookings });
 });
 
-
+function capitalizeFirstLetter(val) {
+    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
+function convertH2M(timeInHour){
+    var timeParts = timeInHour.split(":");
+    return Number(timeParts[0]) * 60 + Number(timeParts[1]);
+}
 const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
     const { now, dow, mStarted, svid } = req.user;
-    if (!now || !dow || !mStarted) {
-        return res.status(400).json({ message: 'Missing input.' });
+    if (!now || !dow?.length || !mStarted) {
+        return res.status(400).json({
+            success: false,
+            message: 'Missing input.'
+        });
     }
 
     let service = await Service.findById(svid).populate('assigned_staff');
-    const staffs = service.assigned_staff;
-
+    const staffTimes = service.assigned_staff?.map(
+        stff => {
+            return {
+                times: stff?.shifts[capitalizeFirstLetter(dow)],
+                id: stff?._id
+            };
+        }
+    );
     
+    console.log('~~~~~~~~~~~~~~', staffTimes);
+    
+    const svduration = parseInt(service.duration);
+    let timeOptionsByStaff = {};
+
+    for (const stffTime of staffTimes) {
+        if (stffTime.isEnabled) {
+            let startMM = convertH2M(stffTime.times.start);
+            let endMM = convertH2M(stffTime.times.end);
+
+            timeOptionsByStaff[stffTime.id] = [];
+            while (startMM < endMM) {
+                timeOptionsByStaff[stffTime.id].push({
+                    start: startMM,
+                    end: startMM + svduration
+                })
+                startMM +=  svduration;
+            }
+        }
+    }
+
+    return res.status(400).json({
+        success: true,
+        timeOptions: timeOptionsByStaff
+    });
+});
+
+const getTimeOptionsAvailableForWeek = asyncHandler(async (req, res) => {
+    const { now, dow, mStarted, svid } = req.user;
+    if (!now || !dow?.length || !mStarted) {
+        return res.status(400).json({
+            success: false,
+            message: 'Missing input.'
+        });
+    }
+
+    let service = await Service.findById(svid).populate('assigned_staff');
+    const staffTimes = service.assigned_staff?.map(
+        stff => {
+            return {
+                times: stff?.shifts[capitalizeFirstLetter(dow)],
+                id: stff?._id
+            };
+        }
+    );
+    
+    console.log('~~~~~~~~~~~~~~', staffTimes);
+    
+    const svduration = parseInt(service.duration);
+    let timeOptionsByStaff = {};
+
+    for (const stffTime of staffTimes) {
+        if (stffTime.isEnabled) {
+            let startMM = convertH2M(stffTime.times.start);
+            let endMM = convertH2M(stffTime.times.end);
+
+            timeOptionsByStaff[stffTime.id] = [];
+            while (startMM < endMM) {
+                timeOptionsByStaff[stffTime.id].push({
+                    start: startMM,
+                    end: startMM + svduration
+                })
+                startMM +=  svduration;
+            }
+        }
+    }
+
+    return res.status(400).json({
+        success: true,
+        timeOptions: timeOptionsByStaff
+    });
 });
 
 module.exports = {
     getUserBookingsById,
-    etTimeOptionsAvailableForDate
+    getTimeOptionsAvailableForDate,
+    getTimeOptionsAvailableForWeek
 }
