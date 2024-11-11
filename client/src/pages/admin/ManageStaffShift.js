@@ -110,7 +110,7 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
   );
 };
 
-const ManageStaffShift = ({ staffId, setManageStaffShift }) => {  
+const ManageStaffShift = ({ staffId, setManageStaffShift, parentHandleSubmitStaffShift }) => {  
   const [currentStaff, setCurrentStaff] = useState(null);
   // const [currentStaffShifts, setCurrentStaffShifts] = useState(null);
 
@@ -118,7 +118,7 @@ const ManageStaffShift = ({ staffId, setManageStaffShift }) => {
     // console.log('_++++_+_+_+_+_+_+_+__+');
 
     if (!staffId?.length) {
-      Swal.fire('Error Ocurred!!', 'Cannot Get Staff Shift Data!!', 'error')
+      // Swal.fire('Error Ocurred!!', 'Cannot Get Staff Shift Data!!', 'error')
       return;
     }
     const fetchStaffData = async () => {
@@ -203,8 +203,12 @@ const ManageStaffShift = ({ staffId, setManageStaffShift }) => {
   };
 
   const handleSubmitStaffShift = async () => {
+    if (parentHandleSubmitStaffShift) {
+      parentHandleSubmitStaffShift(officeHours)
+      return;
+    }
     if (!staffId?.length) {
-      Swal.fire('Error Ocurred!!', 'Data Unavailable To Update Staff!', 'error');
+     //  Swal.fire('Error Ocurred!!', 'Data Unavailable To Update Staff!', 'error');
       return;
     }
     let swalResult = await Swal.fire({

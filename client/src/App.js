@@ -87,7 +87,7 @@ function App() {
         <Route path={path.EDIT_POST_DETAIL} element={<EditPostDetail/>}/>
         <Route path={path.MANAGE_CHAT} element={<ManageChat/>}/>
         <Route path={path.SETTING} element={<ManageSetting/>}/>
-        <Route path={path.WORKING_HOURS} element={<WeeklyOfficeHours/>}/>
+        {/* <Route path={path.WORKING_HOURS} element={<WeeklyOfficeHours/>}/> */}
 
       </Route>
       <Route path={path.USER} element={<UserLayout />}>

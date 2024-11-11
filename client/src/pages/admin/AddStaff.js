@@ -8,6 +8,7 @@ import { HashLoader } from 'react-spinners';
 import { getCurrent } from 'store/user/asyncAction';
 import bgImage from '../../assets/clouds.svg';
 import { useDispatch, useSelector } from 'react-redux';
+import ManageStaffShift from './ManageStaffShift';
 
 const AddStaff = () => {
     const { current } = useSelector(state => state.user);
@@ -15,6 +16,7 @@ const AddStaff = () => {
     const { register, formState: { errors }, reset, handleSubmit, watch } = useForm();
     const [preview, setPreview] = useState({ avatar: null });
     const [isLoading, setIsLoading] = useState(false);
+    const [addOfficeHours, setAddOfficeHours] = useState(false);
 
     useEffect(() => {
         dispatch(getCurrent());
@@ -149,6 +151,13 @@ const AddStaff = () => {
                             <img src={preview.avatar} alt='avatar' className='w-[200px] object-contain' />
                         </div>
                     )}
+
+                    { addOfficeHours && <ManageStaffShift staffId={null}
+                        setManageStaffShift={setAddOfficeHours}
+                        parentHandleSubmitStaffShift={() => {
+                            
+                        } }/> }
+
                     <div className='mt-8'>
                         <Button type='submit'>
                             Add a new staff
