@@ -10,6 +10,8 @@ import bgImage from '../../assets/clouds.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import ManageStaffShift from './ManageStaffShift';
 
+// const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
 const AddStaff = () => {
     const { current } = useSelector(state => state.user);
     const dispatch = useDispatch();
@@ -17,6 +19,7 @@ const AddStaff = () => {
     const [preview, setPreview] = useState({ avatar: null });
     const [isLoading, setIsLoading] = useState(false);
     const [addOfficeHours, setAddOfficeHours] = useState(false);
+    const [staffShifts, setStaffShifts] = useState(null);
 
     useEffect(() => {
         dispatch(getCurrent());
@@ -33,29 +36,88 @@ const AddStaff = () => {
 
     const handleAddStaff = async (data) => {
         data.provider_id = current?.provider_id?._id;
-        const formData = new FormData();
-        for (let i of Object.entries(data)) {
-            formData.append(i[0], i[1]);
-        }
-        if (!current?.provider_id) {
-            toast.error('No Provider Specified With Current User!!');
-            return;
+        if (staffShifts) {
+            data.shifts = staffShifts;
+            // {
+            //     "Monday": {
+            //         "periods": {
+            //             "start": "00:00",
+            //             "end": "00:00"
+            //         },
+            //         "isEnabled": false
+            //     },
+            //     "Tuesday": {
+            //         "periods": {
+            //             "start": "00:00",
+            //             "end": "00:00"
+            //         },
+            //         "isEnabled": false
+            //     },
+            //     "Wednesday": {
+            //         "periods": {
+            //             "start": "00:00",
+            //             "end": "00:00"
+            //         },
+            //         "isEnabled": false
+            //     },
+            //     "Thursday": {
+            //         "periods": {
+            //             "start": "00:00",
+            //             "end": "00:00"
+            //         },
+            //         "isEnabled": false
+            //     },
+            //     "Friday": {
+            //         "periods": {
+            //             "start": "00:00",
+            //             "end": "00:00"
+            //         },
+            //         "isEnabled": false
+            //     },
+            //     "Saturday": {
+            //         "periods": {
+            //             "start": "00:00",
+            //             "end": "00:00"
+            //         },
+            //         "isEnabled": false
+            //     },
+            //     "Sunday": {
+            //         "periods": {
+            //             "start": "00:00",
+            //             "end": "12:32"
+            //         },
+            //         "isEnabled": true
+            //     }
+            // };
         }
 
-        formData.delete('avatar')
-        if (data.avatar) formData.append('avatar', data.avatar[0]);
+        console.log(')))))))))))))))', data);
 
-        console.log('------AADADADA', formData);
+        // const formData = new FormData();
+        // for (let i of Object.entries(data)) {
+        //     formData.append(i[0], i[1]);
+        // }
+        // if (!current?.provider_id) {
+        //     toast.error('No Provider Specified With Current User!!');
+        //     return;
+        // }
+
+        // formData.delete('avatar');
+        // if (data.avatar) formData.append('avatar', data.avatar[0]);
+
+        console.log('++++++++++++++++++', staffShifts);
+        // console.log('------AADAAAAADADA', formData);
 
         setIsLoading(true);
-        const response = await apiAddStaff(formData);
-        setIsLoading(false);
+        const response = await apiAddStaff(data);
+
         if (response.success) {
             toast.success("Create Staff Succesfully!");
             reset();
         } else {
             toast.error("Error Create Staff!");
         }
+        setIsLoading(false);
     };
 
     return (
@@ -65,8 +127,13 @@ const AddStaff = () => {
         </div>
         <div className='relative z-10 w-full'>
           <div className='w-full h-fit flex justify-between p-4'>
-            <span className='text-[#00143c] text-3xl h-fit font-semibold'>Add Blog</span>
+            <span className='text-[#00143c] text-3xl h-fit font-semibold'>Add Staff</span>
           </div>
+
+          { addOfficeHours && <ManageStaffShift staffId={null}
+                        setManageStaffShift={setAddOfficeHours}
+                        parentHandleSubmitStaffShift={setStaffShifts}/> }
+
             <div className='p-4 '>
                 <form onSubmit={handleSubmit(handleAddStaff)}>
                     <div className='w-full my-6 flex gap-4'>
@@ -136,27 +203,29 @@ const AddStaff = () => {
                             styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none rounded-md border-[#dee1e6]'}
                         />
                     </div>
-                    <div className='flex flex-col gap-2 mt-8 text-gray-600'>
-                        <label className='font-semibold' htmlFor='avatar'>Upload Avatar</label>
-                        <input 
-                            {...register('avatar', {required: 'Need upload avatar'})}
-                            type='file' 
-                            id='avatar'
-                            accept="image/*"
-                        />
-                        {errors['avatar'] && <small className='text-xs text-red-500'>{errors['avatar']?.message}</small>}
+                    <div className='flex justify-between gap-4 mt-8 text-gray-600'>
+                        <div className='flex justify-center gap-2'>
+                            <label className='font-semibold' htmlFor='avatar'>Upload Avatar</label>
+                            <input 
+                                {...register('avatar', {required: 'Need upload avatar'})}
+                                type='file' 
+                                id='avatar'
+                                accept="image/*"
+                            />
+                            {errors['avatar'] && <small className='text-xs text-red-500'>{errors['avatar']?.message}</small>}
+                        </div>
+
+                        <div>
+                            <Button handleOnclick={() => { setAddOfficeHours(true); }}>
+                                Add Shift for this Staff
+                            </Button>
+                        </div>
                     </div>
                     {preview.avatar && (
                         <div className='my-4'>
                             <img src={preview.avatar} alt='avatar' className='w-[200px] object-contain' />
                         </div>
                     )}
-
-                    { addOfficeHours && <ManageStaffShift staffId={null}
-                        setManageStaffShift={setAddOfficeHours}
-                        parentHandleSubmitStaffShift={() => {
-                            
-                        } }/> }
 
                     <div className='mt-8'>
                         <Button type='submit'>

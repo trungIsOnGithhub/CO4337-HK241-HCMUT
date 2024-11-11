@@ -204,7 +204,8 @@ const ManageStaffShift = ({ staffId, setManageStaffShift, parentHandleSubmitStaf
 
   const handleSubmitStaffShift = async () => {
     if (parentHandleSubmitStaffShift) {
-      parentHandleSubmitStaffShift(officeHours)
+      parentHandleSubmitStaffShift(officeHours);
+      setManageStaffShift(false);
       return;
     }
     if (!staffId?.length) {
@@ -246,7 +247,7 @@ const ManageStaffShift = ({ staffId, setManageStaffShift, parentHandleSubmitStaf
           <span className='text-[#00143c] text-3xl font-semibold'>Manage Staff Shift</span>
           <span className='text-white text-md hover:underline cursor-pointer p-2 bg-red-400 rounded-md'
             onClick={()=>setManageStaffShift(false)}>
-            Back to Manage Staff
+            Go Back
           </span>
           <span className='text-white text-md hover:underline cursor-pointer p-2 bg-teal-500 rounded-md'
             onClick={handleSubmitStaffShift}>
@@ -254,7 +255,7 @@ const ManageStaffShift = ({ staffId, setManageStaffShift, parentHandleSubmitStaf
           </span>
         </div>
 
-        <div className='m-3'>
+        { staffId && <div className='m-3'>
             <div className='w-full flex gap-1 border text-slate-700'>
               <span className='w-[30%] text-center'>Email Address</span>
               <span className='w-[30%] text-center'>Full Name</span>
@@ -268,7 +269,7 @@ const ManageStaffShift = ({ staffId, setManageStaffShift, parentHandleSubmitStaf
                   <span className='w-[30%] px-2 py-2 text-[#00143c] text-sm line-clamp-1 text-center font-semibold'>{`${currentStaff?.mobile}`}</span>
                 </div>
             </div>
-        </div>
+        </div> }
 
           <div className="w-1/2 flex-col justify-center mx-auto">
             {daysOfWeek.map((day) => (

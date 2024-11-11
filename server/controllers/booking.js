@@ -53,6 +53,19 @@ const getUserBookingsById = asyncHandler(async (req, res) => {
 });
 
 
+const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
+    const { now, dow, mStarted, svid } = req.user;
+    if (!now || !dow || !mStarted) {
+        return res.status(400).json({ message: 'Missing input.' });
+    }
+
+    let service = await Service.findById(svid).populate('assigned_staff');
+    const staffs = service.assigned_staff;
+
+    
+});
+
 module.exports = {
-    getUserBookingsById
+    getUserBookingsById,
+    etTimeOptionsAvailableForDate
 }
