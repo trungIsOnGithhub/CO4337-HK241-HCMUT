@@ -43,3 +43,10 @@ export const apiGetProviderByOwnerId = (data) => axios({
     method: 'post',
     data
 })
+
+
+export const apiGetProviderByAdmin = () => axios({
+    url: `/service_provider/getspbyad`,
+    method: 'get',
+})
+

@@ -21,40 +21,38 @@ const {FaEye, FaHeart, FaCartPlus, BsCartCheckFill} = icons
 const Product = ({productData, isNew, normal, isNotBorder}) => {
   const [isShowOption, setIsShowOption] = useState(false)
   const {current} = useSelector(state => state.user)
+  const {isLogin} = useSelector(state => state.user)
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const location = useLocation()
 
-  const handleClickOptions = async (flag) => {
-    if(flag === 'Cart'){
-      if(!current){
-        return Swal.fire({
-          title: "You haven't logged in",
-          text: 'Please login and try again',
-          icon: 'warning',
-          showConfirmButton: true,
+  const handleAddProductToCart = async() => {
+    if(!isLogin){
+      Swal.fire({
+          text: 'Login to review',
+          cancelButtonText: 'Cancel',
+          confirmButtonText: 'Go login',
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          title: 'Oops!',
           showCancelButton: true,
-          confirmButtonText: 'Go to Login',
-          cancelButtonText: 'Not now',                
-        }).then((rs)=>{
+      }).then((rs)=>{
           if(rs.isConfirmed){
-            navigate({
-              pathname: `/${path.LOGIN}`,
-              search: createSearchParams({
-                redirect: location.pathname}).toString(),
-            })
+              navigate(`/${path.LOGIN}`)
           }
-        })
-      }
+      })
+    }
+    else{
       const response = await apiUpdateCartProduct({
-          pid: productData?._id, 
-          color: productData?.color, 
-          quantity: 1, 
-          price: productData?.price, 
-          thumb: productData?.thumb, 
-          title: productData?.title, 
-          provider: productData?.provider_id
-        })
+        pid: productData?._id, 
+        quantity: 1, 
+        color: productData?.color, 
+        colorCode: productData?.colorCode || "#000000",
+        price: productData?.price, 
+        thumb: productData?.thumb, 
+        title: productData?.title, 
+        provider: productData?.provider_id
+      })
       if(response.success){
         toast.success(response.mes)
         dispatch(getCurrent())
@@ -63,20 +61,7 @@ const Product = ({productData, isNew, normal, isNotBorder}) => {
         toast.error(response.mes)
       }
     }
-    if(flag === 'Heart'){
-      const response = await apiUpdateWishlist({pid: productData?._id})
-      if(response.success){
-        dispatch(getCurrent())
-        toast.success(response.mes)
-      }
-      else{
-        toast.error(response.mes)
-      }
-    }
-    if(flag === 'Eye'){
-      dispatch(showModal({isShowModal: true, modalChildren: <DetailProduct data={{pid: productData?._id, category: productData?.category}} isQuickView={true} />}))
-    }
-  } // handleClickOptions
+  }
 
   const handleNavigateLearnMoreProduct = ( ) => {
     navigate(`/product/${productData.category?.toLowerCase()}/${productData?._id}/${productData?.title}`)
@@ -99,7 +84,7 @@ const Product = ({productData, isNew, normal, isNotBorder}) => {
             </div>
             <div className='flex justify-between'>
             <Button handleOnclick={handleNavigateLearnMoreProduct} style={'px-[10px] rounded-md text-black border border-[#868e96] w-fit h-[40px] hover:bg-gray-400'}>Learn more</Button>
-            <Button style={'px-[10px] rounded-md text-white bg-[#0a66c2] w-fit h-[40px] hover:bg-blue-400 flex items-center gap-1'}><FaCartPlus /> Add to cart</Button>
+            <Button handleOnclick={handleAddProductToCart} style={'px-[10px] rounded-md text-white bg-[#0a66c2] w-fit h-[40px] hover:bg-blue-400 flex items-center gap-1'}><FaCartPlus /> Add to cart</Button>
             </div>
         </div>
         <div className='absolute right-2 top-2 w-fit h-fit px-[8px] py-[4px] bg-[#0a66c2] text-white rounded-md'>

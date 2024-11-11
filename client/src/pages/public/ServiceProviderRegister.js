@@ -3,7 +3,7 @@ import { Button } from '../../components';
 import {apiFinalRegister } from "../../apis/user";
 import { apiCreateServiceProvider, apiFinalRegisterProvider } from "../../apis/ServiceProvider";
 import Swal from 'sweetalert2';
-import {Link, useSearchParams } from 'react-router-dom';
+import {Link, useNavigate, useSearchParams } from 'react-router-dom';
 import path from "../../ultils/path";
 import { useDispatch } from 'react-redux';
 import { validate } from "ultils/helper";
@@ -25,6 +25,7 @@ const GOONG_API_KEY = 'HjmMHCMNz4xyFqc54FsgxrobHmt48vwp7U8xzQUC';
 const GOONG_MAPTILES_KEY = 'IXqHXe9w2riica5A829SuB6HUl5Fi1Yg7LC9OHF2';
 
 const ServiceProviderRegister = () => {
+    const navigate = useNavigate()
     const [payload, setPayload] = useState({
         firstName: '',
         lastName: '',
@@ -167,6 +168,7 @@ const ServiceProviderRegister = () => {
                 }
             }
             if (coordinates) {
+                console.log(coordinates);
                 payload.longitude = coordinates.lng;
                 payload.latitude = coordinates.lat;
                 payload.geolocation = {
@@ -725,6 +727,12 @@ const ServiceProviderRegister = () => {
                             </div>
 
                             <button onClick={handleNextStep} className="w-full h-[40px] bg-[#0a66c2] text-white flex justify-center items-center rounded-md p-4 font-medium">Next</button>
+                            <p className="mt-2 text-center text-sm text-gray-600">
+                                Already have an account?{" "}
+                                <button onClick={() => {navigate(`/${path.LOGIN}`)}} className="font-medium text-[#0a66c2]">
+                                    Sign in
+                                </button>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -853,6 +861,12 @@ const ServiceProviderRegister = () => {
                                     "Sign up"
                                 )}
                             </button>
+                            <p className="mt-2 text-center text-sm text-gray-600">
+                                Already have an account?{" "}
+                                <button onClick={() => {navigate(`/${path.LOGIN}`)}} className="font-medium text-[#0a66c2]">
+                                    Sign in
+                                </button>
+                            </p>
                         </div>
                     </div>
 

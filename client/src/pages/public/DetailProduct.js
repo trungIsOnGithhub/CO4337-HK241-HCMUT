@@ -55,6 +55,8 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
     colorCode: '',
     thumb:'',
     image: [],
+    pid: null,
+    variantId: null
   })
 
   const reRender = useCallback(() => {
@@ -136,11 +138,14 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
         price: product?.price,
         colorCode: product?.colorCode,
         color: product?.color,
-        quantity: product?.quantity
+        quantity: product?.quantity,
+        pid: product?._id,
+        variantId: null
       })
       setSelectedColor(product?.colorCode)
     }
   }, [product]);
+  console.log(product)
   
   useEffect(() => {
     if(data){
@@ -160,11 +165,13 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
       setCurrentProduct({
         title: product?.variants?.find(el => el?._id === variantt)?.title,
         color: product?.variants?.find(el => el?._id === variantt)?.color,
-        price: product?.variants?.find(el => el?._id === variantt)?.price,
+        price: product?.price,
         quantity: product?.variants?.find(el => el?._id === variantt)?.quantity,
         thumb: product?.variants?.find(el => el?._id === variantt)?.thumb,
         image: product?.variants?.find(el => el?._id === variantt)?.image,
-        colorCode: product?.variants?.find(el => el?._id === variantt)?.colorCode
+        colorCode: product?.variants?.find(el => el?._id === variantt)?.colorCode,
+        pid: product?._id,
+        variantId: product?.variants?.find(el => el?._id === variantt)?._id,
       })
     }
     else{
@@ -175,10 +182,13 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
         image: product?.image,
         price: product?.price,
         colorCode: product?.colorCode,
-        quantity: product?.quantity
+        quantity: product?.quantity,
+        pid: product?._id,
+        variantId: null
       })
     }
     setCurrentImageIndex(0)
+    setQuantity(1)
   }, [variantt])
   
   const fetchProductData = async ()=>{
@@ -295,7 +305,8 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
         price: currentProduct?.price, 
         thumb: currentProduct?.thumb, 
         title: currentProduct?.title, 
-        provider: product?.provider_id
+        provider: product?.provider_id,
+        variantId: currentProduct?.variantId
       })
       if(response.success){
         toast.success(response.mes)
@@ -307,8 +318,6 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
     }
   }
 
-  
-  console.log(current)
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 p-4 md:p-8">
       <div className="w-main mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
@@ -419,7 +428,7 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
                         style={{ backgroundColor: variant?.colorCode }}
                       ></span>
                       <span className="text-gray-700">{variant?.color}</span>
-                      <span className="text-gray-500 text-sm">{`${formatPrice(formatPricee(variant?.price))} VNĐ`}</span>
+                      <span className="text-gray-500 text-sm">{`${formatPrice(formatPricee(product?.price))} VNĐ`}</span>
                     </div>
                   ))
                 }
@@ -438,7 +447,7 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
                   </button>
                   <span className="text-lg font-medium">{quantity}</span>
                   <button
-                    onClick={() => setQuantity(quantity + 1)}
+                    onClick={() => setQuantity(Math.min(currentProduct?.quantity, quantity + 1))}
                     className="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-gray-100"
                   >
                     +

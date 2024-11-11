@@ -53,11 +53,11 @@ const DetailCart = () => {
           const couponsData = {};
           for (const providerId in groupedProducts) {
               const productIds = groupedProducts[providerId].products.map(
-                  (product) => product?.product
+                  (product) => product?.productId
               );
               if (productIds.length > 0) {
                   try {
-                      const response = await apiGetCouponsByProductsId({productIds: productIds});
+                      const response = await apiGetCouponsByProductsId({productIds: [...new Set(productIds)]});
                       if (response.success) {
                           couponsData[providerId] = response.coupons; // Giả sử API trả về mảng coupon
                       }
@@ -73,7 +73,6 @@ const DetailCart = () => {
           fetchCouponsForProviders();
       }
     }, [groupedProducts]);
-
 
     // const handleSubmit = () => {
     //     if(!current?.address){
@@ -127,17 +126,19 @@ const DetailCart = () => {
   
       if (coupon?.discount_type === "percentage") {
           coupon?.percentageDiscountProduct.forEach((discount) => {
-              const product = products.find((p) => p.product === discount.id);
-              if (product) {
-                  discountAmount += (product?.price * discount?.value) / 100;
-              }
+            const matchedProducts = products.filter((p) => p.productId === discount.id);
+        
+            // Lặp qua tất cả các sản phẩm thỏa mãn và tính tổng giảm giá
+            matchedProducts.forEach((product) => {
+                discountAmount += (product?.price * discount?.value) / 100 * product?.quantity;
+            });
           });
       } else if (coupon?.discount_type === "fixed") {
           coupon?.fixedAmountProduct.forEach((discount) => {
-              const product = products.find((p) => p.product === discount.id);
-              if (product) {
-                  discountAmount += discount?.value;
-              }
+              const matchedProducts = products.filter((p) => p.productId === discount.id);
+              matchedProducts.forEach((product) => {
+                discountAmount += discount?.value * product?.quantity;
+              });
           });
       }
   
@@ -151,14 +152,15 @@ const DetailCart = () => {
 
       if (selectedVoucher && selectedVoucher.discount_type === "percentage") {
         const discount = selectedVoucher.percentageDiscountProduct.find(
-          (d) => d.id === product.product
+          (d) => d.id === product.productId
         );
         if (discount) {
           discountedPrice -= (product.price * discount.value) / 100;
         }
-      } else if (selectedVoucher && selectedVoucher.discount_type === "fixed") {
+      } 
+      else if (selectedVoucher && selectedVoucher.discount_type === "fixed") {
         const discount = selectedVoucher.fixedAmountProduct.find(
-          (d) => d.id === product.product
+          (d) => d.id === product.productId
         );
         if (discount) {
           discountedPrice -= discount.value;
@@ -175,11 +177,11 @@ const DetailCart = () => {
 
     if (selectedVoucher.discount_type === "percentage") {
       return selectedVoucher.percentageDiscountProduct.some(
-        (discount) => discount.id === product.product
+        (discount) => discount.id === product.productId
       );
     } else if (selectedVoucher.discount_type === "fixed") {
       return selectedVoucher.fixedAmountProduct.some(
-        (discount) => discount.id === product.product
+        (discount) => discount.id === product.productId
       );
     }
     return false;
@@ -213,14 +215,15 @@ const DetailCart = () => {
             const discountPrice = calculateDiscountedPrice(product, providerId); // Tính giá sau giảm giá
         
             return {
-              productId: product.product,           // Product ID
-              quantity: product.quantity,           // Quantity of the product
-              color: product.color,                 // Product color
-              colorCode: product.colorCode,         // Color code
-              originalPrice: product.price,         // Original price of the product
+              productId: product?.productId,           // Product ID
+              variantId: product?.variantId,         // Variant ID
+              quantity: product?.quantity,           // Quantity of the product
+              color: product?.color,                 // Product color
+              colorCode: product?.colorCode,         // Color code
+              originalPrice: product?.price,         // Original price of the product
               discountPrice: discountPrice,         // Discounted price (calculated by function)
-              thumb: product.thumb,                 // Thumbnail image URL
-              title: product.title                  // Product title
+              thumb: product?.thumb,                 // Thumbnail image URL
+              title: product?.title                  // Product title
             };
           });
           
@@ -229,10 +232,13 @@ const DetailCart = () => {
             products: productsDetails
           };
         });
+
+        // console.log(providerProductDetails)
         const providerTotalProductPrice = Object.keys(groupedProducts).map(providerId => {
           const provider = groupedProducts[providerId];
           
           // Tính tổng tiền của các sản phẩm trong provider
+          console.log(provider.products);
           const totalPrice = provider.products.reduce((sum, product) => sum + product.price * product.quantity, 0);
           
           return {
@@ -240,6 +246,7 @@ const DetailCart = () => {
             totalPrice: totalPrice
           };
         });
+        console.log(providerTotalProductPrice)
         const providerTotalSavingPrice = Object.keys(groupedProducts).map(providerId => {
           const provider = groupedProducts[providerId];
           
@@ -251,6 +258,7 @@ const DetailCart = () => {
             totalSavings: totalSavings
           };
         });
+        // console.log(providerTotalSavingPrice)
         const providerTotalShippingPrice = Object.keys(groupedProducts).map(providerId => {
           const provider = groupedProducts[providerId];
           const shippingPrice = shippingPrices[providerId];
@@ -260,6 +268,7 @@ const DetailCart = () => {
             shippingPrice: shippingPrice
           };
         });
+        // console.log(providerTotalShippingPrice)
         const providerTotalPrice = Object.keys(groupedProducts).map(providerId => {
           // Tìm totalProductPrice, totalSavings và shippingPrice cho mỗi provider
           const totalProductPrice = providerTotalProductPrice.find(el => el.providerId === providerId)?.totalPrice || 0;
@@ -274,6 +283,7 @@ const DetailCart = () => {
             totalPrice: totalPrice
           };
         });
+        // console.log(providerTotalPrice)
         const providerSelectedDiscount = Object.keys(groupedProducts).map(providerId => {
           const provider = groupedProducts[providerId];
           const selectedVoucher = selectedVouchers[providerId];

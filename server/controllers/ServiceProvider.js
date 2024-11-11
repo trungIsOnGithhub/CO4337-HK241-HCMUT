@@ -11,7 +11,7 @@ const makeTokenNumber = () => {
 };
 
 const createServiceProvider = asyncHandler(async(req, res)=>{
-    console.log('testtt')
+    console.log(req.body)
     const { email, password, firstName, lastName, mobile } = req.body
     const avatar = req.files?.avatar[0]?.path
 
@@ -242,6 +242,7 @@ const addServiceProviderQuestion = asyncHandler(async(req, res)=>{
         qna: response ? response : "Cannot delete service provider"
     })
 })
+
 const getServiceProviderByOwnerId = asyncHandler(async(req, res)=>{
     const {owner} = req.body;
     if(!owner){
@@ -254,8 +255,6 @@ const getServiceProviderByOwnerId = asyncHandler(async(req, res)=>{
         provider: response ? response : "Cannot get service provider"
     })
 })
-
-
 
 const updateServiceProviderTheme = asyncHandler(async(req, res)=>{
     const spid = req.params.spid
@@ -281,7 +280,15 @@ const updateServiceProviderTheme = asyncHandler(async(req, res)=>{
     })
 })
 
-
+const getServiceProviderByAdmin = asyncHandler(async(req,res) => {
+    const {_id} = req.user
+    const {provider_id} = await User.findById({_id}).select('provider_id')
+    const sp = await ServiceProvider.findById(provider_id);
+    return res.status(200).json({
+        success: sp ? true : false,
+        payload: sp ? sp : "Cannot find Service Provider"
+    })
+})
 module.exports = {
     createServiceProvider,
     getAllServiceProvider,
@@ -291,5 +298,6 @@ module.exports = {
     addServiceProviderQuestion,
     getServiceProviderByOwnerId,
     updateServiceProviderTheme,
-    finalRegisterProvider
+    finalRegisterProvider,
+    getServiceProviderByAdmin
 }

@@ -55,7 +55,59 @@ var ProviderServiceSchema = new mongoose.Schema({
     }],
     theme: {
         type: String,
-        defaultValue: 'light'
+        default: 'dark'
+    },
+    slogan: {
+        type: String,
+        default: '',
+    },
+    mobile:{
+        type:String,
+        unique:true,
+        required:true,  
+    },
+    indexFooter: {
+        type: [{
+            field: {
+                type: String,
+                enum: ['logo', 'slogan', 'address', 'mobile', 'businessName', 'social'],
+                required: true
+            },
+            order: {
+                type: Number,
+                required: true,
+            },
+            column: {
+                type: String,
+                enum: ['left', 'right'],
+                required: true,
+            },
+            isVisible: {
+                type: Boolean,
+                default: true,
+            }
+        }],
+        default: [
+            { field: 'logo', order: 1, column: 'left', isVisible: true },
+            { field: 'slogan', order: 2, column: 'left', isVisible: true },
+            { field: 'businessName', order: 3, column: 'right', isVisible: true },
+            { field: 'address', order: 4, column: 'right', isVisible: true },
+            { field: 'mobile', order: 5, column: 'right', isVisible: true },
+            { field: 'social', order: 6, column: 'right', isVisible: true }
+        ]
+    },
+    socialMedia: {
+        facebook: { type: String, default: '' },
+        instagram: { type: String, default: '' },
+        linkedin: { type: String, default: '' },
+        youtube: { type: String, default: '' },
+        twitter: { type: String, default: '' },
+        tiktok: { type: String, default: '' }
+    },
+    logoSize: {
+        type: String,
+        enum: ['small', 'large'],
+        default: 'small',
     }
 },{
     timestamps: true

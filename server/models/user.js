@@ -40,7 +40,8 @@ var userSchema = new mongoose.Schema({
         dateTime: Date
     }],
     cart_product:[{
-        product: {type:mongoose.Types.ObjectId, ref: 'Product'},
+        productId: {type: String},
+        variantId: {type: String},
         quantity: {type: Number},
         color: {type: String},
         colorCode: {type: String},
@@ -54,11 +55,9 @@ var userSchema = new mongoose.Schema({
     },
     latitude: {
         type: Number,
-        required: true,
     },
     longitude: {
         type: Number,
-        required: true,
     },
     wishlist: [{type: mongoose.Types.ObjectId, ref: 'Service'}],
     wishlistProduct: [{type: mongoose.Types.ObjectId, ref: 'Product'}],

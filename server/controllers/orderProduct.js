@@ -34,12 +34,45 @@ const createNewOrder = asyncHandler(async (req, res) => {
 
     // Cập nhật số lượng sản phẩm trong kho
     for (const product of products) {
-        await Product.findByIdAndUpdate(product.product, {
-            $inc: { quantity: -product.quantity },
-            $inc: {soldQuantity: product.quantity}
-        });
+        // Tìm sản phẩm trong cơ sở dữ liệu để lấy thông tin variants
+        const fullProduct = await Product.findById(product?.productId).lean();
+    
+        if (!fullProduct) {
+            console.log(`Product with ID ${product.productId} not found.`);
+            continue;
+        }
+    
+        // Kiểm tra nếu có variantId
+        if (product?.variantId) {
+            // Tìm biến thể trong mảng variants
+            const variant = fullProduct?.variants?.find(
+                variant => variant?._id.toString() === product?.variantId.toString()
+            );
+    
+            if (variant) {
+                // Cập nhật số lượng và số lượng đã bán cho biến thể
+                await Product.findOneAndUpdate(
+                    { _id: product.productId, "variants._id": product.variantId },
+                    {
+                        $inc: {
+                            "variants.$.quantity": -(+product.quantity),
+                            "variants.$.soldQuantity": +product.quantity
+                        }
+                    }
+                );
+            } else {
+                console.log(`Variant with ID ${product.variantId} not found in product ${product.productId}`);
+            }
+        } else {
+            // Nếu không có variantId, cập nhật số lượng và số lượng đã bán cho sản phẩm chính
+            await Product.findByIdAndUpdate(product.productId, {
+                $inc: {
+                    quantity: -(+product.quantity),
+                    soldQuantity: +product.quantity
+                }
+            });
+        }
     }
-
     await User.findByIdAndUpdate(_id, {cart_product:[]})
     return res.status(200).json({
         success: true,

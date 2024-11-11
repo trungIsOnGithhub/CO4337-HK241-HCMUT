@@ -932,20 +932,6 @@ const AddVoucher = () => {
                 <label htmlFor='noLimitPerUser' className='ml-2 text-[#00143c] italic'>Voucher has no limit per user</label>
               </div>
             </div>
-            <div className='w-full my-6 flex gap-4'>
-              <label className='block flex-1'>
-                <span className='text-[#00143c] font-medium mb-[8px] block'>Type</span>
-                <select
-                  {...register('type')}
-                  className='block w-full h-[36px] border border-[#dee1e6] pl-2 outline-none rounded-md text-[#00143c] cursor-pointer'
-                  onChange={(e)=>handleEventVoucherType(e?.target?.value)}
-                  value={voucherType}
-                >
-                  <option className='text-[#00143c] font-medium' value='percentage'>Percentage Amount</option>
-                  <option className='text-[#00143c] font-medium' value='fixed'>Fixed Amount</option>
-                </select>
-              </label>
-            </div>
 
             <div className='w-full my-6 flex gap-4 items-start'>
               <MultiSelect
@@ -1133,7 +1119,20 @@ const AddVoucher = () => {
               </div>
             )}            
 
-
+            <div className='w-full my-6 flex gap-4'>
+              <label className='block flex-1'>
+                <span className='text-[#00143c] font-medium mb-[8px] block'>Type</span>
+                <select
+                  {...register('type')}
+                  className='block w-full h-[36px] border border-[#dee1e6] pl-2 outline-none rounded-md text-[#00143c] cursor-pointer'
+                  onChange={(e)=>handleEventVoucherType(e?.target?.value)}
+                  value={voucherType}
+                >
+                  <option className='text-[#00143c] font-medium' value='percentage'>Percentage Amount</option>
+                  <option className='text-[#00143c] font-medium' value='fixed'>Fixed Amount</option>
+                </select>
+              </label>
+            </div>
 
             <Button type='submit' style={'w-fit flex gap-1 items-center bg-[#005aee] px-4 py-2 rounded-md text-white shadow-inner mx-auto mb-4'}>
               Create a new voucher

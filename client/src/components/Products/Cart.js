@@ -16,8 +16,8 @@ const Cart = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const {current, currentCartProduct} = useSelector(state => state.user)
-    const removeCart = async(pid, color) => {
-        const response = await apiRemoveCartProduct(pid,color)
+    const removeCart = async(pid, colorCode, variantId) => {
+        const response = await apiRemoveCartProduct(pid,colorCode,variantId)
         if(response.success){
             dispatch(getCurrent())
         }    
@@ -42,7 +42,7 @@ const Cart = () => {
                             <span className='text-sm'>{formatPrice(el?.price)+' VND'}</span>
                         </div>
                     </div>
-                    <span onClick={()=>{removeCart(el?.product, el?.color)}} className='h-8 w-8 flex items-center justify-center rounded-full hover:bg-gray-700 cursor-pointer'>
+                    <span onClick={()=>{removeCart(el?.productId, el?.colorCode, el?.variantId)}} className='h-8 w-8 flex items-center justify-center rounded-full hover:bg-gray-700 cursor-pointer'>
                         <FaTrashCan size={20}/>
                     </span>
                 </div>

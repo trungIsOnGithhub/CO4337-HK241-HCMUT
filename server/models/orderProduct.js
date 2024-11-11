@@ -11,6 +11,7 @@ var orderProductSchema = new mongoose.Schema({
         discountPrice: {type: Number},
         thumb: {type: String},
         title: {type: String},
+        variantId: {type: String},
     }],
     shippingPrice: {
         type: Number

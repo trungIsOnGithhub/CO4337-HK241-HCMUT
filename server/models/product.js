@@ -64,7 +64,6 @@ var productSchema = new mongoose.Schema({
         {
             title: String,
             color: String,
-            price: Number,
             quantity: Number,
             colorCode: String,
             thumb: String,

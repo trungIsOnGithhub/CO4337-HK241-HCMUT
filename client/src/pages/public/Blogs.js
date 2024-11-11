@@ -132,7 +132,7 @@ const Blogs = () => {
   return (
     <div className='w-main mb-8 flex flex-col gap-4 overflow-y-auto'>
       <div className="grid grid-cols-4 gap-8">
-          <div className="col-span-3 max-h-[500px] overflow-y-auto">
+          <div className="col-span-3 max-h-[500px] overflow-y-auto scrollbar-thin">
             <InputFormm
               id='q'
               register={register}

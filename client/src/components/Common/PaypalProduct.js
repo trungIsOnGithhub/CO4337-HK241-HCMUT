@@ -46,14 +46,15 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload, setIsSuccess}) 
                 // Tạo đối tượng dữ liệu cho yêu cầu tạo đơn hàng
                 const orderData = {
                     products: provider.products.map(product => ({
-                        product: product.productId,
-                        quantity: product.quantity,
-                        color: product.color,
-                        colorCode: product.colorCode,
-                        thumb: product.thumb,
-                        title: product.title,
-                        originalPrice: product.originalPrice,
-                        discountPrice: product.discountPrice,
+                        productId: product?.productId,
+                        variantId: product?.variantId,
+                        quantity: product?.quantity,
+                        color: product?.color,
+                        colorCode: product?.colorCode,
+                        thumb: product?.thumb,
+                        title: product?.title,
+                        originalPrice: product?.originalPrice,
+                        discountPrice: product?.discountPrice,
                     })),
                     shippingPrice: shippingPriceObj ? shippingPriceObj.shippingPrice : 0,
                     totalProductPrice: totalProductPriceObj ? totalProductPriceObj.totalPrice : 0,

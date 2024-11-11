@@ -75,12 +75,13 @@ export const apiUpdateWishlistProduct = ({pid}) => axios({
 })
 
 
-export const apiRemoveCartProduct = (pid, colorCode) => axios({
+export const apiRemoveCartProduct = (pid, colorCode, variantId) => axios({
     url: '/user/remove_cart_product',
     method: 'delete',
     params: {
         pid: pid,
-        colorCode: colorCode
+        colorCode: colorCode,
+        variantId: variantId
     }
 })
 
