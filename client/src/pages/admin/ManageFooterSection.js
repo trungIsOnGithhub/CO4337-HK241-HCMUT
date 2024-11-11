@@ -5,7 +5,7 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { FaFacebook, FaInstagram, FaYoutube, FaTiktok, FaLinkedin, FaTwitter } from "react-icons/fa";
 import { MdDragIndicator } from "react-icons/md";
 import { BsToggleOff, BsToggleOn } from 'react-icons/bs';
-import { apiGetProviderByAdmin } from 'apis';
+import { apiGetProviderByAdmin, apiUpdateFooterSection } from 'apis';
 import { FaX, FaXTwitter } from 'react-icons/fa6';
 import { Button } from 'components';
 import { IoSaveOutline } from 'react-icons/io5';
@@ -33,8 +33,15 @@ const ManageFooterSection = () => {
 
   useEffect(() => {
     setSlogan(providerData?.slogan)
-    setSocialMedia(providerData?.socialMedia)
-    setLogoSize(providerData?.logoSize)
+    setSocialMedia({
+      facebook: providerData?.socialMedia?.facebook || "",
+      instagram: providerData?.socialMedia?.instagram || "",
+      linkedin: providerData?.socialMedia?.linkedin || "",
+      youtube: providerData?.socialMedia?.youtube || "",
+      twitter: providerData?.socialMedia?.twitter || "",
+      tiktok: providerData?.socialMedia?.tiktok || ""
+    });
+    setLogoSize(providerData?.logoSize || "small");
   }, [providerData]);
 
   const [elements, setElements] = useState({
@@ -345,14 +352,21 @@ const ManageFooterSection = () => {
   
     return result;
   };
-  const handleSaveFooter = () => {
+  const handleSaveFooter = async() => {
     const formattedData = formatDataForAPI(elements, visibleElements);
     const socialLinksWithoutIcons = socialLinks?.map(({ icon, ...rest }) => rest);
-    
+
     console.log(formattedData);
     console.log(socialLinksWithoutIcons);
     console.log(logoSize)
     console.log(slogan)
+
+    const response = await apiUpdateFooterSection({
+      formattedData,
+      socialLinks: socialLinksWithoutIcons,
+      logoSize,
+      slogan
+    })
     
   }
   return (

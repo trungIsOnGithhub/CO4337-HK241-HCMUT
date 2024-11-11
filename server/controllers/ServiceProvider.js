@@ -294,6 +294,8 @@ const updateFooterSection = asyncHandler(async(req,res) => {
     const {_id} = req.user
     const {provider_id} = await User.findById({_id}).select('provider_id')
     console.log(req?.body)
+    const sp = await ServiceProvider.findById(provider_id);
+    console.log(sp)
 })
 module.exports = {
     createServiceProvider,
