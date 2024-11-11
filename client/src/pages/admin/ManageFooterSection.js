@@ -35,7 +35,6 @@ const ManageFooterSection = () => {
     setSlogan(providerData?.slogan)
     setSocialMedia(providerData?.socialMedia)
     setLogoSize(providerData?.logoSize)
-    console.log(providerData?.indexFooter)
   }, [providerData]);
 
   const [elements, setElements] = useState({
@@ -348,7 +347,12 @@ const ManageFooterSection = () => {
   };
   const handleSaveFooter = () => {
     const formattedData = formatDataForAPI(elements, visibleElements);
+    const socialLinksWithoutIcons = socialLinks?.map(({ icon, ...rest }) => rest);
+    
     console.log(formattedData);
+    console.log(socialLinksWithoutIcons);
+    console.log(logoSize)
+    console.log(slogan)
     
   }
   return (

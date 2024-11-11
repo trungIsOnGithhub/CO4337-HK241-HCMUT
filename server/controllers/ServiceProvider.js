@@ -289,6 +289,12 @@ const getServiceProviderByAdmin = asyncHandler(async(req,res) => {
         payload: sp ? sp : "Cannot find Service Provider"
     })
 })
+
+const updateFooterSection = asyncHandler(async(req,res) => {
+    const {_id} = req.user
+    const {provider_id} = await User.findById({_id}).select('provider_id')
+    console.log(req?.body)
+})
 module.exports = {
     createServiceProvider,
     getAllServiceProvider,
@@ -299,5 +305,6 @@ module.exports = {
     getServiceProviderByOwnerId,
     updateServiceProviderTheme,
     finalRegisterProvider,
-    getServiceProviderByAdmin
+    getServiceProviderByAdmin,
+    updateFooterSection
 }

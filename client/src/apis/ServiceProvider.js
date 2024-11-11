@@ -50,3 +50,8 @@ export const apiGetProviderByAdmin = () => axios({
     method: 'get',
 })
 
+export const apiUpdateFooterSection = (data) => axios({
+    url: `/service_provider/edit_footer`,
+    method: 'post',
+    data
+})
