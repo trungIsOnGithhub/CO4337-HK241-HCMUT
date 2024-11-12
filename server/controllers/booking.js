@@ -169,6 +169,14 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
     });
 });
 
+
+function convertM2H(totalMinutes) {
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    const formattedHours = String(hours).padStart(2, '0');
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    return `${formattedHours}:${formattedMinutes}`;
+}
 const getTimeOptionsAvailableForWeek = asyncHandler(async (req, res) => {
     const { now, dow, mStarted, svid } = req.user;
     if (!now || !dow?.length || !mStarted) {
