@@ -82,18 +82,18 @@ const Header = () => {
                     <FaUser color='white' />
                     <span>Profile</span>
                     {isShowOptions &&
-                        <div onClick={(e)=>{e.stopPropagation()}} className="flex flex-col absolute top-full left-0 bg-gray-100 border min-w-[150px] py-2">
-                        <Link className="p-2 w-full hover:bg-sky-100" to={`/${path.USER}/${path.PERSONAL}`}>
+                    <div onClick={(e)=>{e.stopPropagation()}} className="flex flex-col absolute top-full left-0 bg-slate-200 border min-w-[150px] py-2 z-9999">
+                        <Link className="p-2 w-full hover:bg-sky-100 text-gray-600" to={`/${path.USER}/${path.PERSONAL}`}>
                             Personal
                         </Link>
 
                         {+current.role === 1411 && 
-                            <Link className="p-2 w-full hover:bg-sky-100" to={`/${path.ADMIN}/${path.DASHBOARD}`}>
+                            <Link className="p-2 w-full hover:bg-sky-100 text-gray-600" to={`/${path.ADMIN}/${path.DASHBOARD}`}>
                             Admin Workspace
                             </Link>
                         }
 
-                        <span onClick={() => dispatch(logout())} className="p-2 w-full hover:bg-sky-100">
+                        <span onClick={() => dispatch(logout())} className="p-2 w-full hover:bg-sky-100 text-gray-600">
                             Logout
                         </span>
                     </div>

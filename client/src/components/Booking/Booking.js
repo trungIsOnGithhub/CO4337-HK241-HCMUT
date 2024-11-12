@@ -1,4 +1,4 @@
-import { apiGetCouponsByServiceId, apiGetOneService, apiGetServiceProviderById } from 'apis';
+import { apiGetCouponsByServiceId, apiGetOneService, apiGetServiceProviderById, apiGetServiceTimeOptionAvailable } from 'apis';
 import clsx from 'clsx';
 import Button from 'components/Buttons/Button';
 import React, { useEffect, useState } from 'react';
@@ -12,6 +12,8 @@ import { getCurrent } from 'store/user/asyncAction';
 import { CiSearch } from 'react-icons/ci';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 import moment from 'moment';
+
+// const dayOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 const Booking = () => {
   const dispatch = useDispatch();
@@ -126,65 +128,73 @@ const Booking = () => {
   }, [service]);
 
   useEffect(() => {
-    const fetchData = () => {
-      if (provider) {
-        const getCurrentTime = () => {
-          const now = new Date();
-          const hour = now.getHours();
-          const minute = now.getMinutes();
-          return hour * 100 + minute;
-        };
-  
-        const getOpeningHoursForToday = () => {
-          const dayOfWeek = new Date().getDay();
-          const openingTimeKey = `start${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
-          const closingTimeKey = `end${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
-          
-          const parseTime = (timeString) => {
-            const [hour, minute] = timeString.split(':').map(Number);
-            return hour * 60 + minute;
-          };
-        
-          const openingTime = parseTime(provider?.time[openingTimeKey]);
-          const closingTime = parseTime(provider?.time[closingTimeKey]);
-          return { openingTime, closingTime };
-        };
-  
-        const currentTime = getCurrentTime();
-        const { openingTime, closingTime } = getOpeningHoursForToday();
-  
-        const generateTimeOptions = (openingTime, closingTime, currentTime, duration) => {
-          const timeOptions = [];
-          if (openingTime>=0 && closingTime>=0 && duration>=0) {
-            let currentHour = Math.floor(currentTime / 100);
-            let currentMinute = currentTime % 100;
-            let currentTimeInMinutes = currentHour * 60 + currentMinute;
-            let serviceDurationInMinutes = duration;
-            let saveOpeningTime = openingTime;
-
-            setCurrentTime(currentTimeInMinutes);
-            setTimeOptions([]);
-
-            while (saveOpeningTime <= (closingTime - serviceDurationInMinutes)) {
-              if (saveOpeningTime >= currentTimeInMinutes) {
-                const hour = Math.floor(saveOpeningTime / 60);
-                const minute = saveOpeningTime % 60;
-                const formattedHour = hour.toString().padStart(2, '0');
-                const formattedMinute = minute.toString().padStart(2, '0');
-                const formattedTime = `${formattedHour}:${formattedMinute}`;
-                timeOptions.push(formattedTime);
-                saveOpeningTime += serviceDurationInMinutes;
-              } else {
-                saveOpeningTime += serviceDurationInMinutes;
-              }
-            }
-          }
-
-          return timeOptions;
-        };
-  
-        setTimeOptions(generateTimeOptions(openingTime, closingTime, currentTime, duration));
+    const fetchData = async () => {
+      if (!service?._id) {
+        return;
       }
+
+      let now = new Date();
+      const mStarted = now.getHours() * 60 + now.getMinutes();
+      const dow = daysOfWeek[now.getDay()];
+
+      let resp = await apiGetServiceTimeOptionAvailable({ now:now.getTime(), dow, mStarted, svid: service._id});
+
+      if (resp.success && resp.timeOptions) {
+        setTimeOptions(resp.timeOptions);
+      }
+      // if (provider) {
+  
+      //   const getOpeningHoursForToday = () => {
+      //     const dayOfWeek = new Date().getDay();
+      //     const openingTimeKey = `start${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
+      //     const closingTimeKey = `end${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
+          
+      //     const parseTime = (timeString) => {
+      //       const [hour, minute] = timeString.split(':').map(Number);
+      //       return hour * 60 + minute;
+      //     };
+        
+      //     const openingTime = parseTime(provider?.time[openingTimeKey]);
+      //     const closingTime = parseTime(provider?.time[closingTimeKey]);
+      //     return { openingTime, closingTime };
+      //   };
+  
+      //   const currentTime = getCurrentTime();
+      //   const { openingTime, closingTime } = getOpeningHoursForToday();
+  
+      //   const generateTimeOptions = (openingTime, closingTime, currentTime, duration) => {
+      //     const timeOptions = [];
+
+      //     if (openingTime>=0 && closingTime>=0 && duration>=0) {
+      //       let currentHour = Math.floor(currentTime / 100);
+      //       let currentMinute = currentTime % 100;
+      //       let currentTimeInMinutes = currentHour * 60 + currentMinute;
+      //       let serviceDurationInMinutes = duration;
+      //       let saveOpeningTime = openingTime;
+
+      //       setCurrentTime(currentTimeInMinutes);
+      //       setTimeOptions([]);
+
+      //       while (saveOpeningTime <= (closingTime - serviceDurationInMinutes)) {
+      //         if (saveOpeningTime >= currentTimeInMinutes) {
+      //           const hour = Math.floor(saveOpeningTime / 60);
+      //           const minute = saveOpeningTime % 60;
+      //           const formattedHour = hour.toString().padStart(2, '0');
+      //           const formattedMinute = minute.toString().padStart(2, '0');
+      //           const formattedTime = `${formattedHour}:${formattedMinute}`;
+      //           timeOptions.push(formattedTime);
+      //           saveOpeningTime += serviceDurationInMinutes;
+      //         } else {
+      //           saveOpeningTime += serviceDurationInMinutes;
+      //         }
+      //       }
+      //     }
+
+      //     return timeOptions;
+      //   };
+  
+      //   setTimeOptions(generateTimeOptions(openingTime, closingTime, currentTime, duration));
+      // }
     }
 
     fetchData(); 
@@ -194,7 +204,7 @@ const Booking = () => {
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [provider, duration]);
+  }, [service]);
 
   const handleBookDateTime = (el) => { 
     navigate({

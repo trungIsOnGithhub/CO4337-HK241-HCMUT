@@ -44,9 +44,10 @@ export const apiRatingBlog = (data) => axios({
     data
 })
 
-export const apiGetAllPostTags = (data) => axios({
+export const apiGetAllPostTags = (params) => axios({
     url: '/blog/tags',
     method: 'get',
+    params
 })
 
 export const apiLikeBlog = (data) => axios({

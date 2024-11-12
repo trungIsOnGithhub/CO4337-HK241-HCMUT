@@ -2,8 +2,8 @@ const Blog = require('../models/blog')
 const PostTag = require('../models/postTag')
 const asyncHandler = require('express-async-handler');
 const User = require('../models/user');
-const ES_CONSTANT = require('../advanced/constant');
-const esDBModule = require('../advanced/es');
+const ES_CONSTANT = require('../services/constant');
+const esDBModule = require('../services/es');
 
 const createNewBlogPost = asyncHandler(async(req, res)=>{
     const {_id} = req.user
@@ -38,36 +38,37 @@ const updateBlog = asyncHandler(async(req, res)=>{
 })
 
 const getAllBlogTags = asyncHandler(async (req,res) => {
-    const response = await PostTag.find()
-    // const response = [
-    //     {
-    //         "_id": {
-    //           "$oid": "66377327edf989f1ae865513"
-    //         },
-    //         label: "Tag 68",
-    //       },
-    //       {
-    //         "_id": {
-    //           "$oid": "66377327edf989f1ae865513"
-    //         },
-    //         label: "Sample Tag 999",
-    //       },
-    //       {
-    //         "_id": {
-    //           "$oid": "66377327edf989f1ae865513"
-    //         },
-    //         label: "Label Tag 99",
-    //       },
-    //       {
-    //         "_id": {
-    //           "$oid": "66377327edf989f1ae865513"
-    //         },
-    //         label: "Tag 96",
-    //       }
-    //   ]
+    let { limit, orderBy } = req.query;
+    if (!limit) limit = 10;
+    
+    const sortObj = { tagCount: -1 };
+    if (orderBy?.indexOf('-numberView')) {
+        sortObj['tagViewCount'] = -1;
+    }
+
+    const resp = await Blog.aggregate([
+        // { $match: { isHidden: false } },
+        // { $addFields: {
+        //     numLikes: { "$size": "$likes" }
+        //     // numDislikes: { "$size": "$dislikes" }
+        // }},
+        // { $project: { _id:1, tags:1 } },
+        { $unwind: "$tags" },
+        // { $addFields: {
+        //     tagName: "$tags"
+        // }},
+        { $group: {
+            _id: "$tags",
+            tagCount: { $sum: 1 },
+            tagViewCount: { $sum: "$numberView" }
+        }},
+        // { $project: { _id:1, tags:1, tagName:1 } },
+        { $sort: sortObj }
+    ]);
+
     return res.status(200).json({
-        success: response ? true : false,
-        tags: response ? response : []
+        success: resp ? true : false,
+        tags: resp
     }) 
 });
 
@@ -356,7 +357,7 @@ const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
 
     let blogs = await queryCommand;
 
-    console.log(blogs.length);
+    // console.log(blogs.length);
 
     if (selectedTags?.length) {
         blogs = blogs.filter(blog => {
@@ -537,7 +538,6 @@ module.exports = {
     createNewPostTag,
     getBlogsBySearchTerm,
     getTopBlogWithSelectedTags,
-    // getTopTags,
-    searchBlogAdvanced
-    // searchBlogsAdvanced
+    searchBlogAdvanced,
+    updateViewBlog
 }

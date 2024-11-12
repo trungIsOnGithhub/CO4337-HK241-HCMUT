@@ -10,9 +10,10 @@ import { FaCheck, FaRegThumbsUp, FaRegThumbsDown, FaLocationArrow } from 'react-
 import Swal from 'sweetalert2';
 import { tinh_thanhpho } from 'tinh_thanhpho';
 import { useForm } from 'react-hook-form';
-import { FiClock, FiEye, FiTag, FiUser } from 'react-icons/fi';
+import { FiBook, FiClock, FiEye, FiTag, FiUser } from 'react-icons/fi';
 import { formatDistanceToNow } from 'date-fns';
-import { FaSearch, FaSortAmountDown } from "react-icons/fa";
+import { FaSearch, FaSortAmountDown, FaBahai } from "react-icons/fa";
+import { toast } from 'react-toastify';
 
 const Blogs = () => {
   const location = useLocation();
@@ -27,7 +28,7 @@ const Blogs = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [tags, setTags] = useState([]);
-  const [sort, setSort] = useState([]);
+  // const [sort, setSort] = useState([]);
   const [counts, setCounts] = useState(0);
   const [selectedSort, setSelectedSort] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
@@ -61,11 +62,12 @@ const Blogs = () => {
   });
 
   const fetchTags = async() => {
-    const response = await apiGetAllPostTags();
-    if(response?.success){
-      if(response?.success){
-        setTags(response?.tags)
-      }
+    let resp = await apiGetAllPostTags({ limit: 10, orderBy: '-numberView -likes' });
+    if(resp?.success && resp?.tags){
+      setTags(resp.tags)
+    }
+    else {
+      toast.error("Some data cannot be fetch!");
     }
 
     // const resp = await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
@@ -169,37 +171,59 @@ const Blogs = () => {
   return (
     <div className='w-main mb-8 mt-4 flex flex-col gap-4 overflow-y-auto'>
       <div className="grid grid-cols-4 gap-4">
-          <div className='col-span-4 flex justify-center items-center gap-2'>
-            <InputFormm
-              id='q'
-              register={register}
-              errors={errors}
-              fullWidth
-              placeholder= 'Search blog by title name, tag ...'
-              style={'w-full bg-[#f4f6fa] min-h-10 rounded-md pl-2 flex items-center'}
-              styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
-              onChange={(event) => {setSearchTerm(event.target.value)}}
-            >
-            </InputFormm>
 
-            <span className='flex'>
-              <FaSortAmountDown />
-              <NewInputSelect value={selectedSort} options={sortOptions} changeValue={(value) => {setSelectedSort(value);}} />
-            </span>
+          <div className='col-span-4 flex justify-start items-center gap-4 mb-2'>
+            <div className="grow flex flex-col">
+              <label className="text-gray-800 font-medium">Search&nbsp;By:&nbsp;</label>
+              <InputFormm
+                id='q'
+                register={register}
+                errors={errors}
+                fullWidth
+                placeholder= 'Search blog by title name, tag ...'
+                style={'w-full bg-[#f4f6fa] min-h-10 rounded-md pl-2 flex items-center'}
+                styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
+                onChange={(event) => {setSearchTerm(event.target.value)}}
+              >
+              </InputFormm>
+            </div>
+
+            <div className='flex flex-col'>
+              {/* <FaSortAmountDown />
+              <NewInputSelect value={selectedSort} options={sortOptions} changeValue={(value) => {setSelectedSort(value);}} /> */}
+              <label className="text-gray-800 font-medium">Order&nbsp;By:&nbsp;</label>
+              <select value={selectedSort}
+                onChange={(e) => setSelectedSort(e.target.value)}
+                className="border rounded-lg p-2 w-full mt-1 text-gray-800">
+                  <option value="-likes">No Order</option>
+                  <option value="-likes">Liked Most</option>
+                  <option value="-numberView">Most Viewed</option>
+                  <option value="-createdAt">Created date</option>
+              </select>
+            </div>
 
             <Button
-              handleOnclick={() => { console.log('::::::::::::'); fetchCurrentBlogList();}}
+              handleOnclick={() => { fetchCurrentBlogList();}}
             >
               <span className="flex justify-center gap-2 items-center">
                 <FaSearch /><span>Search</span>
+              </span>
+            </Button>
+
+            <Button
+              handleOnclick={() => { }}
+              style="px-4 py-2 rounded-md text-white bg-slate-400 font-semibold my-2"
+            >
+              <span className="flex justify-center gap-2 items-center">
+                <FaBahai /><span>Reset</span>
               </span>
             </Button>
           </div>
 
           <div className="col-span-3 max-h-[500px] overflow-y-auto scrollbar-thin">
 
-          {currBlogList?.length &&
-              <Pagination totalCount={counts}/>}
+          {/* {currBlogList?.length &&
+              <Pagination totalCount={counts}/>} */}
     
             <div className="space-y-6 mt-3">
               {currBlogList.length === 0 ? (
@@ -266,22 +290,27 @@ const Blogs = () => {
           {/* Tags - Right Side */}
           <div className="col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Top Tags</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Popular Tags:</h2>
               <div className="flex flex-wrap gap-2">
-                {tags.map((tag) => (
+                {tags?.map((tag) => (
                   <button
                     key={tag}
                     onClick={() =>
-                      setSelectedTag(selectedTag === tag?.label ? null : tag?.label)
+                      setSelectedTag(selectedTag === tag?._id ? null : tag?._id)
                     }
-                    className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 ${
-                      selectedTag === tag?.label
+                    className={`flex flex-col gap-1 items-center px-2 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                      selectedTag === tag?._id
                         ? "bg-indigo-600 text-white"
                         : "bg-gray-100 text-gray-800 hover:bg-gray-200"
                     }`}
                   >
-                    <FiTag className="h-3 w-3 mr-1" />
-                    {tag?.label}
+                    <span className='flex'>
+                      <FiTag className="h-3 w-3 mr-1 mt-1"/>{tag?._id}
+                    </span>
+                    <span className='flex gap-1'>
+                      <FiEye className="h-3 w-3 mr-1 mt-1"/>{tag?.tagViewCount}
+                      <FiBook className="h-3 w-3 mr-1 mt-1"/>{tag?.tagCount}
+                    </span>
                   </button>
                 ))}
               </div>
