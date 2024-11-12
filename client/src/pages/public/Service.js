@@ -18,6 +18,7 @@ import Swal from "sweetalert2";
 import Button from 'components/Buttons/Button';
 import { FaSortAmountDown, FaMoneyCheckAlt, FaCubes, FaBahai, FaSearch  } from "react-icons/fa";
 
+const REACT_APP_PAGINATION_LIMIT_DEFAULT = 8;
 const Services = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -52,8 +53,11 @@ const Services = () => {
 
   const fetchServiceCategories = async (queries, advancedQuery) => {
     let response = [];
+    const currerntParamPage = params.get('page');
 
-    if (useAdvanced) {
+    const offset = currerntParamPage > 0 ? currerntParamPage - 1 : 0;
+
+    // if (useAdvanced) {
       const categoriesChosen = params.get("category");
       if(categoriesChosen && categoriesChosen !== 'services'){
         advancedQuery.categories = categoriesChosen;
@@ -90,7 +94,8 @@ const Services = () => {
       if(category && category !== 'services'){
         queries.category = category;
       }
-      response = await apiSearchServiceAdvanced(queries);
+      console.log('Elastic Pre Query', advancedQuery, 'Elastic Pre Query');
+      response = await apiSearchServiceAdvanced(advancedQuery);
 
       if(response.success) setServices(response?.services || []);
     }
@@ -99,7 +104,7 @@ const Services = () => {
     console.log(response)
     if(response.success) setServices(response)
     dispatch(getCurrent())
-  }
+  // }
 }
 
   useEffect(() => {
@@ -143,77 +148,77 @@ const Services = () => {
     const q = {...priceQuery, ...queries}
 // <<<<<<< HEAD
   
-//     console.log(`PRE FETCH === ${JSON.stringify(searchFilter)}`);
-//     // console.log("YYAY", params.get('page'), "udias");
+    console.log(`PRE FETCH === ${JSON.stringify(searchFilter)}`);
+    // console.log("YYAY", params.get('page'), "udias");
 
-//     let advancedQuery = {
-//       searchTerm: searchFilter.term,
-//       limit: REACT_APP_PAGINATION_LIMIT_DEFAULT , offset: 0,
-//       sortBy: sort,
-//       // clientLat: 45, clientLon: 45,
-//       // distanceText: "2000km",
-//     };
+    let advancedQuery = {
+      searchTerm: searchFilter.term,
+      limit: REACT_APP_PAGINATION_LIMIT_DEFAULT , offset: 0,
+      sortBy: sort,
+      // clientLat: 45, clientLon: 45,
+      // distanceText: "2000km",
+    };
 
-//     if (isClientLocationValid(clientLat, clientLon, searchFilter.maxDistance, searchFilter.unit)) {
-//       advancedQuery = {
-//         ...advancedQuery,
-//         clientLat, clientLon,
-//         distanceText: searchFilter.maxDistance + searchFilter.unit
-//       }
-//     }
+    if (isClientLocationValid(clientLat, clientLon, searchFilter.maxDistance, searchFilter.unit)) {
+      advancedQuery = {
+        ...advancedQuery,
+        clientLat, clientLon,
+        distanceText: searchFilter.maxDistance + searchFilter.unit
+      }
+    }
 
-//     queries.page = 1;
-//     setParams(queries);
+    queries.page = 1;
+    setParams(queries);
 
-//     fetchServiceCategories(q, advancedQuery);
-//   }, [sort, searchFilter]);
+    fetchServiceCategories(q, advancedQuery);
+  }, [sort, searchFilter]);
 
 //   // for page changing
-//   useEffect(() => {
-//     window.scrollTo(0,0)
-//     const queries = Object.fromEntries([...params]);
+  useEffect(() => {
+    window.scrollTo(0,0)
+    const queries = Object.fromEntries([...params]);
 
-//     let priceQuery =  {}
-//     if(queries.to && queries.from){
-//       priceQuery = {$and: [
-//         {price: {gte: queries.from}},
-//         {price: {lte: queries.to}},
-//       ]}
-//       delete queries.price
-//     }
-//     else{
-//       if(queries.from) queries.price = {gte:queries.from}
-//       if(queries.to) queries.price = {gte:queries.to}
-//     }
-//     delete queries.from
-//     delete queries.to
-//     const q = {...priceQuery, ...queries}
+    let priceQuery =  {}
+    if(queries.to && queries.from){
+      priceQuery = {$and: [
+        {price: {gte: queries.from}},
+        {price: {lte: queries.to}},
+      ]}
+      delete queries.price
+    }
+    else{
+      if(queries.from) queries.price = {gte:queries.from}
+      if(queries.to) queries.price = {gte:queries.to}
+    }
+    delete queries.from
+    delete queries.to
+    const q = {...priceQuery, ...queries}
 
-//     console.log(`PRE FETCH === ${JSON.stringify(q)}`);
-//     // console.log("YYAY", params.get('page'), "udias");
+    console.log(`PRE FETCH === ${JSON.stringify(q)}`);
+    // console.log("YYAY", params.get('page'), "udias");
 
-//     let advancedQuery = {
-//       searchTerm: searchFilter.term,
-//       limit: REACT_APP_PAGINATION_LIMIT_DEFAULT , offset: params.get('page')-1,
-//       sortBy: queries?.sort
-//     };
+    let advancedQuery = {
+      searchTerm: searchFilter.term,
+      limit: REACT_APP_PAGINATION_LIMIT_DEFAULT , offset: params.get('page')-1,
+      sortBy: queries?.sort
+    };
 
-//     if (isClientLocationValid(clientLat, clientLon, searchFilter.maxDistance, searchFilter.unit)) {
-//       advancedQuery = {
-//         ...advancedQuery,
-//         clientLat, clientLon,
-//         distanceText: searchFilter.maxDistance + searchFilter.unit
-//       }
-//     }
+    if (isClientLocationValid(clientLat, clientLon, searchFilter.maxDistance, searchFilter.unit)) {
+      advancedQuery = {
+        ...advancedQuery,
+        clientLat, clientLon,
+        distanceText: searchFilter.maxDistance + searchFilter.unit
+      }
+    }
 
-//     // queries.page = params.get('page')-1;
-//     // setParams(queries);
+    // queries.page = params.get('page')-1;
+    // setParams(queries);
 
-//     fetchServiceCategories(q, advancedQuery);
-//   }, [params]);
+    fetchServiceCategories(q, advancedQuery);
+  // }, [params]);
 // =======
-    fetchServiceCategories(q)
-  }, [params])
+    // fetchServiceCategories(q)
+  }, [params]);
   
   // const changeActive = useCallback((name)=>{
   //   if(name===active) setActive(null)
