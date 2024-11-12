@@ -3,7 +3,8 @@ export const apiGetCalendarByUserId = () => axios({
     url: '/booking/',
     method: 'get',
 })
-export const apiGetServiceTimeOptionAvailable = () => axios({
+export const apiGetServiceTimeOptionAvailable = (data) => axios({
     url: '/booking/options',
-    method: 'get',
+    method: 'post',
+    data
 })

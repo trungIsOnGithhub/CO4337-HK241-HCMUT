@@ -8,7 +8,7 @@ import icons from 'ultils/icon'
 import { apiCreateBlog, apiGetAllPostTags, apiCreateNewPostTag } from 'apis/blog'
 import { showModal } from 'store/app/appSlice'
 import { getCurrent } from 'store/user/asyncAction'
-import { HashLoader } from 'react-spinners'
+ // import { HashLoader } from 'react-spinners'
 import { FaPlus } from "react-icons/fa";
 import Swal from 'sweetalert2'
 import bgImage from '../../assets/clouds.svg'

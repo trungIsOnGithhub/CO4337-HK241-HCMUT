@@ -62,20 +62,18 @@ function convertH2M(timeInHour){
     let timeParts = timeInHour.split(":");
     return Number(timeParts[0]) * 60 + Number(timeParts[1]);
 }
-function convertM2H(timeInMinutes) {
-    let hour = 0;
-}
+
 const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
     const { now, dow, mStarted, svid } = req.body;
-    if (!now || !dow?.length || !mStarted) {
+    console.log('=====]]]]]]]', now, dow, mStarted);
+    if (!now || !dow?.length || !(typeof mStarted === 'number')) {
         return res.status(400).json({
             success: false,
             message: 'Missing input.'
         });
     }
 
-    console.log('=====]]]]]]]', now);
-    console.log('-----]]]]]]]', new Date(now));
+    // console.log('-----]]]]]]]', new Date(now));
     // Bug timezone
     const startCurrentDay = (new Date(now)).setHours(0, 0, 0, 0);
     const endCurrentDay = (new Date(now)).setHours(23, 59, 59, 999);
@@ -90,10 +88,10 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
         status: 'Successful'
     });
 
-    console.log('==_==____====_==', service);
+    // console.log('==_==____====_==', service);
 
     const shiftKey = capitalizeFirstLetter(dow);
-    console.log('____1', shiftKey);
+    // console.log('____1', shiftKey);
 
     // console.log('!!!!!!!!!!!!!!!!!!!!!!!');
     // service.assigned_staff.forEach(stf => {
@@ -134,10 +132,17 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
             const orderSameDayThisStaff = ordersInCurrentDay.filter(order => {
                 return order?.info[0]?.staff === stffTime.id;
             });
+
+            console.log('OrderSameDay', orderSameDayThisStaff);
+            // console.log('>>>>>>>>>>>>>>>>>>>>>>>>');
+
             const timeReservedThisStaff = orderSameDayThisStaff.map(order => {
                 const mmStart = convertH2M(order.info[0].time);
                 return [mmStart, mmStart + order.info[0].duration];
             })
+
+            console.log('Tim Reserved:', timeReservedThisStaff);
+            // console.log('>>>>>>>>>>>>>>>>>>>>>>>>');
 
             let startMM = convertH2M(stffTime.times[shiftKey].periods.start);
             let endMM = convertH2M(stffTime.times[shiftKey].periods.end);
@@ -154,6 +159,9 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
                     }
                 },);
 
+                if (reservedCollision) {
+                    continue;
+                }
                 timeOptionsByStaff[stffTime.id].push({
                     start: startMM,
                     end: startMM + svduration
@@ -165,7 +173,7 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
 
     return res.status(400).json({
         success: true,
-        timeOptions: ordersInCurrentDay
+        timeOptions: timeOptionsByStaff
     });
 });
 
