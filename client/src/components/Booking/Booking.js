@@ -133,11 +133,11 @@ const Booking = () => {
         return;
       }
 
-      const now = new Date();
+      let now = new Date();
       const mStarted = now.getHours() * 60 + now.getMinutes();
       const dow = daysOfWeek[now.getDay()];
 
-      let resp = await apiGetServiceTimeOptionAvailable({now, dow, mStarted, svid: service._id});
+      let resp = await apiGetServiceTimeOptionAvailable({ now:now.getTime(), dow, mStarted, svid: service._id});
 
       if (resp.success && resp.timeOptions) {
         setTimeOptions(resp.timeOptions);

@@ -1,5 +1,8 @@
 const asyncHandler = require('express-async-handler');
+const Service = require('../models/service');
 const Order = require('../models/order'); 
+
+const timeOffGap = 10;
 
 const getUserBookingsById = asyncHandler(async (req, res) => {
     const { _id } = req.user;
@@ -56,11 +59,14 @@ function capitalizeFirstLetter(val) {
     return String(val).charAt(0).toUpperCase() + String(val).slice(1);
 }
 function convertH2M(timeInHour){
-    var timeParts = timeInHour.split(":");
+    let timeParts = timeInHour.split(":");
     return Number(timeParts[0]) * 60 + Number(timeParts[1]);
 }
+function convertM2H(timeInMinutes) {
+    let hour = 0;
+}
 const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
-    const { now, dow, mStarted, svid } = req.user;
+    const { now, dow, mStarted, svid } = req.body;
     if (!now || !dow?.length || !mStarted) {
         return res.status(400).json({
             success: false,
@@ -68,28 +74,86 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
         });
     }
 
+    console.log('=====]]]]]]]', now);
+    console.log('-----]]]]]]]', new Date(now));
+    // Bug timezone
+    const startCurrentDay = (new Date(now)).setHours(0, 0, 0, 0);
+    const endCurrentDay = (new Date(now)).setHours(23, 59, 59, 999);
+
     let service = await Service.findById(svid).populate('assigned_staff');
+    let ordersInCurrentDay = await Order.find({
+        // 'infor.0.service': svid,
+        'info.0.dateTime': {
+            $gte: startCurrentDay,
+            $lte: endCurrentDay
+        },
+        status: 'Successful'
+    });
+
+    console.log('==_==____====_==', service);
+
+    const shiftKey = capitalizeFirstLetter(dow);
+    console.log('____1', shiftKey);
+
+    // console.log('!!!!!!!!!!!!!!!!!!!!!!!');
+    // service.assigned_staff.forEach(stf => {
+    //     console.log(stf.shifts);
+    // });
+    // console.log('!!!!!!!!!!!!!!!!!!!!!!!');
+
     const staffTimes = service.assigned_staff?.map(
         stff => {
             return {
-                times: stff?.shifts[capitalizeFirstLetter(dow)],
-                id: stff?._id
+                // times: stff?.shifts[shiftKey],
+                times:  {Tuesday: { periods: { start: '09:02', end: '14:34' }, isEnabled: true },
+                Wednesday: { periods: { start: '09:02', end: '14:34' }, isEnabled: true },
+                Monday: { periods: { start: '09:02', end: '14:34' }, isEnabled: true },
+                Thursday: { periods: { start: '09:02', end: '14:34' }, isEnabled: true },
+                Saturday: { periods: { start: '09:02', end: '09:04' }, isEnabled: true },
+                Friday: { periods: { start: '09:02', end: '19:44' }, isEnabled: true },
+                Sunday: { periods: { start: '09:02', end: '19:44' }, isEnabled: true }
+              },              
+                id: stff?._id,
+                name: '' + stff.firstName + ' ' + stff.lastName,
+                isEnabled: stff?.shifts[shiftKey]?.isEnabled || true
             };
         }
     );
-    
     console.log('~~~~~~~~~~~~~~', staffTimes);
     
-    const svduration = parseInt(service.duration);
+    const svduration = 45; // parseInt(service.duration);
     let timeOptionsByStaff = {};
 
     for (const stffTime of staffTimes) {
+        if (!timeOptionsByStaff[stffTime.id]) {
+            timeOptionsByStaff[stffTime.id] = [];
+        }
+
+        // console.log('LLLLLLLL', stffTime);
         if (stffTime.isEnabled) {
-            let startMM = convertH2M(stffTime.times.start);
-            let endMM = convertH2M(stffTime.times.end);
+            const orderSameDayThisStaff = ordersInCurrentDay.filter(order => {
+                return order?.info[0]?.staff === stffTime.id;
+            });
+            const timeReservedThisStaff = orderSameDayThisStaff.map(order => {
+                const mmStart = convertH2M(order.info[0].time);
+                return [mmStart, mmStart + order.info[0].duration];
+            })
+
+            let startMM = convertH2M(stffTime.times[shiftKey].periods.start);
+            let endMM = convertH2M(stffTime.times[shiftKey].periods.end);
+
+            // console.log(stffTime.times[shiftKey].periods.start+ '=====>' + stffTime.times[shiftKey].periods.end);
+            // console.log(startMM+ '----493042==>' + endMM);
 
             timeOptionsByStaff[stffTime.id] = [];
-            while (startMM < endMM) {
+            while (startMM < endMM && startMM > mStarted) {
+                const reservedCollision = false;
+                timeReservedThisStaff.forEach((t) => {
+                    if (startMM >= t[0] || endMM <= t[1]) {
+                        reservedCollision = true;
+                    }
+                },);
+
                 timeOptionsByStaff[stffTime.id].push({
                     start: startMM,
                     end: startMM + svduration
@@ -101,7 +165,7 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
 
     return res.status(400).json({
         success: true,
-        timeOptions: timeOptionsByStaff
+        timeOptions: ordersInCurrentDay
     });
 });
 
