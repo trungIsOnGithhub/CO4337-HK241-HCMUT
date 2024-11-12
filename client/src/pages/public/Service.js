@@ -168,10 +168,10 @@ const Services = () => {
     }
 
     queries.page = 1;
-    setParams(queries);
+    // setParams(queries);
 
     fetchServiceCategories(q, advancedQuery);
-  }, [sort, searchFilter]);
+  }, []);
 
 //   // for page changing
   useEffect(() => {
