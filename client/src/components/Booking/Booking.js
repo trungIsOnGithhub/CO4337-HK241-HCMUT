@@ -1,4 +1,4 @@
-import { apiGetCouponsByServiceId, apiGetOneService, apiGetServiceProviderById, apiGetServiceTimeOptionAvailable } from 'apis';
+import { apiGetCouponsByServiceId, apiGetOneService, apiGetServiceProviderById, apiGetServiceTimeOptionAvailableCurrentDay } from 'apis';
 import clsx from 'clsx';
 import Button from 'components/Buttons/Button';
 import React, { useEffect, useState } from 'react';
@@ -139,13 +139,15 @@ const Booking = () => {
       const mStarted = now.getHours() * 60 + now.getMinutes();
       const dow = daysOfWeek[now.getDay()];
 
-      let resp = await apiGetServiceTimeOptionAvailable({ now:now.getTime(), dow, mStarted, svid: service._id});
+      setIsLoading(true)
+      let resp = await apiGetServiceTimeOptionAvailableCurrentDay({ now:now.getTime(), dow, mStarted, svid: service._id });
 
       console.log('}}}}', resp.timeOptions);
 
       if (resp.success && resp.timeOptions) {
         setTimeOptions(resp.timeOptions);
       }
+      setIsLoading(false);
       // if (provider) {
   
       //   const getOpeningHoursForToday = () => {

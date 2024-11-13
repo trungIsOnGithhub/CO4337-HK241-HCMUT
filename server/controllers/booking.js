@@ -3,6 +3,7 @@ const Service = require('../models/service');
 const Order = require('../models/order'); 
 
 const timeOffGap = 10;
+const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 const getUserBookingsById = asyncHandler(async (req, res) => {
     const { _id } = req.user;
@@ -151,17 +152,17 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
             // console.log(startMM+ '----493042==>' + endMM);
 
             timeOptionsByStaff[stffTime.id] = [];
-            while (startMM < endMM && startMM > mStarted) {
+            while (startMM + svduration <= endMM && startMM + svduration >= mStarted) {
                 const reservedCollision = false;
                 timeReservedThisStaff.forEach((t) => {
                     if (startMM >= t[0] || endMM <= t[1]) {
                         reservedCollision = true;
                     }
                 },);
-
                 if (reservedCollision) {
                     continue;
                 }
+
                 timeOptionsByStaff[stffTime.id].push({
                     start: startMM,
                     end: startMM + svduration
@@ -185,16 +186,108 @@ function convertM2H(totalMinutes) {
     const formattedMinutes = String(minutes).padStart(2, '0');
     return `${formattedHours}:${formattedMinutes}`;
 }
-const getTimeOptionsAvailableForWeek = asyncHandler(async (req, res) => {
-    const { now, dow, mStarted, svid } = req.user;
-    if (!now || !dow?.length || !mStarted) {
+const getMfromDate(date) {
+
+}
+const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
+    const { startTs, endTs, mStarted, service } = req.user;
+    if (!startDate || !endDate || !(typeof mStarted === 'number')
+            || !service?._id || !service?.duration) {
         return res.status(400).json({
             success: false,
             message: 'Missing input.'
         });
     }
 
-    let service = await Service.findById(svid).populate('assigned_staff');
+    const startDate = new Date(startTs);
+    const endDate = new Date(endTs);
+
+    const ordersInDateRange = await Order.find({
+        // 'infor.0.service': svid,
+        'info.0.dateTime': {
+            $gte: startDate,
+            $lte: endDate
+        },
+        status: 'Successful'
+    });
+
+    const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const timeOptionsByStaffAndDay = {};
+    for (let currentDate = startDate; currentDate <= endDate;
+                                    currentDate.setDate(currentDate.getDate() + 1)) {
+        const bookingDate = new Date(currentDate).toISOString().split('T')[0];
+        const dayOfWeek = weekdays[currentDate.getDay()];
+
+        const workSchedule = service.assigned_staff.map(
+            staff => {
+                if (!staff?.shifts[dayOfWeek]?.isEnabled) {
+                    return {
+                        id: staff._id,
+                        shifts: null
+                    }
+                }
+                return {
+                    id: staff._id,
+                    shifts: staff?.shifts[dayOfWeek];
+                }
+            }
+        );
+
+        for (const stfs of workSchedule) {
+            if (!stfs?.shifts) {
+                continue;
+            }
+            console.log('+++++++', stfs);
+            const workingStart = new Date(`${bookingDate}T${stfs.shifts?.periods?.start}`);
+            const workingEnd = new Date(`${bookingDate}T${stfs.shifts?.periods?.end}`);
+
+            if (!timeOptionsByStaffAndDay[stfs.id]) {
+                timeOptionsByStaffAndDay[stfs.id] = {};
+            }
+            timeOptionsByStaffAndDay[stfs.id][currentDate.getTime()] = [];
+
+                // Filter "Successful" orders only for this staff
+            const successfulBookings = ordersInDateRange.filter(order =>
+                order.info[0]?.staff?._id === stfs.id &&
+                order.info[0]?.dateTime >= workingStart &&
+                order.info[0]?.dateTime <= workingEnd &&
+                order.status === "Successful"
+            );
+
+            let mmStart = convertH2M(stfs.shifts?.periods?.start);
+            let mmEnd = convertH2M(stfs.shifts?.periods?.end);
+    
+            while (mmStart + service?.duration <= mmEnd) {
+              const currentSlotEnd = new Date(currentSlotStart.getTime() + serviceDuration);
+        
+              // Check if the current slot overlaps with any "Successful" bookings
+              const overlaps = successfulBookings.some(order => {
+                order.info[0]?.dateTime
+                const orderStart = new Date(`${order.bookingDate}T${;
+                const orderEnd = new Date(orderStart.getTime() + serviceDuration);
+                return (
+                  (currentSlotStart >= orderStart && currentSlotStart < orderEnd) ||
+                  (currentSlotEnd > orderStart && currentSlotEnd <= orderEnd)
+                );
+              });
+        
+              if (!overlaps) {
+                availableTimeSlots.push({
+                  date: bookingDate,
+                  startTime: currentSlotStart.toTimeString().slice(0, 5),
+                  endTime: currentSlotEnd.toTimeString().slice(0, 5)
+                });
+              }
+        
+              currentSlotStart = new Date(currentSlotStart.getTime() + serviceDuration);
+            }
+        }
+        // if (!workSchedule) continue;
+    
+    }
+    
+
+    // let service = await Service.findById(svid).populate('assigned_staff');
     const staffTimes = service.assigned_staff?.map(
         stff => {
             return {
@@ -234,5 +327,5 @@ const getTimeOptionsAvailableForWeek = asyncHandler(async (req, res) => {
 module.exports = {
     getUserBookingsById,
     getTimeOptionsAvailableForDate,
-    getTimeOptionsAvailableForWeek
+    getTimeOptionsAvailableByDateRange
 }
