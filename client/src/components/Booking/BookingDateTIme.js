@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import React, { useEffect, useState } from 'react'
 import { format, addDays, subDays, endOfMonth, startOfMonth, addMonths, subMonths  } from 'date-fns'
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
-import { apiGetCouponsByServiceId, apiGetOneService, apiGetOneStaff, apiGetServiceProviderById, apiUpdateCartService } from 'apis'
+import { apiGetCouponsByServiceId, apiGetOneService, apiGetOneStaff, apiGetServiceProviderById, apiUpdateCartService, apiGetServiceTimeOptionAvailableByDateRange } from 'apis'
 import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 import { formatPrice, formatPricee } from 'ultils/helper'
@@ -30,6 +30,11 @@ const BookingDateTIme = () => {
   const currentUser = useSelector(state => state.user.current);
   const [discountCodes, setDiscountCodes] = useState([]);
 
+
+  const getISOStringDateOnly = (dateTime) => {
+    return new Date(currentDate).toISOString().split('T')[0];
+  };
+
   useEffect(() => {
     const coupon = usableDiscountCodes?.find(el => el?.code === selectedVoucher?.code)
     if(coupon?.discount_type === 'percentage'){
@@ -52,12 +57,10 @@ const BookingDateTIme = () => {
     if (!currentUser) return false;
     
     const userUsage = coupon.usedBy.find(usage => usage.user.toString() === currentUser._id);
-    
     return coupon.noLimitPerUser || !userUsage || userUsage.usageCount < coupon.limitPerUser;
   };
 
   const usableDiscountCodes = discountCodes.filter(canUseDiscount);
-
   const [datetime, setDatetime] = useState()
 
   const [displayTime, setDisplayTime] = useState(new Date())
@@ -93,7 +96,7 @@ const BookingDateTIme = () => {
 
   useEffect(() => {
     fetchServiceData();
-    fetchStaffData();
+    // fetchStaffData();
   }, [params]);
 
   useEffect(() => {
@@ -101,8 +104,14 @@ const BookingDateTIme = () => {
   }, [service]);
 
   useEffect(() => {
-    const fetchData = () => {
+    const fetchData = async () => {
       if (provider) {
+        // let resp = await apiGetServiceTimeOptionAvailableByDateRange();
+
+        // if (resp.success && resp.timeOptions) {
+        //   setTimeOptions(resp.timeOptions);
+        // }
+
         const currentDate = new Date();
         const year = currentDate.getFullYear();
         const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Thêm số 0 vào trước nếu cần
@@ -203,12 +212,15 @@ const BookingDateTIme = () => {
             return timeOptions;
           };
     
-          setTimeOptions(generateTimeOptions(openingTime, closingTime, duration));
+          const tempTime = generateTimeOptions(openingTime, closingTime, duration);
+          console.log('--------', tempTime, '------');
+
+          setTimeOptions(tempTime);
         }
       }
     }
 
-    fetchData(); 
+    fetchData();
 
     const interval = setInterval(() => {
       fetchData();

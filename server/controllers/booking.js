@@ -1,7 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const Service = require('../models/service');
 const Order = require('../models/order'); 
-
+// const ObjectId = require('mongodb').ObjectId; 
 const timeOffGap = 10;
 const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -190,7 +190,7 @@ function convertM2H(totalMinutes) {
 
 // }
 const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
-    const { startTs, endTs, mStarted, svid} = req.body;
+    const { startTs, endTs, mStarted, svid, stfid } = req.body;
     // if (!startTs || !endTs || !(typeof mStarted === 'number')
     //         || !service?._id || !service?.duration) {
     //     return res.status(400).json({
@@ -210,26 +210,43 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
     }
 
 
-    const ordersInDateRange = await Order.find({
+    let successfulBookings = await Order.find({
         // 'infor.0.service': svid,
-        'info.0.dateTime': {
-            $gte: startDate,
-            $lte: endDate
-        },
+        'info.0.staff': stfid,
+        // 'info.0.dateTime': {
+        //     $gte: startDate,
+        //     $lte: endDate
+        // },
         status: 'Successful'
     });
+    successfulBookings = successfulBookings.filter(order => {
+        const dates = order?.info[0]?.date?.split('/').map(Number);
+        console.log(dates, "-----))))")
+        const times = order?.info[0]?.time?.split(':').map(Number);
+        const currOrderDate = new Date(dates[2], dates[1]-1, dates[0], times[0], times[1], 0, 0);
+
+        console.log(currOrderDate.toISOString());
+        console.log(startDate.toISOString());
+        console.log(endDate.toISOString());
+        console.log('------------------');
+
+        return currOrderDate >= startDate && currOrderDate <= endDate;
+    });
+
+    console.log('VUIUIUIUIUIUIUIUIU', successfulBookings.map(o => o.info[0]), 'OQPIEPOIQWOPEIPQIEPOIQPE');
 
     const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const timeOptionsByStaffAndDay = {};
     for (let currentDate = startDate; currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
 
-        console.log(currentDate, '+++++++LDASDASDAD');
+        // console.log(currentDate, '+++++++LDASDASDAD');
 
         const bookingDate = new Date(currentDate).toISOString().split('T')[0];
         const dayOfWeek = weekdays[currentDate.getDay()];
 
         const workSchedule = service.assigned_staff.map(
             staff => {
+                // console.log('INSIDE WS======>' + staff.lastName + '---' + JSON.stringify(staff.shifts));
                 if (!staff?.shifts[dayOfWeek]?.isEnabled) {
                     return {
                         id: staff._id,
@@ -243,13 +260,13 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
             }
         );
 
-        console.log(workSchedule);
+        // console.log('>>>>>>>>', workSchedule);
 
         for (const stfs of workSchedule) {
+            // console.log('+++++++>>>', stfs);
             if (!stfs?.shifts) {
                 continue;
             }
-            console.log('+++++++', stfs);
             // const workingStart = new Date(`${bookingDate}T${stfs.shifts?.periods?.start}`);
             // const workingEnd = new Date(`${bookingDate}T${stfs.shifts?.periods?.end}`);
 
@@ -262,16 +279,16 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
             }
 
             // Filter "Successful" orders only for this staff
-            const successfulBookings = ordersInDateRange.filter(order => {
-                if (!order.info[0]?.date || !order.info[0]?.staff) return false;
+            // const successfulBookings = successfulBookings.filter(order => {
+            //     if (!order.info[0]?.date || !order.info[0]?.staff) return false;
 
-                const orderAD = order.split('/');
-                const bookAD = bookingDate.split('-');
+            //     const orderAD = order.split('/');
+            //     const bookAD = bookingDate.split('-');
 
-                if (bookAD[0] !== orderAD[2] || bookAD[1] !== orderAD[1] || bookAD[2] !== orderAD[0]) return false
+            //     if (bookAD[0] !== orderAD[2] || bookAD[1] !== orderAD[1] || bookAD[2] !== orderAD[0]) return false
 
-                return order.info[0]?.staff?._id === stfs.id && order.status === "Successful";
-            });
+            //     return order.info[0]?.staff?._id === stfs.id && order.status === "Successful";
+            // });
 
             let mmStart = convertH2M(stfs.shifts?.periods?.start);
             let mmEnd = convertH2M(stfs.shifts?.periods?.end);
@@ -349,9 +366,7 @@ module.exports = {
     "endTs": 1733049292000,
     "mStarted" : 280,
     "svid" : "66377b05e479e46dab038112"
-} 
-    
-
+}
 
 {
     "staffId": "66377a8ce479e46dab038106",
@@ -408,4 +423,5 @@ module.exports = {
     }
   }
 }
-}*/
+}
+*/
