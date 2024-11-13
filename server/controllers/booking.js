@@ -153,7 +153,7 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
 
             timeOptionsByStaff[stffTime.id] = [];
             while (startMM + svduration <= endMM && startMM + svduration >= mStarted) {
-                const reservedCollision = false;
+                let reservedCollision = false;
                 timeReservedThisStaff.forEach((t) => {
                     if (startMM >= t[0] || endMM <= t[1]) {
                         reservedCollision = true;
@@ -186,20 +186,29 @@ function convertM2H(totalMinutes) {
     const formattedMinutes = String(minutes).padStart(2, '0');
     return `${formattedHours}:${formattedMinutes}`;
 }
-const getMfromDate(date) {
+// const getMfromDate(date) {
 
-}
+// }
 const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
-    const { startTs, endTs, mStarted, service } = req.user;
-    if (!startTs || !endTs || !(typeof mStarted === 'number')
-            || !service?._id || !service?.duration) {
-        return res.status(400).json({
-            success: false,
-            message: 'Missing input.'
-        });
-    }
+    const { startTs, endTs, mStarted, svid} = req.body;
+    // if (!startTs || !endTs || !(typeof mStarted === 'number')
+    //         || !service?._id || !service?.duration) {
+    //     return res.status(400).json({
+    //         success: false,
+    //         message: 'Missing input.'
+    //     });
+    // }
     const startDate = new Date(startTs);
     const endDate = new Date(endTs);
+
+    let service = await Service.findById(svid).populate('assigned_staff');
+    if (!service?.assigned_staff) {
+        return res.status(400).json({
+            success: false,
+            message: 'Invalid input: Service has no assigned staff'
+        });
+    }
+
 
     const ordersInDateRange = await Order.find({
         // 'infor.0.service': svid,
@@ -213,6 +222,8 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
     const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const timeOptionsByStaffAndDay = {};
     for (let currentDate = startDate; currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
+
+        console.log(currentDate, '+++++++LDASDASDAD');
 
         const bookingDate = new Date(currentDate).toISOString().split('T')[0];
         const dayOfWeek = weekdays[currentDate.getDay()];
@@ -231,6 +242,8 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
                 }
             }
         );
+
+        console.log(workSchedule);
 
         for (const stfs of workSchedule) {
             if (!stfs?.shifts) {
@@ -330,3 +343,69 @@ module.exports = {
     getTimeOptionsAvailableForDate,
     getTimeOptionsAvailableByDateRange
 }
+
+/* {
+    "startTs": 1731494092000,
+    "endTs": 1733049292000,
+    "mStarted" : 280,
+    "svid" : "66377b05e479e46dab038112"
+} 
+    
+
+
+{
+    "staffId": "66377a8ce479e46dab038106",
+    "newShifts": {
+  "times": {
+    "Tuesday": {
+      "periods": {
+        "start": "09:02",
+        "end": "14:34"
+      },
+      "isEnabled": true
+    },
+    "Wednesday": {
+      "periods": {
+        "start": "09:02",
+        "end": "14:34"
+      },
+      "isEnabled": true
+    },
+    "Monday": {
+      "periods": {
+        "start": "09:02",
+        "end": "14:34"
+      },
+      "isEnabled": true
+    },
+    "Thursday": {
+      "periods": {
+        "start": "09:02",
+        "end": "14:34"
+      },
+      "isEnabled": true
+    },
+    "Saturday": {
+      "periods": {
+        "start": "09:02",
+        "end": "09:04"
+      },
+      "isEnabled": true
+    },
+    "Friday": {
+      "periods": {
+        "start": "09:02",
+        "end": "19:44"
+      },
+      "isEnabled": true
+    },
+    "Sunday": {
+      "periods": {
+        "start": "09:02",
+        "end": "19:44"
+      },
+      "isEnabled": true
+    }
+  }
+}
+}*/
