@@ -14,9 +14,14 @@ const path = {
     FAQS: 'faqs',
     DETAIL_SERVICE__CATEGORY__PID__TITLE: 'service/:category/:sid/:name',
     DETAIL_PRODUCT__CATEGORY__PID__TITLE: 'product/:category/:sid/:name',
-    DETAIL_PROVIDER_ID_VARIABLE: 'detail_provider/:prid/:v',
-    DETAIL_PROVIDER_ID_SERVICEID: 'detail_provider/:prid/service/:sid',
-    DETAIL_PROVIDER_ID_PRODUCTID: 'detail_provider/:prid/product/:pid',
+
+    DETAIL_PROVIDER: 'detail_provider',
+    DETAIL_PROVIDER_SERVICE_PRID: 'detail_provider/service/:prid',
+    DETAIL_PROVIDER_PRODUCT_PRID: 'detail_provider/product/:prid',
+    DETAIL_PROVIDER_BOOK_PRID: 'detail_provider/book/:prid',
+    DETAIL_PROVIDER_BLOG_PRID: 'detail_provider/blog/:prid',
+    DETAIL_PROVIDER_FINDUS_PRID: 'detail_provider/find-us/:prid',
+
     FINAL_REGISTER: 'final_register/:status',
     RESET_PASSWORD: 'reset_password/:token',
     DETAIL_CART: 'detail_cart',
@@ -68,6 +73,8 @@ const path = {
     PERSONAL: 'personal',
     MYCART: 'mycart',
     HISTORY: 'history',
+    ORDER_HISTORY: 'order_history',
+    ORDER_HISTORY_DETAIL: 'order_history/:oid',
     WISHLIST: 'wishlist',
     MY_SERVICE_PROVIDER: 'my_sp',
     MY_CALENDAR: 'my_calendar'

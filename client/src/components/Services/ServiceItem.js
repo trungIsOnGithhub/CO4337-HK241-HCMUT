@@ -14,7 +14,7 @@ const ServiceItem = ({serviceData, providerData}) => {
     const current = useSelector
 
     const handleNavigateServiceDetail = () => {
-        navigate(`/detail_provider/${providerData?._id}/service/${serviceData?._id}`)
+        navigate(`/service/${serviceData?.category?.toLowerCase()}/${serviceData?._id}/${serviceData?.name}`)
     }
 
     const handleBookService = async() => { 
@@ -39,7 +39,7 @@ const ServiceItem = ({serviceData, providerData}) => {
         }
         else{
           navigate({
-            pathname:  `/detail_provider/${providerData?._id}/book`,
+            pathname:  `/${path.BOOKING}`,
             search: createSearchParams({sid: serviceData?._id}).toString()
           })
         }

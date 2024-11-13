@@ -9,7 +9,7 @@ import { apiCreateBlog, apiGetAllPostTags, apiCreateNewPostTag } from 'apis/blog
 import { showModal } from 'store/app/appSlice'
 import { getCurrent } from 'store/user/asyncAction'
 import { HashLoader } from 'react-spinners'
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaSpinner } from "react-icons/fa";
 import Swal from 'sweetalert2'
 import bgImage from '../../assets/clouds.svg'
 import { FiX } from 'react-icons/fi'
@@ -112,7 +112,9 @@ const AddPost = () => {
     for (let [key, value] of formData.entries()) {
       // console.log(`${key}:`, value);
     }
+    setIsLoading(true)
     const response = await apiCreateBlog(formData);
+    setIsLoading(false)
     if(response?.success){
        // Lọc các tag mới chưa có trong `tags`
       const newTags = blogTag.filter(
@@ -133,6 +135,7 @@ const AddPost = () => {
       setPreview({
         thumb: null
       })
+      setSelectedCategory(null)
     }
     else{
       toast.error(response.mes)
@@ -300,6 +303,7 @@ const AddPost = () => {
               <input 
                 {...register('thumb', {required: 'Need upload thumb'})}
                 type='file' 
+                accept="image/*"
                 id='thumb'
                 className='text-[#00143c]'
               />
@@ -313,7 +317,18 @@ const AddPost = () => {
               }
             </div>
             <div className='w-full mt-6 mb-4 flex justify-center'>
-              <Button type='submit' style={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center'}><FaPlus /> Create a new blog</Button>
+              <Button type='submit' style={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center'}>
+                {isLoading ? (
+                    <span className="flex items-center">
+                    <FaSpinner className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                    Creating a new post...
+                    </span>
+                ) : (
+                    <span className='flex items-center'>
+                     <FaPlus /> Create a new post
+                    </span>
+                )}
+              </Button>
             </div>
           </form>
         </div>

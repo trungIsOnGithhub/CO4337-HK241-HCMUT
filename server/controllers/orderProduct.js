@@ -11,6 +11,7 @@ const createNewOrder = asyncHandler(async (req, res) => {
     const { _id } = req.user; // Lấy ID của người dùng từ request
     const { products, shippingPrice, totalProductPrice, savingPrice, totalPrice, statusPayment, statusShipping, provider, discountCode} = req.body;
 
+    console.log(products)
     if (!products || products.length === 0) {
         return res.status(400).json({
             success: false,
@@ -121,12 +122,110 @@ const getOrdersProductByAdmin = asyncHandler(async (req, res) => {
     }
 });
 
+const getUserOrderProduct = asyncHandler(async(req, res)=>{
+    const queries = { ...req.query };
+    const {_id} = req.user
+    // Loại bỏ các trường đặc biệt ra khỏi query
+    const excludeFields = ['limit', 'sort', 'page', 'fields'];
+    excludeFields.forEach((el) => delete queries[el]);
+
+    // Format lại các toán tử cho đúng cú pháp của mongoose
+    let queryString = JSON.stringify(queries);
+    queryString = queryString.replace(
+        /\b(gte|gt|lt|lte)\b/g,
+        (matchedEl) => `$${matchedEl}`
+    );
+
+    // chuyen tu chuoi json sang object
+    const formatedQueries = JSON.parse(queryString);
+    //Filtering
+    // let queryFinish = {}
+    // if(queries?.q){
+    //     delete formatedQueries.q
+    //     queryFinish = {
+    //         $or: [
+    //             {color: {$regex: queries.q, $options: 'i' }},
+    //             // {title: {$regex: queries.q, $options: 'i' }},
+    //             // {category: {$regex: queries.q, $options: 'i' }},
+    //             // {brand: {$regex: queries.q, $options: 'i' }},
+               
+    //         ]
+    //     }
+    // }
+    if (queries?.shippingStatus) {
+        // Xóa shippingStatus nếu nó đã tồn tại trong formatedQueries
+        delete formatedQueries.shippingStatus;
+
+        if (queries.shippingStatus.toLowerCase() === 'all') {
+            // Không thêm điều kiện, lấy tất cả
+        } else {
+            // Thêm điều kiện lọc theo shippingStatus với regex
+            formatedQueries.statusShipping = { $regex: queries.shippingStatus, $options: 'i' }; // Tìm kiếm không phân biệt chữ hoa thường
+        }
+    }
+
+    const qr = {...formatedQueries, orderBy: _id}
+    let queryCommand =  OrderProduct.find(qr)
+    try {
+        // sorting
+        if(req.query.sort){
+            const sortBy = req.query.sort.split(',').join(' ')
+            queryCommand.sort(sortBy)
+        }
+
+        //filtering
+        if(req.query.fields){
+            const fields = req.query.fields.split(',').join(' ')
+            queryCommand.select(fields)
+        }
+
+        //pagination
+        //limit: so object lay ve 1 lan goi API
+        //skip: n, nghia la bo qua n cai dau tien
+        //+2 -> 2
+        //+dgfbcxx -> NaN
+        const page = +req.query.page || 1
+        const limit = +req.query.limit || process.env.LIMIT_PRODUCT
+        const skip = (page-1)*limit
+        queryCommand.skip(skip).limit(limit)
 
 
+        const orders = await queryCommand
+        const counts = await OrderProduct.countDocuments(qr);
+        return res.status(200).json({
+            success: true,
+            counts: counts,
+            orderProducts: orders,
+            });
+        
+    } catch (error) {
+        // Xử lý lỗi nếu có
+        return res.status(500).json({
+            success: false,
+            error: 'Cannot get orders',
+        });
+    }
+})
+
+const getOneOrderProductById = asyncHandler(async(req, res)=>{
+    console.log('aaaa')
+    const {oid} = req.params
+
+    const orderProduct = await OrderProduct.findById(oid).populate({
+        path: 'provider',
+    })
+    
+    return res.status(200).json({
+        success: orderProduct ? true : false,
+        order: orderProduct ? orderProduct : "Cannot find order"
+    })
+})
 
 
 
 module.exports = {
     createNewOrder,
-    getOrdersProductByAdmin
+    getOrdersProductByAdmin,
+    getUserOrderProduct,
+    getOneOrderProductById
 }

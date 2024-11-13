@@ -55,7 +55,7 @@ const Blogs = () => {
   const [currBlogList, setCurrBlogList] = useState([]);
   const fetchCurrentBlogList = async (search, selectedTags) => {
     setIsLoading(true);
-    let response = await apiGetAllBlogs({ title: searchTerm,  limit: process.env.REACT_APP_LIMIT, sortBy: selectedSort, provinces: provinceFilter });
+    let response = await apiGetAllBlogs({ title: searchTerm,  limit: process.env.REACT_APP_LIMIT, sortBy: selectedSort });
     if(response?.success && response?.blogs){
       setCurrBlogList(response.blogs);
       setIsLoading(false);
@@ -183,7 +183,6 @@ const Blogs = () => {
                         <h2 className="text-xl font-semibold text-gray-900 mb-2">
                           {blog.title}
                         </h2>
-                        <p className="text-gray-600 mb-4">{blog.excerpt}</p>
                         <div className="flex flex-wrap gap-2">
                           {blog.tags.map((tag) => (
                             <span

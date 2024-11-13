@@ -41,6 +41,32 @@ const UserSideBar = () => {
                 <span>{el?.icon}</span>
                 <span>{el?.text}</span>
               </NavLink>}
+              {el?.type === 'parent' &&
+              <div onClick={() => handleShowTab(+el.id)} className='flex flex-col'>
+                <div className='px-4 py-2 flex items-center justify-between cursor-pointer hover:bg-blue-200'> 
+                  <div className='flex items-center gap-2'>
+                  <span>{el?.icon}</span>
+                  <span>{el?.text}</span>
+                  </div>
+
+                  {active.some(id => +id === +el.id) ? <FaCaretRight />: <FaCaretDown />}
+                </div>
+
+                {active.some(id => +id === +el.id) &&
+                  <div className='flex flex-col'>
+                  {el?.submenu?.map(item => (
+                    <NavLink 
+                      key={item?.text} 
+                      to={item?.path} 
+                      onClick={e=>e.stopPropagation()}
+                      className={({isActive})=> clsx(isActive && activeStyle, !isActive&& notActiveStyle, 'pl-10')}>
+                      {item?.text}
+                    </NavLink>
+                  ))}
+                </div>
+                }
+              </div>
+              }
             </Fragment>
           ))}
           <NavLink 

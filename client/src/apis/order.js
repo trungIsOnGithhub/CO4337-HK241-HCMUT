@@ -33,3 +33,9 @@ export const apiUpdateEmailByBookingId = (data) => axios({
     method: 'put',
     data
 })
+
+export const apiRefundOrder = (captureId) => axios({
+    url: '/order/refund',
+    method: 'post',
+    data: { captureId } // Truyền captureId vào body
+});

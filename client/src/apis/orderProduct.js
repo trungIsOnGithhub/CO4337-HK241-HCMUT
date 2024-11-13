@@ -10,3 +10,14 @@ export const apiGetOrdersProductByAdmin = (params) => axios({
     method: 'get',
     params
 })
+
+export const apiGetUserOrderProduct = (params) => axios({
+    url: '/order_product/user/',
+    method: 'get',
+    params
+})
+
+export const apiGetOneOrderProduct = (oid) => axios({
+    url: '/order_product/' + oid,
+    method: 'get',
+})

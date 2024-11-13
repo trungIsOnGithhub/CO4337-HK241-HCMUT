@@ -9,6 +9,10 @@ import path from 'ultils/path';
 import axios from 'axios'; // Import Axios
 import { apiGetCurrent, apiValidateAndUseCoupon, apiUpdateCouponUsage } from 'apis/coupon'; // Thêm dòng này
 import { useLocation } from 'react-router-dom';
+import { MdOutlineDiscount } from 'react-icons/md';
+import { FaPaypal } from "react-icons/fa";
+import { SiZalo } from "react-icons/si";
+import { TbTruckDelivery } from "react-icons/tb";
 
 const CheckoutService = ({ dispatch, navigate }) => {
   const { currentCartService, current: currentUser } = useSelector((state) => state.user);
@@ -21,8 +25,26 @@ const CheckoutService = ({ dispatch, navigate }) => {
   const searchParams = new URLSearchParams(location.search);
   const priceFromURL = searchParams.get('price');
   const couponCodeFromURL = searchParams.get('couponCode');
+  const [payload, setPayload] = useState([])
+  const [showPaypal, setShowPaypal] = useState(false);
+
+  useEffect(() => {
+    setPayload(currentCartService[0])
+  }, [currentCartService]);
+
+  const handlePaymentSelect = (paymentId) => {
+    setSelectedPayment(paymentId);
+    setShowPaypal(false);
+  };
 
   console.log(couponCodeFromURL)
+
+  const [selectedPayment, setSelectedPayment] = useState("");
+  const paymentMethods = [
+    { id: "paypal", name: "PayPal", icon: FaPaypal },
+    { id: "zalopay", name: "ZaloPay", icon: SiZalo },
+    { id: "cod", name: "Cash on Delivery", icon: TbTruckDelivery, iconColor: "text-green-600" }
+  ];
 
   const fetchCheckoutData = async () => {
     dispatch(getCurrent());
@@ -85,62 +107,132 @@ const CheckoutService = ({ dispatch, navigate }) => {
     }
   };
 
+  const handlePlaceOrder = () => {
+    if (!selectedPayment) {
+      alert("Please select a payment method");
+      return;
+    }
+
+    if (selectedPayment === 'paypal') {
+      setShowPaypal(true); // Hiển thị PaypalProduct nếu chọn PayPal
+    } else {
+      alert(`Order placed successfully with ${selectedPayment} payment method!`);
+    }
+  };
+
+
   return (
-    <div className="p-8 w-full grid grid-cols-10 h-full max-h-screen overflow-y-auto gap-6">
-      {isSuccess && <Congratulation />}
-      <div className="w-full flex items-center justify-center col-span-5">
-        <img className="h-[70%] object-contain" src={paypalLogo} alt="PayPal Logo"></img>
-      </div>
-      <div className="w-full flex flex-col items-center justify-center gap-6 col-span-5">
-        <h2 className="text-3xl mb-6 font-bold">Checkout your booking !</h2>
-        <div className="w-full flex flex-col gap-6 items-center">
-          <div className="border border-gray-400 h-fit pb-5 rounded-md w-fit px-5">
-            <div className="mb-4 border-b-2 border-gray-200 px-3 py-2 flex justify-center items-center">
-              <span className="font-semibold text-3xl">Booking Details</span>
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-blue-100 to-pink-100 py-12 px-4 sm:px-6 lg:px-8 animate-gradient-x">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
+          <div className="px-6 py-8">
+            <h1 className="text-3xl font-bold bg-clip-text bg-gradient-to-r text-[#0a66c2] mb-8">Checkout Details</h1>
+
+            <div className="mb-8 bg-gradient-to-r from-purple-50 via-blue-50 to-pink-50 rounded-xl p-6">
+              <h2 className="text-xl font-semibold text-[#0a66c2] mb-4">Service</h2>
+              <div className="space-y-4">
+                  <div className="flex-grow">
+                    <h3 className="font-medium text-gray-900">{currentCartService[0]?.service?.name}</h3>
+                    <p className="text-sm text-gray-500">Duration: {`${currentCartService[0]?.service?.duration}min`}</p>
+                    <div className="flex items-center mt-1">
+                    {
+                      currentCartService[0]?.discountPrice === 0 ?
+                      <span className="text-[#0a66c2] font-medium">
+                        {formatPrice(currentCartService[0]?.originalPrice)} VNĐ
+                      </span>:
+                      <>
+                        <span className="text-[#0a66c2] font-medium">
+                          {formatPrice(currentCartService[0]?.discountPrice)} VNĐ
+                        </span>
+                        <span className="ml-2 text-gray-400 line-through">
+                          {formatPrice(currentCartService[0]?.originalPrice)} VNĐ
+                        </span>
+                      </>
+                    }
+                      <span className="mx-2 text-gray-400">×</span>
+                      <span className="text-gray-600">1</span>
+                    </div>
+                  </div>
+              </div>
+              </div>
+          
+
+          {/* Payment Methods Section */}
+          <h2 className="text-xl font-semibold text-[#0a66c2] mb-4">Payment Method</h2>
+          <div className="space-y-4">
+            {paymentMethods.map((method) => (
+              <div
+                key={method.id}
+                className={`border-2 rounded-xl p-4 cursor-pointer transition-all duration-300 ${selectedPayment === method.id ? "border-blue-500 bg-gradient-to-r from-purple-50 via-blue-50 to-pink-50" : "border-gray-200 hover:border-blue-200"}`}
+                onClick={() => handlePaymentSelect(method.id)}
+                role="button"
+                tabIndex={0}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-purple-100 to-pink-100">
+                      <method.icon className={`w-6 h-6 ${method.id === "paypal" ? "text-[#003087]" : method.id === "zalopay" ? "text-[#0068FF]" : method.iconColor}`} />
+                    </div>
+                    <div>
+                      <p className="text-lg font-medium text-gray-900">{method.name}</p>
+                      <p className="text-sm text-gray-600">
+                        {method.id === "cod" ? "Pay when you receive your order" : `Pay with ${method.name}`}
+                      </p>
+                    </div>
+                  </div>
+                  <div className={`flex items-center justify-center w-6 h-6 border-2 rounded-full ${selectedPayment === method.id ? "border-purple-500" : "border-gray-300"}`}>
+                    {selectedPayment === method.id && (
+                      <div className="w-3 h-3 rounded-full bg-gradient-to-r from-purple-500 via-blue-500 to-pink-500"></div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {/* Order Summary Section */}
+            <div className="mt-8 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Order Summary</h2>
+              <div className="space-y-4">
+                <div className="flex justify-between">
+                  <p className="text-gray-600">Subtotal</p>
+                  <p className="font-medium text-gray-900">
+                    {`${formatPrice(currentCartService[0]?.originalPrice)} VNĐ`}
+                  </p>
+                </div>
+                {currentCartService[0]?.discountPrice > 0 && (
+                  <div className="flex justify-between text-green-600">
+                    <p className="flex items-center">
+                      <MdOutlineDiscount className="mr-1" />
+                      Total Savings
+                    </p>
+                    <p className="font-medium">{`- ${formatPrice(currentCartService[0]?.originalPrice - currentCartService[0]?.discountPrice)} VNĐ`}</p>
+                  </div>
+                )}
+                <div className="border-t-2 border-gray-200 pt-4">
+                  <div className="flex justify-between">
+                    <p className="text-lg font-semibold text-gray-900">Total</p>
+                    <p className="text-lg font-semibold text-[#0a66c2]">
+                    {`${formatPrice(currentCartService[0]?.discountPrice > 0 ? currentCartService[0]?.discountPrice : currentCartService[0]?.originalPrice)} VNĐ`}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="px-3 flex flex-col gap-2">
-              <div className='flex gap-4'>
-                <span className='text-gray-700 font-bold'>Service Name:</span>
-                <span className='font-semibold text-gray-600'>{currentCartService[0]?.service ? currentCartService[0]?.service?.name : ''}</span>
-              </div>
-              <div className='flex gap-4'>
-                <span className='text-gray-700 font-bold'>Duration:</span>
-                <span className='font-semibold text-gray-600'>{currentCartService[0]?.service ? `${currentCartService[0]?.service?.duration} minutes` : ''}</span>
-              </div>
-              <div className='flex gap-4'>
-                <span className='text-gray-700 font-bold'>Provider Name:</span>
-                <span className='font-semibold text-gray-600'>{currentCartService[0]?.provider ? `${currentCartService[0]?.provider?.bussinessName}` : ''}</span>
-              </div>
-              <div className='flex gap-4'>
-                <span className='text-gray-700 font-bold'>Address:</span>
-                <span className='font-semibold text-gray-600'>{currentCartService[0]?.provider ? `${currentCartService[0]?.provider?.address}` : ''}</span>
-              </div>
-              <div className='flex gap-4'>
-                <span className='text-gray-700 font-bold'>Staff:</span>
-                <span className='font-semibold text-yellow-600'>{currentCartService[0]?.staff ? `${currentCartService[0]?.staff?.lastName} ${currentCartService[0]?.staff?.firstName}` : ''}</span>
-              </div>
-              <div className='flex gap-4'>
-                <span className='text-gray-700 font-bold'>Date & Time:</span>
-                <span className='font-semibold text-green-600'>{currentCartService[0]?.time ? `${currentCartService[0]?.time} ${currentCartService[0]?.date}` : ''}</span>
-              </div>
-              <div className='flex gap-4'>
-                <span className='text-gray-700 font-bold'>Total Price:</span>
-                <span className='font-semibold text-[#0a66c2]'>{`${formatPrice(formatPricee(price))} VNĐ`}</span>
-              </div>
-            </div>
-          </div>
-          <div className="w-[60%]">
-            <Paypal
-              payload={{
-                info: currentCartService,
-                total: Math.round(totalPriceUSD),
-              }}
-              setIsSuccess={setIsSuccess}
-              amount={Math.round(totalPriceUSD)}
-              onSuccess={handlePayment}
-            />
+
+            {showPaypal && (
+              <Paypal amount={Math.round(totalPriceUSD)} payload={payload} setIsSuccess={setIsSuccess} />
+            )}
+
+            <button
+              className="mt-6 w-full bg-[#0a66c2] border border-transparent rounded-xl shadow-lg py-4 px-6 text-lg font-medium text-white disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.02] transition-all duration-300"
+              onClick={handlePlaceOrder}
+              disabled={!selectedPayment}
+            >
+              Place Order
+            </button>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

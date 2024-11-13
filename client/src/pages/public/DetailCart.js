@@ -246,7 +246,7 @@ const DetailCart = () => {
             totalPrice: totalPrice
           };
         });
-        console.log(providerTotalProductPrice)
+        // console.log(providerTotalProductPrice)
         const providerTotalSavingPrice = Object.keys(groupedProducts).map(providerId => {
           const provider = groupedProducts[providerId];
           
@@ -296,6 +296,8 @@ const DetailCart = () => {
         const totalProductPrice = calculateTotalProductPrice();
         const totalShippingPrice = calculateTotalShippingPrice();
         const totalSavings = calculateTotalSavings();
+
+        console.log(providerProductDetails)
         // Lưu vào sessionStorage
         sessionStorage.setItem('providerProductDetails', JSON.stringify(providerProductDetails));
         sessionStorage.setItem('providerTotalProductPrice', JSON.stringify(providerTotalProductPrice));

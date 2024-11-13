@@ -34,7 +34,7 @@ const BookingFromProvider = ({providerData, serviceData}) => {
     }
     else{
       navigate({
-        pathname:  `/detail_provider/${providerData?._id}/book`,
+        pathname:  `/${path.BOOKING}`,
         search: createSearchParams({sid: serviceData?._id}).toString()
       })
     }

@@ -33,11 +33,13 @@ var userSchema = new mongoose.Schema({
         service: {type:mongoose.Types.ObjectId, ref: 'Service'},
         provider: {type:mongoose.Types.ObjectId, ref: 'Service_Provider'},
         staff:  {type:mongoose.Types.ObjectId, ref: 'Staff'},
+        coupon: {type:mongoose.Types.ObjectId, ref: 'Coupon'},
         duration: Number,
         date: String,
         time: String,
-        price: Number,
-        dateTime: Date
+        originalPrice: Number,
+        discountPrice: Number,
+        dateTime: Date,
     }],
     cart_product:[{
         productId: {type: String},

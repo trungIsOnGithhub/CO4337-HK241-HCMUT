@@ -2,13 +2,14 @@ import React, { useEffect } from 'react'
 import bgImage from '../../assets/clouds.svg'
 import { useState, useRef } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { FaFacebook, FaInstagram, FaYoutube, FaTiktok, FaLinkedin, FaTwitter } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaYoutube, FaTiktok, FaLinkedin, FaTwitter, FaSpinner } from "react-icons/fa";
 import { MdDragIndicator } from "react-icons/md";
 import { BsToggleOff, BsToggleOn } from 'react-icons/bs';
 import { apiGetProviderByAdmin, apiUpdateFooterSection } from 'apis';
 import { FaX, FaXTwitter } from 'react-icons/fa6';
 import { Button } from 'components';
 import { IoSaveOutline } from 'react-icons/io5';
+import { toast } from 'react-toastify';
 
 const ManageFooterSection = () => {
   const [logoSize, setLogoSize] = useState("small");
@@ -22,6 +23,7 @@ const ManageFooterSection = () => {
     twitter: "",
     tiktok: ""
   })
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     const fetchProviderData = async () => {
@@ -367,6 +369,13 @@ const ManageFooterSection = () => {
       logoSize,
       slogan
     })
+    if(response?.success){
+      toast.success(response?.mes)
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    else{
+      toast.error(response?.mes)
+    }
     
   }
   return (
@@ -403,7 +412,18 @@ const ManageFooterSection = () => {
             </div>
           </footer>
           <div className='w-full h-[60px] flex items-center justify-center'>
-            <Button handleOnclick={handleSaveFooter} style={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center'}><IoSaveOutline size={20}/> Save Changes</Button>
+            <Button handleOnclick={handleSaveFooter} style={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center'}>
+              {isLoading ? (
+                <span className="flex items-center">
+                    <FaSpinner className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                    Updating footer...
+                </span>
+                ) : (
+                <span className='flex items-center'>
+                     <IoSaveOutline /> Save changes
+                </span>
+                )}
+            </Button>
           </div>
         </div>
       </div>

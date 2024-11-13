@@ -289,7 +289,9 @@ const BookingDateTIme = () => {
         time: time,
         date: date,
         dateTime: dateTime, // datetime chứa cả date và time
-        price: service?.price
+        originalPrice: originalPrice,
+        discountPrice: +discountValue > 0 ? +discountValue : 0,
+        coupon: selectedVoucher?._id
     });
 }
 
@@ -322,7 +324,9 @@ const BookingDateTIme = () => {
       duration: service?.duration,
       date: date,
       dateTime: dateTime,
-      price: finalPrice
+      originalPrice: originalPrice,
+      discountPrice: +discountValue > 0 ? +discountValue : 0,
+      coupon: selectedVoucher?._id
     })
     if(selectedVoucher){
       window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}&couponCode=${selectedVoucher?.code}`, '_blank');

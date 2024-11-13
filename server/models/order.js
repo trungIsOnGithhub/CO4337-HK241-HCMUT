@@ -8,12 +8,13 @@ var orderSchema = new mongoose.Schema({
         staff:  {type:mongoose.Types.ObjectId, ref: 'Staff'},
         date: String,
         time: String,
-        dateTime: Date
+        dateTime: Date,
+        discountCode: {type:mongoose.Types.ObjectId, ref: 'Coupon'}
     }],
     status:{
         type: String,
         default: 'Cancelled',
-        enum: ['Cancelled', 'Successful', 'Pending']
+        enum: ['Cancelled', 'Successful', 'Pending'] //pending thi user co the huy, con Success thi phai nhan voi admin neu muon huy
     },
     total:{
         type: Number
@@ -25,7 +26,14 @@ var orderSchema = new mongoose.Schema({
     emails: [{
         type: String,
         match: [/^\S+@\S+\.\S+$/, 'Invalid email format'] //add google calendar
-    }]
+    }],
+    capturedId: {
+        type: String,
+    },
+    paymentMethod:{
+        type: String,
+        enum: ['paypal', 'cod'],
+    }
 },{
     timestamps: true
 });

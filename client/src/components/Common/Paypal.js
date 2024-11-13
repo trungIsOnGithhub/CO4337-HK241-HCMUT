@@ -25,8 +25,12 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload, setIsSuccess, o
         })
     }, [currency, showSpinner])
 
-    const handleCreateOrder = async() => {
-        const response = await apiCreateOrder(payload)
+    const handleCreateOrder = async(captureId) => {
+        console.log(captureId)
+        console.log(payload)
+        const payloadWithCaptureId = { ...payload, captureId, status: 'Successful', paymentMethod: 'paypal'};
+        console.log(payloadWithCaptureId);
+        const response = await apiCreateOrder(payloadWithCaptureId)
         if(response.success){
             setIsSuccess(true)
             // Gọi onSuccess callback trước
@@ -57,7 +61,8 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload, setIsSuccess, o
                     
                 onApprove={(data, actions)=>actions.order.capture().then(async(response)=>{
                     if(response.status === 'COMPLETED'){
-                        handleCreateOrder()
+                        const captureId = response.purchase_units[0].payments.captures[0].id;
+                        handleCreateOrder(captureId)
                     }
                 })}
             />

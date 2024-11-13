@@ -2,9 +2,9 @@ import React, {useEffect} from 'react';
 import {Route, Routes, useLocation} from 'react-router-dom'
 
 import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageSaleEvent, ManagePostDetail, EditPostDetail, AddPost, ManageChat, ManageThemeAndAppearance, ManageHeroSection, ManageFooterSection, ManageServicePage, AddVariantProduct } from 'pages/admin'
-import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct, ViewBlog, DetailProvider } from 'pages/public'
+import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct, ViewBlog, DetailProvider, DetailProviderServicee } from 'pages/public'
 
-import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct, Calendarr} from 'pages/user'
+import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct, Calendarr, OrderHistory} from 'pages/user'
 import path from './ultils/path'
 import {getCategories} from 'store/app/asyncAction'
 import {getCategorieService} from 'store/category/asyncAction'
@@ -15,6 +15,11 @@ import { Booking, BookingDateTIme, Cart, Chat, MessageBox, Modal } from './compo
 import { showCart, showMessage } from 'store/app/appSlice';
 import ManagePost from 'pages/admin/ManagePost';
 import DetailProviderService from 'pages/public/DetailProviderService';
+import DetailProviderProduct from 'pages/public/DetailProviderProduct';
+import DetailProviderBlog from 'pages/public/DetailProviderBlog';
+import DetailProviderBook from 'pages/public/DetailProviderBook';
+import DetailProviderFindUs from 'pages/public/DetailProviderFindUs';
+import OrderHistoryDetail from 'pages/user/OrderHistoryDetail';
 
 function App() {
   const dispatch = useDispatch();
@@ -39,8 +44,13 @@ function App() {
      <Routes>
       <Route path={path.CHECKOUT_SERVICE} element={<CheckoutService />} />
       <Route path={path.CHECKOUT_PRODUCT} element={<CheckoutProduct />} />
-      <Route path={path.DETAIL_PROVIDER_ID_VARIABLE} element={<DetailProvider />} />
-      <Route path={path.DETAIL_PROVIDER_ID_SERVICEID} element={<DetailProviderService />} />
+
+      <Route path={path.DETAIL_PROVIDER_SERVICE_PRID} element={<DetailProviderServicee />} /> 
+      <Route path={path.DETAIL_PROVIDER_PRODUCT_PRID} element={<DetailProviderProduct />} /> 
+      <Route path={path.DETAIL_PROVIDER_BLOG_PRID} element={<DetailProviderBlog />} /> 
+      <Route path={path.DETAIL_PROVIDER_BOOK_PRID} element={<DetailProviderBook />} /> 
+      <Route path={path.DETAIL_PROVIDER_FINDUS_PRID} element={<DetailProviderFindUs />} />
+
       <Route path={path.PUBLIC} element={<Public />}>
         <Route path={path.HOME} element={<Home />} />
         <Route path={path.BLOGS} element={<Blogs />} />
@@ -93,6 +103,8 @@ function App() {
         <Route path={path.PERSONAL} element={<Personal />}/>
         <Route path={path.MYCART} element={<DetailCart />}/>
         <Route path={path.HISTORY} element={<History/>}/>
+        <Route path={path.ORDER_HISTORY} element={<OrderHistory/>}/>
+        <Route path={path.ORDER_HISTORY_DETAIL} element={<OrderHistoryDetail />}/>
         <Route path={path.WISHLIST} element={<WishList/>}/>
         <Route path={path.MY_SERVICE_PROVIDER} element={<MyServiceProvider/>}/>
         <Route path={path.MY_CALENDAR} element={<Calendarr />}/>

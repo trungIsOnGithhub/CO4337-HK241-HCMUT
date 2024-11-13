@@ -5,6 +5,8 @@ const {verifyAccessToken, isAdmin} = require('../middlewares/verify_token')
 
 // router.post('/', [verifyAccessToken, isAdmin], ctrls.createNewBlog)
 router.get('/tags', ctrls.getAllBlogTags)
+router.get('/blogofprovider', ctrls.getAllBlogByProviderId)
+router.get('/getAllBlogByAdmin', [verifyAccessToken, isAdmin], ctrls.getAllBlogsByAdmin)
 router.post('/', ctrls.getAllBlogs)
 router.get('/', ctrls.getBlogsBySearchTerm)
 router.post('/create', [verifyAccessToken, isAdmin], uploader.fields([

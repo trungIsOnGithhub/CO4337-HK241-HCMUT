@@ -8,16 +8,34 @@ const Staff = require('../models/staff')
 
 const createNewOrder = asyncHandler(async(req, res)=>{
     const {_id} = req.user
-    const {info, total} = req.body
-    if(!info || !total){
+    console.log('test')
+    console.log(req.body)
+    const {service, provider, staff, date, time, dateTime, captureId, originalPrice, discountPrice, status, coupon, paymentMethod} = req.body
+    if(!service || !provider || !staff || !date || !time || !dateTime){
         throw new Error("Missing input");
     }
     else{
         await User.findByIdAndUpdate(_id, {$set: {cart: []}}, {new: true});
         let response;
-        await Staff.findByIdAndUpdate(info[0]?.staff, {$push: {work: {service : info[0]?.service, provider: info[0]?.provider, time: info[0]?.time, date: info[0]?.date, duration: info[0]?.duration}}}, {new: true});
+        await Staff.findByIdAndUpdate(staff?._id, {$push: {work: {service : service?._id, provider: provider?._id, time: time, date: date, duration: service?.duration}}}, {new: true});
         try {
-            response = await Order.create({info, total, orderBy: _id, status: 'Successful'})
+            response = await Order.create({
+                info: [{
+                    service: service._id,
+                    provider: provider._id,
+                    staff: staff._id,
+                    date,
+                    time,
+                    dateTime,
+                    discountCode: coupon // Thay đổi nếu bạn có coupon
+                }],
+                orderBy: _id,
+                total: discountPrice > 0 ? discountPrice : originalPrice,
+                capturedId: captureId,
+                paymentMethod: paymentMethod,
+                emails: [], // Thêm email nếu cần
+                status: status
+            });
         } catch (error) {
             // Xử lý lỗi nếu có
             return res.status(500).json({ success: false, mes: "Something went wrong" });
@@ -98,7 +116,18 @@ const getUserOrder = asyncHandler(async(req, res)=>{
         queryCommand.skip(skip).limit(limit)
 
 
-        const orders = await queryCommand
+        const orders = await queryCommand.populate({
+            path: 'info',
+            populate: {
+                path: 'service',
+                select: 'name price duration thumb'
+            },
+        }).populate({
+            path: 'info',
+            populate: {
+                path: 'provider'
+            },
+        });
         const counts = await Order.countDocuments(qr);
         return res.status(200).json({
             success: true,
@@ -405,6 +434,58 @@ const updateEmailByBookingId = asyncHandler(async(req,res) => {
     }
 })
 
+const getAccessToken = async () => {
+    const clientId = "AYKmbDetUzEsuzEuSEU54izuOjqvD9z9m9HNfpzGLpjaYUDmS69P9kSqLueKqfOXm4BvpWuGDGx2bYnn"; // Thay thế bằng clientId thực tế
+    const clientSecret = "EJ3rnafAZJz6uoFHaTIPtFNdmlyQrfras2yonDooZkeyb5AqZqutRFJh7ekIqZSD2fnpFifMQp2RW6e-"; // Thay thế bằng clientSecret thực tế
+    const credentials = Buffer.from(`${clientId}:${clientSecret}`).toString('base64'); // Base64 encode clientId và clientSecret
+
+    const response = await fetch("https://api.sandbox.paypal.com/v1/oauth2/token", {
+        method: "POST",
+        headers: {
+            "Authorization": `Basic ${credentials}`,
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "grant_type=client_credentials&scope=https://uri.paypal.com/services/payments/refund" // Yêu cầu phạm vi hoàn tiền
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        return data.access_token;
+    } else {
+        throw new Error("Failed to get access token");
+    }
+};
+
+const refundPayment = asyncHandler(async (req, res) => {
+    const { captureId } = req.body; // Lấy captureId từ body của yêu cầu
+    if (!captureId) {
+        return res.status(400).json({ success: false, message: "Missing captureId" });
+    }
+
+    const accessToken = await getAccessToken(); // Lấy access token
+
+    const response = await fetch(`https://api.sandbox.paypal.com/v2/payments/captures/${captureId}/refund`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken}` // Sử dụng access token
+        },
+        body: JSON.stringify({
+            // amount: {
+            //     value: "10.00", // Số tiền bạn muốn hoàn lại
+            //     currency_code: "USD"
+            // }
+        })
+    });
+
+    if (response.ok) {
+        const refundData = await response.json();
+        return res.status(200).json({ success: true, refundData });
+    } else {
+        const errorData = await response.json();
+        return res.status(500).json({ success: false, message: "Failed to refund", error: errorData });
+    }
+});
 module.exports = {
     createNewOrder,
     updateStatus,
@@ -412,6 +493,7 @@ module.exports = {
     getOrdersByAdmin,
     getOrdersForStaffCalendar,
     getOneOrderByAdmin,
-    updateEmailByBookingId
+    updateEmailByBookingId,
+    refundPayment
 }
 
