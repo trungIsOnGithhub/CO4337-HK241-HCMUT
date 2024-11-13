@@ -1,0 +1,151 @@
+[{
+    "_id": {
+      "$oid": "66377a64e479e46dab038109"
+    },
+    "info": [{
+        "service": {
+            "$oid": "66377b05e479e46dab038112"
+        },
+        "provider": {
+            "$oid": "663771db2463a33c6f3a39d2"
+        },
+        "staff":  {
+            "$oid": "66377a8ce479e46dab038106"
+        },
+        "date": "14/11/2024",
+        "time":  "12:24"
+    }],
+    "status": "Successful",
+    "total": 86868686,
+    "orderBy": {
+        "$oid": "66386d3276daa06bc350ea88"
+    },
+    "createdAt": {
+      "$date": "2024-05-05T12:24:04.799Z"
+    },
+    "updatedAt": {
+      "$date": "2024-05-05T12:24:04.799Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "66377a64e479e46dab038189"
+    },
+    "info": [{
+        "service": {
+            "$oid": "66377b05e479e46dab038112"
+        },
+        "provider": {
+            "$oid": "663771db2463a33c6f3a39d2"
+        },
+        "staff":  {
+            "$oid": "66377a64e479e46dab038104"
+        },
+        "date": "16/11/2024",
+        "time":  "14:35"
+    }],
+    "status": "Successful",
+    "total": 9696969,
+    "orderBy": {
+        "$oid": "66386d3276daa06bc350ea88"
+    },
+    "createdAt": {
+      "$date": "2024-05-05T12:24:04.799Z"
+    },
+    "updatedAt": {
+      "$date": "2024-05-05T12:24:04.799Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "66377a64e479e46dab038186"
+    },
+    "info": [{
+        "service": {
+            "$oid": "66377b05e479e46dab038112"
+        },
+        "provider": {
+            "$oid": "663771db2463a33c6f3a39d2"
+        },
+        "staff":  {
+            "$oid": "66377a64e479e46dab038104"
+        },
+        "date": "15/11/2024",
+        "time":  "14:35"
+    }],
+    "status": "Pending",
+    "total": 34151,
+    "orderBy": {
+        "$oid": "66378581e479e46dab0383b8"
+    },
+    "createdAt": {
+      "$date": "2024-05-05T12:24:04.799Z"
+    },
+    "updatedAt": {
+      "$date": "2024-05-05T12:24:04.799Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "66377a64e479e46dab038188"
+    },
+    "info": [{
+        "service": {
+            "$oid": "66377b05e479e46dab038112"
+        },
+        "provider": {
+            "$oid": "663771db2463a33c6f3a39d2"
+        },
+        "staff":  {
+            "$oid": "66377a64e479e46dab038104"
+        },
+        "date": "14/11/2024",
+        "time":  "09:16"
+    }],
+    "status": "Successful",
+    "total": 451234,
+    "orderBy": {
+        "$oid": "66378581e479e46dab0383b8"
+    },
+    "createdAt": {
+      "$date": "2024-05-05T12:24:04.799Z"
+    },
+    "updatedAt": {
+      "$date": "2024-05-05T12:24:04.799Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "66377a64e479e46dab038198"
+    },
+    "info": [{
+        "service": {
+            "$oid": "66377b05e479e46dab038112"
+        },
+        "provider": {
+            "$oid": "663771db2463a33c6f3a39d2"
+        },
+        "staff":  {
+            "$oid": "66377a64e479e46dab038104"
+        },
+        "date": "15/11/2024",
+        "time":  "16:35"
+    }],
+    "status": "Successful",
+    "total": 105000,
+    "orderBy": {
+        "$oid": "66378581e479e46dab0383b8"
+    },
+    "createdAt": {
+      "$date": "2024-05-05T12:24:04.799Z"
+    },
+    "updatedAt": {
+      "$date": "2024-05-05T12:24:04.799Z"
+    },
+    "__v": 0
+  }
+]
