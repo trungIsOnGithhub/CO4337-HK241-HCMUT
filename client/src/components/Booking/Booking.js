@@ -13,6 +13,7 @@ import { CiSearch } from 'react-icons/ci';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 import moment from 'moment';
 import { HashLoader } from 'react-spinners';
+import { convertM2H } from 'ultils/helper';
 
 // const dayOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -205,11 +206,11 @@ const Booking = () => {
 
     fetchData(); 
 
-    const interval = setInterval(() => {
-      fetchData();
-    }, 10000);
+    // const interval = setInterval(() => {
+    //   fetchData();
+    // }, 10000);
 
-    return () => clearInterval(interval);
+    // return () => clearInterval(interval);
   }, [service]);
 
   const handleBookDateTime = (el) => { 
@@ -225,6 +226,7 @@ const Booking = () => {
   };
   
   const handleOnClick = async(time, el) => {
+    time = convertM2H(time);
     setSelectedStaff({time, staff:el, date:new Date().toLocaleDateString()});
 
     const date = moment(new Date()).format("DD/MM/YYYY");
@@ -305,11 +307,13 @@ const Booking = () => {
     <div className='w-main'>
       <div className='w-main flex gap-2 h-fit my-5'>
         <div className='border border-gray-400 flex-7 flex-col p-[24px] rounded-md'>
-        <div className='flex w-full justify-between items-center'>
+        <div className='flex w-full justify-between items-center mb-4'>
           <span className='text-[18px] leading-6 font-semibold'>Choose Employee</span>
           <div className='w-[187px] h-[40px] flex gap-1 items-center border border-[#0a66c2] rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px]'>
             <span className='text-xl'><CiSearch size={20}/></span>
-            <input className=' h-full w-[129px] bg-transparent outline-none text-[15px] text-[#00143c] placeholder:text-[#00143c]' placeholder='Search employee'/>
+            <input className=' h-full w-[129px] bg-transparent outline-none text-[15px] text-[#00143c] placeholder:text-slate-400'
+              onChange={(event) => { console.log('------><><>>' + event.target.value); }}
+              placeholder='Search employee name, email'/>
           </div>
         </div>
 
@@ -321,19 +325,20 @@ const Booking = () => {
                 <img src={el?.avatar} className='w-16 h-16 rounded-full' alt={el?.firstName} />
                 <span>{`${el.lastName} ${el.firstName}`}</span>
               </div>
-              <Button style='px-6 rounded-md text-white bg-[#0a66c2] font-semibold h-fit py-2 w-fit' handleOnclick={()=>handleBookDateTime(el)}>Choose</Button>
+              <Button style='px-6 rounded-md text-white bg-[#0a66c2] font-semibold h-fit py-2 w-fit' handleOnclick={()=>handleBookDateTime(el)}>Choose other date</Button>
             </div>
             <div className='flex gap-2 items-center'>
-              <span className='text-xs leading-4'>Available</span>
-              <div className=' text-xs leading-4 font-medium w-fit h-fit bg-[#0a66c2] px-[2px] py-[1px] rounded-md text-white'>Today</div>
+              <span className='text-xs leading-4'>Availability</span>
+              <div className=' text-xs leading-4 font-medium w-fit h-fit bg-[#0a66c2] p-2 rounded-md text-white'>Today</div>
             </div>
             <div className='flex flex-wrap gap-2 my-3 justify-center'>
               {!(timeOptions[el?._id]?.length) ?
-                  <h5 className='text-[#0a66c2] italic font-semibold'>Service is not available today</h5>
+                  <h5 className='text-red-400 font-semibold'>Service by this staff is not available today!</h5>
                   :
                 timeOptions[el?._id].map((time, idx) => (
                 (
-                  <div className={clsx('w-[15%] h-[46px] border border-[#0a66c2] rounded-md cursor-pointer flex items-center justify-center gap-1 hover:bg-blue-400 hover:border-none', (selectedStaff.time===time && selectedStaff.staff===el) && 'bg-blue-400 border-none')} key={idx} onClick={() =>{handleOnClick(time,el)}}>
+                  <div className={clsx('w-[15%] h-[46px] border border-[#0a66c2] rounded-md cursor-pointer flex items-center justify-center gap-1 hover:bg-blue-400 hover:border-none', (selectedStaff.time===time && selectedStaff.staff===el) && 'bg-blue-400 border-none')}
+                      key={idx} onClick={() =>{handleOnClick(time,el)}}>
                     <span className='text-[14px] leading-5 font-medium'>{`${(time['start'] / 60).toFixed(0)}:${time['start'] % 60}`} - {`${(time['end'] / 60).toFixed(0)}:${time['end'] % 60}`}</span>
                     {/* <span className='text-[12px] leading-4 text-[#00143c]'>{(time[0]/60) >= 12 ? 'pm' : 'am'}</span> */}
                   </div>

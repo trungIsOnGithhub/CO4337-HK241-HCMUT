@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import React, { useEffect, useState } from 'react'
-import { format, addDays, subDays, endOfMonth, startOfMonth, addMonths, subMonths  } from 'date-fns'
+import { format, addDays, subDays, endOfMonth, startOfMonth,
+addMonths, subMonths, startOfWeek, endOfWeek, addMinutes  } from 'date-fns'
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { apiGetCouponsByServiceId, apiGetOneService, apiGetOneStaff, apiGetServiceProviderById, apiUpdateCartService, apiGetServiceTimeOptionAvailableByDateRange } from 'apis'
 import { IoIosArrowBack } from "react-icons/io";
@@ -11,7 +12,8 @@ import path from 'ultils/path'
 import moment from 'moment'
 import { GrPrevious } from 'react-icons/gr'
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa'
-import { useSelector } from 'react-redux'
+import { useSelector } from 'react-redux';
+import { convertM2H } from 'ultils/helper';
 
 const BookingDateTIme = () => {
   const [type, setType] = useState('Week')
@@ -31,7 +33,8 @@ const BookingDateTIme = () => {
   const [discountCodes, setDiscountCodes] = useState([]);
   // const [startDate, setStartDate] = useState(null);
   // const [endDate, setEndDate] = useState(null);
-
+  const [displayTime, setDisplayTime] = useState(startOfWeek(new Date()));
+  const navigate = useNavigate();
 
   const getISOStringDateOnly = (dateTime) => {
     if (dateTime?.length < 4) {
@@ -39,18 +42,21 @@ const BookingDateTIme = () => {
     }
     return new Date(dateTime).toISOString().split('T')[0];
   };
-  const convertM2H = (totalMinutes) => {
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-    const formattedHours = String(hours).padStart(2, '0');
-    const formattedMinutes = String(minutes).padStart(2, '0');
-    return `${formattedHours}:${formattedMinutes}`;
-  }
+
   const fetchBookingTimeOptionsData = async (startDate, endDate) => {
-    if (provider) {
+    // if (provider) {
+      if (!endDate || !startDate) return;
+      const mmTzOffset = startDate.getTimezoneOffset();
+      // if (tzOffset !== endDate?.getTimezoneOffset()) return;
+
+      // addMinutes(startDate, startDate.getTimezoneOffset());
+      // addMinutes(endDate, endDate.getTimezoneOffset());
+      console.log('0000--' + mmTzOffset);
+      console.log(startDate + 'ccccccccc' + endDate);
+
       let resp = await apiGetServiceTimeOptionAvailableByDateRange({
-        "startTs": startDate?.getTime(),
-        "endTs": endDate?.getTime(),
+        startTs: startDate?.getTime() - 60000 * mmTzOffset,
+        endTs: endDate?.getTime() - 60000 * mmTzOffset,
         svid : params?.get('sid'),
         stfid: params?.get('st')
       });
@@ -165,7 +171,7 @@ const BookingDateTIme = () => {
 
       //   setTimeOptions(tempTime);
       // }
-    }
+    // }
   }
 
   useEffect(() => {
@@ -195,9 +201,6 @@ const BookingDateTIme = () => {
 
   const usableDiscountCodes = discountCodes.filter(canUseDiscount);
   const [datetime, setDatetime] = useState('')
-
-  const [displayTime, setDisplayTime] = useState(new Date())
-  const navigate = useNavigate();
 
   const fetchServiceData = async () => {
     const response = await apiGetOneService(params?.get('sid'));
@@ -237,14 +240,16 @@ const BookingDateTIme = () => {
   }, [service]);
 
   useEffect(() => {
-    fetchBookingTimeOptionsData();
-
+    if (provider?._id) {
+      const endWeek = endOfWeek(new Date()); 
+      fetchBookingTimeOptionsData(displayTime, endWeek);  
+    }
     // const interval = setInterval(() => {
     //   fetchData();
     // }, 10000);
 
     // return () => clearInterval(interval);
-  }, []);
+  }, [provider]);
 
 
   const currentWeek = Array.from({ length: 7 }, (_, index) => {
@@ -279,11 +284,32 @@ const BookingDateTIme = () => {
   };
 
   const handlePrevNext = (direction) => {
-    if (direction === 'prev') {
+    if (direction === 'in_week') {
+      const firstDayOfCurrWeek = startOfWeek(displayTime);
+      const endDayOfCurrWeek = endOfWeek(displayTime);
+
+      fetchBookingTimeOptionsData(firstDayOfCurrWeek, endDayOfCurrWeek);
+      // if (firstDayOfPrevMonth < new Date()) {
+      setDisplayTime(new Date());
+    }
+    else if (direction === 'in_month') {
+      const firstDayOfCurrMonth = startOfMonth(displayTime);
+      const endDayOfCurrMonth = endOfMonth(displayTime);
+
+      fetchBookingTimeOptionsData(firstDayOfCurrMonth, endDayOfCurrMonth);
+      // if (firstDayOfPrevMonth < new Date()) {
+      setDisplayTime(new Date());
+    }
+    else if (direction === 'prev') {
       if (type === 'Week') {
-        const startDate = subDays(displayTime, 7)
-        fetchBookingTimeOptionsData(startDate, displayTime);
-        setDisplayTime(startDate);
+        const nowPrev7days = subDays(displayTime, 7);
+        const startWeek = startOfWeek(nowPrev7days);
+        const endWeek = endOfWeek(nowPrev7days);
+
+        console.log(startWeek.toISOString() + '-----' + endWeek.toISOString());
+
+        fetchBookingTimeOptionsData(startWeek, endWeek);
+        setDisplayTime(startWeek);
       }
       else if (type === 'Month') {
         const firstDayOfPrevMonth = startOfMonth(subMonths(displayTime, 1));
@@ -300,23 +326,43 @@ const BookingDateTIme = () => {
     }
     else if (direction === 'next') {
       if (type === 'Week') {
-        const endDate = addDays(displayTime, 7);
-        fetchBookingTimeOptionsData(displayTime, endDate);
-        setDisplayTime(endDate);
-        // setDisplayTime(); // Tăng 7 ngày từ ngày hiện tại
+        // const endDate = addDays(displayTime, 7);
+        // fetchBookingTimeOptionsData(displayTime, endDate);
+        // setDisplayTime(endDate);
+        const nowNext7days = addDays(displayTime, 7);
+        const startWeek = startOfWeek(nowNext7days);
+        const endWeek = endOfWeek(nowNext7days);
+
+        console.log(startWeek.toISOString() + '-----' + endWeek.toISOString());
+
+        fetchBookingTimeOptionsData(startWeek, endWeek);
+        setDisplayTime(startWeek);
       }
       else if (type === 'Month') {
         const firstDayOfNextMonth = startOfMonth(addMonths(displayTime, 1));
         const endDayOfNextMonth = endOfMonth(addMonths(displayTime, 1));
 
         fetchBookingTimeOptionsData(firstDayOfNextMonth, endDayOfNextMonth);
-        setDisplayTime(startOfMonth(addMonths(displayTime, 1))); // Lấy ngày đầu tiên của tháng liền sau
+        // setDisplayTime(startOfMonth(addMonths(displayTime, 1))); // Lấy ngày đầu tiên của tháng liền sau
+
+        if (endDayOfNextMonth <= new Date()) {
+          setDisplayTime(new Date()); // Nếu ngày đầu tiên của tháng liền trước bé hơn ngày hiện tại thì lấy ngày hiện tại
+        } else {
+          setDisplayTime(endDayOfNextMonth); // Lấy ngày đầu tiên của tháng liền trước
+        }
       }
     }
+    setDatetime('');
   };
 
   const handleOnClick = async (time) => {
-    setSelectedTime(time);
+    // console.log('xxxxxxxx-xxx-' + JSON.stringify(time));
+    if (!time?.start || !time?.end) {
+      return;
+    }
+    // let timeParts = time.split(":");
+    // Number(timeParts[0]) * 60 + Number(timeParts[1]);
+    setSelectedTime(convertM2H(time.start));
 
     // Lấy date và chuyển đổi thành định dạng "yyyy-mm-dd"
     const date = moment(new Date(datetime)).format("DD/MM/YYYY");
@@ -428,7 +474,8 @@ const BookingDateTIme = () => {
       search: createSearchParams({sid: service?._id}).toString()
     })
   }
-  console.log(discountValue)
+  // console.log(discountValue)
+
   return (
     <div className='w-main'>
       <div className='w-main flex gap-2 h-fit my-5'>
@@ -439,8 +486,26 @@ const BookingDateTIme = () => {
           </div>
           <div className='flex justify-between'>
             <div className='flex'>
-            <div className={clsx('px-[15px] py-[10px] rounded-l-md cursor-pointer text-[14px] font-medium flex items-center justify-center', type === 'Week' ? 'bg-[#0a66c2] text-white' : 'bg-blue-200')} onClick={()=>{setType('Week'); setDatetime(''); setDisplayTime(new Date()); setSelectedTime()}}>Week</div>
-            <div className={clsx('px-[15px] py-[10px] rounded-r-md cursor-pointer text-[14px] font-medium flex items-center justify-center', type === 'Month' ? 'bg-[#0a66c2] text-white' : 'bg-blue-200')} onClick={()=>{setType('Month'); setDatetime(''); setDisplayTime(new Date()); setSelectedTime()}}>Month</div>
+            <div className={clsx('px-[15px] py-[10px] rounded-l-md cursor-pointer text-[14px] font-medium flex items-center justify-center', type === 'Week' ? 'bg-[#0a66c2] text-white' : 'bg-blue-200')}
+                onClick={()=>{
+                  setType('Week');
+                  setDatetime('');
+                  setDisplayTime(new Date());
+                  setSelectedTime();
+                  handlePrevNext('in_week');
+            }}>
+                    Week
+            </div>
+            <div className={clsx('px-[15px] py-[10px] rounded-r-md cursor-pointer text-[14px] font-medium flex items-center justify-center', type === 'Month' ? 'bg-[#0a66c2] text-white' : 'bg-blue-200')}
+              onClick={()=>{
+                  setType('Month');
+                  setDatetime('');
+                  setDisplayTime(new Date());
+                  setSelectedTime()
+                  handlePrevNext('in_month');
+            }}>
+                    Month
+              </div>
             </div>
             <div className='flex gap-1'>
               <div className={clsx('border rounded-md flex items-center justify-center px-1 py-1',isBackButtonDisabled() ? 'cursor-not-allowed border-gray-200' : 'border-gray-400  cursor-pointer' )} onClick={() => handlePrevNext('prev')}><IoIosArrowBack size={30} color='gray'/></div>
@@ -455,7 +520,15 @@ const BookingDateTIme = () => {
               currentWeek?.map(({ date, dayOfWeek }) => (
                 <div key={date} className='w-[12%] flex flex-col items-center gap-2'>
                   <div className='font-semibold text-xs'>{dayOfWeek.slice(0, 3)}</div>
-                  <div className={clsx('w-full h-[72px] flex items-center justify-center border border-[#0a66c2] rounded-md hover:bg-blue-400  cursor-pointer', date === datetime && 'bg-blue-400 border-[rgba(22,157,215,1)]')} onClick={()=>{console.log('+++++++++++>>>>', getISOStringDateOnly(date));setDatetime(getISOStringDateOnly(date)); setSelectedTime()}}>{format(new Date(date), 'dd')}</div>
+                  <div className={clsx('w-full h-[72px] flex items-center justify-center border border-[#0a66c2] rounded-md hover:bg-blue-400  cursor-pointer', date === datetime && 'bg-blue-400 border-[rgba(22,157,215,1)]',new Date(date).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer')}
+                  onClick={()=>{
+                    // console.log('+++++++++++>>>>', getISOStringDateOnly(date));
+                    if (new Date(date).setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0)) {
+                      setDatetime(getISOStringDateOnly(date)); setSelectedTime()}}
+                    }
+                  >
+                      {format(new Date(date), 'dd')}
+                  </div>
                 </div>
               ))
             ) : 
@@ -466,7 +539,7 @@ const BookingDateTIme = () => {
                     <div className={clsx('w-full h-[72px] flex items-center justify-center border border-[#0a66c2] rounded-md hover:bg-blue-400 cursor-pointer', date === datetime && 'bg-blue-400 border-[rgba(22,157,215,1)]',new Date(date).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer')} 
                       onClick={() => {
                         if (new Date(date).setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0)) {
-                          console.log('+++++++++++>>>>', getISOStringDateOnly(date));
+                          // // // console.log('+++++++++++>>>>', getISOStringDateOnly(date));
                           setDatetime(getISOStringDateOnly(date));
                           setSelectedTime();
                         }
@@ -478,12 +551,14 @@ const BookingDateTIme = () => {
             </div>
           </div>
           <div className='flex flex-col items-center'>
-            <div className='font-semibold'>Choose time { `----${datetime}---` } </div>
+            <div className='font-semibold'>Choose time
+              { `----${datetime}---` }
+            </div>
             <div className='flex flex-wrap gap-2 my-3 justify-center'>
               {
                 datetime &&
                 !timeOptions[datetime]?.length ?
-                  <h5 className='text-red-500'>Service and Staff is not available on {moment(datetime, 'YYYY-MM-DD').format('DD/MM/YYYY')}</h5>
+                  <h5 className='text-red-500'>Service by this staff is not available on this day.</h5>
                   : timeOptions[datetime]?.map((time, idx) => (
                   // (!staff?.work || !isWorkingTime(time, staff?.work)) &&
                   (
@@ -503,7 +578,8 @@ const BookingDateTIme = () => {
         </div>
         <div className='flex-3 flex-col'>
           <div className='border border-gray-400 h-fit pb-5 rounded-md'>
-          <div className='mb-4 border-b-2 border-gray-200 px-3 pb-4'><span className='font-semibold text-3xl'>Booking Details</span></div>
+          <div className='mb-4 border-b-2 border-gray-200 px-3 pt-2'>
+            <span className='font-semibold text-3xl p-2'>Booking Details</span></div>
           <div className='px-3 flex flex-col gap-2'>
             <div className='flex gap-2'>
               <span className='text-gray-700 font-bold'>Service Name:</span>
@@ -527,7 +603,7 @@ const BookingDateTIme = () => {
             </div>
             <div className='flex gap-2'>
               <span className='text-gray-700 font-bold'>Date & Time:</span>
-              <span className='text-[#00143c]'>{(selectedTime && beforeCheckout()) ? `${selectedTime} ${new Date(datetime).toLocaleDateString()}` : ''}</span>
+              <span className='text-[#00143c]'>{(selectedTime && beforeCheckout()) ? `from ${selectedTime}, ${new Date(datetime).toLocaleDateString('en-GB')}` : ''}</span>
             </div>
             <div className='flex gap-2'>
               <span className='text-gray-700 font-bold'>Total Price:</span>

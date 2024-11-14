@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const Service = require('../models/service');
 const Order = require('../models/order'); 
+
 // const ObjectId = require('mongodb').ObjectId; 
 const timeOffGap = 10;
 const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -81,7 +82,7 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
 
     let service = await Service.findById(svid).populate('assigned_staff');
     let ordersInCurrentDay = await Order.find({
-        // 'infor.0.service': svid,
+        'infor.0.service': svid,
         'info.0.dateTime': {
             $gte: startCurrentDay,
             $lte: endCurrentDay
@@ -89,7 +90,7 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
         status: 'Successful'
     });
 
-    // console.log('==_==____====_==', service);
+    console.log('==_==____====_==', ordersInCurrentDay);
 
     const shiftKey = capitalizeFirstLetter(dow);
     // console.log('____1', shiftKey);
@@ -102,25 +103,26 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
 
     const staffTimes = service.assigned_staff?.map(
         stff => {
+            // console.log(`P${shiftKey}P`)
+            // console.log('currr sk: ' + JSON.stringify(stff.shifts));
             return {
-                // times: stff?.shifts[shiftKey],
-                times:  {Tuesday: { periods: { start: '09:02', end: '14:34' }, isEnabled: true },
-                Wednesday: { periods: { start: '09:02', end: '14:34' }, isEnabled: true },
-                Monday: { periods: { start: '09:02', end: '14:34' }, isEnabled: true },
-                Thursday: { periods: { start: '09:02', end: '14:34' }, isEnabled: true },
-                Saturday: { periods: { start: '09:02', end: '09:04' }, isEnabled: true },
-                Friday: { periods: { start: '09:02', end: '19:44' }, isEnabled: true },
-                Sunday: { periods: { start: '09:02', end: '19:44' }, isEnabled: true }
-              },              
+                times: stff?.shifts[shiftKey],
+            //     times:  {Tuesday: { periods: { start: '09:02', end: '14:34' }, isEnabled: true },
+            //     Wednesday: { periods: { start: '09:02', end: '14:34' }, isEnabled: true },
+            //     Monday: { periods: { start: '09:02', end: '14:34' }, isEnabled: true },
+            //     Thursday: { periods: { start: '09:02', end: '14:34' }, isEnabled: true },
+            //     Saturday: { periods: { start: '09:02', end: '09:04' }, isEnabled: true },
+            //     Friday: { periods: { start: '09:02', end: '19:44' }, isEnabled: true },
+            //     Sunday: { periods: { start: '09:02', end: '19:44' }, isEnabled: true }
+            //   },              
                 id: stff?._id,
                 name: '' + stff.firstName + ' ' + stff.lastName,
                 isEnabled: stff?.shifts[shiftKey]?.isEnabled || true
             };
         }
     );
-    console.log('~~~~~~~~~~~~~~', staffTimes);
     
-    const svduration = 45; // parseInt(service.duration);
+    const svduration = parseInt(service.duration);
     let timeOptionsByStaff = {};
 
     for (const stffTime of staffTimes) {
@@ -128,8 +130,8 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
             timeOptionsByStaff[stffTime.id] = [];
         }
 
-        // console.log('LLLLLLLL', stffTime);
-        if (stffTime.isEnabled) {
+        console.log('LLLLLLLL', stffTime?.times, stffTime?.isEnabled);
+        if (stffTime?.isEnabled && stffTime?.times) {
             const orderSameDayThisStaff = ordersInCurrentDay.filter(order => {
                 return order?.info[0]?.staff === stffTime.id;
             });
@@ -145,8 +147,10 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
             console.log('Tim Reserved:', timeReservedThisStaff);
             // console.log('>>>>>>>>>>>>>>>>>>>>>>>>');
 
-            let startMM = convertH2M(stffTime.times[shiftKey].periods.start);
-            let endMM = convertH2M(stffTime.times[shiftKey].periods.end);
+            console.log('PREEEEEE' + JSON.stringify(stffTime.times));
+
+            let startMM = convertH2M(stffTime.times?.periods.start);
+            let endMM = convertH2M(stffTime.times?.periods.end);
 
             // console.log(stffTime.times[shiftKey].periods.start+ '=====>' + stffTime.times[shiftKey].periods.end);
             // console.log(startMM+ '----493042==>' + endMM);
@@ -172,25 +176,19 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
         }
     }
 
+    console.log('~~~~~~~~~~~~~~', staffTimes.map(s => s.times.periods));
+
     return res.status(200).json({
         success: true,
         timeOptions: timeOptionsByStaff
     });
 });
 
-
-function convertM2H(totalMinutes) {
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-    const formattedHours = String(hours).padStart(2, '0');
-    const formattedMinutes = String(minutes).padStart(2, '0');
-    return `${formattedHours}:${formattedMinutes}`;
-}
 // const getMfromDate(date) {
 
 // }
 const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
-    const { startTs, endTs, mStarted, svid, stfid } = req.body;
+    const { startTs, endTs, svid, stfid } = req.body;
     // if (!startTs || !endTs || !(typeof mStarted === 'number')
     //         || !service?._id || !service?.duration) {
     //     return res.status(400).json({
@@ -200,6 +198,9 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
     // }
     const startDate = new Date(startTs);
     const endDate = new Date(endTs);
+
+    console.log('INPUT OptsByDateRange: ', startDate.toISOString());
+    console.log('INPUT OptsByDateRange: ', endDate.toISOString());
 
     let service = await Service.findById(svid).populate('assigned_staff');
     if (!service?.assigned_staff) {
@@ -248,7 +249,6 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
     const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const timeOptionsByStaffAndDay = {};
     for (let currentDate = startDate; currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
-
         // console.log(currentDate, '+++++++LDASDASDAD');
 
         const bookingDate = new Date(currentDate).toISOString().split('T')[0];
