@@ -98,9 +98,9 @@ const Services = () => {
       console.log('Elastic Pre Query', advancedQuery, 'Elastic Pre Query');
       response = await apiSearchServiceAdvanced(advancedQuery);
 
-      console.log("-----------------RESPONSE SERVICES ADVANCED:", response.services);
+      console.log("-----------------RESPONSE SERVICES ADVANCED:", response.services?.hits);
 
-      if(response.success) setServices(response?.services || []);
+      if(response.success) setServices(response?.services?.hits || []);
     }
 
     // response = await apiGetServicePublic(queries)
