@@ -23,7 +23,7 @@ const Services = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [services, setServices] = useState(null)
-  const [active, setActive] = useState(null)
+  // const [active, setActive] = useState(null)
   const [params] = useSearchParams()
   const [sort, setSort] = useState('')
   const [nearMeOption, setNearMeOption] = useState(false)
@@ -33,7 +33,7 @@ const Services = () => {
   const {current} = useSelector((state) => state.user);
   const [svCategories, setSvCategories] = useState([]);
 
-  const [useAdvanced, setUseAdvanced] = useState(true);
+  const [searchedClick, setSearchedClick] = useState(0);
   const [searchFilter, setSearchFilter] = useState({
     term: '',
     province: '',
@@ -75,6 +75,7 @@ const Services = () => {
     if (nearMeOption && searchFilter.province) {
       queries.province = tinh_thanhpho[searchFilter.province].name
     }
+
     if (nearMeOption && current?.lastGeoLocation?.coordinates?.length === 2) {
       queries.current_client_location = {
         longtitude: current.lastGeoLocation.coordinates[0],
@@ -97,12 +98,14 @@ const Services = () => {
       console.log('Elastic Pre Query', advancedQuery, 'Elastic Pre Query');
       response = await apiSearchServiceAdvanced(advancedQuery);
 
+      console.log("-----------------RESPONSE SERVICES ADVANCED:", response.services);
+
       if(response.success) setServices(response?.services || []);
     }
 
-    response = await apiGetServicePublic(queries)
-    console.log(response)
-    if(response.success) setServices(response)
+    // response = await apiGetServicePublic(queries)
+    // console.log("898989898989898989", response)
+    // if(response.success) setServices(response)
     dispatch(getCurrent())
   // }
 }
@@ -112,12 +115,12 @@ const Services = () => {
       let resp = await apiGetCategorieService();
 
       if (resp.success && resp.serviceCategories?.length) {
-        console.log('UEFF', resp.serviceCategories.map(cat => {
-          return {
-            value: cat.title,
-            label: cat.title
-          }
-        }));
+        // console.log('UEFF', resp.serviceCategories.map(cat => {
+        //   return {
+        //     value: cat.title,
+        //     label: cat.title
+        //   }
+        // }));
         setSvCategories(resp.serviceCategories.map(cat => {
           return {
             value: cat.title,
@@ -126,7 +129,9 @@ const Services = () => {
         }));
       }
     })();
-  }, []);
+  }, [searchFilter]);
+
+
   useEffect(() => {
     window.scrollTo(0,0)
     // console.log('=====>>>>>>', current);
@@ -171,7 +176,8 @@ const Services = () => {
     // setParams(queries);
 
     fetchServiceCategories(q, advancedQuery);
-  }, []);
+  }, [searchedClick]);
+
 
 //   // for page changing
   useEffect(() => {
@@ -199,7 +205,7 @@ const Services = () => {
 
     let advancedQuery = {
       searchTerm: searchFilter.term,
-      limit: REACT_APP_PAGINATION_LIMIT_DEFAULT , offset: params.get('page')-1,
+      limit: REACT_APP_PAGINATION_LIMIT_DEFAULT , offset: parseInt(params.get('page')) ? params.get('page')-1 : 0,
       sortBy: queries?.sort
     };
 
@@ -330,8 +336,14 @@ const Services = () => {
                         value={searchFilter?.province}
                         options={Object.entries(tinh_thanhpho).map(ele => { return {id:ele[0], text:ele[1]?.name, value:ele[0]}})}
                         changeValue={(value) => {setSearchFilter(prev => {return {...prev, province: value};}) }}
+                        className={'rounded-md p-2 bg-white min-h-10 border border-gray-300'}
                       />
-                      <InputField nameKey='maxDistance' value={searchFilter.maxDistance} setValue={setSearchFilter} placeholder={"Maximum Distance(optional)"} />
+                      <InputField nameKey='maxDistance'
+                        value={searchFilter.maxDistance}
+                        setValue={setSearchFilter}
+                        placeholder={"Maximum Distance(optional)"}
+                        style={'bg-white min-h-10 rounded-md pl-2 flex items-center border border-gray-300'}
+                      />
                     </>
                   }
                 </span>
@@ -403,8 +415,8 @@ const Services = () => {
             </div>
 
               <Button
-              handleOnclick={prev => { setSearchFilter({ ...prev,  });}}
-            >
+                handleOnclick={() => { console.log(searchFilter); setSearchedClick(prev => prev+1); }}
+              >
               <span className="flex justify-center gap-2 items-center">
                 <FaSearch /><span>Search</span>
               </span>
