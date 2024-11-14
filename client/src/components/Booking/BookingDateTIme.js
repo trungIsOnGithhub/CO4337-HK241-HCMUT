@@ -106,11 +106,17 @@ const BookingDateTIme = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (provider) {
-        // let resp = await apiGetServiceTimeOptionAvailableByDateRange();
+        let resp = await apiGetServiceTimeOptionAvailableByDateRange({
+          "startTs": 1731494092000,
+          "endTs": 1733049292000,
+          svid : params?.get('sid'),
+          stfid: params?.get('st')
+        });
 
-        // if (resp.success && resp.timeOptions) {
-        //   setTimeOptions(resp.timeOptions);
-        // }
+        if (resp.success && resp.timeOptions) {
+          console.log('VVVVVVVVVV---', timeOptions, '++++++++++++++');
+          setTimeOptions(resp.timeOptions);
+        }
 
         const currentDate = new Date();
         const year = currentDate.getFullYear();
