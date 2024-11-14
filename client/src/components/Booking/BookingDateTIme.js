@@ -29,11 +29,144 @@ const BookingDateTIme = () => {
   const [showVoucher, setShowVoucher] = useState(false);
   const currentUser = useSelector(state => state.user.current);
   const [discountCodes, setDiscountCodes] = useState([]);
+  // const [startDate, setStartDate] = useState(null);
+  // const [endDate, setEndDate] = useState(null);
 
 
   const getISOStringDateOnly = (dateTime) => {
-    return new Date(currentDate).toISOString().split('T')[0];
+    if (dateTime?.length < 4) {
+      return '';
+    }
+    return new Date(dateTime).toISOString().split('T')[0];
   };
+  const convertM2H = (totalMinutes) => {
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    const formattedHours = String(hours).padStart(2, '0');
+    const formattedMinutes = String(minutes).padStart(2, '0');
+    return `${formattedHours}:${formattedMinutes}`;
+  }
+  const fetchBookingTimeOptionsData = async (startDate, endDate) => {
+    if (provider) {
+      let resp = await apiGetServiceTimeOptionAvailableByDateRange({
+        "startTs": startDate?.getTime(),
+        "endTs": endDate?.getTime(),
+        svid : params?.get('sid'),
+        stfid: params?.get('st')
+      });
+
+      if (resp.success && resp.timeOptions) {
+        console.log('VVVVVVVVVV---', resp.timeOptions, '++++++++++++++');
+        setTimeOptions(resp.timeOptions);
+      }
+
+      // const currentDate = new Date();
+      // const year = currentDate.getFullYear();
+      // const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Thêm số 0 vào trước nếu cần
+      // const day = String(currentDate.getDate()).padStart(2, '0'); // Thêm số 0 vào trước nếu cần
+
+      // const formattedDate = `${year}-${month}-${day}`;
+      // if(datetime === formattedDate){
+      //   const getCurrentTime = () => {
+      //     const now = new Date();
+      //     const hour = now.getHours();
+      //     const minute = now.getMinutes();
+      //     return hour * 100 + minute;
+      //   };
+      //   const getOpeningHoursForToday = () => {
+      //     const dayOfWeek = new Date().getDay();
+      //     const openingTimeKey = `start${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
+      //     const closingTimeKey = `end${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
+          
+      //     const parseTime = (timeString) => {
+      //       const [hour, minute] = timeString.split(':').map(Number);
+      //       return hour * 60 + minute;
+      //     };
+        
+      //     const openingTime = parseTime(provider?.time[openingTimeKey]);
+      //     const closingTime = parseTime(provider?.time[closingTimeKey]);
+        
+      //     return { openingTime, closingTime };
+      //   };
+  
+      //   const currentTime = getCurrentTime();
+      //   const { openingTime, closingTime } = getOpeningHoursForToday();
+  
+      //   const generateTimeOptions = (openingTime, closingTime, currentTime, duration) => {
+      //     const timeOptions = [];
+      //     if (openingTime>=0 && closingTime>=0 && duration>=0) {
+      //       let currentHour = Math.floor(currentTime / 100);
+      //       let currentMinute = currentTime % 100;
+      //       let currentTimeInMinutes = currentHour * 60 + currentMinute;
+      //       let serviceDurationInMinutes = duration;
+      //       let saveOpeningTime = openingTime
+
+      //       setTimeOptions([])
+
+      //       while (saveOpeningTime <= (closingTime - serviceDurationInMinutes)) {
+      //         if(saveOpeningTime >= currentTimeInMinutes){
+      //           const hour = Math.floor(saveOpeningTime / 60);
+      //           const minute = saveOpeningTime % 60;
+      //           const formattedHour = hour.toString().padStart(2, '0');
+      //           const formattedMinute = minute.toString().padStart(2, '0');
+      //           const formattedTime = `${formattedHour}:${formattedMinute}`;
+      //           timeOptions.push(formattedTime);
+      //           saveOpeningTime += serviceDurationInMinutes;
+      //         }
+      //         else saveOpeningTime += serviceDurationInMinutes;
+      //       }
+      //     }
+      //     return timeOptions;
+      //   };
+  
+      //   setTimeOptions(generateTimeOptions(openingTime, closingTime, currentTime, duration));
+      // }
+      // else{
+      //   const getOpeningHoursForToday = () => {
+      //     const dateObject = new Date(datetime);
+      //     const dayOfWeek = dateObject.getDay();
+      //     const openingTimeKey = `start${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
+      //     const closingTimeKey = `end${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
+          
+      //     const parseTime = (timeString) => {
+      //       const [hour, minute] = timeString.split(':').map(Number);
+      //       return hour * 60 + minute;
+      //     };
+        
+      //     const openingTime = parseTime(provider?.time[openingTimeKey]);
+      //     const closingTime = parseTime(provider?.time[closingTimeKey]);
+        
+      //     return { openingTime, closingTime };
+      //   };
+      //   const { openingTime, closingTime } = getOpeningHoursForToday();
+  
+      //   const generateTimeOptions = (openingTime, closingTime, duration) => {
+      //     const timeOptions = [];
+      //     if (openingTime>=0 && closingTime>=0 && duration>=0) {
+      //       let serviceDurationInMinutes = duration;
+      //       let saveOpeningTime = openingTime
+      //       setTimeOptions([])
+
+      //       while (saveOpeningTime <= (closingTime - serviceDurationInMinutes)) {
+      //           const hour = Math.floor(saveOpeningTime / 60);
+      //           const minute = saveOpeningTime % 60;
+      //           const formattedHour = hour.toString().padStart(2, '0');
+      //           const formattedMinute = minute.toString().padStart(2, '0');
+      //           const formattedTime = `${formattedHour}:${formattedMinute}`;
+      //           timeOptions.push(formattedTime);
+      //           saveOpeningTime += serviceDurationInMinutes;
+      //       }
+      //     }
+      //     return timeOptions;
+      //   };
+  
+      //   const tempTime = generateTimeOptions(openingTime, closingTime, duration);
+      //   console.log('--------', tempTime, '------');
+
+      //   setTimeOptions(tempTime);
+      // }
+    }
+  }
 
   useEffect(() => {
     const coupon = usableDiscountCodes?.find(el => el?.code === selectedVoucher?.code)
@@ -96,7 +229,7 @@ const BookingDateTIme = () => {
 
   useEffect(() => {
     fetchServiceData();
-    // fetchStaffData();
+    fetchStaffData();
   }, [params]);
 
   useEffect(() => {
@@ -104,136 +237,14 @@ const BookingDateTIme = () => {
   }, [service]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (provider) {
-        let resp = await apiGetServiceTimeOptionAvailableByDateRange({
-          "startTs": 1731494092000,
-          "endTs": 1733049292000,
-          svid : params?.get('sid'),
-          stfid: params?.get('st')
-        });
+    fetchBookingTimeOptionsData();
 
-        if (resp.success && resp.timeOptions) {
-          console.log('VVVVVVVVVV---', timeOptions, '++++++++++++++');
-          setTimeOptions(resp.timeOptions);
-        }
+    // const interval = setInterval(() => {
+    //   fetchData();
+    // }, 10000);
 
-        const currentDate = new Date();
-        const year = currentDate.getFullYear();
-        const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Thêm số 0 vào trước nếu cần
-        const day = String(currentDate.getDate()).padStart(2, '0'); // Thêm số 0 vào trước nếu cần
-
-        const formattedDate = `${year}-${month}-${day}`;
-        if(datetime === formattedDate){
-          const getCurrentTime = () => {
-            const now = new Date();
-            const hour = now.getHours();
-            const minute = now.getMinutes();
-            return hour * 100 + minute;
-          };
-          const getOpeningHoursForToday = () => {
-            const dayOfWeek = new Date().getDay();
-            const openingTimeKey = `start${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
-            const closingTimeKey = `end${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
-            
-            const parseTime = (timeString) => {
-              const [hour, minute] = timeString.split(':').map(Number);
-              return hour * 60 + minute;
-            };
-          
-            const openingTime = parseTime(provider?.time[openingTimeKey]);
-            const closingTime = parseTime(provider?.time[closingTimeKey]);
-          
-            return { openingTime, closingTime };
-          };
-    
-          const currentTime = getCurrentTime();
-          const { openingTime, closingTime } = getOpeningHoursForToday();
-    
-          const generateTimeOptions = (openingTime, closingTime, currentTime, duration) => {
-            const timeOptions = [];
-            if (openingTime>=0 && closingTime>=0 && duration>=0) {
-              let currentHour = Math.floor(currentTime / 100);
-              let currentMinute = currentTime % 100;
-              let currentTimeInMinutes = currentHour * 60 + currentMinute;
-              let serviceDurationInMinutes = duration;
-              let saveOpeningTime = openingTime
-  
-              setTimeOptions([])
-  
-              while (saveOpeningTime <= (closingTime - serviceDurationInMinutes)) {
-                if(saveOpeningTime >= currentTimeInMinutes){
-                  const hour = Math.floor(saveOpeningTime / 60);
-                  const minute = saveOpeningTime % 60;
-                  const formattedHour = hour.toString().padStart(2, '0');
-                  const formattedMinute = minute.toString().padStart(2, '0');
-                  const formattedTime = `${formattedHour}:${formattedMinute}`;
-                  timeOptions.push(formattedTime);
-                  saveOpeningTime += serviceDurationInMinutes;
-                }
-                else saveOpeningTime += serviceDurationInMinutes;
-              }
-            }
-            return timeOptions;
-          };
-    
-          setTimeOptions(generateTimeOptions(openingTime, closingTime, currentTime, duration));
-        }
-        else{
-          const getOpeningHoursForToday = () => {
-            const dateObject = new Date(datetime);
-            const dayOfWeek = dateObject.getDay();
-            const openingTimeKey = `start${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
-            const closingTimeKey = `end${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
-            
-            const parseTime = (timeString) => {
-              const [hour, minute] = timeString.split(':').map(Number);
-              return hour * 60 + minute;
-            };
-          
-            const openingTime = parseTime(provider?.time[openingTimeKey]);
-            const closingTime = parseTime(provider?.time[closingTimeKey]);
-          
-            return { openingTime, closingTime };
-          };
-          const { openingTime, closingTime } = getOpeningHoursForToday();
-    
-          const generateTimeOptions = (openingTime, closingTime, duration) => {
-            const timeOptions = [];
-            if (openingTime>=0 && closingTime>=0 && duration>=0) {
-              let serviceDurationInMinutes = duration;
-              let saveOpeningTime = openingTime
-              setTimeOptions([])
-  
-              while (saveOpeningTime <= (closingTime - serviceDurationInMinutes)) {
-                  const hour = Math.floor(saveOpeningTime / 60);
-                  const minute = saveOpeningTime % 60;
-                  const formattedHour = hour.toString().padStart(2, '0');
-                  const formattedMinute = minute.toString().padStart(2, '0');
-                  const formattedTime = `${formattedHour}:${formattedMinute}`;
-                  timeOptions.push(formattedTime);
-                  saveOpeningTime += serviceDurationInMinutes;
-              }
-            }
-            return timeOptions;
-          };
-    
-          const tempTime = generateTimeOptions(openingTime, closingTime, duration);
-          console.log('--------', tempTime, '------');
-
-          setTimeOptions(tempTime);
-        }
-      }
-    }
-
-    fetchData();
-
-    const interval = setInterval(() => {
-      fetchData();
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [datetime]);
+    // return () => clearInterval(interval);
+  }, []);
 
 
   const currentWeek = Array.from({ length: 7 }, (_, index) => {
@@ -270,19 +281,35 @@ const BookingDateTIme = () => {
   const handlePrevNext = (direction) => {
     if (direction === 'prev') {
       if (type === 'Week') {
-        setDisplayTime(subDays(displayTime, 7)); // Giảm 7 ngày từ ngày hiện tại
-      } else if (type === 'Month') {
+        const startDate = subDays(displayTime, 7)
+        fetchBookingTimeOptionsData(startDate, displayTime);
+        setDisplayTime(startDate);
+      }
+      else if (type === 'Month') {
         const firstDayOfPrevMonth = startOfMonth(subMonths(displayTime, 1));
+        const endDayOfPrevMonth = endOfMonth(subMonths(displayTime, 1));
+
+        fetchBookingTimeOptionsData(firstDayOfPrevMonth, endDayOfPrevMonth);
+
         if (firstDayOfPrevMonth < new Date()) {
           setDisplayTime(new Date()); // Nếu ngày đầu tiên của tháng liền trước bé hơn ngày hiện tại thì lấy ngày hiện tại
         } else {
           setDisplayTime(firstDayOfPrevMonth); // Lấy ngày đầu tiên của tháng liền trước
         }
       }
-    } else if (direction === 'next') {
+    }
+    else if (direction === 'next') {
       if (type === 'Week') {
-        setDisplayTime(addDays(displayTime, 7)); // Tăng 7 ngày từ ngày hiện tại
-      } else if (type === 'Month') {
+        const endDate = addDays(displayTime, 7);
+        fetchBookingTimeOptionsData(displayTime, endDate);
+        setDisplayTime(endDate);
+        // setDisplayTime(); // Tăng 7 ngày từ ngày hiện tại
+      }
+      else if (type === 'Month') {
+        const firstDayOfNextMonth = startOfMonth(addMonths(displayTime, 1));
+        const endDayOfNextMonth = endOfMonth(addMonths(displayTime, 1));
+
+        fetchBookingTimeOptionsData(firstDayOfNextMonth, endDayOfNextMonth);
         setDisplayTime(startOfMonth(addMonths(displayTime, 1))); // Lấy ngày đầu tiên của tháng liền sau
       }
     }
@@ -412,8 +439,8 @@ const BookingDateTIme = () => {
           </div>
           <div className='flex justify-between'>
             <div className='flex'>
-            <div className={clsx('px-[15px] py-[10px] rounded-l-md cursor-pointer text-[14px] font-medium flex items-center justify-center', type === 'Week' ? 'bg-[#0a66c2] text-white' : 'bg-blue-200')} onClick={()=>{setType('Week'); setDatetime(); setDisplayTime(new Date()); setSelectedTime()}}>Week</div>
-            <div className={clsx('px-[15px] py-[10px] rounded-r-md cursor-pointer text-[14px] font-medium flex items-center justify-center', type === 'Month' ? 'bg-[#0a66c2] text-white' : 'bg-blue-200')} onClick={()=>{setType('Month'); setDatetime(); setDisplayTime(new Date()); setSelectedTime()}}>Month</div>
+            <div className={clsx('px-[15px] py-[10px] rounded-l-md cursor-pointer text-[14px] font-medium flex items-center justify-center', type === 'Week' ? 'bg-[#0a66c2] text-white' : 'bg-blue-200')} onClick={()=>{setType('Week'); setDatetime(''); setDisplayTime(new Date()); setSelectedTime()}}>Week</div>
+            <div className={clsx('px-[15px] py-[10px] rounded-r-md cursor-pointer text-[14px] font-medium flex items-center justify-center', type === 'Month' ? 'bg-[#0a66c2] text-white' : 'bg-blue-200')} onClick={()=>{setType('Month'); setDatetime(''); setDisplayTime(new Date()); setSelectedTime()}}>Month</div>
             </div>
             <div className='flex gap-1'>
               <div className={clsx('border rounded-md flex items-center justify-center px-1 py-1',isBackButtonDisabled() ? 'cursor-not-allowed border-gray-200' : 'border-gray-400  cursor-pointer' )} onClick={() => handlePrevNext('prev')}><IoIosArrowBack size={30} color='gray'/></div>
@@ -451,17 +478,22 @@ const BookingDateTIme = () => {
             </div>
           </div>
           <div className='flex flex-col items-center'>
-            <div className='font-semibold'>Choose time</div>
+            <div className='font-semibold'>Choose time { `----${datetime}---` } </div>
             <div className='flex flex-wrap gap-2 my-3 justify-center'>
               {
                 datetime &&
-                !timeOptions[datetime].length ?
-                  <h5 className='text-red-500'>Service is not available on {moment(datetime, 'YYYY-MM-DD').format('DD/MM/YYYY')}</h5>
+                !timeOptions[datetime]?.length ?
+                  <h5 className='text-red-500'>Service and Staff is not available on {moment(datetime, 'YYYY-MM-DD').format('DD/MM/YYYY')}</h5>
                   : timeOptions[datetime]?.map((time, idx) => (
-                  (!staff?.work || !isWorkingTime(time, staff?.work)) && (
-                    <div className={clsx('w-[23%] h-[48px] flex items-center justify-center border border-[#0a66c2] rounded-md hover:bg-blue-400 hover:border-none cursor-pointer', selectedTime===time && 'bg-blue-400 border-none')} key={idx} onClick={() =>{handleOnClick(time)}}>
-                      <span className='text-[14px] leading-5 font-medium'>{time}</span>
-                      <span className='text-[12px] leading-4 text-[#00143c]'>{parseInt(time.split(':')[0]) >= 12 ? 'pm' : 'am'}</span>
+                  // (!staff?.work || !isWorkingTime(time, staff?.work)) &&
+                  (
+                    <div className={clsx('flex items-center justify-center p-2 border-2 border-[#0a66c2] rounded-md hover:bg-blue-400 cursor-pointer', selectedTime===time && 'bg-blue-400')}
+                        key={idx}
+                        onClick={() =>{handleOnClick(time)}}>
+                      <span className='text-[14px] leading-5 font-medium'>
+                        {`${convertM2H(time?.start)} - ${convertM2H(time.end)}` }
+                      </span>
+                      {/* <span className='text-[12px] leading-4 text-[#00143c]'>{parseInt(time.split(':')[0]) >= 12 ? 'pm' : 'am'}</span> */}
                     </div>
                   )
                 ))

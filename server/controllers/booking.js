@@ -271,10 +271,8 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
         );
 
         // console.log("====>>>>|||||", currentStaff);
-
         // const curtStaffShift = currentStaff[0].shifts;
-
-        // console.log('>>>>>>>>', workSchedule);
+        console.log('========q>>>>>>>>', workSchedule);
 
         for (const stfs of workSchedule) {
             // console.log('+++++++>>>', stfs);
@@ -309,7 +307,6 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
     
             while (mmStart + service.duration <= mmEnd) {
               const mmCurrEnd = mmStart + service.duration;
-
             //    console.log('PREEEEEE');
             //    console.log(successfulBookings);
             //    console.log('PREEEEEE');
