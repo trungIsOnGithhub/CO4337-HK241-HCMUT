@@ -31,11 +31,15 @@ const createNewOrder = asyncHandler(async(req, res)=>{
 
 const updateStatus = asyncHandler(async(req, res)=>{
     const {oid} = req.params
-    const {status} = req.body
-    if(!status){
-        throw new Error("Missing input")
-    }
-    const response = await Order.findByIdAndUpdate(oid, {status}, {new: true})
+    // const {status} = req.body;
+    const {date, time, stfid } = req.body;
+    const updateObj = {
+        'info.0.date': date
+    };
+    // if(!status){
+    //     throw new Error("Missing input")
+    // }
+    const response = await Order.findByIdAndUpdate(oid, updateObj, {new: true})
     return res.status(200).json({
         success: response ? true : false,
         order: response ? response : "Something went wrong"

@@ -61,7 +61,7 @@ const BookingDateTIme = () => {
   };
 
   const usableDiscountCodes = discountCodes.filter(canUseDiscount);
-  const [datetime, setDatetime] = useState()
+  const [datetime, setDatetime] = useState('')
 
   const [displayTime, setDisplayTime] = useState(new Date())
   const navigate = useNavigate();
@@ -422,7 +422,7 @@ const BookingDateTIme = () => {
               currentWeek?.map(({ date, dayOfWeek }) => (
                 <div key={date} className='w-[12%] flex flex-col items-center gap-2'>
                   <div className='font-semibold text-xs'>{dayOfWeek.slice(0, 3)}</div>
-                  <div className={clsx('w-full h-[72px] flex items-center justify-center border border-[#0a66c2] rounded-md hover:bg-blue-400  cursor-pointer', date === datetime && 'bg-blue-400 border-[rgba(22,157,215,1)]')} onClick={()=>{setDatetime(date); setSelectedTime()}}>{format(new Date(date), 'dd')}</div>
+                  <div className={clsx('w-full h-[72px] flex items-center justify-center border border-[#0a66c2] rounded-md hover:bg-blue-400  cursor-pointer', date === datetime && 'bg-blue-400 border-[rgba(22,157,215,1)]')} onClick={()=>{console.log('+++++++++++>>>>', getISOStringDateOnly(date));setDatetime(getISOStringDateOnly(date)); setSelectedTime()}}>{format(new Date(date), 'dd')}</div>
                 </div>
               ))
             ) : 
@@ -433,7 +433,8 @@ const BookingDateTIme = () => {
                     <div className={clsx('w-full h-[72px] flex items-center justify-center border border-[#0a66c2] rounded-md hover:bg-blue-400 cursor-pointer', date === datetime && 'bg-blue-400 border-[rgba(22,157,215,1)]',new Date(date).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer')} 
                       onClick={() => {
                         if (new Date(date).setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0)) {
-                          setDatetime(date);
+                          console.log('+++++++++++>>>>', getISOStringDateOnly(date));
+                          setDatetime(getISOStringDateOnly(date));
                           setSelectedTime();
                         }
                       }}
@@ -448,9 +449,9 @@ const BookingDateTIme = () => {
             <div className='flex flex-wrap gap-2 my-3 justify-center'>
               {
                 datetime &&
-                !timeOptions.length ?
+                !timeOptions[datetime].length ?
                   <h5 className='text-red-500'>Service is not available on {moment(datetime, 'YYYY-MM-DD').format('DD/MM/YYYY')}</h5>
-                  : timeOptions?.map((time, idx) => (
+                  : timeOptions[datetime]?.map((time, idx) => (
                   (!staff?.work || !isWorkingTime(time, staff?.work)) && (
                     <div className={clsx('w-[23%] h-[48px] flex items-center justify-center border border-[#0a66c2] rounded-md hover:bg-blue-400 hover:border-none cursor-pointer', selectedTime===time && 'bg-blue-400 border-none')} key={idx} onClick={() =>{handleOnClick(time)}}>
                       <span className='text-[14px] leading-5 font-medium'>{time}</span>
