@@ -12,8 +12,9 @@ import { useLocation } from 'react-router-dom';
 
 const CheckoutService = ({ dispatch, navigate }) => {
   const { currentCartService, current: currentUser } = useSelector((state) => state.user);
-  console.log(currentCartService)
-  const [isSuccess, setIsSuccess] = useState(false);
+  console.log(currentCartService);
+  // const [isSuccess, setIsSuccess] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(true);
   const [exchangeRate, setExchangeRate] = useState(null); // State để lưu trữ tỉ giá hối đoái
   const location = useLocation();
 
@@ -49,7 +50,7 @@ const CheckoutService = ({ dispatch, navigate }) => {
       }
     };
 
-    fetchExchangeRate();
+    // fetchExchangeRate();
   }, []); 
 
   // Sử dụng giá từ URL nếu có, nếu không thì sử dụng giá từ currentCartService
@@ -60,25 +61,25 @@ const CheckoutService = ({ dispatch, navigate }) => {
 
   const handlePayment = async (paymentResult) => {
     try {
-      if (couponCodeFromURL) {
-        const validateResponse = await apiValidateAndUseCoupon({ couponCode: couponCodeFromURL, userId: currentUser._id });
-        if (!validateResponse.success) {
-          console.error('Coupon validation failed:', validateResponse.message);
-          // Hiển thị thông báo lỗi cho người dùng
-          return;
-        }
-      }
+      // if (couponCodeFromURL) {
+      //   const validateResponse = await apiValidateAndUseCoupon({ couponCode: couponCodeFromURL, userId: currentUser._id });
+      //   if (!validateResponse.success) {
+      //     console.error('Coupon validation failed:', validateResponse.message);
+      //     // Hiển thị thông báo lỗi cho người dùng
+      //     return;
+      //   }
+      // }
 
-      if (paymentResult.success) {
-        // Cập nhật sử dụng coupon chỉ sau khi thanh toán thành công
-        if (couponCodeFromURL) {
-          await apiUpdateCouponUsage({ couponCode: couponCodeFromURL, userId: currentUser._id });
-        }
-        setIsSuccess(true);
+      // if (paymentResult.success) {
+      //   // Cập nhật sử dụng coupon chỉ sau khi thanh toán thành công
+      //   // if (couponCodeFromURL) {
+      //   //   await apiUpdateCouponUsage({ couponCode: couponCodeFromURL, userId: currentUser._id });
+      //   // }
+      //  setIsSuccess(true);
         // Xử lý sau khi thanh toán thành công (ví dụ: cập nhật giỏ hàng, chuyển hướng, etc.)
-      } else {
+      // } else {
         
-      }
+      // }
     } catch (error) {
       console.error('Payment error:', error);
       // Xử lý lỗi và hiển thị thông báo cho người dùng
@@ -130,7 +131,7 @@ const CheckoutService = ({ dispatch, navigate }) => {
             </div>
           </div>
           <div className="w-[60%]">
-            <Paypal
+            {/* <Paypal
               payload={{
                 info: currentCartService,
                 total: Math.round(totalPriceUSD),
@@ -138,7 +139,7 @@ const CheckoutService = ({ dispatch, navigate }) => {
               setIsSuccess={setIsSuccess}
               amount={Math.round(totalPriceUSD)}
               onSuccess={handlePayment}
-            />
+            /> */}
           </div>
         </div>
       </div>

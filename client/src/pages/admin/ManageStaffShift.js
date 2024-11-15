@@ -233,7 +233,7 @@ const ManageStaffShift = ({ staffId, setManageStaffShift, parentHandleSubmitStaf
         return;
       }
 
-      Swal.fire('Error Ocurred!!', 'Cannot Update Staff Shift!!', 'error');
+      Swal.fire('Error Ocurred!!', `${resp?.msg || 'Cannot Update Staff Shift!'}`, 'error');
     }
   };
 

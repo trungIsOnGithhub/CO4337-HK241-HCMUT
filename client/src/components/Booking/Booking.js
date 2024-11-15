@@ -339,7 +339,7 @@ const Booking = () => {
                 (
                   <div className={clsx('w-[15%] h-[46px] border border-[#0a66c2] rounded-md cursor-pointer flex items-center justify-center gap-1 hover:bg-blue-400 hover:border-none', (selectedStaff.time===time && selectedStaff.staff===el) && 'bg-blue-400 border-none')}
                       key={idx} onClick={() =>{handleOnClick(time,el)}}>
-                    <span className='text-[14px] leading-5 font-medium'>{`${(time['start'] / 60).toFixed(0)}:${time['start'] % 60}`} - {`${(time['end'] / 60).toFixed(0)}:${time['end'] % 60}`}</span>
+                    <span className='text-[14px] leading-5 font-medium'>{convertM2H(time.start)} - {convertM2H(time.end)}</span>
                     {/* <span className='text-[12px] leading-4 text-[#00143c]'>{(time[0]/60) >= 12 ? 'pm' : 'am'}</span> */}
                   </div>
                 )

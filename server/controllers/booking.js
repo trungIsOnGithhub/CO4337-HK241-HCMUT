@@ -80,7 +80,7 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
     const startCurrentDay = (new Date(now)).setHours(0, 0, 0, 0);
     const endCurrentDay = (new Date(now)).setHours(23, 59, 59, 999);
 
-    let service = await Service.findById(svid).populate('assigned_staff');
+    let service = await Service.findById(svid).populate('assigned_staff').populate('provider_id');
     let ordersInCurrentDay = await Order.find({
         'infor.0.service': svid,
         'info.0.dateTime': {
@@ -106,15 +106,7 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
             // console.log(`P${shiftKey}P`)
             // console.log('currr sk: ' + JSON.stringify(stff.shifts));
             return {
-                times: stff?.shifts[shiftKey],
-            //     times:  {Tuesday: { periods: { start: '09:02', end: '14:34' }, isEnabled: true },
-            //     Wednesday: { periods: { start: '09:02', end: '14:34' }, isEnabled: true },
-            //     Monday: { periods: { start: '09:02', end: '14:34' }, isEnabled: true },
-            //     Thursday: { periods: { start: '09:02', end: '14:34' }, isEnabled: true },
-            //     Saturday: { periods: { start: '09:02', end: '09:04' }, isEnabled: true },
-            //     Friday: { periods: { start: '09:02', end: '19:44' }, isEnabled: true },
-            //     Sunday: { periods: { start: '09:02', end: '19:44' }, isEnabled: true }
-            //   },              
+                times: stff?.shifts[shiftKey],         
                 id: stff?._id,
                 name: '' + stff.firstName + ' ' + stff.lastName,
                 isEnabled: stff?.shifts[shiftKey]?.isEnabled || true
@@ -202,7 +194,7 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
     console.log('INPUT OptsByDateRange: ', startDate.toISOString());
     console.log('INPUT OptsByDateRange: ', endDate.toISOString());
 
-    let service = await Service.findById(svid).populate('assigned_staff');
+    let service = await Service.findById(svid).populate('assigned_staff').populate('provider_id');
     if (!service?.assigned_staff) {
         return res.status(400).json({
             success: false,
@@ -361,7 +353,7 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
     }
     
 
-    // let service = await Service.findById(svid).populate('assigned_staff');
+    // let service = await Service.findById(svid).populate('assigned_staff').populate('provider_id');
     // const staffTimes = service.assigned_staff?.map(
     //     stff => {
     //         return {

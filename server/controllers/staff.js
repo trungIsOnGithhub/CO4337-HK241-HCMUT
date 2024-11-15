@@ -166,14 +166,58 @@ const updateStaffWork = asyncHandler(async(req, res)=>{
 //         });
 //     }
 // })
+const convertH2M = (timeInHour) => {
+    let timeParts = timeInHour.split(":");
+    return Number(timeParts[0]) * 60 + Number(timeParts[1]);
+}
+const checkWeekdayValidStaffShift = (pT, staffShift) => {
+    for (const p of Object.entries(staffShift)) {
+        const lowerK = p[0].toLocaleLowerCase();
+        const startPK = `start${lowerK}`;
+        const endPK = `end${lowerK}`;
 
+        if (!pT[endPK] || pT[startPK] || p[1]?.isEnabled || p[1]?.periods) {
+            continue;
+        }
+
+        const pEndMM = convertH2M(pT[endPK]);
+        const pStartMM = convertH2M(pT[startPK]);
+        const stStartMM = convertH2M(p[1].periods.start);
+        const stEndMM = convertH2M(p[1].periods.end);
+
+        if (stEndMM > pEndMM || stStartMM > pEndMM ||
+            stEndMM < pStartMM || stStartMM < pStartMM
+        ) {
+            console.log(pEndMM + '||||>' + pStartMM);
+            console.log(stEndMM + '||||>' + stStartMM);
+            return p[0];
+        }
+    }
+
+    return null;
+}
 const updateStaffShift = asyncHandler(async(req, res)=>{
     const {staffId, newShifts} = req.body;
     if (!staffId || !newShifts) {
         throw new Error("Missing input");
     }
-
     console.log("---|" + staffId + "|---");
+    const staffInfoWithProvider = await Staff.findById(staffId).populate('provider_id');
+    console.log(staffInfoWithProvider.provider_id);
+    if (!staffInfoWithProvider?.provider_id?.time) {
+        return res.status(400).json({
+            success: false,
+            msg: `Invalid Input!`
+        });
+    }
+
+    const weekDayViolated = checkWeekdayValidStaffShift(staffInfoWithProvider.provider_id.time, newShifts);
+    if (staffInfoWithProvider?.provider_id?.time && weekDayViolated) {
+        return res.status(400).json({
+            success: false,
+            msg: `Staff working shift on ${weekDayViolated} violated provider working hour!`
+        });
+    }
 
     const response = await Staff.findByIdAndUpdate(staffId, {$set: {shifts: newShifts}}, {new: true});
 

@@ -508,7 +508,12 @@ const BookingDateTIme = () => {
               </div>
             </div>
             <div className='flex gap-1'>
-              <div className={clsx('border rounded-md flex items-center justify-center px-1 py-1',isBackButtonDisabled() ? 'cursor-not-allowed border-gray-200' : 'border-gray-400  cursor-pointer' )} onClick={() => handlePrevNext('prev')}><IoIosArrowBack size={30} color='gray'/></div>
+              <div className={clsx('border rounded-md flex items-center justify-center px-1 py-1',isBackButtonDisabled() ? 'cursor-not-allowed border-gray-200' : 'border-gray-400  cursor-pointer' )}
+              onClick={() => {
+                if(isBackButtonDisabled()) {return;}
+                handlePrevNext('prev')}
+              }
+              ><IoIosArrowBack size={30} color='gray'/></div>
               <div className='border border-gray-400 rounded-md flex items-center justify-center px-1 py-1 cursor-pointer' onClick={() => handlePrevNext('next')}><IoIosArrowForward size={30} color='gray' /></div>
             </div>
           </div>
