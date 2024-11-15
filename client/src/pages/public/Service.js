@@ -17,6 +17,7 @@ import { apiModifyUser } from '../../apis/user'
 import Swal from "sweetalert2";
 import Button from 'components/Buttons/Button';
 import { FaSortAmountDown, FaMoneyCheckAlt, FaCubes, FaBahai, FaSearch  } from "react-icons/fa";
+import ToggleButton from './ToggleButton';
 
 const REACT_APP_PAGINATION_LIMIT_DEFAULT = 8;
 const Services = () => {
@@ -40,8 +41,8 @@ const Services = () => {
     maxDistance: '',
     unit: 'km'
   });
-  const [clientLat, setClientLat] = useState(9999);
-  const [clientLon, setClientLon] = useState(9999);
+  const [clientLat, setClientLat] = useState(999999);
+  const [clientLon, setClientLon] = useState(999999);
 
   const [totalServiceCount, setTotalServiceCount] = useState(0);
 
@@ -252,6 +253,19 @@ const Services = () => {
   // }, [searchFilter])
 
   const handleGetDirections = () => {
+    if (nearMeOption) {
+      setNearMeOption(false);
+      setSearchFilter({
+        ...searchFilter,
+        province: '',
+        maxDistance: ''
+      })
+      return;
+    }
+    if (clientLat !== 999999 && clientLon !== 999999) {
+      setNearMeOption(true);
+      return;
+    }
     Swal.fire({
       title: 'Chia sẻ vị trí',
       text: "Bạn có muốn chia sẻ vị trí hiện tại của mình để xem đường đi?",
@@ -261,29 +275,29 @@ const Services = () => {
       cancelButtonText: 'Không'
     }).then((result) => {
       if (result.isConfirmed) {
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(async (position) => {
-            const { latitude, longitude } = position.coords;
-            await apiModifyUser({ lastGeoLocation: {
-              type: "Point",
-              coordinates: [longitude, latitude]
-            } }, current._id);
-            // Call the function to show the route using latitude and longitude
-            // showRoute(latitude, longitude);
-            setClientLat(latitude);
-            setClientLon(longitude);
+        // if ("geolocation" in navigator) {
+        //     navigator.geolocation.getCurrentPosition(async (position) => {
+        //     const { latitude, longitude } = position.coords;
+        //     await apiModifyUser({ lastGeoLocation: {
+        //       type: "Point",
+        //       coordinates: [longitude, latitude]
+        //     } }, current._id);
+        //     // Call the function to show the route using latitude and longitude
+        //     // showRoute(latitude, longitude);
+            setClientLat(0);
+            setClientLon(0);
 
             setNearMeOption(prev => !prev);
-          }, () => {
-            Swal.fire('Không thể lấy vị trí của bạn.');
-          });
+          // }, () => {
+          //   Swal.fire('Không thể lấy vị trí của bạn.');
+          // });
         } else {
           Swal.fire('Geolocation không khả dụng.');
         }
-      }
-      else {
+      // }
+      // else {
 
-      }
+      // }
     });
   };
 
@@ -308,7 +322,7 @@ const Services = () => {
             <NewInputSelect value={sort} options={sorts} changeValue={changeValue} /> */}
 
             <div className="grow flex justify-start gap-2">
-                <span className="grow">
+                <span className="grow flex flex-col justify-start">
                   <label className="text-gray-800 font-medium">Search&nbsp;By:&nbsp;</label>
                   <InputFormm
                     id='q'
@@ -317,35 +331,50 @@ const Services = () => {
                     fullWidth
                     placeholder= 'Search blog by title name, tag ...'
                     style={'bg-white min-h-10 rounded-md pl-2 flex items-center border border-gray-300'}
-                    styleInput={'outline-none text-gray-500'}
+                    styleInput={'outline-none text-gray-500 italic w-full'}
                     onChange={(event) => {
                       setSearchFilter(prev => { return { ...prev, term: event.target.value }; })
                     }}
                   >
                   </InputFormm>
-                </span>
 
-                <span className='flex justify-start items-end gap-1'>
-                  <span className='font-semibold text-sm'>Location Search:</span>
-                  <input className='p-3' onInput={() => {handleGetDirections()}} type="checkbox"/>
-
-                  { nearMeOption && 
-                    <>
-                      <span className='font-semibold text-sm p-3'>Province:</span>
-                      <InputSelect
+                  { nearMeOption &&
+                    <span className='flex justify-start items-center my-3 gap-3'>
+                      {/* <span className='font-semibold text-sm p-3'>Province:</span> */}
+                      {/* <InputSelect
                         value={searchFilter?.province}
                         options={Object.entries(tinh_thanhpho).map(ele => { return {id:ele[0], text:ele[1]?.name, value:ele[0]}})}
                         changeValue={(value) => {setSearchFilter(prev => {return {...prev, province: value};}) }}
                         className={'rounded-md p-2 bg-white min-h-10 border border-gray-300'}
+                      /> */}
+                      <label className="text-gray-800 font-medium mr-1">Province:</label>
+                      <Select
+                        defaultValue={""}
+                        name="province"
+                        options={Object.entries(tinh_thanhpho).map(ele => { return {id:ele[0], label:ele[1]?.name, value:ele[0]}})}
+                        className="basic-multi-select"
+                        classNamePrefix="select"
+                        onChange={(value) => {setSearchFilter(prev => {return {...prev, province: value};}) }}
                       />
+
+                      <label className="text-gray-800 font-medium mr-1">Max Distance:</label>
                       <InputField nameKey='maxDistance'
                         value={searchFilter.maxDistance}
                         setValue={setSearchFilter}
                         placeholder={"Maximum Distance(optional)"}
                         style={'bg-white min-h-10 rounded-md pl-2 flex items-center border border-gray-300'}
-                      />
-                    </>
+                      />  
+                    </span>
                   }
+                </span>
+
+                <span className='flex flex-col justify-center items-center gap-1'>
+                  <span className=''>
+                    <span className='font-semibold text-sm'>Location Search:</span>
+                    {/* <input className='p-3' onInput={() => {handleGetDirections()}} type="checkbox"/> */}
+                  </span>
+                  <ToggleButton handleToggleAndReturn={() => {handleGetDirections()}} isToggled={nearMeOption}/>
+
                 </span>
             </div>
 
@@ -372,9 +401,8 @@ const Services = () => {
               {/* <FaSortAmountDown />
               <NewInputSelect value={selectedSort} options={sortOptions} changeValue={(value) => {setSelectedSort(value);}} /> */}
               <label className="text-gray-800 font-medium">Categories:</label>
-
               <Select
-                defaultValue={[]}
+                defaultValue={filterCateg}
                 isMulti
                 name="filterCateg"
                 options={svCategories}
@@ -385,7 +413,7 @@ const Services = () => {
                   if (!filterCateg.includes(e)) {
                     setFilterCateg([
                       ...filterCateg,
-                      e.target.value
+                      e
                     ]);
                   }
                 }}
@@ -417,13 +445,14 @@ const Services = () => {
               <Button
                 handleOnclick={() => { console.log(searchFilter); setSearchedClick(prev => prev+1); }}
               >
-              <span className="flex justify-center gap-2 items-center">
+              <span className="flex justify-center gap-1 items-center">
                 <FaSearch /><span>Search</span>
               </span>
             </Button>
 
             <Button
               handleOnclick={() => {
+                console.log('Presssed');
                 setSearchFilter(prev => {
                   return {
                     term: '',
@@ -437,7 +466,7 @@ const Services = () => {
               }}
               style="px-4 py-2 rounded-md text-white bg-slate-400 font-semibold my-2"
             >
-              <span className="flex justify-center gap-2 items-center">
+              <span className="flex justify-center gap-1 items-center">
                 <FaBahai /><span>Reset</span>
               </span>
             </Button>
