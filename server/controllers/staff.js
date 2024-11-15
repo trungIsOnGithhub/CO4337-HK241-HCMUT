@@ -176,14 +176,22 @@ const checkWeekdayValidStaffShift = (pT, staffShift) => {
         const startPK = `start${lowerK}`;
         const endPK = `end${lowerK}`;
 
-        if (!pT[endPK] || pT[startPK] || p[1]?.isEnabled || p[1]?.periods) {
+        console.log('======', p);
+
+        if (!p[1]?.isEnabled || !p[1]?.periods) {
             continue;
+        }
+        if (!pT[endPK] || !pT[startPK] ) {
+            return p[0];
         }
 
         const pEndMM = convertH2M(pT[endPK]);
         const pStartMM = convertH2M(pT[startPK]);
         const stStartMM = convertH2M(p[1].periods.start);
         const stEndMM = convertH2M(p[1].periods.end);
+
+        console.log(pEndMM + '||||>' + pStartMM);
+        console.log(stEndMM + '------->' + stStartMM);
 
         if (stEndMM > pEndMM || stStartMM > pEndMM ||
             stEndMM < pStartMM || stStartMM < pStartMM
@@ -201,7 +209,7 @@ const updateStaffShift = asyncHandler(async(req, res)=>{
     if (!staffId || !newShifts) {
         throw new Error("Missing input");
     }
-    console.log("---|" + staffId + "|---");
+    console.log("---|" + JSON.stringify(newShifts) + "|---");
     const staffInfoWithProvider = await Staff.findById(staffId).populate('provider_id');
     console.log(staffInfoWithProvider.provider_id);
     if (!staffInfoWithProvider?.provider_id?.time) {
@@ -211,11 +219,21 @@ const updateStaffShift = asyncHandler(async(req, res)=>{
         });
     }
 
-    const weekDayViolated = checkWeekdayValidStaffShift(staffInfoWithProvider.provider_id.time, newShifts);
-    if (staffInfoWithProvider?.provider_id?.time && weekDayViolated) {
+    let weekDayViolated = checkWeekdayValidStaffShift(staffInfoWithProvider.provider_id.time, newShifts);
+
+    if (staffInfoWithProvider?.provider_id?.time && weekDayViolated?.length > 0) {
+        const lowerK = weekDayViolated.toLocaleLowerCase();
+        const startPK = `start${lowerK}`;
+        const endPK = `end${lowerK}`;
+
+        let msg = `Provider has no working hour on ${weekDayViolated}!`;
+        if (staffInfoWithProvider.provider_id.time[startPK] && staffInfoWithProvider.provider_id.time[endPK]) {
+            msg = `Staff working shift violated provider working hour: ${staffInfoWithProvider.provider_id.time[startPK]} - ${staffInfoWithProvider.provider_id.time[endPK]} on ${weekDayViolated}!`
+        }
+
         return res.status(400).json({
             success: false,
-            msg: `Staff working shift on ${weekDayViolated} violated provider working hour!`
+            msg
         });
     }
 
