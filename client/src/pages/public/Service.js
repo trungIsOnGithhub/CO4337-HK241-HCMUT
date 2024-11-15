@@ -335,6 +335,7 @@ const Services = () => {
                     onChange={(event) => {
                       setSearchFilter(prev => { return { ...prev, term: event.target.value }; })
                     }}
+                    value={searchFilter.term}
                   >
                   </InputFormm>
 
@@ -383,6 +384,7 @@ const Services = () => {
               <NewInputSelect value={selectedSort} options={sortOptions} changeValue={(value) => {setSelectedSort(value);}} /> */}
               <label className="text-gray-800 font-medium">Order&nbsp;By:&nbsp;</label>
               <Select
+                value={sort}
                 defaultValue={""}
                 name="orderBy"
                 options={[
@@ -402,21 +404,37 @@ const Services = () => {
               <NewInputSelect value={selectedSort} options={sortOptions} changeValue={(value) => {setSelectedSort(value);}} /> */}
               <label className="text-gray-800 font-medium">Categories:</label>
               <Select
-                defaultValue={filterCateg}
+                value={filterCateg}
+                defaultValue={[]}
                 isMulti
                 name="filterCateg"
                 options={svCategories}
                 className="basic-multi-select"
                 classNamePrefix="select"
-                onChange={(e) => {
-                  console.log('------->', filterCateg);
-                  if (!filterCateg.includes(e)) {
+                onChange={(newVal, actionMeta) => {
+                  if (actionMeta?.action === 'select-option') {
                     setFilterCateg([
-                      ...filterCateg,
-                      e
+                      ...newVal
                     ]);
                   }
+                  else if (actionMeta?.action === 'remove-value') {
+                    const newFilterCateg = filterCateg.filter(cat => cat.value !== actionMeta?.removedValue?.value);
+                    setFilterCateg([...newFilterCateg]);
+                  }
+                  else if (actionMeta?.action === 'clear') {
+                    setFilterCateg([]);
+                  }
+                  // console.log("||||||||", newVal, actionMeta);
                 }}
+                // onChange={(e) => {
+                //   console.log('------->', filterCateg);
+                //   if (!filterCateg.includes(e)) {
+                //     setFilterCateg([
+                //       ...filterCateg,
+                //       e
+                //     ]);
+                //   }
+                // }}
               />
 
               {/* <select value={''}
@@ -463,6 +481,7 @@ const Services = () => {
                 });
                 setSort('');
                 setFilterCateg([]);
+                // setSvCategories([]);
               }}
               style="px-4 py-2 rounded-md text-white bg-slate-400 font-semibold my-2"
             >
