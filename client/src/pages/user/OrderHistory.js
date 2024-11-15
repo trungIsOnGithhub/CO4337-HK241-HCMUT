@@ -109,7 +109,7 @@ const OrderHistory = () => {
           </div>
 
           {/* Orders List */}
-          <div className="divide-y divide-gray-200 max-h-[600px] overflow-y-auto scrollbar-thin">
+          <div className="divide-y divide-gray-200 min-h-[400px] max-h-[600px] overflow-y-auto scrollbar-thin">
             {orders.map((order) => (
               <div key={order._id} className="p-6 hover:bg-gray-50 transition-colors cursor-pointer" onClick={()=>handleViewDetailOrder(order._id)}>
                 <div className="flex items-center justify-between">

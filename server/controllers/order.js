@@ -5,6 +5,7 @@ const User = require('../models/user')
 const Coupon = require('../models/coupon')
 const asyncHandler = require('express-async-handler')
 const Staff = require('../models/staff')
+const Service = require('../models/service')
 
 const createNewOrder = asyncHandler(async(req, res)=>{
     const {_id} = req.user
@@ -36,6 +37,8 @@ const createNewOrder = asyncHandler(async(req, res)=>{
                 emails: [], // Thêm email nếu cần
                 status: status
             });
+
+            await Service.findByIdAndUpdate(service._id, { $inc: { bookingQuantity: 1 } }, { new: true });
         } catch (error) {
             // Xử lý lỗi nếu có
             return res.status(500).json({ success: false, mes: "Something went wrong" });
@@ -317,6 +320,12 @@ const getOneOrderByAdmin = asyncHandler(async(req, res)=>{
             select: 'firstName lastName avatar mobile email'
         },
     })
+    .populate({
+        path: 'info',
+        populate:{
+            path: 'discountCode',
+        },
+    })
 
     
     return res.status(200).json({
@@ -486,6 +495,20 @@ const refundPayment = asyncHandler(async (req, res) => {
         return res.status(500).json({ success: false, message: "Failed to refund", error: errorData });
     }
 });
+
+const updateStatusOrder = asyncHandler(async (req, res) => {
+    const {bookingId, status} = req.body
+    if(!bookingId || !status){
+        throw new Error("Missing input");
+    }
+    const updatedOrder = await Order.findByIdAndUpdate(bookingId, { status }, { new: true });
+    
+    return res.status(200).json({
+        success: updatedOrder ? true : false,
+        mes: updatedOrder ? 'Updated status successfully' : "Cannot find Order"
+    });
+
+})
 module.exports = {
     createNewOrder,
     updateStatus,
@@ -494,6 +517,7 @@ module.exports = {
     getOrdersForStaffCalendar,
     getOneOrderByAdmin,
     updateEmailByBookingId,
-    refundPayment
+    refundPayment,
+    updateStatusOrder
 }
 

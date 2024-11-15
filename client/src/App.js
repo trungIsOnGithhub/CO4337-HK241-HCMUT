@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {Route, Routes, useLocation} from 'react-router-dom'
 
-import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageSaleEvent, ManagePostDetail, EditPostDetail, AddPost, ManageChat, ManageThemeAndAppearance, ManageHeroSection, ManageFooterSection, ManageServicePage, AddVariantProduct } from 'pages/admin'
+import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageSaleEvent, ManagePostDetail, EditPostDetail, AddPost, ManageChat, ManageThemeAndAppearance, ManageHeroSection, ManageFooterSection, ManageServicePage, AddVariantProduct, UpdateService, UpdateProduct } from 'pages/admin'
 import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct, ViewBlog, DetailProvider, DetailProviderServicee } from 'pages/public'
 
 import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct, Calendarr, OrderHistory} from 'pages/user'
@@ -20,6 +20,7 @@ import DetailProviderBlog from 'pages/public/DetailProviderBlog';
 import DetailProviderBook from 'pages/public/DetailProviderBook';
 import DetailProviderFindUs from 'pages/public/DetailProviderFindUs';
 import OrderHistoryDetail from 'pages/user/OrderHistoryDetail';
+import ManageOrderDetail from 'pages/admin/ManageOrderDetail';
 
 function App() {
   const dispatch = useDispatch();
@@ -72,6 +73,7 @@ function App() {
       <Route path={path.ADMIN} element={<AdminLayout />}>
         <Route path={path.DASHBOARD} element={<DashBoard/>}/>
         <Route path={path.MANAGE_ORDER} element={<ManageOrder/>}/>
+        <Route path={path.MANAGE_ORDER_DETAIL} element={<ManageOrderDetail/>}/>
         <Route path={path.MANAGE_BOOKING} element={<ManageBooking/>}/>
         <Route path={path.MANAGE_BOOKING_DETAIL} element={<ManageBookingDetail/>}/>
         <Route path={path.MANAGE_PRODUCT} element={<ManageProduct/>}/>
@@ -80,6 +82,9 @@ function App() {
         <Route path={path.MANAGE_SERVICE} element={<ManageService/>}/>
         <Route path={path.CREATE_PRODUCT} element={<CreateProduct/>}/>
         <Route path={path.ADD_VARIANT_PRODUCT} element={<AddVariantProduct/>}/>
+        <Route path={path.UPDATE_SERVICE} element={<UpdateService/>}/>
+        <Route path={path.UPDATE_PRODUCT} element={<UpdateProduct/>}/>
+
         <Route path={path.ADD_STAFF} element={<AddStaff/>}/>
         <Route path={path.ADD_SERVICE} element={<AddService/>}/>
         <Route path={path.STAFF_CALENDAR} element={<StaffCalendar/>}/>

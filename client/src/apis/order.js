@@ -39,3 +39,10 @@ export const apiRefundOrder = (captureId) => axios({
     method: 'post',
     data: { captureId } // Truyền captureId vào body
 });
+
+
+export const apiUpdateStatusOrder = (data) => axios({
+    url: '/order/updateStatus',
+    method: 'post',
+    data
+});

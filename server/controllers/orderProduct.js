@@ -82,42 +82,99 @@ const createNewOrder = asyncHandler(async (req, res) => {
 });
 
 const getOrdersProductByAdmin = asyncHandler(async (req, res) => {
+    const queries = { ...req.query };
     const { _id } = req.user;
     const { provider_id } = await User.findById(_id).select('provider_id');
 
+
+    const excludeFields = ['limit', 'sort', 'page', 'fields'];
+    excludeFields.forEach((el) => delete queries[el]);
+
+    // Format lại các toán tử cho đúng cú pháp của mongoose
+    let queryString = JSON.stringify(queries);
+    queryString = queryString.replace(
+        /\b(gte|gt|lt|lte)\b/g,
+        (matchedEl) => `$${matchedEl}`
+    );
+
+    // chuyen tu chuoi json sang object
+    const formatedQueries = JSON.parse(queryString);
+    //Filtering
+    // let queryFinish = {}
+    // if(queries?.q){
+    //     delete formatedQueries.q
+    //     queryFinish = {
+    //         $or: [
+    //             {color: {$regex: queries.q, $options: 'i' }},
+    //             // {title: {$regex: queries.q, $options: 'i' }},
+    //             // {category: {$regex: queries.q, $options: 'i' }},
+    //             // {brand: {$regex: queries.q, $options: 'i' }},
+               
+    //         ]
+    //     }
+    // }
+    if (queries?.shippingStatus) {
+        // Xóa shippingStatus nếu nó đã tồn tại trong formatedQueries
+        delete formatedQueries.shippingStatus;
+
+        if (queries.shippingStatus.toLowerCase() === 'all') {
+            // Không thêm điều kiện, lấy tất cả
+        } else {
+            // Thêm điều kiện lọc theo shippingStatus với regex
+            formatedQueries.statusShipping = { $regex: queries.shippingStatus, $options: 'i' }; // Tìm kiếm không phân biệt chữ hoa thường
+        }
+    }
+
+    const qr = {...formatedQueries, provider: provider_id}
+    let queryCommand =  OrderProduct.find(qr).populate({
+        path: 'orderBy',
+        select: 'firstName lastName avatar email mobile',
+    })
+    .populate({
+        path: 'products',
+        populate: {
+            path: 'productId',
+            select: 'title color thumb category provider_id'
+        },
+    });
+
     try {
-        const orders = await OrderProduct.find({
-            'products.provider': provider_id
-        })
-        .select('orderBy createdAt updatedAt')
-        .populate({
-            path: 'orderBy',
-            select: 'firstName lastName avatar email mobile',
-        })
-        .populate({
-            path: 'products',
-            match: { provider: provider_id },
-            populate: {
-                path: 'product',
-                select: 'title color thumb category provider_id'
-            },
-        });
+        // sorting
+        if(req.query.sort){
+            const sortBy = req.query.sort.split(',').join(' ')
+            queryCommand.sort(sortBy)
+        }
 
-        // Lọc các sản phẩm của nhà cung cấp cụ thể trong mỗi đơn hàng
-        orders.forEach(order => {
-            order.products = order.products.filter(product => product.provider.equals(provider_id));
-        });
+        //filtering
+        if(req.query.fields){
+            const fields = req.query.fields.split(',').join(' ')
+            queryCommand.select(fields)
+        }
 
+        //pagination
+        //limit: so object lay ve 1 lan goi API
+        //skip: n, nghia la bo qua n cai dau tien
+        //+2 -> 2
+        //+dgfbcxx -> NaN
+        const page = +req.query.page || 1
+        const limit = +req.query.limit || process.env.LIMIT_PRODUCT
+        const skip = (page-1)*limit
+        queryCommand.skip(skip).limit(limit)
+
+
+        const orders = await queryCommand
+        const counts = await OrderProduct.countDocuments(qr);
         return res.status(200).json({
             success: true,
-            counts: orders.length,
+            counts: counts,
             order: orders,
-        });
+            });
+        
     } catch (error) {
-        console.error(error);
+        // Xử lý lỗi nếu có
         return res.status(500).json({
             success: false,
-            error: 'Cannot get orderProducts',
+            error: 'Cannot get orders',
         });
     }
 });
@@ -213,6 +270,11 @@ const getOneOrderProductById = asyncHandler(async(req, res)=>{
 
     const orderProduct = await OrderProduct.findById(oid).populate({
         path: 'provider',
+    }).populate({
+        path: 'orderBy',
+        select: 'firstName lastName avatar email mobile address'
+    }).populate({
+        path: 'discountCode',
     })
     
     return res.status(200).json({
@@ -222,10 +284,37 @@ const getOneOrderProductById = asyncHandler(async(req, res)=>{
 })
 
 
+const updateShippingStatusOrderProduct = asyncHandler(async (req, res) => {
+    const {orderId, status} = req.body
+    if(!orderId || !status){
+        throw new Error("Missing input");
+    }
+    const updatedOrder = await OrderProduct.findByIdAndUpdate(orderId, { statusShipping: status }, { new: true });
+    
+    return res.status(200).json({
+        success: updatedOrder ? true : false,
+        mes: updatedOrder ? 'Updated status successfully' : "Cannot find OrderProduct"
+    });
+})
+
+const updatePaymentStatusOrderProduct = asyncHandler(async (req, res) => {
+    const {orderId, status} = req.body
+    if(!orderId || !status){
+        throw new Error("Missing input");
+    }
+    const updatedOrder = await OrderProduct.findByIdAndUpdate(orderId, { statusPayment: status }, { new: true });
+    
+    return res.status(200).json({
+        success: updatedOrder ? true : false,
+        mes: updatedOrder ? 'Updated status successfully' : "Cannot find OrderProduct"
+    });
+})
 
 module.exports = {
     createNewOrder,
     getOrdersProductByAdmin,
     getUserOrderProduct,
-    getOneOrderProductById
+    getOneOrderProductById,
+    updateShippingStatusOrderProduct,
+    updatePaymentStatusOrderProduct
 }

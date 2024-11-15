@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { apiGetOrdersByAdmin } from 'apis/order';
+import { apiGetOrdersByAdmin, apiUpdateStatusOrder } from 'apis/order';
 import moment from 'moment';
 import { Button, InputFormm, Pagination } from 'components';
 import { FiCalendar, FiChevronLeft, FiChevronRight, FiX } from 'react-icons/fi';
@@ -15,6 +15,10 @@ import { RxMixerVertical } from 'react-icons/rx';
 import { GoPlusCircle } from "react-icons/go";
 import { format, isValid, isBefore, isAfter, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths } from "date-fns";
 import useDebounce from 'hook/useDebounce';
+import { FaAngleDown } from 'react-icons/fa';
+import { FaCircleHalfStroke } from 'react-icons/fa6';
+import clsx from 'clsx';
+import { toast } from 'react-toastify';
 
 const ManageBooking = () => {
   const [params] = useSearchParams();
@@ -27,6 +31,8 @@ const ManageBooking = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate()
   const location = useLocation()
+  const [showOptionStatus, setShowOptionStatus] = useState(null)
+  const optionRef = useRef(null);
 
   const handleInputClick = () => {
     setShowCalendar(!showCalendar);
@@ -73,7 +79,7 @@ const ManageBooking = () => {
   useEffect(() => {
     const searchParams = Object.fromEntries([...params]);
     fetchBooking(searchParams);
-  }, [params, startDate, endDate]);
+  }, [params, startDate, endDate, showOptionStatus]);
 
 
   const handleClearDates = (e) => {
@@ -237,6 +243,43 @@ const ManageBooking = () => {
     }
   }, [startDate, endDate]);
 
+
+  const handleShowOptionStatus = (bookingId) => {
+    setShowOptionStatus(bookingId)
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (optionRef.current && !optionRef.current.contains(event.target)) {
+        setShowOptionStatus(null); // Đặt lại showOptionStatus
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleChangeStatusBooking = async(bookingId, status) => {
+    console.log(bookingId, status)
+    const response = await apiUpdateStatusOrder({bookingId, status})
+    if(response?.success){
+      setShowOptionStatus(null)
+      toast.success(response?.mes)
+    }
+    else{
+      setShowOptionStatus(null)
+      toast.error(response?.mes)
+    }
+  }
+  const handleNavigateBookingDetail = (bookingid) => {
+    navigate({
+      pathname: `/${path.ADMIN}/${path.MANAGE_BOOKING_DETAIL}`,
+      search: createSearchParams({ bookingid }).toString()
+    });
+  }
+
   return (
     <div className="w-full h-full relative">
       <div className='inset-0 absolute z-0'>
@@ -324,26 +367,39 @@ const ManageBooking = () => {
           <div className='text-[#99a1b1]'>
             <div className='w-full flex gap-1 border-b border-[##dee1e6] p-[8px]'>
               <span className='w-[10%]'>Time</span>
-              <span className='w-[25%]'>Service</span>
-              <span className='w-[15%]'>Customer</span>
-              <span className='w-[10%]'>Duration</span>
-              <span className='w-[15%]'>Status</span>
-              <span className='w-[20%]'>Employee</span>
+              <span className='w-[25%] flex items-center justify-center'>Service</span>
+              <span className='w-[15%] flex items-center justify-center'>Customer</span>
+              <span className='w-[10%] flex items-center justify-center'>Duration</span>
+              <span className='w-[15%] flex items-center justify-center'>Status</span>
+              <span className='w-[20%] flex items-center justify-center'>Employee</span>
               <span className='w-[5%]'>Note</span>
             </div>
             <div>
               {booking?.map((el,index) => (
-                <div key={index} className='w-full flex border-b border-[#f4f6fa] gap-1 h-[56px] px-[8px] py-[12px]'>
+                <div key={index} className='w-full flex border-b border-[#f4f6fa] gap-1 h-[56px] px-[8px] py-[12px] cursor-pointer hover:bg-blue-200'>
                   <span className='w-[10%] py-2 text-[#00143c]'>{el?.info[0]?.time}</span>
-                  <span className='w-[25%] py-2 text-[#00143c] text-sm flex justify-start font-medium'>
+                  <span onClick={()=>handleNavigateBookingDetail(el?._id)} className='w-[25%] py-2 text-[#00143c] text-sm flex justify-start font-medium'>
                     <div className='pl-[4px] flex items-center' style={{borderLeft: `4px solid ${getColorByCategory(el?.serviceDetails?.category)}` }}>
                       {el?.serviceDetails?.name}
                     </div>
                   </span>
-                  <span className='w-[15%] py-2 text-[#00143c] text-sm line-clamp-1'>{`${el?.userDetails?.lastName} ${el?.userDetails?.firstName}`}</span>
-                  <span className='w-[10%] px-2 py-2 text-[#00143c] text-sm line-clamp-1'>{`${el?.serviceDetails?.duration}min`}</span>
-                  <span className='w-[15%] px-2 py-2 text-[#00143c]'>Status</span>
-                  <span className='w-[20%] px-4 py-2 text-[#00143c] flex items-center'>
+                  <span className='w-[15%] py-2 text-[#00143c] text-sm line-clamp-1 flex items-center justify-center'>{`${el?.userDetails?.lastName} ${el?.userDetails?.firstName}`}</span>
+                  <span className='w-[10%] py-2 text-[#00143c] text-sm line-clamp-1 flex items-center justify-center'>{`${el?.serviceDetails?.duration}min`}</span>
+                  <span className='w-[15%] py-2 text-[#00143c] flex items-center justify-center relative cursor-pointer' onClick={()=>{handleShowOptionStatus(el?._id)}}>
+                    <div className='w-full flex justify-between items-center border rounded-md px-2 shadow-sm'>
+                      <span className='flex gap-[6px] items-center'><FaCircleHalfStroke style={{ transform: 'rotate(90deg)'}} color={el?.status === 'Successful' ? 'green' : el?.status === 'Pending' ? 'orange' : 'red'}/>{el?.status}</span>
+                      <FaAngleDown size={10}/>
+                    </div>
+                   {
+                    showOptionStatus === el?._id &&
+                    <div ref={optionRef} className='w-full bg-white border shadow-xl absolute top-8 left-0 px-[7px] py-[5px] flex flex-col gap-1 z-50'>
+                      <span onClick={()=>handleChangeStatusBooking(el?._id, 'Successful')} className={clsx('w-full flex gap-1 items-center p-2 cursor-pointer', el?.status === 'Successful' ? 'text-[#005aee] bg-[#f2f6fe]' : 'hover:bg-gray-100')}><FaCircleHalfStroke style={{ transform: 'rotate(90deg)'}} color='green'/> Successful</span>
+                      <span onClick={()=>handleChangeStatusBooking(el?._id, 'Pending')} className={clsx('w-full flex gap-1 items-center p-2 cursor-pointer', el?.status === 'Pending' ? 'text-[#005aee] bg-[#f2f6fe]' : 'hover:bg-gray-100')}><FaCircleHalfStroke style={{ transform: 'rotate(90deg)'}} color='orange'/> Pending</span>
+                      <span onClick={()=>handleChangeStatusBooking(el?._id, 'Cancelled')} className={clsx('w-full flex gap-1 items-center p-2 cursor-pointer', el?.status === 'Cancelled' ? 'text-[#005aee] bg-[#f2f6fe]' : 'hover:bg-gray-100')}><FaCircleHalfStroke style={{ transform: 'rotate(90deg)'}} color='red'/> Cancelled</span>
+                    </div>
+                   }
+                  </span>
+                  <span className='w-[20%] py-2 text-[#00143c] flex items-center justify-center'>
                     <img className='w-[32px] h-[32px] rounded-full ml-[-10px] mr-[0px]' src={el?.staffDetails?.avatar}/>
                   </span>
                   <span className='w-[5%] px-2 py-2 text-[#00143c] font-bold text-xl'><GoPlusCircle /></span>

@@ -54,7 +54,7 @@ const OrderHistoryDetail = () => {
         }, 1500);
       };
     return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg my-4">
         <h1 className="text-2xl font-bold mb-6">Track Your Order</h1>
         <div className="mb-8">
         <p className="text-gray-600 mb-2">Order ID: {orderProductData?._id}</p>

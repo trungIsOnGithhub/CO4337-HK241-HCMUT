@@ -21,3 +21,15 @@ export const apiGetOneOrderProduct = (oid) => axios({
     url: '/order_product/' + oid,
     method: 'get',
 })
+
+export const apiUpdateShippingStatusOrderProduct = (data) => axios({
+    url: '/order_product/updateShippingStatus',
+    method: 'post',
+    data
+});
+
+export const apiUpdatePaymentStatusOrderProduct = (data) => axios({
+    url: '/order_product/updatePaymentStatus',
+    method: 'post',
+    data
+});

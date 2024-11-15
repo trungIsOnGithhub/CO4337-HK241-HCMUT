@@ -130,6 +130,10 @@ const ManageService = () => {
     return item ? item.color : 'rgba(0, 0, 0, 0.1)'; // Màu mặc định nếu không tìm thấy
   };
 
+  const handleNavigateUpdateService = (serviceId) => {
+    navigate(`/admin/update_service/${serviceId}`)
+  }
+
   return (
     <div className="w-full h-full relative">
       <div className='inset-0 absolute z-0'>
@@ -204,7 +208,7 @@ const ManageService = () => {
                       </div>
                     </span>
                     <span className='w-[20%] px-2 py-2 flex justify-center items-center'>
-                      <span onClick={() => setEditService(el)} 
+                      <span onClick={() => handleNavigateUpdateService(el?._id)} 
                       className='inline-block hover:underline cursor-pointer text-[#005aee] hover:text-orange-500 px-0.5'><MdModeEdit
                       size={24}/></span>
                       <span onClick={() => handleDeleteService(el._id)} 
