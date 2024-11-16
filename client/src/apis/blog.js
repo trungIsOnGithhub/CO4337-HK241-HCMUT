@@ -103,3 +103,9 @@ export const apiGetAllBlogByAdmin = (params) => axios({
     method: 'get',
     params
 })
+
+export const apiSearchBlogAdvanced = (data) => axios({
+    url: '/blog/advanced_search',
+    method: 'post',
+    data
+})

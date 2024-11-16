@@ -1,6 +1,7 @@
 import React, {useState, useCallback, useEffect } from 'react'
-import { InputFormm, MultiSelect, Select } from 'components';
-import { apiGetAllBlogs, apiGetAllPostTags, apiSearchBlogByParams, apiGetTopTags } from 'apis/blog';
+import { apiSearchBlogByParams, apiGetTopTags } from 'apis/blog';
+import { InputFormm, NewInputSelect, Pagination, MultiSelect, Select } from 'components';
+import { apiGetAllBlogs, apiSearchBlogAdvanced, apiGetAllPostTags, apiSearchBlogByParams } from 'apis/blog';
 import Button from 'components/Buttons/Button';
 import { HashLoader } from 'react-spinners';
 import path from 'ultils/path';
@@ -55,8 +56,19 @@ const Blogs = () => {
   const [currBlogList, setCurrBlogList] = useState([]);
   const fetchCurrentBlogList = async (search, selectedTags) => {
     setIsLoading(true);
-    let response = await apiGetAllBlogs({ title: searchTerm,  limit: process.env.REACT_APP_LIMIT, sortBy: selectedSort });
+
+    const sortBy = selectedSort
+    let response = await apiSearchBlogAdvanced({
+      searchTerm,
+      limit: parseInt(process.env.REACT_APP_LIMIT),
+      sortBy,
+      selectedTags,
+      offset: 1
+      // categories
+    });
+    // let response = await await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
     if(response?.success && response?.blogs){
+      console.log('Blog Response: >>>>>>>>>>>>>>', response.blogs.length, response.blogs[0]);
       setCurrBlogList(response.blogs);
       setIsLoading(false);
     }
@@ -111,6 +123,7 @@ const Blogs = () => {
       setIsLoading(false);
     }
   }, [searchTerm]);
+
   const multiSearchBySelectedTags = useCallback(async () => {
     let response = await apiSearchBlogByParams({ selectedTags })
 
@@ -151,7 +164,7 @@ const Blogs = () => {
               ) : (
                 currBlogList.map((blog) => (
                   <div
-                    onClick={() => handleChooseBlogPost(blog?._id)}
+                    onClick={() => handleChooseBlogPost(blog?._id || blog?.id)}
                     key={blog.id}
                     className="cursor-pointer bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:transform hover:scale-[1.02]"
                   >

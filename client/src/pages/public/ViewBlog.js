@@ -1,7 +1,8 @@
 import React, {useState,useEffect} from 'react'
 import { Button, MultiSelect } from '../../components'
 import { useSearchParams, useNavigate, createSearchParams } from 'react-router-dom'
-import { apiGetOneBlog, apiGetTopBlogsWithSelectedTags, apiLikeBlog, apiDislikeBlog, apiUpdateViewBlog } from '../../apis/blog'
+import { apiGetOneBlog, apiLikeBlog, apiDislikeBlog, apiUpdateViewBlog, apiGetTopBlogsWithSelectedTags } from '../../apis/blog'
+// import { apiGetOneBlog, apiGetTopBlogsWithSelectedTags, apiLikeBlog, apiDislikeBlog, apiUpdateViewBlog } from '../../apis/blog'
 import { apiCreateNewBlogComment, apiCreateReplyComment, apiGetAllBlogComment, apiGetAllReplyComment, apiReactComment } from '../../apis/blogComments'
 import DOMPurify from 'dompurify';
 import path from 'ultils/path';
@@ -58,6 +59,9 @@ const ViewBlog = () => {
   
       }
     }
+    // const fetchSuggestedBlogs = async () => {
+    //   let response = await ;
+    // };
     useEffect(() => {
       fetchCurrentBlogList();
     }, []);

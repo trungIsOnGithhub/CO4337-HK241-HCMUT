@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 
-const ToggleButton = () => {
-  const [isToggled, setIsToggled] = useState(false);
-
-  // Handler for toggling the button state
-  const handleToggle = () => setIsToggled(!isToggled);
-
+const ToggleButton = ({ handleToggleAndReturn, isToggled }) => {
+  // const [isToggled, setIsToggled] = useState(false);
+  // const handleToggle = () => setIsToggled(!isToggled);
   return (
     <button
-      onClick={handleToggle}
+      onClick={() => {
+        handleToggleAndReturn()
+        // setIsToggled(isToggled);
+      }}
       className={`relative inline-flex items-center w-12 h-6 rounded-full transition-colors duration-300 ease-in-out 
         ${isToggled ? 'bg-[#0a66c2]' : 'bg-gray-400'}`}
     >

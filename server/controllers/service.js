@@ -3,11 +3,12 @@ const Service = require('../models/service')
 const ServiceProvider = require('../models/ServiceProvider')
 const User = require('../models/user')
 const asyncHandler = require("express-async-handler")
-const slugify = require('slugify')
+// const slugify = require('slugify')
 const makeSku = require('uniqid')
 const Order = require('../models/order')
-const esDBModule = require('../services/es');
 const esIndexNameList = require('../services/constant');
+const esDBModule = require('../services/es');
+const ES_CONSTANT = require('../services/constant');
 
 const createService = asyncHandler(async(req, res)=>{
     const {name, price, description, category, assigned_staff, hour, minute, provider_id,  elastic_query} = req.body
@@ -34,8 +35,7 @@ const createService = asyncHandler(async(req, res)=>{
     //         path: 'assigned_staff'
     //     });
 
-    //     // const esClient = esDBModule.initializeElasticClient();
-
+    //     const esClient = esDBModule.esDBModule.initializeElasticClient();
     //     const response = esDBModule.addToElasticDB(esClient, esIndexNameList.SERVICES ,newServiceFull);
     // }
 
@@ -44,6 +44,72 @@ const createService = asyncHandler(async(req, res)=>{
         mes: newService ? 'Created successfully' : "Cannot create new service"
     })
 })
+
+const searchServiceAdvanced = asyncHandler(async (req, res) => {
+    console.log("INCOMING REQUESTS:", req.body);
+
+    let { searchTerm, limit, offset, categories, sortBy,
+        clientLat, clientLon, distanceText } = req.body;
+
+    if ( (typeof(offset) != "number") ||
+        !limit || offset < 0 || limit > 20)
+    {
+        return res.status(400).json({
+            success: false,
+            searched: [],
+            msg: "Bad Request"
+        });
+    }
+
+    let sortOption = [];
+    let geoSortOption = null;
+    if (sortBy?.indexOf("-price") > -1) {
+        sortOption.push({price : {order : "desc"}});
+    }
+    else if (sortBy?.indexOf("price") > -1) {
+        sortOption.push({price : {order : "asc"}});
+    }
+
+    if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
+
+    let categoriesIncluded = [];
+    if (categories?.length) {
+        categoriesIncluded = categories.split(',');
+    }
+
+    let geoLocationQueryOption = null;
+    if ( clientLat <= 180 && clientLon <= 180 &&
+        clientLat >= -90 && clientLon >= -90 &&
+        /[1-9][0-9]*(km|m)/.test(distanceText) )
+    {
+        geoLocationQueryOption = { distanceText,  clientLat, clientLon };
+    }
+
+    const columnNamesToMatch = ["name", "providername", "province"];
+    const columnNamesToGet = ["id", "title", "providername", "authorname", "numberView"];
+
+    let services = [];
+    services = await esDBModule.fullTextSearchAdvanced(
+        ES_CONSTANT.SERVICES,
+        searchTerm,
+        columnNamesToMatch,
+        columnNamesToGet,
+        limit, offset,
+        sortOption,
+        geoLocationQueryOption,
+        geoSortOption,
+        categoriesIncluded
+    );
+    services = services?.hits;
+
+    // console.log("Query Input Parameter: ", services);
+    // console.log("REAL DATA RETURNED: ", services);
+
+    return res.status(200).json({
+        success: services ? true : false,
+        services: services
+    });
+});
 
 // get all staffs
 const getAllServicesByAdmin = asyncHandler(async (req, res) => {
@@ -200,7 +266,8 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
     excludeFields.forEach((el) => delete queries[el]);
 
     // Format lại các toán tử cho đúng cú pháp của mongoose
-    let queryString = JSON.stringify({});
+    let queryString = JSON.stringify(queries);
+    // let queryString = JSON.stringify({});
     queryString = queryString.replace(
         /\b(gte|gt|lt|lte)\b/g,
         (matchedEl) => `$${matchedEl}`
@@ -345,6 +412,161 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
         });
     }
 })
+
+
+const searchAllServicesPublic = asyncHandler(async (req, res) => {
+    // let { elastic_query } = req.params;
+
+    const queries = { ...req.query };
+    // Loại bỏ các trường đặc biệt ra khỏi query
+    const excludeFields = ['limit', 'sort', 'page', 'fields'];
+    excludeFields.forEach((el) => delete queries[el]);
+
+    const esClient = esDBModule.initializeElasticClient();
+
+    // if (!elastic_query) {
+        // const sortBy = queries.sort?.split(',');
+        // console.log(sortBy, "----------");
+        const { name, category } = queries;
+        const { sort } = req.query;
+        console.log('-------', req.query, '---------')
+
+        const queryObject = {
+            track_scores: true,
+            query: {},
+            sort: []
+        }
+
+        if (name) {
+            if (!queryObject.query.bool) {
+                queryObject.query.bool = {};
+            }
+        }
+        if (category) {
+            if (!queryObject.query.bool) {
+                queryObject.query.bool = {};
+            }
+
+            let categoryArray = category.split(',');
+
+            queryObject.query.bool.should = categoryArray.map(cate => {
+                return { term: { category: cate } }
+            });
+        }
+        if (!name && !category) {
+            queryObject.query = {
+                match_all: {}
+            }
+        }
+
+        console.log('====', sort);
+        if (sort) {
+            console.log('====', queryObject?.sort);
+            if (sort?.indexOf('-') >= 0) {
+                const fieldName = sort.slice(1);//get field name
+
+                queryObject.sort.push({ [fieldName]: { order: 'desc' } });
+            }
+            else {
+                console.log(queryObject, "]]]]]]]]]]]]]]]]]]]]]]]");
+                queryObject.sort.push({ [sort]: { order: 'asc' } });
+            }
+        }
+        
+        console.log('Elastic Query: ', queryObject?.sort, '-------------')
+
+        const queryResult = await esDBModule.queryElasticDB(esClient, esIndexNameList.SERVICES, queryObject);
+
+        const hitsRecord = queryResult?.hits?.hits?.map(record => {
+            return record._source
+        });
+
+        // if (hitsRecord?.length > 0) {
+            return res.status(200).json({
+                success: hitsRecord?.length > 0,
+                counts: hitsRecord.length,
+                services: hitsRecord,
+            });  
+        // }
+    // }
+
+    // // Format lại các toán tử cho đúng cú pháp của mongoose
+    // let queryString = JSON.stringify(queries);
+    // queryString = queryString.replace(
+    //     /\b(gte|gt|lt|lte)\b/g,
+    //     (matchedEl) => `$${matchedEl}`
+    // );
+
+    // // chuyen tu chuoi json sang object
+    // const formatedQueries = JSON.parse(queryString);
+    // //Filtering
+    // let categoryFinish = {}
+    // if (queries?.name) formatedQueries.name = { $regex: queries.title, $options: 'i' };
+    // if (queries?.category){
+    //     delete formatedQueries.category
+    //     const categoryArray = queries.category?.split(',')
+    //     const categoryQuery = categoryArray.map(el => ({
+    //         category: {$regex: el, $options: 'i' }
+    //     }))
+    //     categoryFinish = {$or: categoryQuery}
+    // }
+
+    // let queryFinish = {}
+    // if(queries?.q){
+    //     delete formatedQueries.q
+    //     queryFinish = {
+    //         $or: [
+    //             {name: {$regex: queries.q, $options: 'i' }},
+    //             {category: {$regex: queries.q, $options: 'i' }},
+    //         ]
+    //     }
+    // }
+    // const qr = {...formatedQueries, ...queryFinish, ...categoryFinish}
+    // let queryCommand =  Service.find(qr).populate({
+    //     path: 'assigned_staff',
+    //     select: 'firstName lastName avatar',
+    // })
+    // try {
+    //     // sorting
+    //     if(req.query.sort){
+    //         const sortBy = req.query.sort.split(',').join(' ')
+    //         queryCommand.sort(sortBy)
+    //     }
+
+    //     //filtering
+    //     if(req.query.fields){
+    //         const fields = req.query.fields.split(',').join(' ')
+    //         queryCommand.select(fields)
+    //     }
+
+    //     //pagination
+    //     //limit: so object lay ve 1 lan goi API
+    //     //skip: n, nghia la bo qua n cai dau tien
+    //     //+2 -> 2
+    //     //+dgfbcxx -> NaN
+    //     const page = +req.query.page || 1
+    //     const limit = +req.query.limit || process.env.LIMIT_PRODUCT
+    //     const skip = (page-1)*limit
+    //     queryCommand.skip(skip).limit(limit)
+
+
+    //     const services = await queryCommand
+    //     const counts = await Service.countDocuments(qr);
+    //     return res.status(200).json({
+    //         success: true,
+    //         counts: counts,
+    //         services: services,
+    //         });
+        
+    // } catch (error) {
+    //     // Xử lý lỗi nếu có
+    //     return res.status(500).json({
+    //     success: false,
+    //     error: 'Cannot get services',
+    //     });
+    // }
+})
+
 
 const getOneService = asyncHandler(async(req, res)=>{
     console.log('aaaa')
@@ -579,5 +801,7 @@ module.exports = {
     addVariantService,
     ratingService,
     getMostPurchasedService,
-    getAllServicesByProviderId
+    getAllServicesByProviderId,
+    searchAllServicesPublic,
+    searchServiceAdvanced
 }
