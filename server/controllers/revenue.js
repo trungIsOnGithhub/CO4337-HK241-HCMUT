@@ -794,7 +794,7 @@ const getOccupancyByDayCurrentMonth = asyncHandler(async (req, res) => {
     let occupancyMonthList = Array(numDaysInMonth).fill(0);
     let workingHoursList = Array(numDaysInMonth).fill(0);
 
-    console.log(allOrdersThisMonth.length, '..........OOOOOO.....');
+    // console.log('..........OOOOOO.....', workingHourByDayMap, '..........OOOOOO.....');
 
     allOrdersThisMonth.forEach(order => {
         // console.log(order.info, 'order.info++++++===;[;');
@@ -808,21 +808,27 @@ const getOccupancyByDayCurrentMonth = asyncHandler(async (req, res) => {
                 // console.log(';', currYear)
                 
                 if (item.dateTime && itemMonth === currMonth) {
+                    
                     const indexByDate = itemDate - 1;
-                    occupancyMonthList[indexByDate] += item.service?.duration || 0;
-                    console.log('----;;;;-;;;;', item?.service);
+                    console.log(item.service, '++++++++==');
+                    occupancyMonthList[indexByDate] += item.service?.duration;
+                    console.log(occupancyMonthList[indexByDate])
+                    // console.log('----;;;;-;;;;', item?.service);
                     workingHoursList[indexByDate] = workingHourByDayMap[itemDayWeek];
                 }
             }
         }
     });
-
+    // console.log(occupancyMonthList);
     for (const idx in occupancyMonthList) {
-        occupancyMonthList[idx] = Math.ceil(occupancyMonthList[idx] * 100 / workingHoursList[idx]);
+        if (workingHoursList[idx] > 0) {
+            occupancyMonthList[idx] = Math.ceil(occupancyMonthList[idx] * 100 / workingHoursList[idx]);
+        }
+        else occupancyMonthList[idx] = 0;
     }
 
-    console.log(occupancyMonthList, '++++++++++');
-    console.log(workingHoursList, '++++++++++');
+    // console.log(occupancyMonthList, '++++++++++');
+    // console.log(workingHoursList, '++++++++++');
 
     return res.json({
         success: true,

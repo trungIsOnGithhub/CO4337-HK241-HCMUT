@@ -28,11 +28,11 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
             className="hidden"
           />
           <span
-            className={`relative inline-block w-10 h-5 transition bg-gray-300 rounded-full ${
-              isEnabled ? 'bg-blue-500' : ''
+            className={`relative inline-block w-10 h-5 transition rounded-full ${
+              isEnabled ? 'bg-blue-500' : 'bg-gray-300'
             }`}
           >
-            <span
+            <span 
               className={`absolute left-0 inline-block w-6 h-5 py-1 transition transform bg-white rounded-full ${
                 isEnabled ? 'translate-x-full' : ''
               }`}
@@ -245,11 +245,11 @@ const ManageStaffShift = ({ staffId, setManageStaffShift, parentHandleSubmitStaf
       <div className="relative flex-col justify-center items-center"> {/* Thêm lớp này để đảm bảo dòng chữ không bị che mất */}
         <div className='flex justify-start gap-5 p-4'>
           <span className='text-[#00143c] text-3xl font-semibold'>Manage Staff Shift</span>
-          <span className='text-white text-md hover:underline cursor-pointer p-2 bg-red-400 rounded-md'
+          <span className='text-white text-md cursor-pointer p-2 bg-red-600 hover:bg-red-400 rounded-md'
             onClick={()=>setManageStaffShift(false)}>
             Go Back
           </span>
-          <span className='text-white text-md hover:underline cursor-pointer p-2 bg-teal-500 rounded-md'
+          <span className='text-white text-md cursor-pointer p-2 bg-green-600 hover:bg-green-400 rounded-md'
             onClick={handleSubmitStaffShift}>
             Submit Changes
           </span>

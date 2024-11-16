@@ -28,8 +28,8 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
             className="hidden"
           />
           <span
-            className={`relative inline-block w-10 h-5 transition bg-gray-300 rounded-full ${
-              isEnabled ? 'bg-blue-500' : ''
+            className={`relative inline-block w-10 h-5 transition rounded-full ${
+              isEnabled ? 'bg-blue-500' : 'bg-gray-300'
             }`}
           >
             <span

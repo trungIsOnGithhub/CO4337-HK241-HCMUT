@@ -1,20 +1,23 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { InputForm, Button, Loading, InputFormm } from 'components';
 import { useForm } from 'react-hook-form';
-import { validate, getBase64 } from 'ultils/helper';
+import { getBase64 } from 'ultils/helper';
+import path from 'ultils/path';
 import { toast } from 'react-toastify';
-import { apiAddStaff } from 'apis';
+import { apiAddStaff, apiUpdateStaffShift } from 'apis';
 import { HashLoader } from 'react-spinners';
 import { getCurrent } from 'store/user/asyncAction';
 import bgImage from '../../assets/clouds.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import ManageStaffShift from './ManageStaffShift';
-
+import Swal from 'sweetalert2';
+import { useNavigate} from 'react-router-dom';
 // const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 const AddStaff = () => {
     const { current } = useSelector(state => state.user);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { register, formState: { errors }, reset, handleSubmit, watch } = useForm();
     const [preview, setPreview] = useState({ avatar: null });
     const [isLoading, setIsLoading] = useState(false);
@@ -36,84 +39,53 @@ const AddStaff = () => {
 
     const handleAddStaff = async (data) => {
         data.provider_id = current?.provider_id?._id;
-        if (staffShifts) {
-            data.shifts = staffShifts;
-            // {
-            //     "Monday": {
-            //         "periods": {
-            //             "start": "00:00",
-            //             "end": "00:00"
-            //         },
-            //         "isEnabled": false
-            //     },
-            //     "Tuesday": {
-            //         "periods": {
-            //             "start": "00:00",
-            //             "end": "00:00"
-            //         },
-            //         "isEnabled": false
-            //     },
-            //     "Wednesday": {
-            //         "periods": {
-            //             "start": "00:00",
-            //             "end": "00:00"
-            //         },
-            //         "isEnabled": false
-            //     },
-            //     "Thursday": {
-            //         "periods": {
-            //             "start": "00:00",
-            //             "end": "00:00"
-            //         },
-            //         "isEnabled": false
-            //     },
-            //     "Friday": {
-            //         "periods": {
-            //             "start": "00:00",
-            //             "end": "00:00"
-            //         },
-            //         "isEnabled": false
-            //     },
-            //     "Saturday": {
-            //         "periods": {
-            //             "start": "00:00",
-            //             "end": "00:00"
-            //         },
-            //         "isEnabled": false
-            //     },
-            //     "Sunday": {
-            //         "periods": {
-            //             "start": "00:00",
-            //             "end": "12:32"
-            //         },
-            //         "isEnabled": true
-            //     }
-            // };
-        }
+
+        // if (staffShifts) {
+        //     data.shifts = staffShifts;
+        // }
 
         console.log(')))))))))))))))', data);
 
-        // const formData = new FormData();
-        // for (let i of Object.entries(data)) {
-        //     formData.append(i[0], i[1]);
-        // }
-        // if (!current?.provider_id) {
-        //     toast.error('No Provider Specified With Current User!!');
-        //     return;
-        // }
+        const formData = new FormData();
+        for (let i of Object.entries(data)) {
+            formData.append(i[0], i[1]);
+        }
+        if (!current?.provider_id) {
+            toast.error('No Provider Specified With Current User!!');
+            return;
+        }
 
-        // formData.delete('avatar');
-        // if (data.avatar) formData.append('avatar', data.avatar[0]);
+        formData.delete('avatar');
+        if (data.avatar) formData.append('avatar', data.avatar[0]);
 
         console.log('++++++++++++++++++', staffShifts);
         // console.log('------AADAAAAADADA', formData);
 
         setIsLoading(true);
-        const response = await apiAddStaff(data);
+        const response = await apiAddStaff(formData);
 
-        if (response.success) {
-            toast.success("Create Staff Succesfully!");
-            reset();
+        if (response.success && response.staff) {
+            let resp = await apiUpdateStaffShift({staffId: response.staff?._id, newShifts:staffShifts});
+
+            if (resp.success) {
+                toast.success('Created staff successfully');
+            }
+            else {
+                let swalResult = await Swal.fire({
+                    title: "Staff Created Success - Failed To Update Shift",
+                    text: 'Staff shift cannot updated as it violated working Hours of providers, you can resolve in Manage Staff menu!',
+                    icon: 'warning',
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                    confirmButtonText: 'Confirm'           
+                });
+
+                if (swalResult.isConfirmed) {
+                    navigate({
+                        pathname: `/${path.ADMIN}/${path.MANAGE_STAFF}`
+                    })
+                }
+            }
         } else {
             toast.error("Error Create Staff!");
         }
@@ -204,7 +176,7 @@ const AddStaff = () => {
                         />
                     </div>
                     <div className='flex justify-between gap-4 mt-8 text-gray-600'>
-                        <div className='flex justify-center gap-2'>
+                        <div className='flex flex-col gap-2'>
                             <label className='font-semibold' htmlFor='avatar'>Upload Avatar</label>
                             <input 
                                 {...register('avatar', {required: 'Need upload avatar'})}
@@ -212,7 +184,7 @@ const AddStaff = () => {
                                 id='avatar'
                                 accept="image/*"
                             />
-                            {errors['avatar'] && <small className='text-xs text-red-500'>{errors['avatar']?.message}</small>}
+                            {errors['avatar'] && <small className='text-base text-red-500'>{errors['avatar']?.message}</small>}
                         </div>
 
                         <div>

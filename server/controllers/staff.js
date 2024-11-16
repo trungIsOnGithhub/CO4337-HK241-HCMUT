@@ -5,13 +5,15 @@ const Staff = require('../models/staff')
 const addStaff = asyncHandler(async(req, res)=>{
     console.log('---|||', req.body);
     const {firstName, lastName, email, mobile, provider_id, shifts} = req.body
+
     if(!firstName || !lastName || !mobile || !email || !provider_id){
         throw new Error("Missing input")
     }
     const data = {firstName, lastName, mobile, email, provider_id, shifts}
-    // if(req.file){
-    //     data.avatar = req.file.path
-    // }
+
+    if(req.file){
+        data.avatar = req.file.path
+    }
 
     console.log('--->', data);
 
@@ -19,7 +21,8 @@ const addStaff = asyncHandler(async(req, res)=>{
 
     return res.status(200).json({
         success: response ? true : false,
-        mes: response ? 'Created successfully' : "Cannot create new staff"
+        mes: response ? 'Created successfully' : "Cannot create new staff",
+        staff: response
     })
 });
 

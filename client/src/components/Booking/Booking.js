@@ -215,7 +215,7 @@ const Booking = () => {
 
   const handleBookDateTime = (el) => { 
     navigate({
-      pathname:  `/${path.BOOKING_DATE_TIME}`,
+      pathname: `/${path.BOOKING_DATE_TIME}`,
       search: createSearchParams({sid: service?._id, st: el?._id}).toString()
     })
   }
