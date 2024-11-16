@@ -59,6 +59,7 @@ const path = {
 
     UPDATE_SERVICE: 'update_service/:service_id',
     UPDATE_PRODUCT: 'update_product/:product_id',
+    UPDATE_BLOG: 'update_blog/:blog_id',
 
     ADD_VOUCHER: 'add_voucher',
     ADD_SALE_EVENT: 'add_sale_event',

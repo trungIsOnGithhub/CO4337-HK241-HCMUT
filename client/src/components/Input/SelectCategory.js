@@ -2,8 +2,9 @@ import React, { memo, useState } from 'react'
 import clsx from 'clsx'
 import Select from 'react-select'
 
-const SelectCategory = ({styleLabel, label, options, register, errors, id, validate, style, styleSelect, fullWidth, text, values, onChangee, defaultValue}) => {
+const SelectCategory = ({styleLabel, label, options=[], register, errors, id, validate, style, styleSelect, fullWidth, text, values, onChangee, defaultValue}) => {
   // Tạo một hàm handleChange để xử lý thay đổi giá trị của select
+  console.log(options)
 
   const handleChange = (aa) => {
     onChangee(aa?.label);

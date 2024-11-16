@@ -21,6 +21,7 @@ import DetailProviderBook from 'pages/public/DetailProviderBook';
 import DetailProviderFindUs from 'pages/public/DetailProviderFindUs';
 import OrderHistoryDetail from 'pages/user/OrderHistoryDetail';
 import ManageOrderDetail from 'pages/admin/ManageOrderDetail';
+import UpdateBlog from 'pages/admin/UpdateBlog';
 
 function App() {
   const dispatch = useDispatch();
@@ -84,6 +85,7 @@ function App() {
         <Route path={path.ADD_VARIANT_PRODUCT} element={<AddVariantProduct/>}/>
         <Route path={path.UPDATE_SERVICE} element={<UpdateService/>}/>
         <Route path={path.UPDATE_PRODUCT} element={<UpdateProduct/>}/>
+        <Route path={path.UPDATE_BLOG} element={<UpdateBlog/>}/>
 
         <Route path={path.ADD_STAFF} element={<AddStaff/>}/>
         <Route path={path.ADD_SERVICE} element={<AddService/>}/>

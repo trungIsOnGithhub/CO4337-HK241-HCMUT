@@ -266,7 +266,7 @@ const AddPost = () => {
                 <div className="mt-2 p-2 bg-white border border-gray-200 rounded-md shadow-sm">
                   <p className="text-sm text-[#00143c] mb-2">Suggested tags:</p>
                   <div className="flex flex-wrap gap-2">
-                    {tags.map((tag) => (
+                    {tags?.map((tag) => (
                       <button
                         key={tag?._id}
                         type="button"
@@ -281,7 +281,7 @@ const AddPost = () => {
               )}
 
               <div className="mt-2 flex flex-wrap gap-2">
-                {blogTag.map((tag) => (
+                {blogTag?.map((tag) => (
                   <span
                     key={tag}
                     className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-[#0a66c2]"

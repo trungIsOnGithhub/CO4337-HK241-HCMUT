@@ -12,11 +12,11 @@ import { apiGetOneService, apiUpdateServiceByAdmin } from 'apis/service'
 import { useParams } from 'react-router-dom'
 import bgImage from '../../assets/clouds.svg'
 import { IoReturnDownBack } from 'react-icons/io5'
-import { FaPlus } from 'react-icons/fa'
+import { FaPlus, FaSpinner } from 'react-icons/fa'
 
 const UpdateService = () => {
   const {service_id} = useParams()
-
+  const [isLoading, setIsLoading] = useState(false)
   const {categories_service} = useSelector(state => state.category)
   const [editService, setEditService] = useState(null)
   const option_category = categories_service?.map((cate) => ({
@@ -130,7 +130,6 @@ const UpdateService = () => {
   const handleUpdateService = async(data) => {
     // const invalid = validate(payload, setInvalidField)
     // if(invalid === 0){
-
       let finalPayload = {...data,...payload}
       if(selectedStaff?.length > 0){
         finalPayload.assigned_staff = selectedStaff
@@ -138,7 +137,6 @@ const UpdateService = () => {
       if(selectedCategory){
         finalPayload.category = selectedCategory
       }
-      console.log(finalPayload)
       if(data.thumb?.length === 0){
         finalPayload.thumb = preview.thumb
       }
@@ -170,12 +168,13 @@ const UpdateService = () => {
       }
     
       // // // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
+      setIsLoading(true)
       const response = await apiUpdateServiceByAdmin(formData, editService._id)
+      setIsLoading(false)
       // // // dispatch(showModal({isShowModal: false, modalChildren: null}))
       if(response.success){
         toast.success(response.mes)
-        
-        setEditService(null)
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
       }
       else{
         toast.error(response.mes)
@@ -340,8 +339,20 @@ const UpdateService = () => {
               </div>
               }
             </div>
+
             <div className='w-full mt-6 mb-4 flex justify-center'>
-              <Button type='submit' style={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center'}>Update Service</Button>
+              <Button type='submit' style={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center'}>
+                {isLoading ? (
+                    <span className="flex items-center">
+                    <FaSpinner className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                    Updating service...
+                    </span>
+                ) : (
+                    <span className='flex items-center'>
+                     Update service
+                    </span>
+                )}
+              </Button>
             </div>
           </form>
         </div>
