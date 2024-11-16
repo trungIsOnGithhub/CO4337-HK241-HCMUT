@@ -387,16 +387,16 @@ const BookingDateTIme = () => {
     //   price: service?.price
     // });
 
-    let response = await apiCreateOrder({info:{
-        service: service?._id,
-        provider: provider?._id,
-        staff: staff?._id,
-        duration: service?.duration,
-        time: timeStartHH,
-        date: date,
-        dateTime: dateTime, // datetime chứa cả date và time
-        price: service?.price
-    }, total: service?.price});
+    // let response = await apiCreateOrder({info:{
+    //     service: service?._id,
+    //     provider: provider?._id,
+    //     staff: staff?._id,
+    //     duration: service?.duration,
+    //     time: timeStartHH,
+    //     date: date,
+    //     dateTime: dateTime, // datetime chứa cả date và time
+    //     price: service?.price
+    // }, total: service?.price});
 
     await apiUpdateCartService({
       service: service?._id,
@@ -405,11 +405,17 @@ const BookingDateTIme = () => {
       duration: service?.duration,
       time: timeStartHH,
       date: date,
-      dateTime: dateTime, // datetime chứa cả date và time
-      price: service?.price
-  });
+      dateTime: dateTime,
+      originalPrice: originalPrice,
+      discountPrice: +discountValue > 0 ? +discountValue : 0,
+      coupon: selectedVoucher?._id
+    });
+ // datetime chứa cả date và time
+//       price: service?.price
+//   });
 
-  // Swal.fire("noti", JSON.stringify(response), 'error');
+//   // Swal.fire("noti", JSON.stringify(response), 'error');
+// =======
 }
 
   const parseTimee = (time) => {
@@ -452,21 +458,10 @@ const BookingDateTIme = () => {
       duration: service?.duration,
       date: date,
       dateTime: dateTime,
-      price: finalPrice
+      originalPrice: originalPrice,
+      discountPrice: +discountValue > 0 ? +discountValue : 0,
+      coupon: selectedVoucher?._id
     })
-
-    let response = await apiCreateOrder({
-      service: service?._id, 
-      provider: provider?._id, 
-      staff: staff?._id, 
-      time: selectedTime, 
-      duration: service?.duration,
-      date: date,
-      dateTime: dateTime,
-      price: finalPrice
-    });
-
-  // Swal.fire("noti", JSON.stringify(response), 'error');
 
     if(selectedVoucher){
       window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}&couponCode=${selectedVoucher?.code}`, '_blank');
@@ -474,6 +469,19 @@ const BookingDateTIme = () => {
     else {
       window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}`, '_blank');
     }
+
+    // let response = await apiCreateOrder({
+    //   service: service?._id, 
+    //   provider: provider?._id, 
+    //   staff: staff?._id, 
+    //   time: selectedTime, 
+    //   duration: service?.duration,
+    //   date: date,
+    //   dateTime: dateTime,
+    //   price: finalPrice
+    // });
+
+  // Swal.fire("noti", JSON.stringify(response), 'error');
   }
 
   const beforeCheckout = () => {

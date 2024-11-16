@@ -366,7 +366,7 @@ const getOneService = asyncHandler(async(req, res)=>{
     
     return res.status(200).json({
         success: service ? true : false,
-        service: service ? service : "Cannot find product"
+        service: service ? service : "Cannot find service"
     })
 })
 

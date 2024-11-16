@@ -300,11 +300,11 @@ const uploadImage = asyncHandler(async(req, res)=>{
 
 const addVariant = asyncHandler(async (req, res) => {
     const { pid } = req.params;
-    const { title, price, color, quantity, colorCode } = req.body;
+    const { title, color, quantity, colorCode } = req.body;
     const thumb = req.files?.thumb[0]?.path;
     const image = req.files?.images?.map(el => el.path);
 
-    if (!title || !price || !color || !quantity || !colorCode) {
+    if (!title || !color || !quantity || !colorCode) {
         throw new Error("Missing input");
     }
 
@@ -329,7 +329,7 @@ const addVariant = asyncHandler(async (req, res) => {
     // Nếu không trùng, thêm variant mới
     const response = await Product.findByIdAndUpdate(
         pid,
-        { $push: { variants: { title, color, price, quantity, colorCode, thumb, image } } },
+        { $push: { variants: { title, color, quantity, colorCode, thumb, image } } },
         { new: true }
     );
 

@@ -48,31 +48,31 @@ const OurProviders = () => {
   const [longitude, setLongitude] = useState(null)
   const [totalProvider, setTotalProvider] = useState(0)
 
-  useEffect(() => {
-    // Yêu cầu người dùng chia sẻ vị trí
-    Swal.fire({
-      title: 'Chia sẻ vị trí',
-      text: "Bạn có muốn chia sẻ vị trí hiện tại của mình?",
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Chia sẻ',
-      cancelButtonText: 'Không'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition(position => {
-            const { latitude, longitude } = position.coords;
-            setLatitude(latitude);
-            setLongitude(longitude);
-          }, () => {
-            Swal.fire('Không thể lấy vị trí của bạn.');
-          });
-        } else {
-          Swal.fire('Geolocation không khả dụng.');
-        }
-      }
-    });
-  }, []);
+  // useEffect(() => {
+  //   // Yêu cầu người dùng chia sẻ vị trí
+  //   Swal.fire({
+  //     title: 'Chia sẻ vị trí',
+  //     text: "Bạn có muốn chia sẻ vị trí hiện tại của mình?",
+  //     icon: 'question',
+  //     showCancelButton: true,
+  //     confirmButtonText: 'Chia sẻ',
+  //     cancelButtonText: 'Không'
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       if ("geolocation" in navigator) {
+  //         navigator.geolocation.getCurrentPosition(position => {
+  //           const { latitude, longitude } = position.coords;
+  //           setLatitude(latitude);
+  //           setLongitude(longitude);
+  //         }, () => {
+  //           Swal.fire('Không thể lấy vị trí của bạn.');
+  //         });
+  //       } else {
+  //         Swal.fire('Geolocation không khả dụng.');
+  //       }
+  //     }
+  //   });
+  // }, []);
 
 
 

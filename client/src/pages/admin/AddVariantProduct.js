@@ -135,36 +135,6 @@ const AddVariantProduct = () => {
               />
             </div>
             <div className='w-full my-6 flex gap-4'>
-              <InputFormm
-                label = 'Price'
-                register={register}
-                errors={errors}
-                id = 'price'
-                validate = {{
-                  required: 'Need fill this field'
-                }}
-                placeholder='Price of new product'
-                type='number'
-                style='flex-1 flex flex-col'
-                styleLabel={'text-[#00143c] font-medium mb-1'}
-                styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none rounded-md border-[#dee1e6]'}
-              />
-              <InputFormm
-                label = 'Quantity'
-                register={register}
-                errors={errors}
-                id = 'quantity'
-                validate = {{
-                  required: 'Need fill this field'
-                }}
-                placeholder='Quantity of new product'
-                type='number'
-                style='flex-1 flex flex-col'
-                styleLabel={'text-[#00143c] font-medium mb-1'}
-                styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none rounded-md border-[#dee1e6]'}
-              />
-            </div>
-            <div className='w-full my-6 flex gap-4'>
                 <InputFormm
                     label = 'Color'
                     register={register}
@@ -197,6 +167,22 @@ const AddVariantProduct = () => {
                         </div>
                     </div>
                 </div>
+            </div>
+            <div className='w-full my-6 flex gap-4'>
+              <InputFormm
+                label = 'Quantity'
+                register={register}
+                errors={errors}
+                id = 'quantity'
+                validate = {{
+                  required: 'Need fill this field'
+                }}
+                placeholder='Quantity of new product'
+                type='number'
+                style='flex-1 flex flex-col'
+                styleLabel={'text-[#00143c] font-medium mb-1'}
+                styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none rounded-md border-[#dee1e6]'}
+              />
             </div>
             <div className='w-full my-6 flex flex-col'>
               <label className='text-[#00143c] font-medium mb-1' htmlFor='thumb'>Upload Thumb</label>

@@ -11,7 +11,7 @@ const makeTokenNumber = () => {
 };
 
 const createServiceProvider = asyncHandler(async(req, res)=>{
-    console.log('testtt')
+    console.log(req.body)
     const { email, password, firstName, lastName, mobile } = req.body
     const avatar = req.files?.avatar[0]?.path
 
@@ -246,6 +246,7 @@ const addServiceProviderQuestion = asyncHandler(async(req, res)=>{
         qna: response ? response : "Cannot delete service provider"
     })
 })
+
 const getServiceProviderByOwnerId = asyncHandler(async(req, res)=>{
     const {owner} = req.body;
     if(!owner){
@@ -258,8 +259,6 @@ const getServiceProviderByOwnerId = asyncHandler(async(req, res)=>{
         provider: response ? response : "Cannot get service provider"
     })
 })
-
-
 
 const updateServiceProviderTheme = asyncHandler(async(req, res)=>{
     const spid = req.params.spid
@@ -285,6 +284,62 @@ const updateServiceProviderTheme = asyncHandler(async(req, res)=>{
     })
 })
 
+const getServiceProviderByAdmin = asyncHandler(async(req,res) => {
+    const {_id} = req.user
+    const {provider_id} = await User.findById({_id}).select('provider_id')
+    const sp = await ServiceProvider.findById(provider_id);
+    return res.status(200).json({
+        success: sp ? true : false,
+        payload: sp ? sp : "Cannot find Service Provider"
+    })
+})
+
+const updateFooterSection = asyncHandler(async(req,res) => {
+    const {_id} = req.user;
+    const {provider_id} = await User.findById({_id}).select('provider_id');
+    console.log(req?.body);
+    const sp = await ServiceProvider.findById(provider_id);
+    
+    // Update the footer section with the new data from req.body
+    if (sp) {
+        // Update indexFooter
+        sp.indexFooter = req.body.formattedData.map(item => ({
+            field: item.field,
+            order: item.order,
+            column: item.column,
+            isVisible: item.isVisible
+        }));
+
+        // Update slogan
+        sp.slogan = req.body.slogan;
+
+        // Update socialMedia
+        sp.socialMedia = {
+            facebook: req.body.socialLinks.find(link => link.platform === 'facebook')?.url || '',
+            instagram: req.body.socialLinks.find(link => link.platform === 'instagram')?.url || '',
+            linkedin: req.body.socialLinks.find(link => link.platform === 'linkedin')?.url || '',
+            youtube: req.body.socialLinks.find(link => link.platform === 'youtube')?.url || '',
+            twitter: req.body.socialLinks.find(link => link.platform === 'twitter')?.url || '',
+            tiktok: req.body.socialLinks.find(link => link.platform === 'tiktok')?.url || ''
+        };
+
+        // Update logoSize
+        sp.logoSize = req.body.logoSize;
+
+        const updatedProvider = await sp.save(); // Save the updated document
+
+        return res.status(200).json({
+            success: true,
+            updatedServiceProvider: updatedProvider,
+            mes: 'Footer section updated successfully'
+        });
+    } else {
+        return res.status(404).json({
+            success: false,
+            message: "Service Provider not found",
+        });
+    }
+});
 
 module.exports = {
     createServiceProvider,
@@ -295,5 +350,7 @@ module.exports = {
     addServiceProviderQuestion,
     getServiceProviderByOwnerId,
     updateServiceProviderTheme,
-    finalRegisterProvider
+    finalRegisterProvider,
+    getServiceProviderByAdmin,
+    updateFooterSection
 }

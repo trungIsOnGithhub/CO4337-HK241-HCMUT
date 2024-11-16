@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createSearchParams, useSearchParams } from 'react-router-dom';
-import { apiGetAllBlogs } from 'apis/blog';
+import { apiGetAllBlogByAdmin, apiGetAllBlogs } from 'apis/blog';
 import moment from 'moment';
 import { Button, Pagination } from 'components';
 import { FiCalendar, FiDollarSign, FiEdit, FiEye, FiEyeOff, FiThumbsDown, FiThumbsUp, FiTrash2 } from 'react-icons/fi';
@@ -25,7 +25,7 @@ const ManagePost = ({ dispatch, navigate }) => {
         toast.success('Please Log In To Continue!');
         return;
       }
-      const sortedPosts = await apiGetAllBlogs({ ...params, provider_id: current?.provider_id?._id,  limit: process.env.REACT_APP_LIMIT });
+      const sortedPosts = await apiGetAllBlogByAdmin({ ...params, provider_id: current?.provider_id?._id,  limit: process.env.REACT_APP_LIMIT });
       setPosts(sortedPosts?.blogs);
       // setCounts(sortedPosts?.blogs.length);
     // }
@@ -45,6 +45,10 @@ const ManagePost = ({ dispatch, navigate }) => {
   }, [params]);
 
   console.log(post)
+
+  const handleNavigateEditBlog = (blogId) => {
+    navigate(`/admin/update_blog/${blogId}`)
+  }
 
   return (
     <div className='w-full h-full relative'>
@@ -88,9 +92,9 @@ const ManagePost = ({ dispatch, navigate }) => {
                 <div className='w-[10%] px-2 py-2 text-[#00143c] flex justify-center items-center'>{el?.numberView}</div>
                 <div className='w-[10%] px-2 py-2 text-[#00143c] flex justify-center items-center'>{el?.isHidden ? 'Hidden' : 'Visible'}</div>
                 <div className='w-[20%] px-2 py-2 text-[#00143c] flex justify-center items-center gap-2'>
-                  <span className='text-blue-600 hover:text-blue-900'><FiEdit className="h-5 w-5" /></span>
-                  <span className={clsx(!el?.isHidden ? "text-green-600 hover:text-green-900" : "text-gray-600 hover:text-gray-900")}>{!el.isHidden ? <FiEye className="h-5 w-5" /> : <FiEyeOff className="h-5 w-5" />}</span>
-                  <span className='text-red-600 hover:text-red-900'><FiTrash2 className='h-5 w-5'/></span>
+                  <span onClick={()=>{handleNavigateEditBlog(el?._id)}} className='text-blue-600 hover:text-blue-900 cursor-pointer'><FiEdit className="h-5 w-5" /></span>
+                  <span className={clsx(!el?.isHidden ? "text-green-600 hover:text-green-900" : "text-gray-600 hover:text-gray-900 cursor-pointer")}>{!el.isHidden ? <FiEye className="h-5 w-5" /> : <FiEyeOff className="h-5 w-5" />}</span>
+                  <span className='text-red-600 hover:text-red-900 cursor-pointer'><FiTrash2 className='h-5 w-5'/></span>
                 </div>
                </div>
               ))}

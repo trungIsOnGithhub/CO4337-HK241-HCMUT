@@ -253,8 +253,10 @@ const Booking = () => {
       time: time,
       duration: service?.duration,
       date: new Date().toLocaleDateString(),
-      price: +discountValue > 0 ? +discountValue : +originalPrice,
-      dateTime
+      originalPrice: originalPrice,
+      discountPrice: +discountValue > 0 ? +discountValue : 0,
+      dateTime,
+      coupon: selectedVoucher?._id
     })
   }
 
@@ -284,8 +286,10 @@ const Booking = () => {
       time: selectedStaff?.time,
       duration: service?.duration,
       date: new Date().toLocaleDateString(),
-      price: finalPrice,
-      dateTime: dateTime
+      originalPrice: originalPrice,
+      discountPrice: +discountValue > 0 ? +discountValue : 0,
+      dateTime: dateTime,
+      coupon: selectedVoucher?._id
     })
     if(selectedVoucher){
       window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}&couponCode=${selectedVoucher?.code}`, '_blank');
@@ -402,8 +406,8 @@ const Booking = () => {
               <div className='flex gap-2'>
                 <span className='text-gray-700 font-bold'>Total Price:</span>
                 <div className='flex gap-2 items-center'>
-                  <span className={clsx('text-[#0a66c2] font-semibold', discountValue > 0 && 'font-medium line-through')}>{`${formatPrice(formatPricee(service?.price))} VNĐ`}</span>
-                  {discountValue > 0 && <span className='leading-7 text-[#0a66c2] font-semibold'>{`${formatPrice(formatPricee(discountValue))} VNĐ`}</span>}
+                  <span className={clsx('text-[#0a66c2] font-semibold', discountValue > 0 && 'font-medium line-through')}>{`${formatPrice(service?.price)} VNĐ`}</span>
+                  {discountValue > 0 && <span className='leading-7 text-[#0a66c2] font-semibold'>{`${formatPrice(discountValue)} VNĐ`}</span>}
                 </div>
               </div>
             </div>

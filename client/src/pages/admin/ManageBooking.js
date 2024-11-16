@@ -1,25 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { apiGetOrdersByAdmin } from 'apis/order';
-// import moment from 'moment';
+import { apiGetOrdersByAdmin, apiUpdateStatusOrder } from 'apis/order';
+import moment from 'moment';
 import { Button, InputFormm, Pagination } from 'components';
 import { FiCalendar, FiChevronLeft, FiChevronRight, FiX } from 'react-icons/fi';
-// import path from 'ultils/path';
-// import withBaseComponent from 'hocs/withBaseComponent';
-// import { formatPrice, formatPricee } from 'ultils/helper';
+import path from 'ultils/path';
+import withBaseComponent from 'hocs/withBaseComponent';
+import { formatPrice, formatPricee } from 'ultils/helper';
 import bgImage from '../../assets/clouds.svg'
 import { TfiExport } from "react-icons/tfi";
 import { useForm } from 'react-hook-form';
-// import { BsCalendar } from "react-icons/bs";
+import { BsCalendar } from "react-icons/bs";
 import { RxMixerVertical } from 'react-icons/rx';
 import { GoPlusCircle } from "react-icons/go";
 import { format, isValid, isBefore, isAfter, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths } from "date-fns";
 import useDebounce from 'hook/useDebounce';
-import icons from 'ultils/icon';
-import ViewOrderDetail from './ViewOrderDetail';
+import { FaAngleDown } from 'react-icons/fa';
+import { FaCircleHalfStroke } from 'react-icons/fa6';
+import clsx from 'clsx';
+import { toast } from 'react-toastify';
 
 const ManageBooking = () => {
-  const {MdModeEdit, MdDelete} = icons;
   const [params] = useSearchParams();
   const [booking, setBookings] = useState(null);
   const [counts, setCounts] = useState(0);
@@ -28,10 +29,10 @@ const ManageBooking = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
   const [error, setError] = useState("");
-  // const navigate = useNavigate();
-  // const location = useLocation();
-  const [viewOrder, setViewOrder] = useState(false);
-  const [chosenBookingId, setChosenBookingId] = useState('');
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [showOptionStatus, setShowOptionStatus] = useState(null)
+  const optionRef = useRef(null);
 
   const handleInputClick = () => {
     setShowCalendar(!showCalendar);
@@ -55,9 +56,6 @@ const ManageBooking = () => {
         const startDateISO = startDateUTC.toISOString();
         const endDateISO = endDateUTC.toISOString();
 
-        console.log('--->', startDateISO);
-        console.log('--->', endDateISO);
-
         const response = await apiGetOrdersByAdmin({
             ...params,
             startDate: startDateISO,
@@ -65,15 +63,12 @@ const ManageBooking = () => {
             limit: process.env.REACT_APP_LIMIT
         });
 
-        console.log('----??????', response);
-
         if (response?.success) {
             setBookings(response?.orders);
             setCounts(response?.counts);
         }
     } else {
         const response = await apiGetOrdersByAdmin({ ...params, limit: process.env.REACT_APP_LIMIT });
-        console.log('----??????', response);
         if (response?.success) {
             setBookings(response?.orders);
             setCounts(response?.counts);
@@ -84,7 +79,7 @@ const ManageBooking = () => {
   useEffect(() => {
     const searchParams = Object.fromEntries([...params]);
     fetchBooking(searchParams);
-  }, [params, startDate, endDate]);
+  }, [params, startDate, endDate, showOptionStatus]);
 
 
   const handleClearDates = (e) => {
@@ -226,27 +221,64 @@ const ManageBooking = () => {
   };
 
 
-  // const queryDebounce = useDebounce(watch('q'),800)
+  const queryDebounce = useDebounce(watch('q'),800)
 
-  // useEffect(() => {
-  //   if(queryDebounce) {
-  //     navigate({
-  //       pathname: location.pathname,
-  //       search: createSearchParams({q:queryDebounce}).toString()
-  //     })
-  //   }
-  //   else{
-  //     navigate({
-  //       pathname: location.pathname,
-  //     })
-  //   }
-  // }, [queryDebounce])
+  useEffect(() => {
+    if(queryDebounce) {
+      navigate({
+        pathname: location.pathname,
+        search: createSearchParams({q:queryDebounce}).toString()
+      })
+    }
+    else{
+      navigate({
+        pathname: location.pathname,
+      })
+    }
+  }, [queryDebounce])
 
   useEffect(() => {
     if(startDate && endDate){
 
     }
   }, [startDate, endDate]);
+
+
+  const handleShowOptionStatus = (bookingId) => {
+    setShowOptionStatus(bookingId)
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (optionRef.current && !optionRef.current.contains(event.target)) {
+        setShowOptionStatus(null); // Đặt lại showOptionStatus
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleChangeStatusBooking = async(bookingId, status) => {
+    console.log(bookingId, status)
+    const response = await apiUpdateStatusOrder({bookingId, status})
+    if(response?.success){
+      setShowOptionStatus(null)
+      toast.success(response?.mes)
+    }
+    else{
+      setShowOptionStatus(null)
+      toast.error(response?.mes)
+    }
+  }
+  const handleNavigateBookingDetail = (bookingid) => {
+    navigate({
+      pathname: `/${path.ADMIN}/${path.MANAGE_BOOKING_DETAIL}`,
+      search: createSearchParams({ bookingid }).toString()
+    });
+  }
 
   return (
     <div className="w-full h-full relative">
@@ -257,12 +289,7 @@ const ManageBooking = () => {
         <div className='w-full h-20 flex justify-between p-4'>
           <span className='text-[#00143c] text-3xl font-semibold'>Manage Booking</span>
         </div>
-
-        {viewOrder && <div className='inset-0 z-50 flex-auto'>
-          <ViewOrderDetail bookingId={chosenBookingId} onClose={() => {setViewOrder(false);}}/>
-        </div>}
-
-        {!viewOrder && <div className='w-[95%] h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
+        <div className='w-[95%] h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
           <div className='w-full h-fit flex justify-between items-center'>
             <h1 className='text-[#00143c] font-medium text-[16px]'>{`Bookings (${counts})`}</h1>
             <Button style={'px-4 py-2 rounded-md text-[#00143c] bg-[#fff] font-semibold w-fit h-fit flex gap-2 items-center border border-[#b3b9c5]'}><TfiExport className='text-lg font-bold' /> Export Data</Button>
@@ -338,39 +365,44 @@ const ManageBooking = () => {
             </div>
           </div>
           <div className='text-[#99a1b1]'>
-            <div className='w-full flex gap-1 border-b border-[##dee1e6] p-[8px] [&>*]:text-center'>
-              <span className='w-[25%]'>Date Time</span>
-              {/* <span className='w-[10%]'>Time</span> */}
-              <span className='w-[25%]'>Service</span>
-              <span className='w-[15%]'>Customer</span>
-              <span className='w-[15%]'>Status</span>
-              <span className='w-[15%]'>Employee</span>
-              <span className='w-[5%]'>Action</span>
+            <div className='w-full flex gap-1 border-b border-[##dee1e6] p-[8px]'>
+              <span className='w-[10%]'>Time</span>
+              <span className='w-[25%] flex items-center justify-center'>Service</span>
+              <span className='w-[15%] flex items-center justify-center'>Customer</span>
+              <span className='w-[10%] flex items-center justify-center'>Duration</span>
+              <span className='w-[15%] flex items-center justify-center'>Status</span>
+              <span className='w-[20%] flex items-center justify-center'>Employee</span>
+              <span className='w-[5%]'>Note</span>
             </div>
             <div>
               {booking?.map((el,index) => (
-                <div key={index} className='w-full flex border-b border-[#f4f6fa] gap-1 h-[56px] px-[8px] py-[12px] [&>*]:text-center'>
-                  <span className='w-[25%] px-2 py-2 text-[#00143c] line-clamp-1'>{el?.info[0]?.date}, {el?.info[0]?.time}</span>
-                  {/* <span className='w-[10%] py-2 text-[#00143c]'>{el?.info[0]?.time}</span> */}
-                  <span className='w-[25%] py-2 text-[#00143c] text-sm flex justify-start font-medium'>
+                <div key={index} className='w-full flex border-b border-[#f4f6fa] gap-1 h-[56px] px-[8px] py-[12px] cursor-pointer hover:bg-blue-200'>
+                  <span className='w-[10%] py-2 text-[#00143c]'>{el?.info[0]?.time}</span>
+                  <span onClick={()=>handleNavigateBookingDetail(el?._id)} className='w-[25%] py-2 text-[#00143c] text-sm flex justify-start font-medium'>
                     <div className='pl-[4px] flex items-center' style={{borderLeft: `4px solid ${getColorByCategory(el?.serviceDetails?.category)}` }}>
                       {el?.serviceDetails?.name}
                     </div>
                   </span>
-                  <span className='w-[15%] py-2 text-[#00143c] text-sm line-clamp-1'>{`${el?.userDetails?.lastName} ${el?.userDetails?.firstName}`}</span>
-                  <span className={`w-[15%] px-2 py-2 ${el?.status ==='Successful' ? 'text-teal-500' :
-                    el?.status ==='Canceled' ? 'text-red-500' : 'text-orange-400' }`}>{el?.status}</span>
-                  <span className='w-[20%] px-4 py-2 text-[#00143c] flex items-center justify-center'>
-                    {/* <img className='w-[32px] h-[32px] rounded-full ml-[-10px] mr-[0px]' src={el?.staffDetails?.avatar}/> */}
-                    <span className='text-gray-500'>{`${el?.staffDetails.firstName} ${el?.staffDetails.lastName}`}</span>
+                  <span className='w-[15%] py-2 text-[#00143c] text-sm line-clamp-1 flex items-center justify-center'>{`${el?.userDetails?.lastName} ${el?.userDetails?.firstName}`}</span>
+                  <span className='w-[10%] py-2 text-[#00143c] text-sm line-clamp-1 flex items-center justify-center'>{`${el?.serviceDetails?.duration}min`}</span>
+                  <span className='w-[15%] py-2 text-[#00143c] flex items-center justify-center relative cursor-pointer' onClick={()=>{handleShowOptionStatus(el?._id)}}>
+                    <div className='w-full flex justify-between items-center border rounded-md px-2 shadow-sm'>
+                      <span className='flex gap-[6px] items-center'><FaCircleHalfStroke style={{ transform: 'rotate(90deg)'}} color={el?.status === 'Successful' ? 'green' : el?.status === 'Pending' ? 'orange' : 'red'}/>{el?.status}</span>
+                      <FaAngleDown size={10}/>
+                    </div>
+                   {
+                    showOptionStatus === el?._id &&
+                    <div ref={optionRef} className='w-full bg-white border shadow-xl absolute top-8 left-0 px-[7px] py-[5px] flex flex-col gap-1 z-50'>
+                      <span onClick={()=>handleChangeStatusBooking(el?._id, 'Successful')} className={clsx('w-full flex gap-1 items-center p-2 cursor-pointer', el?.status === 'Successful' ? 'text-[#005aee] bg-[#f2f6fe]' : 'hover:bg-gray-100')}><FaCircleHalfStroke style={{ transform: 'rotate(90deg)'}} color='green'/> Successful</span>
+                      <span onClick={()=>handleChangeStatusBooking(el?._id, 'Pending')} className={clsx('w-full flex gap-1 items-center p-2 cursor-pointer', el?.status === 'Pending' ? 'text-[#005aee] bg-[#f2f6fe]' : 'hover:bg-gray-100')}><FaCircleHalfStroke style={{ transform: 'rotate(90deg)'}} color='orange'/> Pending</span>
+                      <span onClick={()=>handleChangeStatusBooking(el?._id, 'Cancelled')} className={clsx('w-full flex gap-1 items-center p-2 cursor-pointer', el?.status === 'Cancelled' ? 'text-[#005aee] bg-[#f2f6fe]' : 'hover:bg-gray-100')}><FaCircleHalfStroke style={{ transform: 'rotate(90deg)'}} color='red'/> Cancelled</span>
+                    </div>
+                   }
                   </span>
-                  <span className='font-bold text-xl flex justify-center'>
-                    <GoPlusCircle />
-                    <span onClick={() => {setChosenBookingId(el?._id); setViewOrder(true)}}
-                      className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'>
-                        <MdModeEdit size={24}/>
-                    </span>
+                  <span className='w-[20%] py-2 text-[#00143c] flex items-center justify-center'>
+                    <img className='w-[32px] h-[32px] rounded-full ml-[-10px] mr-[0px]' src={el?.staffDetails?.avatar}/>
                   </span>
+                  <span className='w-[5%] px-2 py-2 text-[#00143c] font-bold text-xl'><GoPlusCircle /></span>
                 </div>
               ))}
             </div>
@@ -378,9 +410,7 @@ const ManageBooking = () => {
           <div className='text-[#00143c] flex-1 flex items-end'>
             <Pagination totalCount={counts} />
           </div>
-        </div> }
-
-
+        </div>
       </div>
     </div>
   );

@@ -128,6 +128,9 @@ const ManageProduct = () => {
     navigate(`/admin/add_variant_product/${productId}`)
   }
   
+  const handleNavigateUpdateProduct = (productId) => {
+    navigate(`/admin/update_product/${productId}`)
+  }
   return (
     <div className="w-full h-full relative">
       <div className='inset-0 absolute z-0'>
@@ -177,7 +180,7 @@ const ManageProduct = () => {
                     <span className='w-[10%] px-2 py-2 text-[#00143c] font-medium flex justify-center'>{el?.totalRatings}</span>
                     <span className='w-[10%] px-2 py-2 text-[#00143c] font-medium flex justify-center'>{el?.color}</span>
                     <span className='w-[20%] px-2 py-2 flex justify-center items-center'>
-                      <span onClick={() => setEditProduct(el)} 
+                      <span onClick={() => handleNavigateUpdateProduct(el?._id)} 
                       className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdModeEdit size={24}/></span>
                       <span onClick={() => handleDeleteProduct(el._id)} 
                       className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>

@@ -11,6 +11,7 @@ var orderProductSchema = new mongoose.Schema({
         discountPrice: {type: Number},
         thumb: {type: String},
         title: {type: String},
+        variantId: {type: String},
     }],
     shippingPrice: {
         type: Number
@@ -28,7 +29,7 @@ var orderProductSchema = new mongoose.Schema({
     statusPayment:{
         type: String,
         default: 'Pending',
-        enum: ['Pending', 'Successful']
+        enum: ['Cancelled', 'Pending', 'Successful'] //pending thi user co the huy, con Success thi phai nhan voi admin neu muon huy
     },
     statusShipping:{
         type: String,

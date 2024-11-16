@@ -437,7 +437,7 @@ const deleteUser = asyncHandler(async (req, res) => {
 //update user
 const updateUser = asyncHandler(async (req, res) => {
     const {_id} = req.user
-    console.log(req.body)
+
     const {firstName, lastName, email, mobile, address, latitude, longitude} = req.body
     const data = {firstName, lastName, email, mobile, address, latitude, longitude}
     
@@ -504,9 +504,9 @@ const updateUserAddress = asyncHandler(async (req, res) => {
 // update cart_service
 const updateCartService = asyncHandler(async (req, res) => {
     const {_id} = req.user;
-    const {service, provider, staff, time, date, duration, price, dateTime} = req.body;
+    const {service, provider, staff, time, date, duration, originalPrice, discountPrice, dateTime, coupon=null} = req.body;
     
-    if (!service || !provider || !staff || !time || !date || !duration || !price || !dateTime) {
+    if (!service || !provider || !staff || !time || !date || !duration || !originalPrice || !dateTime) {
         throw new Error("Missing input");
     } else {
         const user = await User.findById(_id).select('cart_service');
@@ -517,7 +517,7 @@ const updateCartService = asyncHandler(async (req, res) => {
 
         try {
             // Thêm một phần tử mới vào mảng 'cart'
-            response = await User.findByIdAndUpdate(_id, {$push: {cart_service: {service, provider, staff, time, date, duration, price, dateTime}}}, {new: true});
+            response = await User.findByIdAndUpdate(_id, {$push: {cart_service: {service, provider, staff, time, date, duration, originalPrice, discountPrice, dateTime, coupon}}}, {new: true});
         } catch (error) {
             // Xử lý lỗi nếu có
             return res.status(500).json({ success: false, mes: "Something went wrong" });
@@ -533,29 +533,59 @@ const updateCartService = asyncHandler(async (req, res) => {
 // update cart_product
 const updateCartProduct = asyncHandler(async (req, res) => {
     const {_id} = req.user
-    const {pid, quantity=1, color, colorCode, price, thumb, title, provider} = req.body
+    const {pid, quantity=1, color, colorCode, price, thumb, title, provider, variantId} = req.body
+    console.log(req.body)
     if(!pid || !color || !price || !thumb|| !title|| !provider || !colorCode) {
         throw new Error("Missing input")
     }
     else{
         const user = await User.findById(_id).select('cart_product')
-        const alreadyProduct = user?.cart_product?.find(el => el.product.toString() === pid && el.colorCode === colorCode)
-
-        if(alreadyProduct){
-            const response = await User.updateOne({cart_product:{$elemMatch: alreadyProduct}}, {$set: {"cart_product.$.quantity": quantity, "cart_product.$.price": price, "cart_product.$.thumb": thumb, "cart_product.$.title": title,  "cart_product.$.provider": provider, "cart_product.$.color": color}},{new:true})
-            return res.status(200).json({
-                success: response ? true : false,
-                mes: response ? 'Updated your cart' : "Something went wrong"
-            })     
+        if(!user){
+            throw new Error("User not found")
         }
+        else{
+           if(!variantId){
+            const alreadyProduct = user?.cart_product?.find(el => el?.productId?.toString() === pid && el?.colorCode === colorCode)
 
-        // neu sp chua them vao gio hang || sp da them nhung khac color
-        else {
-            const response = await User.findByIdAndUpdate(_id,{$push:{cart_product:{product:pid, quantity, color, colorCode, price, thumb, title, provider}}},{new: true})
-            return res.status(200).json({
-                success: response ? true : false,
-                mes: response ? 'Updated your cart' : "Something went wrong"
-            })
+            if(alreadyProduct){
+                const response = await User.updateOne({cart_product:{$elemMatch: alreadyProduct}}, {$set: {"cart_product.$.quantity": quantity, "cart_product.$.price": price, "cart_product.$.thumb": thumb, "cart_product.$.title": title,  "cart_product.$.provider": provider, "cart_product.$.color": color}},{new:true})
+                return res.status(200).json({
+                    success: response ? true : false,
+                    mes: response ? 'Updated your cart' : "Something went wrong"
+                })     
+            }
+    
+            // neu sp chua them vao gio hang || sp da them nhung khac color
+            else {
+                const response = await User.findByIdAndUpdate(_id,{$push:{cart_product:{productId:pid, quantity, color, colorCode, price, thumb, title, provider}}},{new: true})
+                return res.status(200).json({
+                    success: response ? true : false,
+                    mes: response ? 'Updated your cart' : "Something went wrong"
+                })
+            }
+           }
+           else{
+            console.log('aaaa')
+            const alreadyProduct = user?.cart_product?.find(el => el?.variantId?.toString() === variantId && el?.colorCode === colorCode)
+
+            if(alreadyProduct){
+                const response = await User.updateOne({cart_product:{$elemMatch: alreadyProduct}}, {$set: {"cart_product.$.quantity": quantity, "cart_product.$.price": price, "cart_product.$.thumb": thumb, "cart_product.$.title": title,  "cart_product.$.provider": provider, "cart_product.$.color": color}},{new:true})
+                return res.status(200).json({
+                    success: response ? true : false,
+                    mes: response ? 'Updated your cart' : "Something went wrong"
+                })     
+            }
+    
+            // neu sp chua them vao gio hang || sp da them nhung khac color
+            else {
+                const response = await User.findByIdAndUpdate(_id,{$push:{cart_product:{variantId:variantId, productId:pid, quantity, color, colorCode, price, thumb, title, provider}}},{new: true})
+                return res.status(200).json({
+                    success: response ? true : false,
+                    mes: response ? 'Updated your cart' : "Something went wrong"
+                })
+            }
+
+           }
         }
     }
 })
@@ -622,25 +652,45 @@ const updateWishlistProduct = asyncHandler(async(req, res)=>{
 
 const removeProductFromCart = asyncHandler(async (req, res) => {
     const {_id} = req.user
-    const {pid, colorCode} = req.query
-    console.log(req.query)
+    const {pid, colorCode, variantId} = req.query
     const user = await User.findById(_id).select('cart_product')
 
-    console.log(user)
-    const alreadyProduct = user?.cart_product?.find(e1 => e1?.product?.toString() === pid && e1?.colorCode === colorCode)
-    
-    if(!alreadyProduct){
-        return res.status(200).json({
-            success: true,
-            mes: 'Not Found'
-        })
+    if(!user){
+        throw new Error("User not found")
     }
     else{
-        const response = await User.findByIdAndUpdate(_id,{$pull:{cart_product:{product:pid, colorCode}}},{new: true})
-        return res.status(200).json({
-            success: response ? true : false,
-            mes: response ? 'Deleted successfully' : "Something went wrong"
-        })
+        if(!variantId){
+            const alreadyProduct = user?.cart_product?.find(e1 => e1?.productId?.toString() === pid && e1?.colorCode === colorCode)            
+            if(!alreadyProduct){
+                return res.status(200).json({
+                    success: true,
+                    mes: 'Not Found'
+                })
+            }
+            else{
+                const response = await User.findByIdAndUpdate(_id,{$pull:{cart_product:{productId:pid, colorCode}}},{new: true})
+                return res.status(200).json({
+                    success: response ? true : false,
+                    mes: response ? 'Deleted successfully' : "Something went wrong"
+                })
+            }
+        }
+        else{
+            const alreadyProduct = user?.cart_product?.find(e1 => e1?.variantId?.toString() === variantId && e1?.colorCode === colorCode)            
+            if(!alreadyProduct){
+                return res.status(200).json({
+                    success: true,
+                    mes: 'Not Found'
+                })
+            }
+            else{
+                const response = await User.findByIdAndUpdate(_id,{$pull:{cart_product:{variantId, colorCode}}},{new: true})
+                return res.status(200).json({
+                    success: response ? true : false,
+                    mes: response ? 'Deleted successfully' : "Something went wrong"
+                })
+            }
+        }
     }
     
 })

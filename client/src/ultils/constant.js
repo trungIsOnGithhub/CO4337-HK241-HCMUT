@@ -420,11 +420,20 @@ export const userSidebar = [
     },
     {
         id: 3,
-        type: 'single',
+        type: 'parent',
         text: 'History',
-        path: `/${path.USER}/${path.HISTORY}`,
         icon: <MdHistory size={20}/>,
         visibleForRole: [202],
+        submenu:[
+            {
+                text: 'Booking History',
+                path: `/${path.USER}/${path.HISTORY}`
+            },
+            {
+                text: 'Order History',
+                path: `/${path.USER}/${path.ORDER_HISTORY}`
+            }
+        ],
     },
     {
         id: 4,

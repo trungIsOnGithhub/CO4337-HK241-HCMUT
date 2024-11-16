@@ -107,8 +107,8 @@ const CheckoutProduct = ({dispatch, navigate}) => {
             <div className="mb-8 bg-gradient-to-r from-purple-50 via-blue-50 to-pink-50 rounded-xl p-6">
               <h2 className="text-xl font-semibold text-[#0a66c2] mb-4">Order Items</h2>
               <div className="space-y-4">
-                {allProducts?.map((product) => (
-                  <div key={product?.productId} className="flex items-center space-x-4 bg-white/70 backdrop-blur-sm p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-[1.02]">
+                {allProducts?.map((product, index) => (
+                  <div key={index} className="flex items-center space-x-4 bg-white/70 backdrop-blur-sm p-4 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 transform hover:scale-[1.02]">
                     <img
                       src={product?.thumb}
                       alt={product?.title}
@@ -135,7 +135,7 @@ const CheckoutProduct = ({dispatch, navigate}) => {
                     </div>
                     <div className="text-right">
                       <p className="font-medium text-[#0a66c2]">
-                        ${(product?.discountPrice * product?.quantity).toFixed(2)}
+                        {formatPrice(product?.discountPrice * product?.quantity)} VNĐ
                       </p>
                       {product.price !== product.discountedPrice && (
                         <p className="text-sm text-green-600 flex items-center">

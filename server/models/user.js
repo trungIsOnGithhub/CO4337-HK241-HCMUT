@@ -33,14 +33,17 @@ var userSchema = new mongoose.Schema({
         service: {type:mongoose.Types.ObjectId, ref: 'Service'},
         provider: {type:mongoose.Types.ObjectId, ref: 'Service_Provider'},
         staff:  {type:mongoose.Types.ObjectId, ref: 'Staff'},
+        coupon: {type:mongoose.Types.ObjectId, ref: 'Coupon'},
         duration: Number,
         date: String,
         time: String,
-        price: Number,
-        dateTime: Date
+        originalPrice: Number,
+        discountPrice: Number,
+        dateTime: Date,
     }],
     cart_product:[{
-        product: {type:mongoose.Types.ObjectId, ref: 'Product'},
+        productId: {type: String},
+        variantId: {type: String},
         quantity: {type: Number},
         color: {type: String},
         colorCode: {type: String},
@@ -54,11 +57,9 @@ var userSchema = new mongoose.Schema({
     },
     latitude: {
         type: Number,
-        required: true,
     },
     longitude: {
         type: Number,
-        required: true,
     },
     wishlist: [{type: mongoose.Types.ObjectId, ref: 'Service'}],
     wishlistProduct: [{type: mongoose.Types.ObjectId, ref: 'Product'}],

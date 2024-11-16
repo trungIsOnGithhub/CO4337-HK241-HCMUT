@@ -12,11 +12,12 @@ import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
 import { apiDeleteServiceByAdmin, apiGetServiceByAdmin } from 'apis/service'
 import clsx from 'clsx'
-import { formatPricee } from 'ultils/helper'
+import { formatPrice, formatPricee } from 'ultils/helper'
 import UpdateService from './UpdateService'
 import VariantService from './VariantService'
 import bgImage from '../../assets/clouds.svg'
 import { CiSearch } from 'react-icons/ci'
+import { FaChevronLeft, FaChevronRight, FaEye, FaTimes } from 'react-icons/fa'
 
 const ManageService = () => {
   const {MdModeEdit, MdDelete, FaCopy} = icons
@@ -30,11 +31,23 @@ const ManageService = () => {
   const [update, setUpdate] = useState(false)
   const [variant, setVariant] = useState(null)
   const [isShowStaff, setIsShowStaff] = useState(false)
+  const [expandedService, setExpandedService] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     const searchParams = Object.fromEntries([...params]) 
     fetchService(searchParams)
   }, [params, update])
+
+  const handleExpand = async (serviceId) => {
+    setCurrentImageIndex(0);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      setExpandedService(expandedService === serviceId ? null : serviceId);
+    } catch (error) {
+      console.error("Error loading service details:", error);
+    } 
+  };
 
   const handleDeleteService = async(sid) => {
     Swal.fire({
@@ -130,6 +143,10 @@ const ManageService = () => {
     return item ? item.color : 'rgba(0, 0, 0, 0.1)'; // Màu mặc định nếu không tìm thấy
   };
 
+  const handleNavigateUpdateService = (serviceId) => {
+    navigate(`/admin/update_service/${serviceId}`)
+  }
+
   return (
     <div className="w-full h-full relative">
       <div className='inset-0 absolute z-0'>
@@ -204,15 +221,107 @@ const ManageService = () => {
                       </div>
                     </span>
                     <span className='w-[20%] px-2 py-2 flex justify-center items-center'>
-                      <span onClick={() => setEditService(el)} 
+                      <span onClick={() => handleNavigateUpdateService(el?._id)} 
                       className='inline-block hover:underline cursor-pointer text-[#005aee] hover:text-orange-500 px-0.5'><MdModeEdit
                       size={24}/></span>
-                      <span onClick={() => handleDeleteService(el._id)} 
+                      <span onClick={() => handleDeleteService(el?._id)} 
                       className='inline-block hover:underline cursor-pointer text-[#005aee] hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>
-                      <span onClick={() => setVariant(el)} 
-                      className='inline-block hover:underline cursor-pointer text-[#005aee] hover:text-orange-500 px-0.5'><FaCopy 
+                      <span onClick={() => handleExpand(el?._id)}
+                      className='inline-block hover:underline cursor-pointer text-[#005aee] hover:text-orange-500 px-0.5'><FaEye 
                       size={22}/></span>
                     </span>
+
+                    {expandedService === el?._id && (
+                      <div className="fixed inset-0 z-[500] flex items-center justify-end bg-black bg-opacity-50">
+                        <div className="bg-white rounded-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto relative animate-fade-in-up mr-24">
+                          <button
+                            onClick={() => setExpandedService(null)}
+                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                          >
+                            <FaTimes className="text-xl" />
+                          </button>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-[#00143c]">
+                            <div>
+                              <h3 className="text-lg font-semibold mb-4">Service Details</h3>
+                              <div className="space-y-2">
+                                <p>
+                                  <span className="font-medium">Price: </span>{`${formatPrice(el?.price)} VNĐ`}
+                                </p>
+                                <p>
+                                  <span className="font-medium">Duration:</span> {el?.duration}min
+                                </p>
+                                <p>
+                                  <span className="font-medium">Category:</span> {el?.category}
+                                </p>
+                                <p>
+                                  <span className="font-medium">Created Date:</span> {new Date(el?.createdAt).toLocaleDateString()}
+                                </p>
+                              </div>
+
+                              <h3 className="text-lg font-semibold mt-6 mb-4 text-[#00143c]">Employee:</h3>
+                              <div className="flex flex-wrap gap-4 text-[#00143c]">
+                                {el?.assigned_staff.map((provider, index) => (
+                                  <div
+                                    key={index}
+                                    className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg shadow-sm"
+                                  >
+                                    <img
+                                      src={provider?.avatar}
+                                      alt={`${provider?.lastName} ${provider?.firstName}`}
+                                      className="w-12 h-12 rounded-full object-cover"
+                                      onError={(e) => {
+                                        e.target.src = "https://images.unsplash.com/photo-1633613286991-611fe299c4be";
+                                      }}
+                                    />
+                                    <div>
+                                      <p className="font-medium">{`${provider?.lastName} ${provider?.firstName}`}</p>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div>
+                              <h3 className="text-lg font-semibold mb-4">Gallery</h3>
+                              <div className="relative">
+                                <img
+                                  src={[el?.thumb, ...el?.image][currentImageIndex]}
+                                  alt={currentImageIndex + 1}
+                                  className="rounded-lg object-cover w-full h-80"
+                                  onError={(e) => {
+                                    e.target.src = "https://images.unsplash.com/photo-1633613286991-611fe299c4be";
+                                  }}
+                                />
+                               
+                                <div className="flex justify-center mt-4 space-x-2">
+                                  {[el?.thumb, ...el?.image]?.map((_, index) => (
+                                    <button
+                                      key={index}
+                                      onClick={() => setCurrentImageIndex(index)}
+                                      className={`w-2 h-2 rounded-full ${index === currentImageIndex ? "bg-blue-500" : "bg-gray-300"}`}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                              <div className="grid grid-cols-6 gap-2 mt-4">
+                                {[el?.thumb, ...el?.image]?.map((image, index) => (
+                                  <img
+                                    key={index}
+                                    src={image}
+                                    alt={index + 1}
+                                    className={`rounded-lg object-cover w-full h-12 cursor-pointer ${index === currentImageIndex ? "ring-2 ring-blue-500" : ""}`}
+                                    onClick={() => setCurrentImageIndex(index)}
+                                    onError={(e) => {
+                                      e.target.src = "https://images.unsplash.com/photo-1633613286991-611fe299c4be";
+                                    }}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))
               }
