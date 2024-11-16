@@ -79,7 +79,7 @@ const BusinessDetailsForm = () => {
   // }, []);
   useEffect(() => {
     currentProviderEffectHanlder();
-    console.log('hehhehehehehe');
+    //console.log('hehhehehehehe');
   }, [current])
 
   const handleChange = (e) => {
@@ -104,7 +104,21 @@ const BusinessDetailsForm = () => {
       return;
     }
 
-    const response = await apiUpdateCurrentServiceProvider(current.provider_id._id, data)
+    console.log('=====>', data);
+
+    const formData = new FormData();
+    for (let i of Object.entries(data)) {
+        formData.append(i[0], i[1]);
+    }
+    if (!current?.provider_id) {
+        toast.error('No Provider Specified With Current User!!');
+        return;
+    }
+
+    formData.delete('avatar');
+    if (data.avatar) formData.append('avatar', data.avatar[0]);
+
+    const response = await apiUpdateCurrentServiceProvider(current.provider_id._id, formData)
     if(response.success){
       dispatch(getCurrent())
       toast.success("Update Provider Info OK!")

@@ -1,7 +1,6 @@
 import React, {useState, useCallback, useEffect } from 'react'
-import { apiSearchBlogByParams, apiGetTopTags } from 'apis/blog';
 import { InputFormm, NewInputSelect, Pagination, MultiSelect, Select } from 'components';
-import { apiGetAllBlogs, apiSearchBlogAdvanced, apiGetAllPostTags, apiSearchBlogByParams } from 'apis/blog';
+import { apiGetAllBlogs, apiSearchBlogAdvanced, apiGetAllPostTags, apiSearchBlogByParams, apiGetTopTags } from 'apis/blog';
 import Button from 'components/Buttons/Button';
 import { HashLoader } from 'react-spinners';
 import path from 'ultils/path';
