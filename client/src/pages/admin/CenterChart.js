@@ -15,8 +15,8 @@ const months = [
 const CenterChart = ({ providerId }) => {
   // const currentUser = useSelector(state => state.user.current);
 
-  const [newCustomers, setNewCustomers] = useState(30);
-  const [returningCustomers, setReturningCustomers] = useState(70);
+  const [newCustomers, setNewCustomers] = useState(0);
+  const [returningCustomers, setReturningCustomers] = useState(0);
   const [newCustomerRatio, setNewCustomerRatio] = useState(0.0);
   const [returningCustomerRatio, setReturningCustomerRatio] = useState(0.0);
 
@@ -27,25 +27,45 @@ const CenterChart = ({ providerId }) => {
   const [dailyTrends, setDailyTrends] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [lineData, setLineData] = useState({});
+
   const [selectedMonth, setSelectedMonth] = useState(2);
   const [selectedYear, setSelectedYear] = useState(2024);
 
-  const fetchCustomerData = async (month, year) => {
+  const getDaysArray = (month, year) => {
+    var numDaysInMonth, daysInWeek, daysIndex, index, i, l, daysArray;
+
+    numDaysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    daysInWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    daysIndex = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
+    index = daysIndex[(new Date(year, month - 1, 1)).toString().split(' ')[0]];
+    daysArray = [];
+
+    for (i = 0, l = numDaysInMonth[month - 1]; i < l; i++) {
+        daysArray.push( ((i + 1) + '. ' + daysInWeek[index++]).substring(0,3) );
+        if (index === 7) index = 0;
+    }
+
+    return daysArray;
+}
+
+  useEffect(() => {
+    const fetchCustomerData = async (month, year) => {
       if (!providerId) {
         Swal.fire('Error Ocurred!!', 'Cannot Find User Session!', 'error');
         return;
       }
       setLoading(true);
 
-      const data = {
-        dailyTrends: [18,59,8,99,68,86,100,66,30,36,39],
-        returningCustomers: 68,
-        newCustomers: 32,
-        appointmentsBooked: 88,
-        appointmentsBookedChange: 20,
-        canceledAppointments: 99,
-        canceledAppointmentsChange: 39
-      }
+      // const data = {
+      //   dailyTrends: [18,59,8,99,68,86,100,66,30,36,39],
+      //   returningCustomers: 68,
+      //   newCustomers: 32,
+      //   appointmentsBooked: 88,
+      //   appointmentsBookedChange: 20,
+      //   canceledAppointments: 99,
+      //   canceledAppointmentsChange: 39
+      // }
 
       console.log("Selected Month: ....", selectedMonth);
 
@@ -57,7 +77,7 @@ const CenterChart = ({ providerId }) => {
       return;
     }
 
-    // console.log(chartData);
+    console.log("------", chartData);
 
     setNewCustomers(customerData.newCustomers);
     setReturningCustomers(customerData.returningCustomers);
@@ -73,7 +93,7 @@ const CenterChart = ({ providerId }) => {
     setCanceledAppointments(chartData.canceled);
 
     const sumOrdersChartData = (chartData.finished + chartData.canceled) || 1;
-    console.log(sumOrdersChartData, "------");
+    // console.log(sumOrdersChartData, "------");
     const ratioFinish = (chartData.finished / sumOrdersChartData)?.toFixed(1);
     const ratioCanceled = (chartData.canceled / sumOrdersChartData)?.toFixed(1);
     setAppointmentsBookedChange(ratioFinish);
@@ -81,28 +101,30 @@ const CenterChart = ({ providerId }) => {
 
     setDailyTrends(chartData.revenueSeries);
 
+    // const dayLabelArray = getDaysArray(selectedMonth+1, selectedYear);
+    // console.log([...Array(new Date(selectedYear, selectedMonth+1, 0).getDate()).keys().map(e => e.toString())]);
+    setLineData({
+      labels: [...Array(new Date(selectedYear, selectedMonth+1, 0).getDate()).keys().map(e => e.toString())],
+      datasets: [
+        {
+          label: 'Customer Trends',
+          data: dailyTrends,
+          borderColor: '#2563EB',
+          fill: {
+            target: 'origin',
+            above: 'rgba(37, 99, 235, 0.1)',
+          },
+          tension: 0.3,
+        },
+      ],
+    });
+
     setLoading(false);
   };
 
-  useEffect(() => {
     fetchCustomerData(selectedMonth, selectedYear);
   }, [selectedMonth, selectedYear]);
 
-  const lineData = {
-    labels: ['F', 'S', 'S', 'M', 'T', 'W', 'T', 'F', 'S', 'S', 'M', 'T', 'W', 'T', 'F', 'S', 'S'],
-    datasets: [
-      {
-        label: 'Customer Trends',
-        data: dailyTrends,
-        borderColor: '#2563EB',
-        fill: {
-          target: 'origin',
-          above: 'rgba(37, 99, 235, 0.1)',
-        },
-        tension: 0.3,
-      },
-    ],
-  };
 
   const lineOptions = {
     responsive: true,

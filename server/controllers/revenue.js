@@ -299,7 +299,7 @@ const getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
                 orderBy: customer._id
             });
 
-            console.log('....:::::---', pastOrder.length);
+            // console.log('....:::::---', pastOrder.length);
 
             if (pastOrder?.length === 1) {
                 ++newCusCnt;
@@ -502,7 +502,7 @@ const getAllOrderSpecificMonth = async (month, year, spid) => {
 
     const res = ordersByProv.filter(order => {
         const dates = order?.info[0]?.date?.split('/').map(Number);
-        console.log(dates, "-----))))")
+        // console.log(dates, "-----))))")
 
         return dates[1] === month && dates[2] === year;
     });
@@ -567,12 +567,15 @@ const getThisMonthRevenueAndOrderStatistic = asyncHandler(async (req, res) => {
     let revenueMonthList = Array(numDaysInMonth).fill(0);
     allOrdersThisMonth.forEach(order => {
         if (order.status === 'Successful' && order.info[0]?.date) {
-            const [day, month, year] = item.date.split('/');
+            const dates = order.info[0].date.split('/');
             // // Kết hợp formattedDate và time để tạo datetime
-            const cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+            // const cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
-            const indexByDate = cDate.getDate()-1;
-            revenueMonthList[indexByDate] += order.total;
+            // const indexByDate = cDate.getDate()-1;
+
+            console.log(`============&&&&&&&&&&&&&&&&${dates}`)
+
+            revenueMonthList[dates[0]-1] += order.total;
             ++finishedOrderCurrMonth;
         }
         else if (order.status === 'Cancelled') {
@@ -811,13 +814,14 @@ const getOccupancyByDayCurrentMonth = asyncHandler(async (req, res) => {
     let occupancyMonthList = Array(numDaysInMonth).fill(0);
     let workingHoursList = Array(numDaysInMonth).fill(0);
 
-    console.log('..........OOOOOO.....', workingHourByDayMap, '..........OOOOOO.....');
+    // console.log('..........OOOOOO.....', workingHourByDayMap, '..........OOOOOO.....');
 
     allOrdersThisMonth.forEach(order => {
-        console.log(order.info, 'order.info++++++===;[;');
+        // console.log(order.info, 'order.info++++++===;[;');
         if (order.status === 'Successful' && order.info?.length > 0) {
             for (const item of order.info) {
-                const [day, month, year] = item.date.split('/');
+                const [day, month, year] = item.date.split('/').map(e => e.padStart(2,'0'));
+                // console.log(`***********************************${year}-${month}-${day}T00:00:00Z`);
                   // // Kết hợp formattedDate và time để tạo datetime
                 const cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
                 console.log('CDate:  ' + cDate.toISOString());
@@ -956,7 +960,7 @@ const getOccupancyByStaffs = asyncHandler(async (req, res) => {
                 if (!item.staff || !item.staff?._id || !item.service) continue;
 
                 if (allStaffInOrders.filter(staff => staff._id === item.staff?._id).length === 0) {
-                    console.log('---------JJJJJJJJ', item.staff);
+                    // console.log('---------JJJJJJJJ', item.staff);
                     allStaffInOrders.push(item.staff);
                 }
                 sumWorkedHourByStaff[item.staff?._id] = (sumWorkedHourByStaff[item.staff?._id] || 0) + item.service?.duration;

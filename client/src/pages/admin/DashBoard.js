@@ -5,7 +5,8 @@ import { apiGetDailyRevenueByDateRange, apiGetUserVisitByDateRange, apiGet3Recen
         apiGet3RecentOccupancyStatistic, apiGet3RecentNewCustomerStatistic } from 'apis'
 import { useSelector } from 'react-redux';
 import moment from 'moment';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+import { formatPrice } from 'ultils/helper';
 import { apiGetMostPurchasedServicesByYear } from 'apis'
 import { FaAngleDoubleUp, FaAngleDoubleDown, FaBars } from "react-icons/fa";
 import GridPercentageCalendar from './GridPercentageCalendar';
@@ -14,18 +15,19 @@ import OrdersList from './OrdersList';
 // // import './style.css';
 import bgImage from '../../assets/clouds.svg'
 import PerformanceSummary from './PerformanceSummary';
-import { SlPlane } from 'react-icons/sl';
+// import { SlPlane } from 'react-icons/sl';
+import { Line } from 'react-chartjs-2';
 
 const button_string_style = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 roundedtext-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 text-sm'
 
 const MetricIndicator = ({ prev, current }) => {
   return (
-    <span>
+    <span className='mt-3'>
       {
       current > prev &&
         (<span className="flex justify-center items-center flex-col flex-wrap">
             <span className="text-teal-500 text-xs">higher</span>
-            <span className='text-teal-500 pr-1 text-base'>&nbsp;{(current - prev)?.toFixed(2)}</span>
+            <span className='text-teal-500 pr-1 text-base'>&nbsp;{(current > 0 ? (current - prev)/current*100.0 : 0)?.toFixed(1)} %</span>
             <FaAngleDoubleUp style={{color: 'green' }} className='text-teal-500 rotate-45'/>
         </span>)
       }
@@ -33,7 +35,7 @@ const MetricIndicator = ({ prev, current }) => {
       current < prev && 
         (<span className="flex justify-center items-center flex-col flex-wrap">
             <span className="text-rose-700 text-xs">lower</span>
-            <span className='text-rose-700 pr-1 text-base'>&nbsp;{(prev - current)?.toFixed(2)}</span>
+            <span className='text-rose-700 pr-1 text-base'>&nbsp;{(current > 0 ? (current - prev)/current*100.0 : 0)?.toFixed(1)} %</span>
             <FaAngleDoubleDown className='text-rose-700 -rotate-45'/>
         </span>)
       }
@@ -49,21 +51,64 @@ const DashBoard = () => {
   const currentUser = useSelector(state => state.user.current);
 
   const {current} = useSelector((state) => state.user);
-  const [totalRevenue, setTotalRevenue] = useState(0)
-  const [monthRevenue, setMonthRevenue] = useState(0)
-  const [monthOrders, setMonthOrders] = useState(0)
-  const [monthCustomer, setMonthCustomer] = useState(0);
-  const [totalServices, setTotalServices] = useState(0);
+  // const [totalRevenue, setTotalRevenue] = useState(0)
+  // const [monthRevenue, setMonthRevenue] = useState(0)
+  // const [monthOrders, setMonthOrders] = useState(0)
+  // const [monthCustomer, setMonthCustomer] = useState(0);
+  // const [totalServices, setTotalServices] = useState(0);
 
   const [currentMetricView, setCurrentMetricView] = useState({
     occupancy: 3,
     new_customer: 3,
     revenue: 3
   });
+  const lineOptions = {
+    maintainAspectRatio: false,
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false,
+      },
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false,
+        },
+      },
+      y: {
+        grid: {
+          display: false,
+          beginAtZero: true,
+        },
+        ticks: {
+          display: false,
+        },
+      },
+    },
+  };
 
-  const [revenueTriplet, setRevenueTriplet] = useState([88.8, 68.8, 39.6]);
-  const [newCustomerTriplet, setNewCustomerTriplet] = useState([88.8, 68.8, 39.6]);
-  const [occupancyTriplet, setOccupancyTriplet] = useState([88.8, 68.8, 39.6]);
+  const genericLineData = {
+    labels: ['p', 'c', 't'],
+    datasets: [
+      {
+        label: '',
+        data: [],
+        borderColor: '#2563EB',
+        fill: {
+          target: 'origin',
+          above: 'rgba(37, 99, 235, 0.1)',
+        },
+        tension: 0.4,
+      },
+    ],
+  };
+
+  const [revenueTriplet, setRevenueTriplet] = useState([0,0,0]);
+  const [newCustomerTriplet, setNewCustomerTriplet] = useState([0,0,0]);
+  const [occupancyTriplet, setOccupancyTriplet] = useState([0,0,0]);
+
+  // const [lineDataReveunue, setLineDataRevenue] = 
 
   const metricViewOptions = [
     { value: 3, label: "Current Week" },
@@ -241,16 +286,20 @@ const DashBoard = () => {
             </div>
           </section>
 
-          <section className='grid grid-cols-2 gap-2 bg-white p-3 text-gray-900 rounded-md grow border-2'>
+          <section className='grid grid-cols-2 gap-2 bg-white p-2 text-gray-900 rounded-md grow border-2'>
             <div className='flex flex-col justify-start'>
               <h5 className='pb-1 fond-semibold text-sm'>
                 Revenue
               </h5>
-              <span className='text-lg font-bold'>
-                { currentMetricView.revenue === 3 && revenueTriplet[2] }
-                { currentMetricView.revenue === 2 && revenueTriplet[1] }
-                { currentMetricView.revenue === 1 && revenueTriplet[2] }
-                { currentMetricView.revenue === 0 && revenueTriplet[1] } $
+              <span className='text-lg font-bold flex flex-col text-center'>
+                { currentMetricView.revenue === 3 && formatPrice(revenueTriplet[2]) }
+                { currentMetricView.revenue === 2 && formatPrice(revenueTriplet[1]) }
+                { currentMetricView.revenue === 1 && formatPrice(revenueTriplet[2]) }
+                { currentMetricView.revenue === 0 && formatPrice(revenueTriplet[1]) }
+                <span className='text-sm font-semibold'>VND</span>
+                <MetricIndicator
+                  prev={revenueTriplet[1]} current={revenueTriplet[2]}>
+                </MetricIndicator> 
               </span>
             </div>
             <div className='flex flex-col justify-start'>
@@ -269,9 +318,25 @@ const DashBoard = () => {
               <div className='mt-3'>
                   {
                     currentMetricView.revenue === 3 &&
-                      <MetricIndicator
-                        prev={revenueTriplet[1]} current={revenueTriplet[2]}>
-                      </MetricIndicator>
+                      <div className="w-24">     
+                        <Line data={{
+                          labels: ['p', 'c', 't'],
+                          datasets: [
+                              {
+                                label: '',
+                                data: revenueTriplet,
+                                borderColor: '#2563EB',
+                                fill: {
+                                  target: 'origin',
+                                  above: 'rgba(37, 99, 235, 0.1)',
+                                },
+                                tension: 0.4,
+                              },
+                            ],
+                          }}
+                          options={lineOptions}
+                        />
+                      </div>
                   }
                   {
                     currentMetricView.revenue === 2 &&
@@ -306,11 +371,12 @@ const DashBoard = () => {
               <h5 className='pb-1 fond-semibold text-sm'>
                   Occupancy
               </h5>
-              <span className='text-lg font-bold'>
+              <span className='text-lg flex flex-col font-bold'>
                 { currentMetricView.occupancy === 3 && occupancyTriplet[2]?.toFixed(1) }
                 { currentMetricView.occupancy === 2 && occupancyTriplet[1]?.toFixed(1) }
                 { currentMetricView.occupancy === 1 && occupancyTriplet[2]?.toFixed(1) }
-                { currentMetricView.occupancy === 0 && occupancyTriplet[1]?.toFixed(1) } %
+                { currentMetricView.occupancy === 0 && occupancyTriplet[1]?.toFixed(1) }
+                <span className='text-sm font-semibold'>%</span>
               </span>
             </div>
             <div className='flex flex-col justify-start'>
