@@ -69,12 +69,12 @@ const Services = () => {
       let resp = await apiGetCategorieService()
 
       if (resp.success && resp.serviceCategories?.length) {
-        console.log('UEFF', resp.serviceCategories.map(cat => {
-          return {
-            value: cat.title,
-            label: cat.title
-          }
-        }));
+        // console.log('UEFF', resp.serviceCategories.map(cat => {
+        //   return {
+        //     value: cat.title,
+        //     label: cat.title
+        //   }
+        // }));
         setSvCategories(resp.serviceCategories.map(cat => {
           return {
             value: cat.title,

@@ -136,7 +136,7 @@ const Booking = () => {
         return;
       }
 
-      let now = new Date('Tue Nov 5 2024');
+      let now = new Date();
       const mStarted = now.getHours() * 60 + now.getMinutes();
       const dow = daysOfWeek[now.getDay()];
 
@@ -235,9 +235,20 @@ const Booking = () => {
     // // Kết hợp formattedDate và time để tạo datetime
     const dateTime = new Date(`${formattedDate}T${time}:00Z`);
 
+    console.log('......', {
+      service: service?._id, 
+      provider: provider?._id,
+      staff: el?._id, 
+      time: time,
+      duration: service?.duration,
+      date: new Date().toLocaleDateString(),
+      price: +discountValue > 0 ? +discountValue : +originalPrice,
+      dateTime
+    });
+
     await apiUpdateCartService({
       service: service?._id, 
-      provider: provider?._id, 
+      provider: provider?._id,
       staff: el?._id, 
       time: time,
       duration: service?.duration,
@@ -254,6 +265,17 @@ const Booking = () => {
     const formattedDate = `${year}-${month}-${day}`;
       // // Kết hợp formattedDate và time để tạo datetime
     const dateTime = new Date(`${formattedDate}T${selectedStaff?.time}:00Z`);
+
+    console.log('......', {
+      service: service?._id, 
+      provider: provider?._id, 
+      staff: selectedStaff?.staff?._id, 
+      time: selectedStaff?.time,
+      duration: service?.duration,
+      date: new Date().toLocaleDateString(),
+      price: finalPrice,
+      dateTime: dateTime
+    });
 
     await apiUpdateCartService({
       service: service?._id, 

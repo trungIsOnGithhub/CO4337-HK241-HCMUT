@@ -214,7 +214,7 @@ const MessageBox = ({currentChat}) => {
           }
         </div>
         <form className='flex-1 flex gap-1 items-center' onSubmit={(e)=>sendChat(e)}>
-            <input className='inline-block w-[90%] border border-gray-400 rounded-md outline-none px-1 py-1 placeholder:text-gray-400 placeholder:italic' type='text' placeholder='Your message here ...' value={msg} onChange={(e)=>setMsg(e.target.value)}/>
+            <input className='inline-block w-[90%] border border-gray-400 bg-slate-500 rounded-md outline-none px-1 py-1 text-slate-600 placeholder:italic' type='text' placeholder='Your message here ...' value={msg} onChange={(e)=>setMsg(e.target.value)}/>
             <button className='text-xl font-semibold'>
                 <IoMdSend />
             </button>

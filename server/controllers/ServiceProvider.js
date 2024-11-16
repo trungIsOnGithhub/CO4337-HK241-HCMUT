@@ -193,6 +193,8 @@ const getAllServiceProvider = asyncHandler(async(req, res) => {
 const updateServiceProvider = asyncHandler(async(req, res)=>{
     const spid = req.params.spid
 
+    console.log('vuivuiuviuv', req.body, spid);
+
     if(Object.keys(req.body).length === 0){
         throw new Error('Missing input')
     }
@@ -200,6 +202,8 @@ const updateServiceProvider = asyncHandler(async(req, res)=>{
         req.body.expiry = Date.now() + +req.body.expiry * 24 * 60 * 60 * 1000
     }
     const response = await ServiceProvider.findByIdAndUpdate(spid, req.body, {new: true})
+
+    console.log(response);
 
     return res.status(200).json({
         success: response ? true : false,

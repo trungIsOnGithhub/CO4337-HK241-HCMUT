@@ -9,6 +9,9 @@ const Staff = require('../models/staff')
 const createNewOrder = asyncHandler(async(req, res)=>{
     const {_id} = req.user
     const {info, total} = req.body
+
+    console.log('ORDER CREATE: ', req.body);
+
     if(!info || !total){
         throw new Error("Missing input");
     }

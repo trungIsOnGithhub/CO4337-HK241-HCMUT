@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { format, addDays, subDays, endOfMonth, startOfMonth,
 addMonths, subMonths, startOfWeek, endOfWeek, addMinutes  } from 'date-fns'
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
-import { apiGetCouponsByServiceId, apiGetOneService, apiGetOneStaff, apiGetServiceProviderById, apiUpdateCartService, apiGetServiceTimeOptionAvailableByDateRange } from 'apis'
+import { apiGetCouponsByServiceId, apiGetOneService, apiGetOneStaff, apiGetServiceProviderById, apiUpdateCartService, apiGetServiceTimeOptionAvailableByDateRange, apiCreateOrder } from 'apis'
 import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 import { formatPrice, formatPricee } from 'ultils/helper'
@@ -14,6 +14,7 @@ import { GrPrevious } from 'react-icons/gr'
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa'
 import { useSelector } from 'react-redux';
 import { convertM2H } from 'ultils/helper';
+import Swal from 'sweetalert2'
 
 const BookingDateTIme = () => {
   const [type, setType] = useState('Week')
@@ -362,7 +363,8 @@ const BookingDateTIme = () => {
     }
     // let timeParts = time.split(":");
     // Number(timeParts[0]) * 60 + Number(timeParts[1]);
-    setSelectedTime(convertM2H(time.start));
+    const timeStartHH = convertM2H(time.start)
+    setSelectedTime(timeStartHH);
 
     // Lấy date và chuyển đổi thành định dạng "yyyy-mm-dd"
     const date = moment(new Date(datetime)).format("DD/MM/YYYY");
@@ -370,18 +372,44 @@ const BookingDateTIme = () => {
     const formattedDate = `${year}-${month}-${day}`;
 
     // Kết hợp formattedDate và time để tạo datetime
-    const dateTime = new Date(`${formattedDate}T${time}:00Z`);
+    const dateTime = new Date(`${formattedDate}T${timeStartHH}:00Z`);
 
-    await apiUpdateCartService({
+    // console.log('=====>', time)
+
+    // console.log('......', {
+    //   service: service?._id,
+    //   provider: provider?._id,
+    //   staff: staff?._id,
+    //   duration: service?.duration,
+    //   time: timeStartHH,
+    //   date: date,
+    //   dateTime: dateTime, // datetime chứa cả date và time
+    //   price: service?.price
+    // });
+
+    let response = await apiCreateOrder({info:{
         service: service?._id,
         provider: provider?._id,
         staff: staff?._id,
         duration: service?.duration,
-        time: time,
+        time: timeStartHH,
         date: date,
         dateTime: dateTime, // datetime chứa cả date và time
         price: service?.price
-    });
+    }, total: service?.price});
+
+    await apiUpdateCartService({
+      service: service?._id,
+      provider: provider?._id,
+      staff: staff?._id,
+      duration: service?.duration,
+      time: timeStartHH,
+      date: date,
+      dateTime: dateTime, // datetime chứa cả date và time
+      price: service?.price
+  });
+
+  // Swal.fire("noti", JSON.stringify(response), 'error');
 }
 
   const parseTimee = (time) => {
@@ -405,6 +433,17 @@ const BookingDateTIme = () => {
 
     const dateTime = new Date(`${formattedDate}T${selectedTime}:00Z`);
 
+    console.log('........', {
+      service: service?._id, 
+      provider: provider?._id, 
+      staff: staff?._id, 
+      time: selectedTime, 
+      duration: service?.duration,
+      date: date,
+      dateTime: dateTime,
+      price: finalPrice
+    });
+
     await apiUpdateCartService({
       service: service?._id, 
       provider: provider?._id, 
@@ -415,6 +454,20 @@ const BookingDateTIme = () => {
       dateTime: dateTime,
       price: finalPrice
     })
+
+    let response = await apiCreateOrder({
+      service: service?._id, 
+      provider: provider?._id, 
+      staff: staff?._id, 
+      time: selectedTime, 
+      duration: service?.duration,
+      date: date,
+      dateTime: dateTime,
+      price: finalPrice
+    });
+
+  // Swal.fire("noti", JSON.stringify(response), 'error');
+
     if(selectedVoucher){
       window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}&couponCode=${selectedVoucher?.code}`, '_blank');
     }
@@ -557,7 +610,7 @@ const BookingDateTIme = () => {
           </div>
           <div className='flex flex-col items-center'>
             <div className='font-semibold'>Choose time
-              { `----${datetime}---` }
+              {/* `----${datetime}---` */}
             </div>
             <div className='flex flex-wrap gap-2 my-3 justify-center'>
               {

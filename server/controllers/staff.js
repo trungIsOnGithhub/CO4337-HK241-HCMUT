@@ -172,7 +172,7 @@ const convertH2M = (timeInHour) => {
 }
 const checkWeekdayValidStaffShift = (pT, staffShift) => {
     for (const p of Object.entries(staffShift)) {
-        const lowerK = p[0].toLocaleLowerCase();
+        const lowerK = p[0].toLowerCase();
         const startPK = `start${lowerK}`;
         const endPK = `end${lowerK}`;
 

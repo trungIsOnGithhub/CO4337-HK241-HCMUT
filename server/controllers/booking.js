@@ -106,10 +106,10 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
             // console.log(`P${shiftKey}P`)
             // console.log('currr sk: ' + JSON.stringify(stff.shifts));
             return {
-                times: stff?.shifts?[shiftKey],         
+                times: stff?.shifts?.[shiftKey],         
                 id: stff?._id,
                 name: '' + stff.firstName + ' ' + stff.lastName,
-                isEnabled: stff?.shifts?[shiftKey]?.isEnabled || true
+                isEnabled: stff?.shifts?.[shiftKey]?.isEnabled || true
             };
         }
     );

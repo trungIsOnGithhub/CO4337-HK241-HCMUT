@@ -174,7 +174,7 @@ const getRevenue3RecentStatistic = asyncHandler(async (req, res) => {
             'info.0.provider': spid
         }).populate('info.service');
 
-        console.log('{{{{{{', currentWeekOrders[0].info[0].service);
+        //  console.log('{{{{{{', currentWeekOrders[0].info[0].service);
 
         revenueData[2] = currentWeekOrders.reduce((acc, order) => {
             return acc + order?.info[0].service?.price;
@@ -797,7 +797,7 @@ const getOccupancyByDayCurrentMonth = asyncHandler(async (req, res) => {
     console.log(allOrdersThisMonth.length, '..........OOOOOO.....');
 
     allOrdersThisMonth.forEach(order => {
-        console.log(order.info, 'order.info++++++===;[;');
+        // console.log(order.info, 'order.info++++++===;[;');
         if (order.status === 'Successful' && order.info?.length > 0) {
             for (const item of order.info) {
                 const itemDate = order.createdAt.getDate();
