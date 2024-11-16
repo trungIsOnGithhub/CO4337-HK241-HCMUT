@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import {Route, Routes, useLocation} from 'react-router-dom'
 
 import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageSaleEvent, ManagePostDetail, EditPostDetail, AddPost, ManageChat, ManageThemeAndAppearance, ManageHeroSection, ManageFooterSection, ManageServicePage, AddVariantProduct, UpdateService, UpdateProduct } from 'pages/admin'
-import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct, ViewBlog, DetailProvider, DetailProviderServicee } from 'pages/public'
+import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct, ViewBlog, DetailProvider} from 'pages/public'
 
 import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct, Calendarr, OrderHistory} from 'pages/user'
 import path from './ultils/path'
@@ -14,11 +14,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Booking, BookingDateTIme, Cart, Chat, MessageBox, Modal } from './components';
 import { showCart, showMessage } from 'store/app/appSlice';
 import ManagePost from 'pages/admin/ManagePost';
-import DetailProviderService from 'pages/public/DetailProviderService';
-import DetailProviderProduct from 'pages/public/DetailProviderProduct';
-import DetailProviderBlog from 'pages/public/DetailProviderBlog';
-import DetailProviderBook from 'pages/public/DetailProviderBook';
-import DetailProviderFindUs from 'pages/public/DetailProviderFindUs';
 import OrderHistoryDetail from 'pages/user/OrderHistoryDetail';
 import ManageOrderDetail from 'pages/admin/ManageOrderDetail';
 import UpdateBlog from 'pages/admin/UpdateBlog';
@@ -47,11 +42,7 @@ function App() {
       <Route path={path.CHECKOUT_SERVICE} element={<CheckoutService />} />
       <Route path={path.CHECKOUT_PRODUCT} element={<CheckoutProduct />} />
 
-      <Route path={path.DETAIL_PROVIDER_SERVICE_PRID} element={<DetailProviderServicee />} /> 
-      <Route path={path.DETAIL_PROVIDER_PRODUCT_PRID} element={<DetailProviderProduct />} /> 
-      <Route path={path.DETAIL_PROVIDER_BLOG_PRID} element={<DetailProviderBlog />} /> 
-      <Route path={path.DETAIL_PROVIDER_BOOK_PRID} element={<DetailProviderBook />} /> 
-      <Route path={path.DETAIL_PROVIDER_FINDUS_PRID} element={<DetailProviderFindUs />} />
+      <Route path={path.DETAIL_PROVIDER} element={<DetailProvider />} /> 
 
       <Route path={path.PUBLIC} element={<Public />}>
         <Route path={path.HOME} element={<Home />} />

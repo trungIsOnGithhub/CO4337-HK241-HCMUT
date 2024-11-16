@@ -73,6 +73,11 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
     rating: 0,
   });
 
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+  
   const validateReview = () => {
     if (newReview.rating === 0) {
       setError("Please select a rating between 1 and 5 stars");

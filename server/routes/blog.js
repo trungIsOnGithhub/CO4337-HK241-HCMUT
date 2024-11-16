@@ -18,7 +18,11 @@ router.post('/create', [verifyAccessToken, isAdmin], uploader.fields([
 router.post('/create_tag', ctrls.createNewPostTag)
 router.get('/:bid', ctrls.getBlog)
 router.delete('/:bid',[verifyAccessToken, isAdmin], ctrls.deleteBlog)
-router.put('/:bid', [verifyAccessToken, isAdmin], ctrls.updateBlog)
+router.put('/:bid', [verifyAccessToken, isAdmin],uploader.fields([
+    {
+        name: 'thumb',
+        maxCount: 1
+    }]), ctrls.updateBlog)
 router.post('/like', [verifyAccessToken], ctrls.likeBlog)
 router.post('/dislike', [verifyAccessToken], ctrls.dislikeBlog)
 router.put('/upload_image/:bid', [verifyAccessToken, isAdmin],uploader.single('image'), ctrls.uploadImage)

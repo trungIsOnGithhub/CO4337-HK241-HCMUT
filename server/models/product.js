@@ -41,11 +41,9 @@ var productSchema = new mongoose.Schema({
     },
     color:{
         type:String,
-        required:true,
     },
     colorCode: {
         type:String,
-        required:true,
     },
     rating:[
         {

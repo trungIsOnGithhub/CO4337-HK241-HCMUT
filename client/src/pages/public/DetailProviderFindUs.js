@@ -336,16 +336,16 @@ const DetailProviderFindUs = () => {
                 </div>
               </div>
             </div>
+        </div>
+        {
+            showMap && 
+            <div className='w-full h-full z-[1000] fixed top-0 left-0 bg-overlay flex items-center justify-center'>
+            <div className='w-[800px] h-[600px] border-2 border-[#868e96] rounded-md relative'>
+                <Mapbox userCoords={userLocation} providerCoords={providerLocation} small={true}/>
+                <div onClick={()=>setShowMap(false)} className='w-fit h-fit absolute top-2 right-2 cursor-pointer hover:text-[#868e96]'><FaWindowClose size={20}/></div>
             </div>
-            {
-                showMap && 
-                <div className='w-full h-full z-[1000] fixed top-0 left-0 bg-overlay flex items-center justify-center'>
-                <div className='w-[800px] h-[600px] border-2 border-[#868e96] rounded-md relative'>
-                    <Mapbox userCoords={userLocation} providerCoords={providerLocation} small={true}/>
-                    <div onClick={()=>setShowMap(false)} className='w-fit h-fit absolute top-2 right-2 cursor-pointer hover:text-[#868e96]'><FaWindowClose size={20}/></div>
-                </div>
-                </div>
-            }
+            </div>
+        }
         <div className={clsx('w-full h-[229px]', providerData?.theme === 'dark' ? 'bg-[#2b3035]' : 'bg-[rgba(248,249,250,0.5)]')}>
           {renderFooter()}
         </div>

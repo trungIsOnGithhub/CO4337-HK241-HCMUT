@@ -76,7 +76,7 @@ const DetailProviderServicee = () => {
         setService(response?.services)
       }
       fetchData()
-    }, []);
+    }, [prid]);
 
     const renderFooter = () => {
       if (!indexFooter) return null;

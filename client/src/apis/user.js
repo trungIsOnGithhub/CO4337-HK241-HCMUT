@@ -95,3 +95,9 @@ export const apiAddContactToCurrentUser = (data) => axios({
     method: 'post',
     data
 })
+
+export const apiGetAdminData = (params) => axios({
+    url: `/user/admin_data`,
+    method: 'get',
+    params
+})

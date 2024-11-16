@@ -15,7 +15,7 @@ const path = {
     DETAIL_SERVICE__CATEGORY__PID__TITLE: 'service/:category/:sid/:name',
     DETAIL_PRODUCT__CATEGORY__PID__TITLE: 'product/:category/:sid/:name',
 
-    DETAIL_PROVIDER: 'detail_provider',
+    DETAIL_PROVIDER: 'detail_provider/:prid',
     DETAIL_PROVIDER_SERVICE_PRID: 'detail_provider/service/:prid',
     DETAIL_PROVIDER_PRODUCT_PRID: 'detail_provider/product/:prid',
     DETAIL_PROVIDER_BOOK_PRID: 'detail_provider/book/:prid',

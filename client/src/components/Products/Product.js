@@ -70,7 +70,7 @@ const Product = ({productData, isNew, normal, isNotBorder}) => {
 
   return (
     <div className='cursor-pointer w-full h-fit rounded-md relative shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300'>
-        <div className='w-full h-[200px]'>
+        <div className='w-full h-[200px]' onClick={()=>{navigate(`/product/${productData.category?.toLowerCase()}/${productData?._id}/${productData?.title}`)}}>
             <img className='h-full w-full object-contain rounded-t-md' src={productData?.thumb} alt={productData?.name} />
         </div>
         <div className='w-full h-[184px] rounded-b-md px-[16px] py-[12px] flex flex-col justify-between'>
