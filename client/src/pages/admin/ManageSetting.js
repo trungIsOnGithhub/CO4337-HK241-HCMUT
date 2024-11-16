@@ -57,10 +57,10 @@ function ManageSetting() {
         <img src={bgImage} className='w-full h-full object-cover' alt='background decorate image'/>
       </div>
       <div className="relative z-10"> {/* Thêm lớp này để đảm bảo dòng chữ không bị che mất */}
-        <div className='w-full h-20 flex justify-between p-4'>
-          <span className='text-[#00143c] text-3xl font-semibold'>Setting</span>
+        <div className='ml-26 w-full h-20 flex justify-between p-4'>
+          <span className='text-[#00143c] text-3xl font-semibold text-center'>Setting</span>
         </div>
-        <div className='w-[95%] h-[fit] shadow-2xl rounded-md bg-white ml-4 mb-[200px] p-6 flex flex-col gap-4'>
+        <div className='ml-36 w-[70%] shadow-2xl rounded-md bg-white ml-4 mb-6 p-6 flex flex-col gap-4'>
             {/* <div className="p-8 bg-gray-50 min-h-screen flex justify-center">
               <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-5xl"> */}
                 
