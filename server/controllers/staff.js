@@ -1,6 +1,6 @@
-const asyncHandler = require("express-async-handler")
-const User = require('../models/user')
-const Staff = require('../models/staff')
+const asyncHandler = require("express-async-handler");
+const User = require('../models/user');
+const Staff = require('../models/staff');
 
 const addStaff = asyncHandler(async(req, res)=>{
     console.log('---|||', req.body);

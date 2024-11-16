@@ -28,13 +28,13 @@ var staffSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Service_Provider',
     },
-    work:{
+    work:[{
         service: {type:mongoose.Types.ObjectId, ref: 'Service'},
         provider: {type:mongoose.Types.ObjectId, ref: 'Service_Provider'},
         duration: Number,
         date: String,
         time: String,
-    },
+    }],
     shifts: {
         type: Object
     }

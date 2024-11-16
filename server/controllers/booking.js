@@ -79,28 +79,31 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
 
     // console.log('-----]]]]]]]', new Date(now));
     // Bug timezone
-    const startCurrentDay = (new Date(now));
+    const currentDay = new Date(now);
+    console.log('+++++++>' + currentDay.toISOString());
     // const endCurrentDay = (new Date(now)).setHours(23, 59, 59, 999);
 
     let service = await Service.findById(svid).populate('assigned_staff').populate('provider_id');
-    let ordersInCurrentDay = await Order.find({
-        'info.0.service': svid,
-        // 'info.0.dateTime': {
-        //     $gte: startCurrentDay,
-        //     $lte: endCurrentDay
-        // },
-        status: 'Successful'
-    }).populate('info.0.staff');
-    ordersInCurrentDay = ordersInCurrentDay.filter(order => {
-        const dates = order?.info[0]?.date?.split('/').map(Number);
-        console.log(dates, "-----))))")
-        // const times = order?.info[0]?.time?.split(':').map(Number);
-        // const currOrderDate = new Date(dates[2], dates[1]-1, dates[0], 0, 0, 0, 0);
-        // console.log(currOrderDate, "-----))))")
-        return dates[0] === startCurrentDay.getDate() && (dates[1]-1) === startCurrentDay.getMonth() && dates[2] === startCurrentDay.getFullYear();
-    })
 
-    console.log('==_==____====_==', ordersInCurrentDay);
+    // let ordersInCurrentDay = await Order.find({
+    //     'info.0.service': svid,
+    //     // 'info.0.dateTime': {
+    //     //     $gte: startCurrentDay,
+    //     //     $lte: endCurrentDay
+    //     // },
+    //     status: 'Successful'
+    // }).populate('info.0.staff');
+
+    // const ordersInCurrentDay = ordersInCurrentDay.filter(order => {
+    //     const dates = order?.info[0]?.date?.split('/').map(Number);
+    //     console.log(dates, "-----))))")
+    //     // const times = order?.info[0]?.time?.split(':').map(Number);
+    //     // const currOrderDate = new Date(dates[2], dates[1]-1, dates[0], 0, 0, 0, 0);
+    //     // console.log(currOrderDate, "-----))))")
+    //     return dates[0] === startCurrentDay.getDate() && (dates[1]-1) === startCurrentDay.getMonth() && dates[2] === startCurrentDay.getFullYear();
+    // })
+
+    // console.log('==_==____====_==', ordersInCurrentDay);
 
     const shiftKey = capitalizeFirstLetter(dow);
     // console.log('____1', shiftKey);
@@ -111,58 +114,71 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
     // });
     // console.log('!!!!!!!!!!!!!!!!!!!!!!!');
 
-    const staffTimes = service.assigned_staff?.map(
-        stff => {
-            // console.log(`P${shiftKey}P`)
-            // console.log('currr sk: ' + JSON.stringify(stff.shifts));
-            return {
-                times: stff?.shifts?.[shiftKey],         
-                id: stff?._id,
-                name: '' + stff.firstName + ' ' + stff.lastName,
-                isEnabled: stff?.shifts?.[shiftKey]?.isEnabled || true,
-                name: stff?.firstName 
-            };
-        }
-    );
+    // const staffTimes = service.assigned_staff?.map(
+    //     stff => {
+    //         // console.log(`P${shiftKey}P`)
+    //         // console.log('currr sk: ' + JSON.stringify(stff.shifts));
+    //         return {
+    //             times: stff?.shifts?.[shiftKey],         
+    //             id: stff?._id,
+    //             name: '' + stff.firstName + ' ' + stff.lastName,
+    //             isEnabled: stff?.shifts?.[shiftKey]?.isEnabled || true,
+    //             fname: stff?.firstName,
+    //             lname: stff?.lastName,
+    //             work: stff?.work || []
+    //         };
+    //     }
+    // );
     
-    const svduration = parseInt(service.duration);
+    let svduration = parseInt(service.duration);
+
     let timeOptionsByStaff = {};
 
-    for (const stffTime of staffTimes) {
-        if (!timeOptionsByStaff[stffTime.id]) {
-            timeOptionsByStaff[stffTime.id] = [];
+    for (const stff of service.assigned_staff) {
+        if (!timeOptionsByStaff[stff._id]) {
+            timeOptionsByStaff[stff._id] = [];
         }
 
-        console.log('LLLLLLLL', JSON.stringify(stffTime), ordersInCurrentDay[0].info[0].staff.firstName);
+        console.log(JSON.stringify(stff));
 
+        svduration += (stff.cooldown || 0);
+        // console.log('LLLLLLLL', JSON.stringify(stffTime), ordersInCurrentDay[0].info[0].staff.firstName);
         // const staff = await Staff.findById(stffTime.id);
 
-        if (stffTime?.isEnabled && stffTime?.times) {
-            console.log(stffTime.name);
-            const orderSameDayThisStaff = ordersInCurrentDay.filter(order => {
-                return order?.info[0].staff.firstName === stffTime.name;
-            });
+        if (stff?.shifts?.[shiftKey]?.isEnabled) {
+            // console.log(stffTime.name);
+            // const orderSameDayThisStaff = ordersInCurrentDay.filter(order => {
+            //     console.log('=====>' + order?.info[0].staff);
+            //     return order?.info[0].staff.firstName === stffTime.fname &&
+            //             order?.info[0].staff.lastName === stffTime.lname;
+            // });
 
-            console.log(`OrderSameDay ${stffTime.id}`, orderSameDayThisStaff);
+            // console.log(`OrderSameDay ${stff._id}`, orderSameDayThisStaff);
             // console.log('>>>>>>>>>>>>>>>>>>>>>>>>');
 
-            const timeReservedThisStaff = orderSameDayThisStaff.map(order => {
-                const mmStart = convertH2M(order.info[0].time);
-                return [mmStart, mmStart + svduration];
+            const timeReservedThisStaff = stff.work
+            .filter(work => {
+                const dates = work.date.split('/').map(Number);
+                return dates[0] === currentDay.getDate() &&
+                    dates[1]-1 === currentDay.getMonth() && dates[2] === currentDay.getFullYear();
+            })
+            .map(work => {
+                const mmStart = convertH2M(work.time);
+                return [mmStart, mmStart + work.duration];
             });
 
-            console.log('Tim Reserved:', timeReservedThisStaff);
+            console.log('Time Reserved:', timeReservedThisStaff);
             // console.log('>>>>>>>>>>>>>>>>>>>>>>>>');
 
             // console.log('PREEEEEE' + JSON.stringify(stffTime.times));
 
-            let startMM = Math.max(convertH2M(stffTime.times?.periods.start), mStarted);
-            let endMM = convertH2M(stffTime.times?.periods.end);
+            let startMM = Math.max(convertH2M(stff.shifts?.[shiftKey]?.periods.start), mStarted);
+            let endMM = convertH2M(stff.shifts?.[shiftKey]?.periods.end);
 
             // console.log(stffTime.times[shiftKey].periods.start+ '=====>' + stffTime.times[shiftKey].periods.end);
-            console.log(startMM+ '----493042==>' + endMM + "|||||" + mStarted);
+            // console.log(startMM+ '----493042==>' + endMM + "|||||" + mStarted);
 
-            timeOptionsByStaff[stffTime.id] = [];
+            timeOptionsByStaff[stff._id] = [];
             while (startMM < endMM) {
                 let reservedCollision = false;
                 let currEndMM = startMM + svduration;
@@ -180,9 +196,9 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
                     continue;
                 }
 
-                console.log('}}}}}}}}}}}}}}}}{{{[[[[[[', stffTime.name, startMM, currEndMM);
+                // console.log('}}}}}}}}}}}}}}}}{{{[[[[[[', stffTime.name, startMM, currEndMM);
 
-                timeOptionsByStaff[stffTime.id].push({
+                timeOptionsByStaff[stff._id].push({
                     start: startMM,
                     end: currEndMM
                 })

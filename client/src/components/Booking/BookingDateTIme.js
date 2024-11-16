@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { format, addDays, subDays, endOfMonth, startOfMonth,
 addMonths, subMonths, startOfWeek, endOfWeek, addMinutes  } from 'date-fns'
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
@@ -14,7 +14,8 @@ import { GrPrevious } from 'react-icons/gr'
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa'
 import { useSelector } from 'react-redux';
 import { convertM2H } from 'ultils/helper';
-import Swal from 'sweetalert2'
+// import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 const BookingDateTIme = () => {
   const [type, setType] = useState('Week')
@@ -44,7 +45,7 @@ const BookingDateTIme = () => {
     return new Date(dateTime).toISOString().split('T')[0];
   };
 
-  const fetchBookingTimeOptionsData = async (startDate, endDate) => {
+  const fetchBookingTimeOptionsData = useCallback(async (startDate, endDate) => {
     // if (provider) {
       if (!endDate || !startDate) return;
       const mmTzOffset = startDate.getTimezoneOffset();
@@ -66,117 +67,10 @@ const BookingDateTIme = () => {
       });
 
       if (resp.success && resp.timeOptions) {
-        console.log('VVVVVVVVVV---', resp.timeOptions, '++++++++++++++');
+        // console.log('VVVVVVVVVV---', resp.timeOptions, '++++++++++++++');
         setTimeOptions(resp.timeOptions);
       }
-
-      // const currentDate = new Date();
-      // const year = currentDate.getFullYear();
-      // const month = String(currentDate.getMonth() + 1).padStart(2, '0'); // Thêm số 0 vào trước nếu cần
-      // const day = String(currentDate.getDate()).padStart(2, '0'); // Thêm số 0 vào trước nếu cần
-
-      // const formattedDate = `${year}-${month}-${day}`;
-      // if(datetime === formattedDate){
-      //   const getCurrentTime = () => {
-      //     const now = new Date();
-      //     const hour = now.getHours();
-      //     const minute = now.getMinutes();
-      //     return hour * 100 + minute;
-      //   };
-      //   const getOpeningHoursForToday = () => {
-      //     const dayOfWeek = new Date().getDay();
-      //     const openingTimeKey = `start${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
-      //     const closingTimeKey = `end${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
-          
-      //     const parseTime = (timeString) => {
-      //       const [hour, minute] = timeString.split(':').map(Number);
-      //       return hour * 60 + minute;
-      //     };
-        
-      //     const openingTime = parseTime(provider?.time[openingTimeKey]);
-      //     const closingTime = parseTime(provider?.time[closingTimeKey]);
-        
-      //     return { openingTime, closingTime };
-      //   };
-  
-      //   const currentTime = getCurrentTime();
-      //   const { openingTime, closingTime } = getOpeningHoursForToday();
-  
-      //   const generateTimeOptions = (openingTime, closingTime, currentTime, duration) => {
-      //     const timeOptions = [];
-      //     if (openingTime>=0 && closingTime>=0 && duration>=0) {
-      //       let currentHour = Math.floor(currentTime / 100);
-      //       let currentMinute = currentTime % 100;
-      //       let currentTimeInMinutes = currentHour * 60 + currentMinute;
-      //       let serviceDurationInMinutes = duration;
-      //       let saveOpeningTime = openingTime
-
-      //       setTimeOptions([])
-
-      //       while (saveOpeningTime <= (closingTime - serviceDurationInMinutes)) {
-      //         if(saveOpeningTime >= currentTimeInMinutes){
-      //           const hour = Math.floor(saveOpeningTime / 60);
-      //           const minute = saveOpeningTime % 60;
-      //           const formattedHour = hour.toString().padStart(2, '0');
-      //           const formattedMinute = minute.toString().padStart(2, '0');
-      //           const formattedTime = `${formattedHour}:${formattedMinute}`;
-      //           timeOptions.push(formattedTime);
-      //           saveOpeningTime += serviceDurationInMinutes;
-      //         }
-      //         else saveOpeningTime += serviceDurationInMinutes;
-      //       }
-      //     }
-      //     return timeOptions;
-      //   };
-  
-      //   setTimeOptions(generateTimeOptions(openingTime, closingTime, currentTime, duration));
-      // }
-      // else{
-      //   const getOpeningHoursForToday = () => {
-      //     const dateObject = new Date(datetime);
-      //     const dayOfWeek = dateObject.getDay();
-      //     const openingTimeKey = `start${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
-      //     const closingTimeKey = `end${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
-          
-      //     const parseTime = (timeString) => {
-      //       const [hour, minute] = timeString.split(':').map(Number);
-      //       return hour * 60 + minute;
-      //     };
-        
-      //     const openingTime = parseTime(provider?.time[openingTimeKey]);
-      //     const closingTime = parseTime(provider?.time[closingTimeKey]);
-        
-      //     return { openingTime, closingTime };
-      //   };
-      //   const { openingTime, closingTime } = getOpeningHoursForToday();
-  
-      //   const generateTimeOptions = (openingTime, closingTime, duration) => {
-      //     const timeOptions = [];
-      //     if (openingTime>=0 && closingTime>=0 && duration>=0) {
-      //       let serviceDurationInMinutes = duration;
-      //       let saveOpeningTime = openingTime
-      //       setTimeOptions([])
-
-      //       while (saveOpeningTime <= (closingTime - serviceDurationInMinutes)) {
-      //           const hour = Math.floor(saveOpeningTime / 60);
-      //           const minute = saveOpeningTime % 60;
-      //           const formattedHour = hour.toString().padStart(2, '0');
-      //           const formattedMinute = minute.toString().padStart(2, '0');
-      //           const formattedTime = `${formattedHour}:${formattedMinute}`;
-      //           timeOptions.push(formattedTime);
-      //           saveOpeningTime += serviceDurationInMinutes;
-      //       }
-      //     }
-      //     return timeOptions;
-      //   };
-  
-      //   const tempTime = generateTimeOptions(openingTime, closingTime, duration);
-      //   console.log('--------', tempTime, '------');
-
-      //   setTimeOptions(tempTime);
-      // }
-    // }
-  }
+  }, [])
 
   useEffect(() => {
     const coupon = usableDiscountCodes?.find(el => el?.code === selectedVoucher?.code)
@@ -401,7 +295,7 @@ const BookingDateTIme = () => {
     //     price: service?.price
     // }, total: service?.price});
 
-    await apiUpdateCartService({
+    let resp = await apiUpdateCartService({
       service: service?._id,
       provider: provider?._id,
       staff: staff?._id,
@@ -413,12 +307,25 @@ const BookingDateTIme = () => {
       discountPrice: +discountValue > 0 ? +discountValue : 0,
       coupon: selectedVoucher?._id
     });
- // datetime chứa cả date và time
-//       price: service?.price
-//   });
 
-//   // Swal.fire("noti", JSON.stringify(response), 'error');
-// =======
+
+    if (resp.success) {
+      toast.success("Service cart updated successfully!");
+    }
+    else if (resp.mes) {
+      console.log('==============', resp);
+      toast.error(resp.mes);
+
+      if (type === 'Week') {
+        handlePrevNext('in_week');
+      }
+      else {
+        handlePrevNext('in_month');
+      }
+    }
+    else  {
+      toast.error("Error add service to cart!");
+    }
 }
 
   const parseTimee = (time) => {
@@ -453,7 +360,7 @@ const BookingDateTIme = () => {
       price: finalPrice
     });
 
-    await apiUpdateCartService({
+    let resp = await apiUpdateCartService({
       service: service?._id, 
       provider: provider?._id, 
       staff: staff?._id, 
@@ -466,11 +373,29 @@ const BookingDateTIme = () => {
       coupon: selectedVoucher?._id
     })
 
-    if(selectedVoucher){
-      window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}&couponCode=${selectedVoucher?.code}`, '_blank');
+    if (resp.success) {
+      toast.success("Service cart updated successfully!");
+
+      if(selectedVoucher){
+        window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}&couponCode=${selectedVoucher?.code}`, '_blank');
+      }
+      else {
+        window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}`, '_blank');
+      }
     }
-    else {
-      window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}`, '_blank');
+    else if (resp.mes) {
+      console.log('==============', resp);
+      toast.error(resp.mes);
+
+      if (type === 'Week') {
+        handlePrevNext('in_week');
+      }
+      else {
+        handlePrevNext('in_month');
+      }
+    }
+    else  {
+      toast.error("Error add service to cart!");
     }
 
     // let response = await apiCreateOrder({

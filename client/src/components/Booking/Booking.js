@@ -144,74 +144,15 @@ const Booking = () => {
       setIsLoading(true)
       let resp = await apiGetServiceTimeOptionAvailableCurrentDay({ now:now.getTime(), dow, mStarted, svid: service._id });
 
-      console.log('}}}}', resp.timeOptions);
+      // console.log('}}}}', resp.timeOptions);
 
       if (resp.success && resp.timeOptions) {
         setTimeOptions(resp.timeOptions);
       }
       setIsLoading(false);
-      // if (provider) {
-  
-      //   const getOpeningHoursForToday = () => {
-      //     const dayOfWeek = new Date().getDay();
-      //     const openingTimeKey = `start${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
-      //     const closingTimeKey = `end${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
-          
-      //     const parseTime = (timeString) => {
-      //       const [hour, minute] = timeString.split(':').map(Number);
-      //       return hour * 60 + minute;
-      //     };
-        
-      //     const openingTime = parseTime(provider?.time[openingTimeKey]);
-      //     const closingTime = parseTime(provider?.time[closingTimeKey]);
-      //     return { openingTime, closingTime };
-      //   };
-  
-      //   const currentTime = getCurrentTime();
-      //   const { openingTime, closingTime } = getOpeningHoursForToday();
-  
-      //   const generateTimeOptions = (openingTime, closingTime, currentTime, duration) => {
-      //     const timeOptions = [];
-
-      //     if (openingTime>=0 && closingTime>=0 && duration>=0) {
-      //       let currentHour = Math.floor(currentTime / 100);
-      //       let currentMinute = currentTime % 100;
-      //       let currentTimeInMinutes = currentHour * 60 + currentMinute;
-      //       let serviceDurationInMinutes = duration;
-      //       let saveOpeningTime = openingTime;
-
-      //       setCurrentTime(currentTimeInMinutes);
-      //       setTimeOptions([]);
-
-      //       while (saveOpeningTime <= (closingTime - serviceDurationInMinutes)) {
-      //         if (saveOpeningTime >= currentTimeInMinutes) {
-      //           const hour = Math.floor(saveOpeningTime / 60);
-      //           const minute = saveOpeningTime % 60;
-      //           const formattedHour = hour.toString().padStart(2, '0');
-      //           const formattedMinute = minute.toString().padStart(2, '0');
-      //           const formattedTime = `${formattedHour}:${formattedMinute}`;
-      //           timeOptions.push(formattedTime);
-      //           saveOpeningTime += serviceDurationInMinutes;
-      //         } else {
-      //           saveOpeningTime += serviceDurationInMinutes;
-      //         }
-      //       }
-      //     }
-
-      //     return timeOptions;
-      //   };
-  
-      //   setTimeOptions(generateTimeOptions(openingTime, closingTime, currentTime, duration));
-      // }
     }
 
     fetchData(); 
-
-    // const interval = setInterval(() => {
-    //   fetchData();
-    // }, 10000);
-
-    // return () => clearInterval(interval);
   }, [service]);
 
   const handleBookDateTime = (el) => { 
@@ -264,6 +205,30 @@ const Booking = () => {
     if (resp.success) {
       toast.success("Service cart updated successfully!");
     }
+    else if (resp.mes) {
+      console.log('==============', resp);
+      toast.error(resp.mes);
+
+      const fetchData = async () => {
+        if (!service?._id) {
+          return;
+        }
+  
+        let now = new Date();
+        const mStarted = now.getHours() * 60 + now.getMinutes();
+        const dow = daysOfWeek[now.getDay()];
+  
+        setIsLoading(true)
+        let resp = await apiGetServiceTimeOptionAvailableCurrentDay({ now:now.getTime(), dow, mStarted, svid: service._id });
+  
+        if (resp.success && resp.timeOptions) {
+          setTimeOptions(resp.timeOptions);
+        }
+        setIsLoading(false);
+      }
+  
+      fetchData(); 
+    }
     else  {
       toast.error("Error add service to cart!");
     }
@@ -277,16 +242,16 @@ const Booking = () => {
       // // Kết hợp formattedDate và time để tạo datetime
     const dateTime = new Date(`${formattedDate}T${selectedStaff?.time}:00Z`);
 
-    console.log('......', {
-      service: service?._id, 
-      provider: provider?._id, 
-      staff: selectedStaff?.staff?._id, 
-      time: selectedStaff?.time,
-      duration: service?.duration,
-      date,
-      price: finalPrice,
-      dateTime: dateTime
-    });
+    // console.log('......', {
+    //   service: service?._id, 
+    //   provider: provider?._id, 
+    //   staff: selectedStaff?.staff?._id, 
+    //   time: selectedStaff?.time,
+    //   duration: service?.duration,
+    //   date,
+    //   price: finalPrice,
+    //   dateTime: dateTime
+    // });
 
     let resp = await apiUpdateCartService({
       service: service?._id, 
@@ -303,6 +268,30 @@ const Booking = () => {
 
     if (resp.success) {
       toast.success("Service cart updated successfully!");
+    }
+    else if (resp.mes) {
+      console.log('==============', resp);
+      toast.error(resp.mes);
+
+      const fetchData = async () => {
+        if (!service?._id) {
+          return;
+        }
+  
+        let now = new Date();
+        const mStarted = now.getHours() * 60 + now.getMinutes();
+        const dow = daysOfWeek[now.getDay()];
+  
+        setIsLoading(true)
+        let resp = await apiGetServiceTimeOptionAvailableCurrentDay({ now:now.getTime(), dow, mStarted, svid: service._id });
+  
+        if (resp.success && resp.timeOptions) {
+          setTimeOptions(resp.timeOptions);
+        }
+        setIsLoading(false);
+      }
+  
+      fetchData(); 
     }
     else  {
       toast.error("Error add service to cart!");
