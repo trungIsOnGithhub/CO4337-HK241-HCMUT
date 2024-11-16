@@ -172,7 +172,7 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
 
             // console.log('PREEEEEE' + JSON.stringify(stffTime.times));
 
-            let startMM = Math.max(convertH2M(stff.shifts?.[shiftKey]?.periods.start), mStarted);
+            let startMM = convertH2M(stff.shifts?.[shiftKey]?.periods.start);
             let endMM = convertH2M(stff.shifts?.[shiftKey]?.periods.end);
 
             // console.log(stffTime.times[shiftKey].periods.start+ '=====>' + stffTime.times[shiftKey].periods.end);
@@ -185,8 +185,13 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
 
                 if (currEndMM > endMM) { break; }
 
+                if (startMM < mStarted) {
+                    startMM = currEndMM;
+                    continue;
+                }
+
                 timeReservedThisStaff.forEach(t => {
-                    if (!(currEndMM < t[0] || startMM > t[1])) {
+                    if (!(currEndMM <= t[0] || startMM >= t[1])) {
                         reservedCollision = true;
                     }
                 });
@@ -199,7 +204,7 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
                 // console.log('}}}}}}}}}}}}}}}}{{{[[[[[[', stffTime.name, startMM, currEndMM);
 
                 timeOptionsByStaff[stff._id].push({
-                    start: startMM,
+                    start: Math.min(startMM, ),
                     end: currEndMM
                 })
 
@@ -243,44 +248,48 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
         });
     }
     let currentStaff = service?.assigned_staff?.filter(stf => {
-        console.log('------>', stf._id);
+        // console.log('------>', stf._id);
         return stf._id.toString() === stfid
     });
+
     if (currentStaff?.length !== 1) {
         return res.status(400).json({
             success: false,
             message: 'Invalid input: Cannot find staff in service'
         });
     }
+    console.log('===========KKKKKKKKKKKK' + currentStaff);
+    currentStaff = currentStaff[0];
 
-    let successfulBookings = await Order.find({
-        // 'infor.0.service': svid,
-        'info.0.staff': stfid,
-        // 'info.0.dateTime': {
-        //     $gte: startDate,
-        //     $lte: endDate
-        // },
-        status: 'Successful'
-    });
-    successfulBookings = successfulBookings.filter(order => {
-        const dates = order?.info[0]?.date?.split('/').map(Number);
-        console.log(dates, "-----))))")
-        const times = order?.info[0]?.time?.split(':').map(Number);
-        const currOrderDate = new Date(dates[2], dates[1]-1, dates[0], times[0], times[1], 0, 0);
+    // let staffWork = await Order.find({
+    //     // 'infor.0.service': svid,
+    //     'info.0.staff': stfid,
+    //     // 'info.0.dateTime': {
+    //     //     $gte: startDate,
+    //     //     $lte: endDate
+    //     // },
+    //     status: 'Successful'
+    // });
+    let staffWorkRecord = currentStaff.work.filter(work => {
+        const dates = work.date?.split('/').map(Number);
+        console.log(dates, "-----))))");
+
+        const times = work.time?.split(':').map(Number);
+        const cDate = new Date(dates[2], dates[1]-1, dates[0], times[0], times[1], 0, 0);
 
         // console.log(currOrderDate.toISOString());
         // console.log(startDate.toISOString());
         // console.log(endDate.toISOString());
         // console.log('------------------');
 
-        return currOrderDate >= startDate && currOrderDate <= endDate;
+        return cDate >= startDate && cDate <= endDate;
     });
 
-    console.log('VUIUIUIUIUIUIUIUIU', successfulBookings.map(o => o.info[0]), 'OQPIEPOIQWOPEIPQIEPOIQPE');
+    // console.log('VUIUIUIUIUIUIUIUIU', staffWorkRecord.map(o => o.info[0]), 'OQPIEPOIQWOPEIPQIEPOIQPE');
 
-    
     const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const timeOptionsByStaffAndDay = {};
+
     for (let currentDate = startDate; currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
         // console.log(currentDate, '+++++++LDASDASDAD');
         const bookingDate = new Date(currentDate).toISOString().split('T')[0];
@@ -293,32 +302,31 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
             && currentDate.getFullYear() === nowDate.getFullYear()) {
                 continue;
         }
-
-        const dayOfWeek = weekdays[currentDate.getDay()];
     
-        const workSchedule = currentStaff.map(
-            staff => {
-                // console.log('INSIDE WS======>' + staff.lastName + '---' + JSON.stringify(staff.shifts));
-                if (!staff?.shifts[dayOfWeek]?.isEnabled) {
-                    return {
-                        id: staff._id,
-                        shifts: null
-                    }
-                }
-                return {
-                    id: staff._id,
-                    shifts: staff?.shifts[dayOfWeek]
-                }
-            }
-        );
+        // const workSchedule = currentStaff.map(
+        //     staff => {
+        //         // console.log('INSIDE WS======>' + staff.lastName + '---' + JSON.stringify(staff.shifts));
+        //         if (!staff?.shifts[dayOfWeek]?.isEnabled) {
+        //             return {
+        //                 id: staff._id,
+        //                 shifts: null
+        //             }
+        //         }
+        //         return {
+        //             id: staff._id,
+        //             shifts: staff?.shifts[dayOfWeek]
+        //         }
+        //     }
+        // );
 
-        // console.log("====>>>>|||||", currentStaff);
-        // const curtStaffShift = currentStaff[0].shifts;
-        console.log('========q>>>>>>>>', workSchedule);
+        // // console.log("====>>>>|||||", currentStaff);
+        // // const curtStaffShift = currentStaff[0].shifts;
+        // console.log('========q>>>>>>>>', workSchedule);
 
-        for (const stfs of workSchedule) {
+        // for (const day of weekdays) {
+            const weekday = weekdays[currentDate.getDay()];
             // console.log('+++++++>>>', stfs);
-            if (!stfs?.shifts) {
+            if (!currentStaff.shifts[weekday]) {
                 continue;
             }
             // const workingStart = new Date(`${bookingDate}T${stfs.shifts?.periods?.start}`);
@@ -330,7 +338,7 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
             // }
 
             // Filter "Successful" orders only for this staff
-            // const successfulBookings = successfulBookings.filter(order => {
+            // const staffWorkRecord = staffWorkRecord.filter(order => {
             //     if (!order.info[0]?.date || !order.info[0]?.staff) return false;
 
             //     const orderAD = order.split('/');
@@ -341,36 +349,27 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
             //     return order.info[0]?.staff?._id === stfs.id && order.status === "Successful";
             // });
 
-            let mmStart = convertH2M(stfs.shifts?.periods?.start);
-            let mmEnd = convertH2M(stfs.shifts?.periods?.end);
+            let mmStart = convertH2M(currentStaff.shifts[weekday]?.periods?.start);
+            let mmEnd = convertH2M(currentStaff.shifts[weekday]?.periods?.end);
     
             while (mmStart + service.duration <= mmEnd) {
               const mmCurrEnd = mmStart + service.duration;
             //    console.log('PREEEEEE');
-            //    console.log(successfulBookings);
+            //    console.log(staffWorkRecord);
             //    console.log('PREEEEEE');
 
               // Check if the current slot overlaps with any "Successful" bookings
-              const overlaps = successfulBookings.filter(order => {
-                const dates = order?.info[0]?.date?.split('/').map(Number);
-                const mmBookTime = convertH2M(order.info[0]?.time);
-                const mmBookTimeEnd = mmBookTime + service.duration;
+              const overlaps = staffWorkRecord.some(work => {
+                const dates = work.date?.split('/').map(Number);
+                const mmBookTime = convertH2M(work.time);
 
-                // if (dates[0] === 14 && mmStart === 602) {
-                //     console.log('Checkinggg: ' + (currentDate.getMonth() === dates[1]-1))
-                //     console.log(dates);
-                //     console.log(currentDate);
-                //     console.log(mmStart + '----' + mmCurrEnd);
-                //     console.log(mmBookTime + '----' + mmBookTimeEnd);
-                //     console.log('=++++++_+_+');
-                // }
+                const mmBookTimeEnd = mmBookTime + service.duration;
 
                 return currentDate.getDate() === dates[0]
                     && currentDate.getMonth() === dates[1]-1
                     && currentDate.getFullYear()  === dates[2]
                     && !(mmStart >= mmBookTimeEnd || mmCurrEnd <= mmBookTime);
               });
-            
             //   if (overlaps.length > 0) {
             //     console.log('----->', overlaps);
             //   }
@@ -384,7 +383,7 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
 
               // console.log(mmStart, mmCurrEnd, overlaps);
         
-              if (overlaps.length === 0) {
+              if (!overlaps) {
                 timeOptionsByStaffAndDay[bookingDate].push({
                 //   date: bookingDate,
                 //   startTime: currentSlotStart.toTimeString().slice(0, 5),
@@ -396,7 +395,9 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
         
               mmStart = mmCurrEnd;
             }
-        }
+
+
+        // }
     }
     
 

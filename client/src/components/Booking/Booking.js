@@ -10,7 +10,7 @@ import withBaseComponent from 'hocs/withBaseComponent';
 import { useSelector, useDispatch } from 'react-redux';
 import { getCurrent } from 'store/user/asyncAction';
 import { CiSearch } from 'react-icons/ci';
-import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
+import { FaAngleDown, FaAngleUp, FaPhone } from 'react-icons/fa';
 import moment from 'moment';
 import { HashLoader } from 'react-spinners';
 import { convertM2H } from 'ultils/helper';
@@ -22,7 +22,7 @@ const Booking = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const [staffs, setStaffs] = useState(null);
+  const [staffs, setStaffs] = useState([]);
   const [service, setService] = useState(null);
   const [provider, setProvider] = useState(null);
   const [duration, setDuration] = useState(null);
@@ -341,21 +341,33 @@ const Booking = () => {
         <div className='border border-gray-400 flex-7 flex-col p-[24px] rounded-md'>
         <div className='flex w-full justify-between items-center mb-4'>
           <span className='text-[18px] leading-6 font-semibold'>Choose Employee</span>
-          <div className='w-[187px] h-[40px] flex gap-1 items-center border border-[#0a66c2] rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px]'>
+          <div className='w-[40%] h-[40px] flex gap-1 items-center border border-[#0a66c2] rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px]'>
             <span className='text-xl'><CiSearch size={20}/></span>
-            <input className=' h-full w-[129px] bg-transparent outline-none text-[15px] text-[#00143c] placeholder:text-slate-400'
-              onChange={(event) => { console.log(event.target.value); }}
-              placeholder='Search employee name, email'/>
+            <input className=' h-full flex-1 bg-transparent outline-none text-[15px] text-[#00143c] placeholder:text-slate-400'
+              onChange={(event) => {
+
+                  const staffsSearched = service?.assigned_staff.filter(stf => {
+                    return stf.firstName.includes(event.target.value) || stf.lastName.includes(event.target.value)
+                          || stf.email.includes(event.target.value) || stf.mobile.includes(event.target.value);
+                  });
+                  console.log(staffsSearched);
+                  setStaffs(staffsSearched);
+
+              }}
+              placeholder='Search employee name, email...'/>
           </div>
         </div>
 
         <div>
-        {service?.assigned_staff?.map((el, index) => (
+        {staffs?.map((el, index) => (
           <div key={index} className='border border-gray-300 px-2 py-2 rounded-md my-2'>
             <div className='flex justify-between'>
               <div className='flex items-center gap-1'>
                 <img src={el?.avatar} className='w-16 h-16 rounded-full' alt={el?.firstName} />
-                <span>{`${el.lastName} ${el.firstName}`}</span>
+                <span className='flex flex-col gap-1'>
+                  <span className='text-lg'>{`${el.lastName} ${el.firstName}`}</span>
+                  <span className='text-md flex gap-2 items-center'><FaPhone size='12px'/> {el.mobile}</span>
+                </span>
               </div>
               <Button style='px-6 rounded-md text-white bg-[#0a66c2] font-semibold h-fit py-2 w-fit' handleOnclick={()=>handleBookDateTime(el)}>Choose other date</Button>
             </div>
