@@ -13,7 +13,6 @@ import { FaPaypal } from "react-icons/fa";
 import { SiZalo } from "react-icons/si";
 import { TbTruckDelivery } from "react-icons/tb";
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 
 const CheckoutService = () => {
   const dispatch = useDispatch();

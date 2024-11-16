@@ -107,6 +107,10 @@ const getAllStaffsByAdmin = asyncHandler(async (req, res) => {
 const updateStaffByAdmin = asyncHandler(async (req, res) => {
     const {staffId} = req.params
 
+    if(req.file){
+        req.body.avatar = req.file.path
+    }
+
     if(!staffId || Object.keys(req.body).length === 0){
         throw new Error("Missing input")
     }

@@ -6,7 +6,8 @@ import { toast } from 'react-toastify'
 import { validate, getBase64 } from 'ultils/helper'
 import {apiModifyStaff} from 'apis/staff'
 import bgImage from '../../assets/clouds.svg';
-import { showModal } from 'store/app/appSlice'
+import { showModal } from 'store/app/appSlice';
+import { FaArrowLeft } from 'react-icons/fa'
 
 const UpdateStaff = ({editStaff, render, setEditStaff}) => {
   const dispatch = useDispatch()
@@ -57,9 +58,9 @@ const UpdateStaff = ({editStaff, render, setEditStaff}) => {
         formData.append(i[0],i[1])
       }
 
-      for (var pair of formData.entries())
-      {
-      }
+      // for (var pair of formData.entries())
+      // {
+      // }
     
       // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
       const response = await apiModifyStaff(formData, editStaff._id)
@@ -82,8 +83,9 @@ const UpdateStaff = ({editStaff, render, setEditStaff}) => {
     </div>
     <div className='relative z-10 w-full'>
       <div className='w-full h-fit flex justify-start gap-4 p-4'>
+      <div onClick={()=>setEditStaff(null)} className='text-[#00143c] cursor-pointer mr-4 ml-1'><FaArrowLeft size={28}/></div>
         <span className='text-[#00143c] text-3xl h-fit font-semibold'>Update Staff</span>
-        <span className='text-[#0a66c2] text-lg hover:underline cursor-pointer bg-red-500 rounded-md p-2' onClick={()=>setEditStaff(null)}>Back to Manage</span>
+        {/* <span className='text-lg hover:underline cursor-pointer bg-red-500 rounded-md p-2' onClick={}>Back to Manage</span> */}
       </div>
         <div className='p-4 '>
         <form onSubmit={handleSubmit(handleUpdateStaff)}>

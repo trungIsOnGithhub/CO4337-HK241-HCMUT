@@ -4,13 +4,13 @@ import { useForm } from 'react-hook-form'
 import {apiGetAllStaffs, apiDeleteStaff} from 'apis/staff'
 // import moment from 'moment'
 import { useSearchParams, createSearchParams, useNavigate, useLocation, json} from 'react-router-dom'
-import useDebounce from 'hook/useDebounce'
+// import useDebounce from 'hook/useDebounce'
 import UpdateStaff from './UpdateStaff'
 import ManageStaffShift from './ManageStaffShift'
 import icons from 'ultils/icon'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
-import { FaCalendarCheck } from "react-icons/fa";
+import { FaCalendarCheck, FaSearch } from "react-icons/fa";
 import bgImage from '../../assets/clouds.svg'
 // import { createSearchParams, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 // import { apiGetOrdersByAdmin } from 'apis/order';
@@ -22,7 +22,6 @@ import bgImage from '../../assets/clouds.svg'
 import { TfiExport } from "react-icons/tfi";
 import { BsCalendar } from "react-icons/bs";
 import { RxMixerVertical } from 'react-icons/rx';
-import { FaBahai } from "react-icons/fa";
 import { utils, writeFile } from 'xlsx';
 
 const ManageProduct = () => {
@@ -90,7 +89,7 @@ const ManageProduct = () => {
       searchParams['q'] = searchTerm;
     }
 
-    console.log('____________', searchParams);
+    // console.log('____________', searchParams);
 
     fetchStaff(searchParams);
   }
@@ -150,7 +149,7 @@ const ManageProduct = () => {
 
           </div>
           <div className='w-full h-[48px] mx-[-6px] mt-[-6px] mb-[10px] flex'>
-              <div className='w-[62%] h-[36px] m-[6px] flex'>
+              <div className='h-[36px] m-[6px] flex grow'>
                 <form className='flex-1' >
                   <InputFormm
                     id='q'
@@ -169,15 +168,15 @@ const ManageProduct = () => {
                 <Button
                   handleOnclick={() => { staffDataEffectHandler() }}
                   style={'w-full px-4 py-2 bg-[#dee1e6] rounded-md text-[#00143c] flex gap-1 items-center justify-center font-semibold'}>
-                  <span className='font-bold text-xl'><RxMixerVertical /></span>
-                  <span>Filters</span>
+                  <span className='font-bold text-xl'><FaSearch /></span>
+                  <span>Search</span>
                 </Button>
-                <Button
+                {/* <Button
                   handleOnclick={() => { resetParam() }}
                   style={'w-full px-4 py-2 bg-[#dee1e6] rounded-md text-[#00143c] flex gap-1 items-center justify-center font-semibold'}>
                   <span className='font-bold text-xl'><FaBahai /></span>
                   <span>Reset</span>
-                </Button>
+                </Button> */}
               </div>
             {/* <div className="relative w-[25%] h-[36px] m-[6px]">
               <div className="relative" onClick={handleInputClick}>
@@ -351,10 +350,10 @@ const DataExportSheetModal = ({ rawData, onClose, propsToExport }) => {
           </select>
         </div>
         <div className="mt-4 flex justify-end space-x-2 gap-4">
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 bg-red-400 p-2 rounded-md text-white">Cancel</button>
+          <button onClick={onClose} className="text-gray-500 hover:opacity-50 bg-red-500 p-2 rounded-md text-white">Cancel</button>
           <button
             onClick={() => { exportExcelFile(); onClose(); }}
-            className={`text-blue-600 hover:underline opacity-50 bg-blue-500 p-2 rounded-md text-white`}
+            className='text-blue-600 hover:opacity-50 bg-blue-600 p-2 rounded-md text-white'
           >
             Confirm
           </button>

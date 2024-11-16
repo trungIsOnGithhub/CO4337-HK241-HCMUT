@@ -14,6 +14,7 @@ import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 import moment from 'moment';
 import { HashLoader } from 'react-spinners';
 import { convertM2H } from 'ultils/helper';
+import { toast } from 'react-toastify';
 
 // const dayOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
@@ -226,7 +227,8 @@ const Booking = () => {
   };
   
   const handleOnClick = async(time, el) => {
-    time = convertM2H(time);
+    // console.log('|'+time+'|');
+    time = convertM2H(time?.start);
     setSelectedStaff({time, staff:el, date:new Date().toLocaleDateString()});
 
     const date = moment(new Date()).format("DD/MM/YYYY");
@@ -241,23 +243,30 @@ const Booking = () => {
       staff: el?._id, 
       time: time,
       duration: service?.duration,
-      date: new Date().toLocaleDateString(),
+      date,
       price: +discountValue > 0 ? +discountValue : +originalPrice,
       dateTime
     });
 
-    await apiUpdateCartService({
+    let resp = await apiUpdateCartService({
       service: service?._id, 
       provider: provider?._id,
       staff: el?._id, 
       time: time,
       duration: service?.duration,
-      date: new Date().toLocaleDateString(),
+      date,
       originalPrice: originalPrice,
       discountPrice: +discountValue > 0 ? +discountValue : 0,
       dateTime,
       coupon: selectedVoucher?._id
     })
+
+    if (resp.success) {
+      toast.success("Service cart updated successfully!");
+    }
+    else  {
+      toast.error("Error add service to cart!");
+    }
   }
 
   const handleCheckout = async() => {
@@ -274,23 +283,31 @@ const Booking = () => {
       staff: selectedStaff?.staff?._id, 
       time: selectedStaff?.time,
       duration: service?.duration,
-      date: new Date().toLocaleDateString(),
+      date,
       price: finalPrice,
       dateTime: dateTime
     });
 
-    await apiUpdateCartService({
+    let resp = await apiUpdateCartService({
       service: service?._id, 
       provider: provider?._id, 
       staff: selectedStaff?.staff?._id, 
       time: selectedStaff?.time,
       duration: service?.duration,
-      date: new Date().toLocaleDateString(),
+      date,
       originalPrice: originalPrice,
       discountPrice: +discountValue > 0 ? +discountValue : 0,
       dateTime: dateTime,
       coupon: selectedVoucher?._id
     })
+
+    if (resp.success) {
+      toast.success("Service cart updated successfully!");
+    }
+    else  {
+      toast.error("Error add service to cart!");
+    }
+
     if(selectedVoucher){
       window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}&couponCode=${selectedVoucher?.code}`, '_blank');
     }
@@ -338,7 +355,7 @@ const Booking = () => {
           <div className='w-[187px] h-[40px] flex gap-1 items-center border border-[#0a66c2] rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px]'>
             <span className='text-xl'><CiSearch size={20}/></span>
             <input className=' h-full w-[129px] bg-transparent outline-none text-[15px] text-[#00143c] placeholder:text-slate-400'
-              onChange={(event) => { console.log('------><><>>' + event.target.value); }}
+              onChange={(event) => { console.log(event.target.value); }}
               placeholder='Search employee name, email'/>
           </div>
         </div>
@@ -363,7 +380,7 @@ const Booking = () => {
                   :
                 timeOptions[el?._id].map((time, idx) => (
                 (
-                  <div className={clsx('w-[15%] h-[46px] border border-[#0a66c2] rounded-md cursor-pointer flex items-center justify-center gap-1 hover:bg-blue-400 hover:border-none', (selectedStaff.time===time && selectedStaff.staff===el) && 'bg-blue-400 border-none')}
+                  <div className={clsx('w-[15%] h-[46px] border border-[#0a66c2] rounded-md cursor-pointer flex items-center justify-center gap-1 hover:bg-blue-400 hover:border-none', (selectedStaff.time === convertM2H(time.start) && selectedStaff?.staff?._id === el?._id) && 'bg-blue-400 border-none')}
                       key={idx} onClick={() =>{handleOnClick(time,el)}}>
                     <span className='text-[14px] leading-5 font-medium'>{convertM2H(time.start)} - {convertM2H(time.end)}</span>
                     {/* <span className='text-[12px] leading-4 text-[#00143c]'>{(time[0]/60) >= 12 ? 'pm' : 'am'}</span> */}
@@ -401,7 +418,7 @@ const Booking = () => {
               </div>
               <div className='flex gap-2'>
                 <span className='text-gray-700 font-bold'>Date & Time:</span>
-                <span className='text-[#00143c] flex-1 line-clamp-1'>{(selectedStaff?.time && parseTimee(selectedStaff?.time) >= currentTime) ? `${selectedStaff?.time} ${selectedStaff?.date}` : ''}</span>
+                <span className='text-[#00143c] flex-1 line-clamp-1'>{(selectedStaff?.time && parseTimee(selectedStaff?.time) >= currentTime) ? `${selectedStaff?.time} - ${selectedStaff?.date}` : ''}</span>
               </div>
               <div className='flex gap-2'>
                 <span className='text-gray-700 font-bold'>Total Price:</span>

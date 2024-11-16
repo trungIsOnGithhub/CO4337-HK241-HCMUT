@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const Service = require('../models/service');
-const Order = require('../models/order'); 
+const Order = require('../models/order');
+const Staff = require('../models/staff')
 
 // const ObjectId = require('mongodb').ObjectId; 
 const timeOffGap = 10;
@@ -68,6 +69,7 @@ function convertH2M(timeInHour){
 const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
     const { now, dow, mStarted, svid } = req.body;
     console.log('=====]]]]]]]', now, dow, mStarted);
+
     if (!now || !dow?.length || !(typeof mStarted === 'number')) {
         return res.status(400).json({
             success: false,
@@ -77,18 +79,26 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
 
     // console.log('-----]]]]]]]', new Date(now));
     // Bug timezone
-    const startCurrentDay = (new Date(now)).setHours(0, 0, 0, 0);
-    const endCurrentDay = (new Date(now)).setHours(23, 59, 59, 999);
+    const startCurrentDay = (new Date(now));
+    // const endCurrentDay = (new Date(now)).setHours(23, 59, 59, 999);
 
     let service = await Service.findById(svid).populate('assigned_staff').populate('provider_id');
     let ordersInCurrentDay = await Order.find({
-        'infor.0.service': svid,
-        'info.0.dateTime': {
-            $gte: startCurrentDay,
-            $lte: endCurrentDay
-        },
+        'info.0.service': svid,
+        // 'info.0.dateTime': {
+        //     $gte: startCurrentDay,
+        //     $lte: endCurrentDay
+        // },
         status: 'Successful'
-    });
+    }).populate('info.0.staff');
+    ordersInCurrentDay = ordersInCurrentDay.filter(order => {
+        const dates = order?.info[0]?.date?.split('/').map(Number);
+        console.log(dates, "-----))))")
+        // const times = order?.info[0]?.time?.split(':').map(Number);
+        // const currOrderDate = new Date(dates[2], dates[1]-1, dates[0], 0, 0, 0, 0);
+        // console.log(currOrderDate, "-----))))")
+        return dates[0] === startCurrentDay.getDate() && (dates[1]-1) === startCurrentDay.getMonth() && dates[2] === startCurrentDay.getFullYear();
+    })
 
     console.log('==_==____====_==', ordersInCurrentDay);
 
@@ -109,7 +119,8 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
                 times: stff?.shifts?.[shiftKey],         
                 id: stff?._id,
                 name: '' + stff.firstName + ' ' + stff.lastName,
-                isEnabled: stff?.shifts?.[shiftKey]?.isEnabled || true
+                isEnabled: stff?.shifts?.[shiftKey]?.isEnabled || true,
+                name: stff?.firstName 
             };
         }
     );
@@ -122,53 +133,66 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
             timeOptionsByStaff[stffTime.id] = [];
         }
 
-        console.log('LLLLLLLL', stffTime?.times, stffTime?.isEnabled);
+        console.log('LLLLLLLL', JSON.stringify(stffTime), ordersInCurrentDay[0].info[0].staff.firstName);
+
+        // const staff = await Staff.findById(stffTime.id);
+
         if (stffTime?.isEnabled && stffTime?.times) {
+            console.log(stffTime.name);
             const orderSameDayThisStaff = ordersInCurrentDay.filter(order => {
-                return order?.info[0]?.staff === stffTime.id;
+                return order?.info[0].staff.firstName === stffTime.name;
             });
 
-            console.log('OrderSameDay', orderSameDayThisStaff);
+            console.log(`OrderSameDay ${stffTime.id}`, orderSameDayThisStaff);
             // console.log('>>>>>>>>>>>>>>>>>>>>>>>>');
 
             const timeReservedThisStaff = orderSameDayThisStaff.map(order => {
                 const mmStart = convertH2M(order.info[0].time);
-                return [mmStart, mmStart + order.info[0].duration];
-            })
+                return [mmStart, mmStart + svduration];
+            });
 
             console.log('Tim Reserved:', timeReservedThisStaff);
             // console.log('>>>>>>>>>>>>>>>>>>>>>>>>');
 
-            console.log('PREEEEEE' + JSON.stringify(stffTime.times));
+            // console.log('PREEEEEE' + JSON.stringify(stffTime.times));
 
-            let startMM = convertH2M(stffTime.times?.periods.start);
+            let startMM = Math.max(convertH2M(stffTime.times?.periods.start), mStarted);
             let endMM = convertH2M(stffTime.times?.periods.end);
 
             // console.log(stffTime.times[shiftKey].periods.start+ '=====>' + stffTime.times[shiftKey].periods.end);
-            // console.log(startMM+ '----493042==>' + endMM);
+            console.log(startMM+ '----493042==>' + endMM + "|||||" + mStarted);
 
             timeOptionsByStaff[stffTime.id] = [];
-            while (startMM + svduration <= endMM && startMM + svduration >= mStarted) {
+            while (startMM < endMM) {
                 let reservedCollision = false;
-                timeReservedThisStaff.forEach((t) => {
-                    if (startMM >= t[0] || endMM <= t[1]) {
+                let currEndMM = startMM + svduration;
+
+                if (currEndMM > endMM) { break; }
+
+                timeReservedThisStaff.forEach(t => {
+                    if (!(currEndMM < t[0] || startMM > t[1])) {
                         reservedCollision = true;
                     }
-                },);
+                });
                 if (reservedCollision) {
+                    console.log('===>', startMM, currEndMM);
+                    startMM = currEndMM;
                     continue;
                 }
 
+                console.log('}}}}}}}}}}}}}}}}{{{[[[[[[', stffTime.name, startMM, currEndMM);
+
                 timeOptionsByStaff[stffTime.id].push({
                     start: startMM,
-                    end: startMM + svduration
+                    end: currEndMM
                 })
-                startMM +=  svduration;
+
+                startMM = currEndMM;
             }
         }
     }
 
-    console.log('~~~~~~~~~~~~~~', staffTimes.map(s => s.times.periods));
+    // console.log('~~~~~~~~~~~~~~', staffTimes.map(s => s.times.periods));
 
     return res.status(200).json({
         success: true,
@@ -180,7 +204,7 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
 
 // }
 const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
-    const { startTs, endTs, svid, stfid } = req.body;
+    const { startTs, endTs, svid, stfid, nowTs} = req.body;
     // if (!startTs || !endTs || !(typeof mStarted === 'number')
     //         || !service?._id || !service?.duration) {
     //     return res.status(400).json({
@@ -190,6 +214,7 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
     // }
     const startDate = new Date(startTs);
     const endDate = new Date(endTs);
+    const nowDate = new Date(nowTs);
 
     console.log('INPUT OptsByDateRange: ', startDate.toISOString());
     console.log('INPUT OptsByDateRange: ', endDate.toISOString());
@@ -242,8 +267,17 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
     const timeOptionsByStaffAndDay = {};
     for (let currentDate = startDate; currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
         // console.log(currentDate, '+++++++LDASDASDAD');
-
         const bookingDate = new Date(currentDate).toISOString().split('T')[0];
+        if (!timeOptionsByStaffAndDay[bookingDate]) {
+            timeOptionsByStaffAndDay[bookingDate] = [];
+        }
+
+        if (currentDate.getDate() === nowDate.getDate()
+            && currentDate.getMonth() === nowDate.getMonth()
+            && currentDate.getFullYear() === nowDate.getFullYear()) {
+                continue;
+        }
+
         const dayOfWeek = weekdays[currentDate.getDay()];
     
         const workSchedule = currentStaff.map(
@@ -278,9 +312,6 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
             // if (!timeOptionsByStaffAndDay[stfs.id]) {
             //     timeOptionsByStaffAndDay[stfs.id] = {};
             // }
-            if (!timeOptionsByStaffAndDay[bookingDate]) {
-                timeOptionsByStaffAndDay[bookingDate] = [];
-            }
 
             // Filter "Successful" orders only for this staff
             // const successfulBookings = successfulBookings.filter(order => {

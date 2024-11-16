@@ -11,8 +11,8 @@ import { apiGetAllStaffs } from 'apis'
 import { apiGetOneService, apiUpdateServiceByAdmin } from 'apis/service'
 import { useParams } from 'react-router-dom'
 import bgImage from '../../assets/clouds.svg'
-import { IoReturnDownBack } from 'react-icons/io5'
-import { FaPlus, FaSpinner } from 'react-icons/fa'
+// import { IoReturnDownBack } from 'react-icons/io5'
+import { FaArrowLeft, FaSpinner } from 'react-icons/fa';
 
 const UpdateService = () => {
   const {service_id} = useParams()
@@ -194,7 +194,7 @@ const UpdateService = () => {
       </div>
       <div className='relative z-10 w-full'>
         <div className='w-full h-fit flex items-end p-4'>
-          <div onClick={handleBackManageService} className='text-[#00143c] cursor-pointer'><IoReturnDownBack size={28}/></div>
+          <div onClick={handleBackManageService} className='text-[#00143c] cursor-pointer mr-4 ml-1'><FaArrowLeft size={28}/></div>
           <span className='text-[#00143c] text-3xl h-fit font-semibold'>Update Service</span>
         </div>
         <div className='w-[95%] h-fit shadow-2xl rounded-md bg-white ml-4 mb-[50px] px-4 py-2 flex flex-col gap-4'>

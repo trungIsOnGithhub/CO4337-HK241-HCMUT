@@ -488,17 +488,28 @@ function getSpecificMonthStartEnd(month, year) {
 }
 const getAllOrderSpecificMonth = async (month, year, spid) => {
     const startEndThisMonth = getSpecificMonthStartEnd(month, year);
-    console.log(startEndThisMonth, ";;;;;;;;;;;;;;;;");
-    return await Order.find({
-        createdAt: {
-            $gte: startEndThisMonth.start,
-            $lte: startEndThisMonth.end,
-        },
+    // console.log(startEndThisMonth, ";;;;;;;;;;;;;;;;");
+    let ordersByProv = await Order.find({
+        // createdAt: {
+        //     $gte: startEndThisMonth.start,
+        //     $lte: startEndThisMonth.end,
+        // },
         'info.0.provider': spid
     })
     .populate('info.service')
     .populate('info.staff')
     .populate('orderBy');
+
+    const res = ordersByProv.filter(order => {
+        const dates = order?.info[0]?.date?.split('/').map(Number);
+        console.log(dates, "-----))))")
+
+        return dates[1] === month && dates[2] === year;
+    });
+
+    // console.log(res, ':::::::');
+
+    return res;
 }
 const getCustomerDataByMonth = asyncHandler(async (req, res) => {
     const { currMonth, currYear, spid } = req.body;
@@ -555,8 +566,12 @@ const getThisMonthRevenueAndOrderStatistic = asyncHandler(async (req, res) => {
     let numDaysInMonth = new Date(currYear, currMonth, 0).getDate();
     let revenueMonthList = Array(numDaysInMonth).fill(0);
     allOrdersThisMonth.forEach(order => {
-        if (order.status === 'Successful' && order.createdAt) {
-            const indexByDate = order.createdAt.getDate()-1;
+        if (order.status === 'Successful' && order.info[0]?.date) {
+            const [day, month, year] = item.date.split('/');
+            // // Kết hợp formattedDate và time để tạo datetime
+            const cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+
+            const indexByDate = cDate.getDate()-1;
             revenueMonthList[indexByDate] += order.total;
             ++finishedOrderCurrMonth;
         }
@@ -790,32 +805,36 @@ const getOccupancyByDayCurrentMonth = asyncHandler(async (req, res) => {
 
     let allOrdersThisMonth = await getAllOrderSpecificMonth(currMonth, currYear, spid);
 
+    // console.log('------', allOrdersThisMonth);
+
     let numDaysInMonth = new Date(currYear, currMonth, 0).getDate();
     let occupancyMonthList = Array(numDaysInMonth).fill(0);
     let workingHoursList = Array(numDaysInMonth).fill(0);
 
-    // console.log('..........OOOOOO.....', workingHourByDayMap, '..........OOOOOO.....');
+    console.log('..........OOOOOO.....', workingHourByDayMap, '..........OOOOOO.....');
 
     allOrdersThisMonth.forEach(order => {
-        // console.log(order.info, 'order.info++++++===;[;');
+        console.log(order.info, 'order.info++++++===;[;');
         if (order.status === 'Successful' && order.info?.length > 0) {
             for (const item of order.info) {
-                const itemDate = order.createdAt.getDate();
-                const itemMonth = order.createdAt.getMonth()+1;
-                const itemDayWeek = order.createdAt.getDay();
+                const [day, month, year] = item.date.split('/');
+                  // // Kết hợp formattedDate và time để tạo datetime
+                const cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+                console.log('CDate:  ' + cDate.toISOString());
+                const itemDate = cDate.getDate();
+                // const itemMonth = item.dateTime.getMonth()+1;
+                const itemDayWeek = cDate.getDay();
 
-                // console.log(';', itemYear)
+                // console.log(';;;;;;;;;;;;;;;;', item.)
                 // console.log(';', currYear)
                 
-                if (item.dateTime && itemMonth === currMonth) {
-                    
                     const indexByDate = itemDate - 1;
-                    console.log(item.service, '++++++++==');
+                    // console.log(item.service, '++++++++==');
                     occupancyMonthList[indexByDate] += item.service?.duration;
                     console.log(occupancyMonthList[indexByDate])
                     // console.log('----;;;;-;;;;', item?.service);
                     workingHoursList[indexByDate] = workingHourByDayMap[itemDayWeek];
-                }
+
             }
         }
     });
@@ -947,7 +966,7 @@ const getOccupancyByStaffs = asyncHandler(async (req, res) => {
         }
     });
 
-    console.log('----:::::::', allStaffInOrders);
+    // console.log('----:::::::', allStaffInOrders);
 
     const serviceProviderInfo = await ServiceProvider.findById(spid);
     let totalWorkingHoursOfProviderPerWeek = 0;

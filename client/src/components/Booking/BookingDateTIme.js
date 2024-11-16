@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { format, addDays, subDays, endOfMonth, startOfMonth,
 addMonths, subMonths, startOfWeek, endOfWeek, addMinutes  } from 'date-fns'
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom'
-import { apiGetCouponsByServiceId, apiGetOneService, apiGetOneStaff, apiGetServiceProviderById, apiUpdateCartService, apiGetServiceTimeOptionAvailableByDateRange, apiCreateOrder } from 'apis'
+import { apiGetCouponsByServiceId, apiGetOneService, apiGetOneStaff, apiGetServiceProviderById, apiUpdateCartService, apiGetServiceTimeOptionAvailableByDateRange } from 'apis'
 import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
 import { formatPrice, formatPricee } from 'ultils/helper'
@@ -52,14 +52,17 @@ const BookingDateTIme = () => {
 
       // addMinutes(startDate, startDate.getTimezoneOffset());
       // addMinutes(endDate, endDate.getTimezoneOffset());
-      console.log('0000--' + mmTzOffset);
-      console.log(startDate + 'ccccccccc' + endDate);
+      // console.log('0000--' + mmTzOffset);
+      // console.log(startDate + 'ccccccccc' + endDate);
+      let now = new Date();
+      // const mStarted = now.getHours() * 60 + now.getMinutes();
 
       let resp = await apiGetServiceTimeOptionAvailableByDateRange({
         startTs: startDate?.getTime() - 60000 * mmTzOffset,
         endTs: endDate?.getTime() - 60000 * mmTzOffset,
         svid : params?.get('sid'),
-        stfid: params?.get('st')
+        stfid: params?.get('st'),
+        nowTs: now.getTime()
       });
 
       if (resp.success && resp.timeOptions) {
@@ -586,10 +589,10 @@ const BookingDateTIme = () => {
               currentWeek?.map(({ date, dayOfWeek }) => (
                 <div key={date} className='w-[12%] flex flex-col items-center gap-2'>
                   <div className='font-semibold text-xs'>{dayOfWeek.slice(0, 3)}</div>
-                  <div className={clsx('w-full h-[72px] flex items-center justify-center border border-[#0a66c2] rounded-md hover:bg-blue-400  cursor-pointer', date === datetime && 'bg-blue-400 border-[rgba(22,157,215,1)]',new Date(date).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer')}
+                  <div className={clsx('w-full h-[72px] flex items-center justify-center border border-[#0a66c2] rounded-md hover:bg-blue-400  cursor-pointer', date === datetime && 'bg-blue-400 border-[rgba(22,157,215,1)]',new Date(date).setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0) ? 'opacity-50 cursor-not-allowed hover:bg-slate-300' : 'cursor-pointer')}
                   onClick={()=>{
                     // console.log('+++++++++++>>>>', getISOStringDateOnly(date));
-                    if (new Date(date).setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0)) {
+                    if (new Date(date).setHours(0, 0, 0, 0) > new Date().setHours(0, 0, 0, 0)) {
                       setDatetime(getISOStringDateOnly(date)); setSelectedTime()}}
                     }
                   >
@@ -602,9 +605,9 @@ const BookingDateTIme = () => {
                 currentMonth?.map(({ date, dayOfMonth }) => (
                   <div key={date} className='w-[12%] flex flex-col items-center gap-2'>
                     <div className='font-semibold text-xs'>{dayOfMonth.slice(0, 3)}</div>
-                    <div className={clsx('w-full h-[72px] flex items-center justify-center border border-[#0a66c2] rounded-md hover:bg-blue-400 cursor-pointer', date === datetime && 'bg-blue-400 border-[rgba(22,157,215,1)]',new Date(date).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0) ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer')} 
+                    <div className={clsx('w-full h-[72px] flex items-center justify-center border border-[#0a66c2] rounded-md hover:bg-blue-400 cursor-pointer', date === datetime && 'bg-blue-400 border-[rgba(22,157,215,1)]',new Date(date).setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0) ? 'opacity-50 cursor-not-allowed hover:bg-slate-300' : 'cursor-pointer')} 
                       onClick={() => {
-                        if (new Date(date).setHours(0, 0, 0, 0) >= new Date().setHours(0, 0, 0, 0)) {
+                        if (new Date(date).setHours(0, 0, 0, 0) > new Date().setHours(0, 0, 0, 0)) {
                           // // // console.log('+++++++++++>>>>', getISOStringDateOnly(date));
                           setDatetime(getISOStringDateOnly(date));
                           setSelectedTime();
@@ -628,7 +631,7 @@ const BookingDateTIme = () => {
                   : timeOptions[datetime]?.map((time, idx) => (
                   // (!staff?.work || !isWorkingTime(time, staff?.work)) &&
                   (
-                    <div className={clsx('flex items-center justify-center p-2 border-2 border-[#0a66c2] rounded-md hover:bg-blue-400 cursor-pointer', selectedTime===time && 'bg-blue-400')}
+                    <div className={clsx('flex items-center justify-center p-2 border-2 border-[#0a66c2] rounded-md hover:bg-blue-400 cursor-pointer', selectedTime === convertM2H(time.start) && 'bg-blue-400')}
                         key={idx}
                         onClick={() =>{handleOnClick(time)}}>
                       <span className='text-[14px] leading-5 font-medium'>
