@@ -237,23 +237,8 @@ const DashBoard = () => {
                 { currentMetricView.new_customer === 2 && newCustomerTriplet[1] }
                 { currentMetricView.new_customer === 1 && newCustomerTriplet[2] }
                 { currentMetricView.new_customer === 0 && newCustomerTriplet[1] }
-              </span>
-            </div>
-            <div className='flex flex-col justify-start'>
-              <select
-                className="text-xs border-2 rounded-md"
-                onChange={(event) => { onChangeMetricViewOption(event, "new_customer"); }}
-              >
-                {metricViewOptions.map(
-                  (opt, idx) => { 
-                    if (idx > 0)
-                      return <option className="text-xs" value={opt?.value}>{opt?.label}</option>
-                    return <option className="text-xs" selected="selected" value={opt?.value}>{opt?.label}</option>
-                  }
-                )}
-              </select>
-              <div className='mt-3'>
-                  {
+
+                {
                     currentMetricView.new_customer === 3 &&
                       <MetricIndicator
                         prev={newCustomerTriplet[1]} current={newCustomerTriplet[2]}>
@@ -276,13 +261,46 @@ const DashBoard = () => {
                       <MetricIndicator
                         prev={newCustomerTriplet[1]} current={newCustomerTriplet[0]}>
                       </MetricIndicator>
-                    // (<>
-                    //   {(revenueLast3Months[1] > revenueLast3Months[0]) && <FaAngleDoubleUp />}
-                    //   {(revenueLast3Months[1] < revenueLast3Months[0]) && <FaAngleDoubleDown />}
-                    //   {(revenueLast3Months[1] === revenueLast3Months[0]) && <FaBars />}
-                    // </>)
                   }
+              </span>
+            </div>
+            <div className='flex flex-col justify-start'>
+              <select
+                className="text-xs border-2 rounded-md"
+                onChange={(event) => { onChangeMetricViewOption(event, "new_customer"); }}
+              >
+                {metricViewOptions.map(
+                  (opt, idx) => { 
+                    if (idx > 0)
+                      return <option className="text-xs" value={opt?.value}>{opt?.label}</option>
+                    return <option className="text-xs" selected="selected" value={opt?.value}>{opt?.label}</option>
+                  }
+                )}
+              </select>
+
+
+              <div className="w-24 h-16 mt-2">     
+                  <Line data={{
+                    labels: ['p', 'c', 't'],
+                    datasets: [
+                        {
+                          label: '',
+                          data: newCustomerTriplet,
+                          borderColor: '#2563EB',
+                          fill: {
+                            target: 'origin',
+                            above: 'rgba(37, 99, 235, 0.1)',
+                          },
+                          tension: 0.4,
+                        },
+                      ],
+                    }}
+                    options={lineOptions}
+                  />
               </div>
+
+              {/* <div className='mt-3'>
+              </div> */}
             </div>
           </section>
 
@@ -297,46 +315,12 @@ const DashBoard = () => {
                 { currentMetricView.revenue === 1 && formatPrice(revenueTriplet[2]) }
                 { currentMetricView.revenue === 0 && formatPrice(revenueTriplet[1]) }
                 <span className='text-sm font-semibold'>VND</span>
-                <MetricIndicator
-                  prev={revenueTriplet[1]} current={revenueTriplet[2]}>
-                </MetricIndicator> 
-              </span>
-            </div>
-            <div className='flex flex-col justify-start'>
-              <select
-                className="text-xs border-2 rounded-md"
-                onChange={(event) => { onChangeMetricViewOption(event, "revenue"); }}
-              >
-                {metricViewOptions.map(
-                  (opt, idx) => { 
-                    if (idx > 0)
-                      return <option className="text-xs" value={opt?.value}>{opt?.label}</option>
-                    return <option className="text-xs" selected="selected" value={opt?.value}>{opt?.label}</option>
-                  }
-                )}
-              </select>
-              <div className='mt-3'>
+
                   {
                     currentMetricView.revenue === 3 &&
-                      <div className="w-24">     
-                        <Line data={{
-                          labels: ['p', 'c', 't'],
-                          datasets: [
-                              {
-                                label: '',
-                                data: revenueTriplet,
-                                borderColor: '#2563EB',
-                                fill: {
-                                  target: 'origin',
-                                  above: 'rgba(37, 99, 235, 0.1)',
-                                },
-                                tension: 0.4,
-                              },
-                            ],
-                          }}
-                          options={lineOptions}
-                        />
-                      </div>
+                    <MetricIndicator
+                      prev={revenueTriplet[1]} current={revenueTriplet[2]}>
+                    </MetricIndicator>
                   }
                   {
                     currentMetricView.revenue === 2 &&
@@ -355,13 +339,42 @@ const DashBoard = () => {
                       <MetricIndicator
                         prev={revenueTriplet[1]} current={revenueTriplet[0]}>
                       </MetricIndicator>
-                    // (<>
-                    //   {(revenueLast3Months[1] > revenueLast3Months[0]) && <FaAngleDoubleUp />}
-                    //   {(revenueLast3Months[1] < revenueLast3Months[0]) && <FaAngleDoubleDown />}
-                    //   {(revenueLast3Months[1] === revenueLast3Months[0]) && <FaBars />}
-                    // </>)
                   }
+              </span>
+            </div>
+            <div className='flex flex-col justify-start'>
+              <select
+                className="text-xs border-2 rounded-md"
+                onChange={(event) => { onChangeMetricViewOption(event, "revenue"); }}
+              >
+                {metricViewOptions.map(
+                  (opt, idx) => { 
+                    if (idx > 0)
+                      return <option className="text-xs" value={opt?.value}>{opt?.label}</option>
+                    return <option className="text-xs" selected="selected" value={opt?.value}>{opt?.label}</option>
+                  }
+                )}
+              </select>
+              <div className="w-24 h-16 mt-2">     
+                  <Line data={{
+                    labels: ['p', 'c', 't'],
+                    datasets: [
+                        {
+                          label: '',
+                          data: revenueTriplet,
+                          borderColor: '#2563EB',
+                          fill: {
+                            target: 'origin',
+                            above: 'rgba(37, 99, 235, 0.1)',
+                          },
+                          tension: 0.4,
+                        },
+                      ],
+                    }}
+                    options={lineOptions}
+                  />
               </div>
+  
             </div>
           </section>
 
@@ -377,23 +390,7 @@ const DashBoard = () => {
                 { currentMetricView.occupancy === 1 && occupancyTriplet[2]?.toFixed(1) }
                 { currentMetricView.occupancy === 0 && occupancyTriplet[1]?.toFixed(1) }
                 <span className='text-sm font-semibold'>%</span>
-              </span>
-            </div>
-            <div className='flex flex-col justify-start'>
-              <select
-                className="text-xs border-2 rounded-md"
-                onChange={(event) => { onChangeMetricViewOption(event, "occupancy"); }}
-                defaultValue={3}
-              >
-                {metricViewOptions.map(
-                  (opt, idx) => { 
-                    if (idx > 0)
-                      return <option className="text-xs" value={opt?.value}>{opt?.label}</option>
-                    return <option className="text-xs" value={opt?.value}>{opt?.label}</option>
-                  }
-                )}
-              </select>
-              <div className='mt-3'>
+              
                   {
                     currentMetricView.occupancy === 3 &&
                       <MetricIndicator
@@ -417,13 +414,47 @@ const DashBoard = () => {
                       <MetricIndicator
                         prev={occupancyTriplet[1]} current={occupancyTriplet[0]}>
                       </MetricIndicator>
-                    // (<>
-                    //   {(revenueLast3Months[1] > revenueLast3Months[0]) && <FaAngleDoubleUp />}
-                    //   {(revenueLast3Months[1] < revenueLast3Months[0]) && <FaAngleDoubleDown />}
-                    //   {(revenueLast3Months[1] === revenueLast3Months[0]) && <FaBars />}
-                    // </>)
                   }
+              </span>
+            </div>
+            <div className='flex flex-col justify-start'>
+              <select
+                className="text-xs border-2 rounded-md"
+                onChange={(event) => { onChangeMetricViewOption(event, "occupancy"); }}
+                defaultValue={3}
+              >
+                {metricViewOptions.map(
+                  (opt, idx) => { 
+                    if (idx > 0)
+                      return <option className="text-xs" value={opt?.value}>{opt?.label}</option>
+                    return <option className="text-xs" value={opt?.value}>{opt?.label}</option>
+                  }
+                )}
+              </select>
+
+
+              <div className="w-24 h-16 mt-2">     
+                  <Line data={{
+                    labels: ['p', 'c', 't'],
+                    datasets: [
+                        {
+                          label: '',
+                          data: occupancyTriplet,
+                          borderColor: '#2563EB',
+                          fill: {
+                            target: 'origin',
+                            above: 'rgba(37, 99, 235, 0.1)',
+                          },
+                          tension: 0.4,
+                        },
+                      ],
+                    }}
+                    options={lineOptions}
+                  />
               </div>
+  
+              {/* <div className='mt-3'>
+              </div> */}
             </div>
           </section>
         </div>

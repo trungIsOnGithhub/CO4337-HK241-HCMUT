@@ -7,7 +7,7 @@ const asyncHandler = require("express-async-handler")
 const makeSku = require('uniqid')
 const Order = require('../models/order')
 const esIndexNameList = require('../services/constant');
-const esDBModule = require('../services/es');
+// const esDBModule = require('../services/es');
 const ES_CONSTANT = require('../services/constant');
 
 const createService = asyncHandler(async(req, res)=>{
@@ -89,18 +89,18 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
     const columnNamesToGet = ["id", "title", "providername", "authorname", "numberView"];
 
     let services = [];
-    services = await esDBModule.fullTextSearchAdvanced(
-        ES_CONSTANT.SERVICES,
-        searchTerm,
-        columnNamesToMatch,
-        columnNamesToGet,
-        limit, offset,
-        sortOption,
-        geoLocationQueryOption,
-        geoSortOption,
-        categoriesIncluded
-    );
-    services = services?.hits;
+    // services = await esDBModule.fullTextSearchAdvanced(
+    //     ES_CONSTANT.SERVICES,
+    //     searchTerm,
+    //     columnNamesToMatch,
+    //     columnNamesToGet,
+    //     limit, offset,
+    //     sortOption,
+    //     geoLocationQueryOption,
+    //     geoSortOption,
+    //     categoriesIncluded
+    // );
+    // services = services?.hits;
 
     // console.log("Query Input Parameter: ", services);
     // console.log("REAL DATA RETURNED: ", services);
@@ -422,7 +422,8 @@ const searchAllServicesPublic = asyncHandler(async (req, res) => {
     const excludeFields = ['limit', 'sort', 'page', 'fields'];
     excludeFields.forEach((el) => delete queries[el]);
 
-    const esClient = esDBModule.initializeElasticClient();
+    let esClient = {};
+    // esClient = esDBModule.initializeElasticClient();
 
     // if (!elastic_query) {
         // const sortBy = queries.sort?.split(',');
@@ -475,7 +476,8 @@ const searchAllServicesPublic = asyncHandler(async (req, res) => {
         
         console.log('Elastic Query: ', queryObject?.sort, '-------------')
 
-        const queryResult = await esDBModule.queryElasticDB(esClient, esIndexNameList.SERVICES, queryObject);
+        let queryResult = [];
+        // queryResult = await esDBModule.queryElasticDB(esClient, esIndexNameList.SERVICES, queryObject);
 
         const hitsRecord = queryResult?.hits?.hits?.map(record => {
             return record._source

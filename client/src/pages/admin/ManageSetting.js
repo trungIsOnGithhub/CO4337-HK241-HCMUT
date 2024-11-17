@@ -56,11 +56,11 @@ function ManageSetting() {
       <div className='inset-0 absolute z-0'>
         <img src={bgImage} className='w-full h-full object-cover' alt='background decorate image'/>
       </div>
-      <div className="relative z-10"> {/* Thêm lớp này để đảm bảo dòng chữ không bị che mất */}
-        <div className='ml-26 w-full h-20 flex justify-between p-4'>
-          <span className='text-[#00143c] text-3xl font-semibold text-center'>Setting</span>
+      <div className="relative z-10 flex flex-col justify-center items-center"> {/* Thêm lớp này để đảm bảo dòng chữ không bị che mất */}
+        <div className='w-[70%] h-20 p-4'>
+          <span className='text-[#00143c] text-3xl font-semibold'>Setting</span>
         </div>
-        <div className='ml-36 w-[70%] shadow-2xl rounded-md bg-white ml-4 mb-6 p-6 flex flex-col gap-4'>
+        <div className='w-[70%] shadow-2xl rounded-md bg-white mb-6 p-6'>
             {/* <div className="p-8 bg-gray-50 min-h-screen flex justify-center">
               <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-5xl"> */}
                 
@@ -86,10 +86,10 @@ function ManageSetting() {
                           viewOption === "working_hour" ?
                           "font-semibold text-blue-600 cursor-pointer border-b-2"
                           : "cursor-pointer"
-                        } 
+                        }
                         onClick={() => {setViewOption("working_hour");}}
                       >Working Hours</li>
-                      <li className={
+                      {/* <li className={
                           viewOption === "sms_noti" ?
                           "font-semibold text-blue-600 cursor-pointer border-b-2"
                           : "cursor-pointer"
@@ -109,7 +109,7 @@ function ManageSetting() {
                           : "cursor-pointer"
                         }
                         onClick={() => {setViewOption("payment");}}
-                      >Payments</li>
+                      >Payments</li> */}
                       {/* <li className="cursor-pointer">Users & Roles</li> */}
                     </ul>
                   </div>
@@ -225,20 +225,20 @@ function ManageSetting() {
                                   <option>Sunday</option>
                                 </select>
                               </div>
-                              <div>
+                              {/* <div>
                                 <label className="text-gray-800 font-medium">Default phone country code</label>
                                 <select value={phoneCountryCode} onChange={(e) => setPhoneCountryCode(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
                                   <option>United States</option>
                                   <option>United Kingdom</option>
                                   <option>Australia</option>
                                 </select>
-                              </div>
-                              <div>
+                              </div> */}
+                              {/* <div>
                                 <label className="text-gray-800 font-medium">Default FirstPage</label>
                                 <select className="border rounded-lg p-2 w-full mt-1">
                                   <option>Dashboard</option>
                                 </select>
-                              </div>
+                              </div> */}
                               <div>
                                 <label className="text-gray-700 font-medium">Dashboard language</label>
                                 <select className="border rounded-lg p-2 w-full mt-1">
