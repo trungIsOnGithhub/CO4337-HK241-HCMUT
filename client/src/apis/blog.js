@@ -27,7 +27,7 @@ export const apiGetOneBlog = (id) => axios({
     method: 'get',
 })
 
-export const apiUpdateBlog = (data, id) => axios({
+export const apiUpdateBlogByAdmin = (data, id) => axios({
     url: '/blog/'+id,
     method: 'put',
     data

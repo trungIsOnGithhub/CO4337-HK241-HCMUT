@@ -12,6 +12,7 @@ import {io} from 'socket.io-client'
 import { useDispatch, useSelector } from 'react-redux'
 import { apiGetAllContact } from 'apis'
 import { host } from 'ultils/APIRoute'
+import { apigetLastMessages } from 'apis/message'
 
 const Chat = () => {
   const location = useLocation();
@@ -41,16 +42,8 @@ const Chat = () => {
   useEffect(() => {
     const fetchData = async () => {
       if(current){
-        const response = await apiGetAllContact(current._id)
-        console.log('||||||||||==================', response);
-        console.log(location?.state?.currenRedirectedChatUserId, '|||||||||||++++++++++++++++');
+        const response = await apigetLastMessages({userId: current._id})
         setContacts(response)
-
-        if (location?.state?.currenRedirectedChatUserId) {
-          setCurrentChat(
-            response.filter(user => user?._id === location?.state?.currenRedirectedChatUserId)[0]
-          );
-        }
       }
     }
     fetchData();

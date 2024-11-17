@@ -271,12 +271,24 @@ const ratings = asyncHandler(async(req, res)=>{
 
     // Average rating
     const updatedProduct = await Product.findById(pid)
+    console.log(updatedProduct)
     const totalRatings = updatedProduct.rating.length
     
     // reduce: 2 doi so (callback + initial value)
     const totalScores = updatedProduct.rating.reduce((sum,ele) => sum + (+ele.star),0)
-    updatedProduct.totalRatings = Math.round(totalScores/totalRatings)
-    await updatedProduct.save()
+
+    console.log(totalScores)
+    console.log(totalRatings)
+    console.log(Math.round((+totalScores)/ (+totalRatings)))
+    updatedProduct.totalRatings = Math.round((+totalScores)/ (+totalRatings))
+
+    try {
+        console.log("Before saving totalRatings: ", updatedProduct.totalRatings); // Log giá trị
+        await updatedProduct.save();
+        console.log("After saving: ", updatedProduct); // Log lại để xác minh
+    } catch (error) {
+        console.error("Error while saving:", error);
+    }
 
     return res.status(200).json({
         success: true,

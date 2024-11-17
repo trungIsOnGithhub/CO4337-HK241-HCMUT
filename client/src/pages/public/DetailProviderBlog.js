@@ -217,7 +217,7 @@ const DetailProviderBlog = () => {
       <div className={clsx('w-full min-h-[476px] flex justify-center', providerData?.theme === 'dark' &&  'bg-[#343a40] text-white')}>
           <div className='w-[90%] pt-[24px] pb-[48px] flex flex-col'>
             <div className='w-full flex justify-between'>
-              <span className='text-[22px] font-semibold'>Products</span>
+              <span className='text-[22px] font-semibold'>Blogs</span>
               <div className='relative'>
                 <Button handleOnclick={()=>{setShowSort(prev => !prev)}} style={'px-[23px] rounded-l-full rounded-r-full text-white border border-[##e6ebef] w-fit h-[40px] flex items-center gap-2'}><MdOutlineSort />Sort by</Button>
                 {

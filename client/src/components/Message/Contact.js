@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import bgImage from '../../assets/clouds.svg'
 
 const Contact = ({contacts, currentUser, changeChat}) => {
+  console.log(contacts)
   const navigate = useNavigate()
 
   const [currentUserName, setCurrentUserName] = useState(undefined)
@@ -22,6 +23,9 @@ const Contact = ({contacts, currentUser, changeChat}) => {
       setCurrentUserName(currentUser?.firstName + " " + currentUser?.lastName)
     }
   }, [currentUser]);
+
+  console.log(currentUserImage)
+  console.log(currentUserName)
   
 
   const changeCurrentChat = (index, contact) => { 

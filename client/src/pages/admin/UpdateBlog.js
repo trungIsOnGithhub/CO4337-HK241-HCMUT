@@ -2,12 +2,14 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import bgImage from '../../assets/clouds.svg'
 import { IoReturnDownBack } from 'react-icons/io5'
-import { apiGetAllPostTags, apiGetOneBlog } from 'apis/blog'
+import { apiGetAllPostTags, apiGetOneBlog, apiUpdateBlogByAdmin } from 'apis/blog'
 import { useForm } from 'react-hook-form'
 import { Button, InputFormm, MarkdownEditor, SelectCategory } from 'components'
 import { useSelector } from 'react-redux'
 import { FiX } from 'react-icons/fi'
 import { FaSpinner } from 'react-icons/fa'
+import { toast } from 'react-toastify'
+import { getBase64 } from 'ultils/helper'
 
 const UpdateBlog = () => {
     const {blog_id} = useParams()
@@ -107,9 +109,52 @@ const UpdateBlog = () => {
         setShowSuggestedTags(false);
     }; 
 
-    const handleUpdateBlog = (data) => {
+    const handleUpdateBlog = async(data) => {
+        let finalPayload = {...data, ...payload}
+        if(selectedCategory){
+            finalPayload.category = selectedCategory
+        }
+        if(data.thumb?.length === 0){
+            finalPayload.thumb = preview.thumb
+        }
+        else{
+            finalPayload.thumb = data.thumb[0]
+        }
+        if(blogTag.length > 0){
+            finalPayload.tags = blogTag
+        }
+        const formData = new FormData()
+        for(let i of Object.entries(finalPayload)){
+            formData.append(i[0],i[1])
+        }
+        formData.delete('tags')
+        if(finalPayload.tags) {
+            for (let tag of finalPayload.tags) formData.append('tags', tag)
+        }
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}:`, value);
+        }
 
+        setIsLoading(true)
+        const response = await apiUpdateBlogByAdmin(formData, editBlog._id)
+        setIsLoading(false)
+        if(response.success){
+            toast.success(response.mes)
+            window.scrollTo({ top: 0, behavior: 'smooth' }); 
+        }
+        else{
+        toast.error(response.mes)
+        }
     }
+
+    const handlePreviewThumb = async(file) => {
+        const base64Thumb = await getBase64(file)
+        setPreview(prev => ({...prev, thumb: base64Thumb}))
+      }
+    
+    useEffect(() => {
+        if(watch('thumb') instanceof FileList && watch('thumb').length > 0) handlePreviewThumb(watch('thumb')[0])
+    }, [watch('thumb')])
 
   return (
     <div className='w-full h-full relative'>

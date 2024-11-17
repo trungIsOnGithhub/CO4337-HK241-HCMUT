@@ -8,7 +8,7 @@ import { TbBrandBooking } from "react-icons/tb";
 import { MdPostAdd } from "react-icons/md";
 import { CiDiscount1 } from "react-icons/ci";
 import { IoIosSettings } from "react-icons/io";
-import { FaCalendarAlt } from 'react-icons/fa';
+import { FaCalendarAlt, FaHeart, FaRegHeart } from 'react-icons/fa';
 import { MdHistory } from "react-icons/md";
 import { MdOutlineColorLens } from "react-icons/md";
 
@@ -437,11 +437,20 @@ export const userSidebar = [
     },
     {
         id: 4,
-        type: 'single',
-        text: 'Wish List',
-        path: `/${path.USER}/${path.WISHLIST}`,
-        icon: <RiBillLine size={20}/>,
+        type: 'parent',
+        text: 'Wishlist',
+        icon: <FaRegHeart size={20}/>,
         visibleForRole: [202],
+        submenu:[
+            {
+                text: 'Service Wishlist',
+                path: `/${path.USER}/${path.WISHLIST_SERVICE}`
+            },
+            {
+                text: 'Product Wishlist',
+                path: `/${path.USER}/${path.WISHLIST_PRODUCT}`
+            }
+        ],
     },
     {
         id: 5,

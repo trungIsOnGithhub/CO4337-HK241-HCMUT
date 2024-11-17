@@ -182,7 +182,7 @@ const getOneUser = asyncHandler(async(req, res)=>{
         populate:{
             path: 'provider'
         }
-    })
+    }).populate('wishlist').populate('wishlistProduct')
 
     return res.status(200).json({
         success: user? true : false,
@@ -571,7 +571,6 @@ const updateCartService = asyncHandler(async (req, res) => {
 const updateCartProduct = asyncHandler(async (req, res) => {
     const {_id} = req.user
     const {pid, quantity=1, color, colorCode, price, thumb, title, provider, variantId} = req.body
-    console.log(req.body)
     if(!pid || !color || !price || !thumb|| !title|| !provider || !colorCode) {
         throw new Error("Missing input")
     }
@@ -602,7 +601,6 @@ const updateCartProduct = asyncHandler(async (req, res) => {
             }
            }
            else{
-            console.log('aaaa')
             const alreadyProduct = user?.cart_product?.find(el => el?.variantId?.toString() === variantId && el?.colorCode === colorCode)
 
             if(alreadyProduct){
@@ -757,6 +755,22 @@ const addContact = asyncHandler(async (req, res) => {
     })
 });
 
+const getAdmin = asyncHandler(async (req, res) => {
+    console.log('testttt')
+    console.log(req.query)
+    const {prid} = req.query;
+
+    if (!prid) {
+        throw new Error('Missing Input!');
+    }
+    const user = await User.find({provider_id: prid})
+
+    return res.status(200).json({
+        success: user ? true : false,
+        admin: user 
+    })
+});
+
 module.exports = {
     register,
     login,
@@ -779,5 +793,6 @@ module.exports = {
     removeProductFromCart,
     getAllContact,
     addContact,
-    updateWishlistProduct
+    updateWishlistProduct,
+    getAdmin
 }

@@ -14,4 +14,4 @@ export {default as ResetPassword} from './ResetPassword'
 export {default as DetailCart} from './DetailCart'
 export {default as ServiceProviderRegister} from './ServiceProviderRegister';
 export {default as ViewBlog} from './ViewBlog';
-
+export {default as DetailProvider} from './DetailProvider';

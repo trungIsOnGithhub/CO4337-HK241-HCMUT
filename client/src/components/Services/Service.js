@@ -19,7 +19,7 @@ import clsx from 'clsx'
 import { MdOutlineCategory } from 'react-icons/md'
 const {FaEye, FaHeart, FaCartPlus, BsCartCheckFill} = icons
 
-const Service = ({serviceData, fullWidth = false, clientDistance = null}) => {
+const Service = ({serviceData}) => {
   const [isShowOption, setIsShowOption] = useState(false)
   const {current} = useSelector(state => state.user)
   const navigate = useNavigate()
@@ -60,7 +60,7 @@ const Service = ({serviceData, fullWidth = false, clientDistance = null}) => {
 
   return (
     <div className='cursor-pointer w-full h-fit rounded-md relative shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300'>
-        <div className='w-full h-[150px]'>
+        <div className='w-full h-[150px]' onClick={()=>{navigate(`/service/${serviceData?.sv?.category?.toLowerCase()}/${serviceData?.sv?._id}/${serviceData?.sv?.name}`)}}>
             <img className='h-full w-full object-cover rounded-t-md' src={serviceData?.sv?.thumb} alt={serviceData?.sv?.name} />
         </div>
         <div className='w-full h-[184px] rounded-b-md px-[16px] py-[12px] flex flex-col justify-between'>

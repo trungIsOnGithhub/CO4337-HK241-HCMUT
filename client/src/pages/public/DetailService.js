@@ -1,7 +1,7 @@
 import React ,{useState, useEffect, useCallback, memo, useRef}from 'react'
 import {createSearchParams, useLocation, useNavigate, useParams} from 'react-router-dom'
 import { apiGetOneProduct, apiGetProduct } from '../../apis/product'
-import { apiModifyUser } from '../../apis/user'
+import { apiModifyUser, apiUpdateWishlist } from '../../apis/user'
 import { apiGetOneService, apiGetServicePublic, apiRatingService } from '../../apis/service'
 import {Breadcrumb, Button, SelectQuantity, ServiceExtra, ServiceInformation, CustomSliderService, ServiceCard} from '../../components'
 import Slider from "react-slick";
@@ -16,9 +16,11 @@ import path from 'ultils/path';
 import withBaseComponent from 'hocs/withBaseComponent';
 import { FaLocationDot } from "react-icons/fa6";
 import Mapbox from 'components/Map/Mapbox'
-import { FaClock, FaMapMarkerAlt, FaPhone, FaStar } from 'react-icons/fa'
+import { FaClock, FaHeart, FaMapMarkerAlt, FaPhone, FaStar } from 'react-icons/fa'
 import { MdDirections, MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md'
 import avatarDefault from "../../assets/avatarDefault.png";
+import { getCurrent } from 'store/user/asyncAction'
+import { toast } from 'react-toastify'
 
 const settings = {
   dots: false,
@@ -47,17 +49,15 @@ const DetailService = ({isQuickView, data}) => {
   });
   
   const [category, setCategory] = useState(null)
-  
   const [variant, setVariant] = useState(null)
   const [currentImage, setCurrentImage] = useState(null)
-  
   const [sid, setSid] = useState(null)
   const [providerId, setProviderId] = useState("")
-  
   const [update, setUpdate] = useState(false)
   const [showMap, setShowMap] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
   const [providerLocation, setProviderLocation] = useState(null);
+  const [isWishlisted, setIsWishlisted] = useState(false)
 
   const reRender = useCallback(() => {
     setUpdate(!update)
@@ -91,8 +91,6 @@ const DetailService = ({isQuickView, data}) => {
     }
 
   }, [data, params])
-
-
   
   const fetchServiceData = async ()=>{
     const response = await apiGetOneService(sid)
@@ -118,14 +116,46 @@ const DetailService = ({isQuickView, data}) => {
     }
   }, [update])
   
-  // const handleClickImage = (e,el) => {
-  //   e.stopPropagation();
-  //   setCurrentImage(el)
-  //   setCurrentService(prev => ({
-  //     ...prev,
-  //     thumb: el
-  //   }))
-  // }
+  useEffect(() => {
+    if(current?.wishlist?.some(el => el?._id === serviceData?._id)){
+      setIsWishlisted(true)
+    }
+    else{
+      setIsWishlisted(false)
+    }
+  }, [current, serviceData]);
+
+  console.log(current)
+
+  console.log(isWishlisted)
+  
+  const handleWishlist = async() => {
+    if(!isLogin){
+      Swal.fire({
+          text: 'Login to add wishlist',
+          cancelButtonText: 'Cancel',
+          confirmButtonText: 'Go login',
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          title: 'Oops!',
+          showCancelButton: true,
+      }).then((rs)=>{
+          if(rs.isConfirmed){
+              navigate(`/${path.LOGIN}`)
+          }
+      })
+    }
+    else{
+      const response = await apiUpdateWishlist({sid: serviceData?._id})
+      if(response.success){
+        dispatch(getCurrent())
+        toast.success(response.mes)
+      }
+      else{
+        toast.error(response.mes)
+      }
+    }
+  }
 
   const editQuantity = useCallback((number)=>{
     if(!Number(number)||Number(number)<1) {
@@ -171,31 +201,6 @@ const DetailService = ({isQuickView, data}) => {
     })
     }
    }
-
-  const handleAddtoWishlist = async() => { 
-  if(!current){
-    return Swal.fire({
-      name: "You haven't logged in",
-      text: 'Please login and try again',
-      icon: 'warning',
-      showConfirmButton: true,
-      showCancelButton: true,
-      confirmButtonText: 'Go to Login',
-      cancelButtonText: 'Not now',                
-    }).then((rs)=>{
-      if(rs.isConfirmed){
-        navigate({
-          pathname: `/${path.LOGIN}`,
-          search: createSearchParams({
-            redirect: location.pathname}).toString(),
-        })
-      }
-    })
-  }
-  else{
-    
-  }
-  }
 
   const showRoute = (userLat, userLng) => {
     // Logic to display the route from user's location to the service provider's location
@@ -305,7 +310,6 @@ const DetailService = ({isQuickView, data}) => {
     })
     }
   }
-  console.log(serviceData)
 
   return (
    <div className='w-full'>
@@ -357,9 +361,29 @@ const DetailService = ({isQuickView, data}) => {
         {/* Service Details Section */}
         <div className="space-y-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
-              {serviceData?.name}
-            </h1>
+            <div className='flex justify-between items-start'>
+              <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                {serviceData?.name}
+              </h1>
+              <button
+                onClick={handleWishlist}
+                className={`p-2 rounded-full ${isWishlisted ? "text-red-500" : "text-gray-400"} hover:bg-gray-100`}
+              >
+                <FaHeart size={24} />
+              </button>        
+            </div>
+
+            <div className="my-4 flex items-center gap-2">
+              <div className="flex items-center justify-center gap-1 my-2 text-xl">
+                {[...Array(5)].map((_, index) => (
+                  <FaStar
+                    key={index}
+                    className={index < Math.round(serviceData?.totalRatings) ? "text-yellow-400" : "text-gray-300"}
+                  />
+                ))}
+              </div>
+            </div>
+
             <p className="text-2xl text-[#0a66c2] font-semibold">
             {`${formatPrice(formatPricee(serviceData?.price))} VNĐ`}
             </p>

@@ -25,19 +25,6 @@ const createNewBlogPost = asyncHandler(async(req, res)=>{
     })
 })
 
-const updateBlog = asyncHandler(async(req, res)=>{
-    const {bid} = req.params
-    if(Object.keys(req.body).length === 0){
-        throw new Error("Missing input")
-    }
-    const response = await Blog.findByIdAndUpdate(bid, req.body, {new: true})
-
-    return res.status(200).json({
-        success: response ? true : false,
-        updatedBlog: response ? response : "Cannot update blog"
-    })
-})
-
 const getAllBlogTags = asyncHandler(async (req,res) => {
     let { limit, orderBy } = req.query;
     if (!limit) limit = 10;
@@ -626,7 +613,19 @@ const getAllBlogsByAdmin = asyncHandler(async (req, res) => {
     }
 })
 
+const updateBlog = asyncHandler(async(req, res) => {
+    const {bid} = req.params
 
+    const files = req?.files
+    if(files?.thumb){
+        req.body.thumb = files?.thumb[0]?.path
+    }
+    const blog = await Blog.findByIdAndUpdate(bid, req.body, {new: true})
+    return res.status(200).json({
+        success: blog ? true : false,
+        mes: blog ? 'Updated successfully' : "Cannot update blog"
+    })
+})
 module.exports = {
     updateBlog,
     getAllBlogs,
