@@ -414,8 +414,8 @@ const multiFunc = async function(indexName, init, reset) {
 
 (async function () {
     // // COMMENT THIS WHEN RUN MIGRATE OR ANY OTHE FILE INCLUDED THIS
-    await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, false, true);
-    await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, true, false);
+    // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, false, true);
+    // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, true, false);
     // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, false, false);
 })();
 
