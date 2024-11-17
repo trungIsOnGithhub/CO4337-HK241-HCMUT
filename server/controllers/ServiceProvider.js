@@ -198,9 +198,9 @@ const updateServiceProvider = asyncHandler(async(req, res)=>{
     if(Object.keys(req.body).length === 0){
         throw new Error('Missing input')
     }
-    if(req.body.expiry){
-        req.body.expiry = Date.now() + +req.body.expiry * 24 * 60 * 60 * 1000
-    }
+    // if(req.body.expiry){
+    //     req.body.expiry = Date.now() + +req.body.expiry * 24 * 60 * 60 * 1000
+    // }
     const response = await ServiceProvider.findByIdAndUpdate(spid, req.body, {new: true})
 
     console.log(response);
@@ -239,11 +239,13 @@ const addServiceProviderQuestion = asyncHandler(async(req, res)=>{
     if(!qna && !provider_id){
         throw new Error('Missing input')
     }
-    console.log(req.body);
+    // console.log('--{{{{{{{{{{{{}}}}}}}}}}}}>'+JSON.stringify(req.body));
+
     const response = await ServiceProvider.findByIdAndUpdate(provider_id, {chatGivenQuestions:qna}, {new:true});
+    // console.log('--{{{{{{{{{{{{}}0000000000000>'+response);
     return res.status(200).json({
         success: response ? true : false,
-        qna: response ? response : "Cannot delete service provider"
+        qna: response ? response : "Cannot modify service provider"
     })
 })
 
@@ -252,11 +254,11 @@ const getServiceProviderByOwnerId = asyncHandler(async(req, res)=>{
     if(!owner){
         throw new Error('Missing input')
     }
-    console.log(req.body);
-    const response = await ServiceProvider.findOne({});
+    // console.log(req.body);
+    const response = await User.findById(owner).populate('provider_id');
     return res.status(200).json({
         success: response ? true : false,
-        provider: response ? response : "Cannot get service provider"
+        provider: response?.provider_id?._id ? response.provider_id : "Cannot get service provider"
     })
 })
 
