@@ -186,6 +186,7 @@ const DetailProvider = () => {
 
     const renderFooter = () => {
       if (!indexFooter) return null;
+      console.log('-||||||||||||||||||>', indexFooter);
     
       // Sắp xếp theo order (thứ tự thấp hơn sẽ ở trên cùng)
       const sortedFooter = [...indexFooter].sort((a, b) => a.order - b.order);
@@ -193,6 +194,9 @@ const DetailProvider = () => {
       // Tạo cấu trúc footer
       const leftColumn = sortedFooter.filter(item => item.column === 'left');
       const rightColumn = sortedFooter.filter(item => item.column === 'right');
+
+      // console.log('LLLLLLLLLLLL', leftColumn);
+      // console.log('ERRRRRRRRRRR', rightColumn);
     
       return (
         <div className="footer flex justify-center pt-[32px] pb-[28px] px-[18px] w-full h-full">

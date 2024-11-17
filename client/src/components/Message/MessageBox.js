@@ -120,7 +120,7 @@ const MessageBox = ({currentChat}) => {
 }
 
   return (
-    <div className='fixed bottom-0 right-0 mb-4 mr-8 z-50 w-[300px] h-[400px] bg-slate-200 border border-gray-400 rounded-md overflow-hidden shadow-lg flex flex-col z-1000'>
+    <div className='fixed bottom-0 right-0 mb-4 mr-8 z-50 w-[300px] h-[400px] bg-white border border-gray-400 rounded-md overflow-hidden shadow-lg flex flex-col z-1000'>
       <div className='flex justify-between px-4 py-2 border-b border-gray-400 items-center'>
         <div className='flex gap-4 justify-start'>
           <div className='avatar'>

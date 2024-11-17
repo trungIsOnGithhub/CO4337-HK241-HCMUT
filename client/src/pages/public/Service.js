@@ -265,39 +265,38 @@ const Services = () => {
       setNearMeOption(true);
       return;
     }
-    Swal.fire({
-      title: 'Chia sẻ vị trí',
-      text: "Bạn có muốn chia sẻ vị trí hiện tại của mình để xem đường đi?",
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Chia sẻ',
-      cancelButtonText: 'Không'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // if ("geolocation" in navigator) {
-        //     navigator.geolocation.getCurrentPosition(async (position) => {
-        //     const { latitude, longitude } = position.coords;
-        //     await apiModifyUser({ lastGeoLocation: {
-        //       type: "Point",
-        //       coordinates: [longitude, latitude]
-        //     } }, current._id);
-        //     // Call the function to show the route using latitude and longitude
-        //     // showRoute(latitude, longitude);
-            setClientLat(0);
-            setClientLon(0);
+    // Swal.fire({
+    //   title: 'Chia sẻ vị trí',
+    //   text: "Bạn có muốn chia sẻ vị trí hiện tại của mình để xem đường đi?",
+    //   icon: 'question',
+    //   showCancelButton: true,
+    //   confirmButtonText: 'Chia sẻ',
+    //   cancelButtonText: 'Không'
+    // }).then((result) => {
+    //   if (result.isConfirmed) {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(async (position) => {
+            const { latitude, longitude } = position.coords;
+            await apiModifyUser({ lastGeoLocation: {
+              type: "Point",
+              coordinates: [longitude, latitude]
+            } }, current._id);
+            // Call the function to show the route using latitude and longitude
+            //  showRoute(latitude, longitude);
+            setClientLat(latitude);
+            setClientLon(longitude);
 
-            setNearMeOption(prev => !prev);
-          // }, () => {
-          //   Swal.fire('Không thể lấy vị trí của bạn.');
-          // });
-        } else {
-          Swal.fire('Geolocation không khả dụng.');
+            setNearMeOption(true);
+          }, () => {
+            Swal.fire('Cannot get your position!');
+            setNearMeOption(false);
+          });
         }
-      // }
-      // else {
-
-      // }
-    });
+        else {
+          Swal.fire('Geolocation is not avaialable!');
+          setNearMeOption(false);
+        }
+    // });
   };
 
   return (
