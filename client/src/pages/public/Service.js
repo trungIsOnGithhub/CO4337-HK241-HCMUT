@@ -58,7 +58,7 @@ const Services = () => {
     const offset = currerntParamPage > 0 ? currerntParamPage - 1 : 0;
 
     // if (useAdvanced) {
-      const categoriesChosen = params.get("category");
+      const categoriesChosen = filterCateg.map(cat => cat.value);
       if(categoriesChosen && categoriesChosen !== 'services'){
         advancedQuery.categories = categoriesChosen;
       }
@@ -85,7 +85,7 @@ const Services = () => {
       console.log('Elastic Pre Query', advancedQuery, 'Elastic Pre Query');
       response = await apiSearchServiceAdvanced(advancedQuery);
 
-      console.log("-----------------RESPONSE SERVICES ADVANCED:", response.services);
+      console.log("-----------------RES ADVANCED:", response.services);
 
       if(response.success) setServices(response?.services?.hits || []);
 

@@ -13,6 +13,10 @@ export const convertM2H = (totalMinutes) => {
     const formattedMinutes = String(minutes).padStart(2, '0');
     return `${formattedHours}:${formattedMinutes}`;
 }
+export const convertH2M( = timeInHour) => {
+    let timeParts = timeInHour.split(":");
+    return Number(timeParts[0]) * 60 + Number(timeParts[1]);
+}
 
 export const renderStarfromNumber = (number, size) => {
     if(!Number(number)) return 

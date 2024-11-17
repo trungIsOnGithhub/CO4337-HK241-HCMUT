@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import Button from 'components/Buttons/Button';
 import React, { useEffect, useState } from 'react';
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { formatPrice, formatPricee } from 'ultils/helper';
+import { convertH2M, formatPrice, formatPricee } from 'ultils/helper';
 import path from 'ultils/path';
 import { apiUpdateCartService } from 'apis';
 import withBaseComponent from 'hocs/withBaseComponent';
@@ -169,25 +169,64 @@ const Booking = () => {
   
   const handleOnClick = async(time, el) => {
     // console.log('|'+time+'|');
+    const fetchData = async () => {
+      if (!service?._id) {
+        return;
+      }
+
+      let now = new Date();
+      const mStarted = now.getHours() * 60 + now.getMinutes();
+      const dow = daysOfWeek[now.getDay()];
+
+      setIsLoading(true)
+      let resp = await apiGetServiceTimeOptionAvailableCurrentDay({ now:now.getTime(), dow, mStarted, svid: service._id });
+
+      if (resp.success && resp.timeOptions) {
+        setTimeOptions(resp.timeOptions);
+      }
+      setIsLoading(false);
+    };
+
+    const startMM = time.start;
+
     time = convertM2H(time?.start);
     setSelectedStaff({time, staff:el, date:new Date().toLocaleDateString()});
+    const nowDate = new Date();
+    const date = moment(nowDate).format("DD/MM/YYYY");
 
-    const date = moment(new Date()).format("DD/MM/YYYY");
+    if (provider?.advancedSetting?.minTimeBookSameDay > 0) {
+      const nowMM = nowDate.getHours() * 60 + nowDate.getMinutes() + 1; // add 1 one more minute to fix delay
+
+      if (startMM - nowMM <= provider.advancedSetting.minTimeBookSameDay) {
+        const hNeed = provider.advancedSetting.minTimeBookSameDay / 60;
+        const mNeed = provider.advancedSetting.minTimeBookSameDay % 60;
+        let msg = `Provider required ${hNeed} hours ${mNeed} before booking this timeslot!`;
+        if (hNeed < 1) {
+          msg = `Provider required ${mNeed} minutes before booking this timeslot!`;
+        }
+
+        toast.error(msg);
+  
+        fetchData();
+        return;
+      }
+    }
+
     const [day, month, year] = date.split('/');
     const formattedDate = `${year}-${month}-${day}`;
     // // Kết hợp formattedDate và time để tạo datetime
     const dateTime = new Date(`${formattedDate}T${time}:00Z`);
 
-    console.log('......', {
-      service: service?._id, 
-      provider: provider?._id,
-      staff: el?._id, 
-      time: time,
-      duration: service?.duration,
-      date,
-      price: +discountValue > 0 ? +discountValue : +originalPrice,
-      dateTime
-    });
+    // console.log('......', {
+    //   service: service?._id, 
+    //   provider: provider?._id,
+    //   staff: el?._id, 
+    //   time: time,
+    //   duration: service?.duration,
+    //   date,
+    //   price: +discountValue > 0 ? +discountValue : +originalPrice,
+    //   dateTime
+    // });
 
     let resp = await apiUpdateCartService({
       service: service?._id, 
@@ -200,34 +239,16 @@ const Booking = () => {
       discountPrice: +discountValue > 0 ? +discountValue : 0,
       dateTime,
       coupon: selectedVoucher?._id
-    })
+    });
 
     if (resp.success) {
       toast.success("Service cart updated successfully!");
     }
     else if (resp.mes) {
-      console.log('==============', resp);
+      // console.log('==============', resp);
       toast.error(resp.mes);
-
-      const fetchData = async () => {
-        if (!service?._id) {
-          return;
-        }
   
-        let now = new Date();
-        const mStarted = now.getHours() * 60 + now.getMinutes();
-        const dow = daysOfWeek[now.getDay()];
-  
-        setIsLoading(true)
-        let resp = await apiGetServiceTimeOptionAvailableCurrentDay({ now:now.getTime(), dow, mStarted, svid: service._id });
-  
-        if (resp.success && resp.timeOptions) {
-          setTimeOptions(resp.timeOptions);
-        }
-        setIsLoading(false);
-      }
-  
-      fetchData(); 
+      fetchData();
     }
     else  {
       toast.error("Error add service to cart!");
@@ -235,13 +256,53 @@ const Booking = () => {
   }
 
   const handleCheckout = async() => {
+  
+    const fetchData = async () => {
+      if (!service?._id) {
+        return;
+      }
+
+      let now = new Date();
+      const mStarted = now.getHours() * 60 + now.getMinutes();
+      const dow = daysOfWeek[now.getDay()];
+
+      setIsLoading(true)
+      let resp = await apiGetServiceTimeOptionAvailableCurrentDay({ now:now.getTime(), dow, mStarted, svid: service._id });
+
+      if (resp.success && resp.timeOptions) {
+        setTimeOptions(resp.timeOptions);
+      }
+      setIsLoading(false);
+    }
+  
+
+    const nowDate = new Date();
+    const startMM = convertH2M(selectedStaff?.time);
+
     const finalPrice = +discountValue > 0 ? +discountValue : +originalPrice;
-    const date = moment(new Date()).format("DD/MM/YYYY");
+    const date = moment().format("DD/MM/YYYY");
     const [day, month, year] = date.split('/');
     const formattedDate = `${year}-${month}-${day}`;
       // // Kết hợp formattedDate và time để tạo datetime
     const dateTime = new Date(`${formattedDate}T${selectedStaff?.time}:00Z`);
 
+    if (provider?.advancedSetting?.minTimeBookSameDay > 0) {
+      const nowMM = nowDate.getHours() * 60 + nowDate.getMinutes() + 1; // add 1 one more minute to fix delay
+
+      if (startMM - nowMM <= provider.advancedSetting.minTimeBookSameDay) {
+        const hNeed = provider.advancedSetting.minTimeBookSameDay / 60;
+        const mNeed = provider.advancedSetting.minTimeBookSameDay % 60;
+        let msg = `Provider required ${hNeed} hours ${mNeed} before booking this timeslot!`;
+        if (hNeed < 1) {
+          msg = `Provider required ${mNeed} minutes before booking this timeslot!`;
+        }
+
+        toast.error(msg);
+  
+        fetchData();
+        return;
+      }
+    }
     // console.log('......', {
     //   service: service?._id, 
     //   provider: provider?._id, 
@@ -272,24 +333,6 @@ const Booking = () => {
     else if (resp.mes) {
       console.log('==============', resp);
       toast.error(resp.mes);
-
-      const fetchData = async () => {
-        if (!service?._id) {
-          return;
-        }
-  
-        let now = new Date();
-        const mStarted = now.getHours() * 60 + now.getMinutes();
-        const dow = daysOfWeek[now.getDay()];
-  
-        setIsLoading(true)
-        let resp = await apiGetServiceTimeOptionAvailableCurrentDay({ now:now.getTime(), dow, mStarted, svid: service._id });
-  
-        if (resp.success && resp.timeOptions) {
-          setTimeOptions(resp.timeOptions);
-        }
-        setIsLoading(false);
-      }
   
       fetchData(); 
     }

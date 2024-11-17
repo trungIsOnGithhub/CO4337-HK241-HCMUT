@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import WeeklyOfficeHours from './WeeklyOfficeHours';
 import BusinessDetailsForm from './BusinessDetailsForm';
-import bgImage from '../../assets/clouds.svg'
+import bgImage from '../../assets/clouds.svg';
+import Select from 'react-select';
 
 function ManageSetting() {
   // State variables for all inputs
@@ -14,12 +15,13 @@ function ManageSetting() {
   const [daysInAdvance, setDaysInAdvance] = useState(100);
   const [dateFormat, setDateFormat] = useState('MMMM D, YYYY');
   const [timeFormat, setTimeFormat] = useState('h:mm a');
-  const [timeZone, setTimeZone] = useState('Bangkok');
+  // const [timeZone, setTimeZone] = useState('Bangkok');
   const [firstDayOfWeek, setFirstDayOfWeek] = useState('Monday');
   const [phoneCountryCode, setPhoneCountryCode] = useState('United States');
-  const [firstPage, setFirstPage] = useState('Dashboard');
+  // const [firstPage, setFirstPage] = useState('Dashboard');
   const [dashboardLanguage, setDashboardLanguage] = useState('English');
   const [viewOption, setViewOption] = useState("general");
+  const [minTimeBeforeBookingSameDay, setMinTimeBeforeBookingSameDay] = useState(0);
 
   // Effect to simulate loading current settings
   useEffect(() => {
@@ -154,13 +156,35 @@ function ManageSetting() {
                           {/* Minimum Time Settings */}
                           <div className="grid grid-cols-2 gap-6">
                             <div>
-                              <label className="text-gray-800 font-medium">Minimum time required before booking</label>
-                              <select value={minTimeBooking} onChange={(e) => setMinTimeBooking(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
-                                <option>Disabled</option>
-                                <option>1 hour</option>
-                                <option>24 hours</option>
-                              </select>
-                            </div>
+                              <label className="text-gray-800 font-medium">Minimum time required before booking in same day</label>
+                                <span>
+                                <Select
+                                  defaultValue={""}
+                                  name="minTimeBookSameDay"
+                                  options={[
+                                    { value: 15, label: '15' },
+                                    { value: 30, label: '30' },
+                                    { value: 45, label: '45' },
+                                  ]}
+                                  className="basic-multi-select"
+                                  classNamePrefix="select"
+                                  onChange={(value) => {setMinTimeBeforeBookingSameDay(prev => prev + value)}}
+                                />
+                              </div>
+                              <Select
+                                defaultValue={""}
+                                name="minTimeBookSameDay"
+                                options={[
+                                  { value: 15, label: '15' },
+                                  { value: 30, label: '30' },
+                                  { value: 45, label: '45' },
+                                ]}
+                                className="basic-multi-select"
+                                classNamePrefix="select"
+                                onChange={(value) => {setMinTimeBeforeBookingSameDay(prev => prev + value)}}
+                              />
+                              </span>
+                              </div>
                             <div>
                               <label className="text-gray-800 font-medium">Minimum time required before canceling</label>
                               <select value={minTimeCanceling} onChange={(e) => setMinTimeCanceling(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
@@ -210,21 +234,21 @@ function ManageSetting() {
                                   <option>HH:mm</option>
                                 </select>
                               </div>
-                              <div>
+                              {/* <div>
                                 <label className="text-gray-800 font-medium">Time Zone</label>
                                 <select value={timeZone} onChange={(e) => setTimeZone(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
                                   <option>Bangkok</option>
                                   <option>UTC</option>
                                   <option>New York</option>
                                 </select>
-                              </div>
-                              <div>
+                              </div> */}
+                              {/*<div>
                                 <label className="text-gray-800 font-medium">First Day of the Week</label>
                                 <select value={firstDayOfWeek} onChange={(e) => setFirstDayOfWeek(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
                                   <option>Monday</option>
                                   <option>Sunday</option>
                                 </select>
-                              </div>
+                              </div> */}
                               {/* <div>
                                 <label className="text-gray-800 font-medium">Default phone country code</label>
                                 <select value={phoneCountryCode} onChange={(e) => setPhoneCountryCode(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
