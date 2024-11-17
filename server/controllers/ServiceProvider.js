@@ -193,6 +193,8 @@ const getAllServiceProvider = asyncHandler(async(req, res) => {
 const updateServiceProvider = asyncHandler(async(req, res)=>{
     const spid = req.params.spid
 
+    console.log('vuivuiuviuv', req.body, spid);
+
     if(Object.keys(req.body).length === 0){
         throw new Error('Missing input')
     }
@@ -201,11 +203,13 @@ const updateServiceProvider = asyncHandler(async(req, res)=>{
     }
     const response = await ServiceProvider.findByIdAndUpdate(spid, req.body, {new: true})
 
+    console.log(response);
+
     return res.status(200).json({
         success: response ? true : false,
         updatedServiceProvider: response ? response : "Cannot update a Service Provider",
         mes: response ? 'Success Updated' : 'Failed to Update'
-    })
+    });
 })
 
 const getServiceProvider = asyncHandler(async(req, res)=>{

@@ -9,8 +9,8 @@ const Service = require('../models/service')
 
 const createNewOrder = asyncHandler(async(req, res)=>{
     const {_id} = req.user
-    console.log('test')
-    console.log(req.body)
+    // console.log('test')
+    // console.log(req.body)
     const {service, provider, staff, date, time, dateTime, captureId, originalPrice, discountPrice, status, coupon, paymentMethod} = req.body
     if(!service || !provider || !staff || !date || !time || !dateTime){
         throw new Error("Missing input");
@@ -52,14 +52,18 @@ const createNewOrder = asyncHandler(async(req, res)=>{
 
 const updateStatus = asyncHandler(async(req, res)=>{
     const {oid} = req.params
-    const {status}  = req.body
-    if(!status){
-        throw new Error("Missing input")
-    }
-    const response = await Order.findByIdAndUpdate(oid, {status}, {new: true})
+    // const {status} = req.body;
+    const {date, time, stfid } = req.body;
+    const updateObj = {
+        'info.0.date': date
+    };
+    // if(!status){
+    //     throw new Error("Missing input")
+    // }
+    const response = await Order.findByIdAndUpdate(oid, updateObj, {new: true})
     return res.status(200).json({
         success: response ? true : false,
-        response: response ? response : "Something went wrong"
+        order: response ? response : "Something went wrong"
     })
 })
 

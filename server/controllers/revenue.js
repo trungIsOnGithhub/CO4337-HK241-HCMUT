@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const asyncHandler = require("express-async-handler")
 const Order = require('../models/order')
-const Service = require('../models/service')
-const Interaction = require('../models/interaction')
+const Service = require('../models/service');
+const ServiceProvider = require('../models/ServiceProvider');
+//  const Interaction = require('../models/interaction')
 
 const getRevenueByDateRange = asyncHandler(async(req, res) => {
     const { provider_id, start_date, end_date } = req.body;
@@ -97,9 +98,924 @@ const getRevenueStatistic = asyncHandler(async (req, res) => {
             totalServices
         }
     })
-})
+});
+
+const getMondayOfWeek = (date) => {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
+    return new Date(d.setDate(diff));
+}
+const get3RecentWeekRange = () => {
+    const nowDate = new Date();
+    const currentWeekMonday = getMondayOfWeek(nowDate);
+
+    const sundayOfLastWeek = currentWeekMonday - 1;
+    const mondayOfLastWeek = getMondayOfWeek(sundayOfLastWeek);
+
+    const sundayOfPreviousWeek = mondayOfLastWeek - 1;
+    const mondayOfPreviousWeek = getMondayOfWeek(sundayOfPreviousWeek);
+
+    return [
+        [currentWeekMonday, nowDate],
+        [mondayOfLastWeek, sundayOfLastWeek],
+        [mondayOfPreviousWeek, sundayOfPreviousWeek],
+    ]
+}
+function getLastThreeMonthsStartEnd(date) {
+    // Clone the date to avoid mutating the original
+    const inputDate = new Date(date);
+    const results = [];
+
+    // Loop through the last three months
+    for (let i = 0; i < 3; i++) {
+        // Calculate the year and month for the current iteration
+        const year = inputDate.getFullYear();
+        const month = inputDate.getMonth() - i; // Go back i months
+
+        // Start of the month
+        const startOfMonth = new Date(year, month, 1);
+        startOfMonth.setHours(0, 0, 0, 0); // Set to start of the day
+
+        // End of the month
+        const endOfMonth = new Date(year, month + 1, 0); // 0 gets the last day of the previous month
+        endOfMonth.setHours(23, 59, 59, 999); // Set to end of the day
+
+        // Push the result into the array
+        results.push({
+            start: startOfMonth,
+            end: endOfMonth
+        });
+    }
+
+    return results;
+}
+
+
+const getRevenue3RecentStatistic = asyncHandler(async (req, res) => {
+    const { periodData, spid } = req.body;
+    if (!periodData || !spid) {
+        return res.status(400).json({
+            success: false,
+            error: 'Missing Input'
+        });
+    }
+
+    const last3Weeks = get3RecentWeekRange();
+    const last3Months = getLastThreeMonthsStartEnd(new Date());
+
+    let revenueData = [0,0,0];
+    if (periodData === 'week') {
+        const currentWeekOrders = await Order.find({
+            createdAt: {
+                $gte: new Date(last3Weeks[0][0]),
+                $lte: new Date(last3Weeks[0][1]),
+            },
+            'info.0.provider': spid
+        }).populate('info.service');
+
+        //  console.log('{{{{{{', currentWeekOrders[0].info[0].service);
+
+        revenueData[2] = currentWeekOrders.reduce((acc, order) => {
+            return acc + order?.info[0].service?.price;
+        }, 0);
+
+        console.log('|||||||||||||||||', revenueData[2]);
+
+
+        const lastWeekOrders = await Order.find({
+            createdAt: {
+                $gte: new Date(last3Weeks[1][0]),
+                $lte: new Date(last3Weeks[1][1]),
+            },
+            'info.0.provider': spid
+        }).populate('info.service');
+
+        revenueData[1] = lastWeekOrders.reduce((acc, order) => {
+            return acc + order?.info[0].service?.price;
+        }, 0);
+
+
+        const prevWeekOrders = await Order.find({
+            createdAt: {
+                $gte: new Date(last3Weeks[2][0]),
+                $lte: new Date(last3Weeks[2][1]),
+            },
+            'info.0.provider': spid
+        }).populate('info.service');
+
+        revenueData[0] = prevWeekOrders.reduce((acc, order) => {
+            return acc + order?.info[0].service?.price;
+        }, 0);
+    }
+    else if (periodData === 'month') {
+
+        const currentWeekOrders = await Order.find({
+            createdAt: {
+                $gte: last3Months[2].start,
+                $lte: last3Months[2].end,
+            },
+            'info.0.provider': spid
+        }).populate('info.service');
+
+        revenueData[2] = currentWeekOrders.reduce((acc, order) => {
+            return acc + order?.info[0].service?.price;
+        }, 0);
+
+
+        const lastWeekOrders = await Order.find({
+            createdAt: {
+                $gte: last3Months[1].start,
+                $lte: last3Months[1].end,
+            },
+            'info.0.provider': spid
+        }).populate('info.service');
+
+        revenueData[1] = lastWeekOrders.reduce((acc, order) => {
+            return acc + order?.info[0].service?.price;
+        }, 0);
+
+
+        const prevWeekOrders = await Order.find({
+            createdAt: {
+                $gte: last3Months[0].start,
+                $lte: last3Months[0].end,
+            },
+            'info.0.provider': spid
+        }).populate('info.service');
+
+        revenueData[0] = prevWeekOrders.reduce((acc, order) => {
+            return acc + order?.info[0].service?.price;
+        }, 0);
+    }
+
+    console.log('----><<', revenueData, '------<><>', periodData);
+
+    return res.json({
+        success: revenueData ? true : false,
+        revenue: revenueData
+    })
+});
+
+
+const getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
+    const { periodData, spid } = req.body;
+    if (!periodData) {
+        return res.status(400).json({
+            success: false,
+            error: 'Missing Input'
+        });
+    }
+
+    const last3Weeks = get3RecentWeekRange();
+    const last3Months = getLastThreeMonthsStartEnd(new Date());
+
+    console.log('..........', last3Weeks);
+
+    let newCustomerData = [0,0,0];
+    if (periodData === 'week') {
+        // console.log('......', last3Weeks[0]);
+        // console.log('......', spid);
+
+        const currentWeekOrders = await Order.find({
+            'info.0.provider': spid
+        }).populate('info.service').populate('orderBy');
+
+        // console.log('..........', currentWeekOrders);
+
+        let currentWeekCustomers = currentWeekOrders.map((order) => {
+            return order.orderBy;
+        });
+        currentWeekCustomers = currentWeekCustomers.filter(function(item, pos, self) {
+            return self.indexOf(item) == pos;
+        })
+    
+        // console.log('..........', currentWeekCustomers);
+
+        let newCusCnt = 0;
+        for (const customer of currentWeekCustomers) {
+            const pastOrder = await Order.find({
+                'info.0.provider': spid,
+                orderBy: customer._id
+            });
+
+            // console.log('....:::::---', pastOrder.length);
+
+            if (pastOrder?.length === 1) {
+                ++newCusCnt;
+            }
+        }
+        newCustomerData[2] = newCusCnt;
+
+
+        const lastWeekOrders = await Order.find({
+            createdAt: {
+                $gte: new Date(last3Months[1].start),
+                $lte: new Date(last3Months[1].end),
+            },
+            'info.0.provider': spid
+        }).populate('info.service').populate('orderBy');
+
+        let lastWeekCustomers = lastWeekOrders.map((order) => {
+            return order.orderBy;
+        });
+        lastWeekCustomers = lastWeekCustomers.filter(function(item, pos, self) {
+            return self.indexOf(item) == pos;
+        })
+
+        newCusCnt = 0;
+        for (const customer of lastWeekCustomers) {
+            const pastOrder = await Order.find({
+                'info.0.provider': spid,
+                orderBy: customer._id
+            });
+
+            if (pastOrder?.length === 1) {
+                ++newCusCnt;
+            }
+        }
+        newCustomerData[1] = newCusCnt;
+
+
+        const prevWeekOrders = await Order.find({
+            createdAt: {
+                $gte: new Date(last3Months[2].start),
+                $lte: new Date(last3Months[2].end),
+            },
+            'info.0.provider': spid
+        }).populate('info.service').populate('orderBy');
+
+        let prevWeekCustomers = prevWeekOrders.map((order) => {
+            return order.orderBy;
+        });
+        prevWeekCustomers = prevWeekCustomers.filter(function(item, pos, self) {
+            return self.indexOf(item) == pos;
+        })
+
+        newCusCnt = 0;
+        for (const customer of prevWeekCustomers) {
+            const pastOrder = await Order.find({
+                'info.0.provider': spid,
+                orderBy: customer._id
+            });
+
+            if (pastOrder?.length === 1) {
+                ++newCusCnt;
+            }
+        }
+        newCustomerData[0] = newCusCnt;
+    }
+    else if (periodData === 'month') {
+
+        console.log(last3Months[2].start);
+        console.log(last3Months[2].end);
+        const currentWeekOrders = await Order.find({
+            createdAt: {
+                $gte: new Date(last3Months[2].start),
+                $lte: new Date(last3Months[2].end),
+            },
+            'info.0.provider': spid
+        }).populate('info.service').populate('orderBy');
+
+        let currentWeekCustomers = currentWeekOrders.map((order) => {
+            return order.orderBy;
+        });
+        currentWeekCustomers = currentWeekCustomers.filter(function(item, pos, self) {
+            return self.indexOf(item) == pos;
+        })
+
+        let newCusCnt = 0;
+        for (const customer of currentWeekCustomers) {
+            const pastOrder = await Order.find({
+                'info.0.provider': spid,
+                orderBy: customer._id
+            });
+
+            if (pastOrder?.length === 1) {
+                ++newCusCnt;
+            }
+        }
+        newCustomerData[2] = newCusCnt;
+
+
+
+        const lastWeekOrders = await Order.find({
+            createdAt: {
+                $gte: new Date(last3Months[1].start),
+                $lte: new Date(last3Months[1].end),
+            },
+            'info.0.provider': spid
+        }).populate('info.service').populate('orderBy');
+
+        let lastWeekCustomers = lastWeekOrders.map((order) => {
+            return order.orderBy;
+        });
+        lastWeekCustomers = lastWeekCustomers.filter(function(item, pos, self) {
+            return self.indexOf(item) == pos;
+        })
+
+        newCusCnt = 0;
+        for (const customer of lastWeekCustomers) {
+            const pastOrder = await Order.find({
+                'info.0.provider': spid,
+                orderBy: customer._id
+            });
+
+            if (pastOrder?.length === 1) {
+                ++newCusCnt;
+            }
+        }
+        newCustomerData[1] = newCusCnt;
+
+
+
+        const prevWeekOrders = await Order.find({
+            createdAt: {
+                $gte: new Date(last3Months[0].start),
+                $lte: new Date(last3Months[0].end),
+            },
+            'info.0.provider': spid
+        }).populate('info.service').populate('orderBy');
+
+        let prevWeekCustomers = prevWeekOrders.map((order) => {
+            return order.orderBy;
+        });
+        prevWeekCustomers = prevWeekCustomers.filter(function(item, pos, self) {
+            return self.indexOf(item) == pos;
+        })
+
+        newCusCnt = 0;
+        for (const customer of prevWeekCustomers) {
+            const pastOrder = await Order.find({
+                'info.0.provider': spid,
+                orderBy: customer._id
+            });
+
+            if (pastOrder?.length === 1) {
+                ++newCusCnt;
+            }
+        }
+        newCustomerData[0] = newCusCnt;
+    }
+
+    // console.log('----><<', newCustomerData, '------<><>', periodData);
+
+    return res.json({
+        success: newCustomerData ? true : false,
+        newCustomer: newCustomerData
+    });
+});
+
+
+function getSpecificMonthStartEnd(month, year) {
+    // Ensure month is within the valid range (1-12)
+    if (month < 1 || month > 12) {
+        throw new Error('Month must be between 1 and 12');
+    }
+
+    // Start of the month (set to the 1st day of the specified month and year)
+    const startOfMonth = new Date(year, month - 1, 1); // month - 1 because Date months are 0-indexed
+    startOfMonth.setHours(0, 0, 0, 0); // Set to start of the day
+
+    // End of the month (set to the last day of the specified month and year)
+    const endOfMonth = new Date(year, month, 0); // 0 gets the last day of the previous month
+    endOfMonth.setHours(23, 59, 59, 999); // Set to end of the day
+
+    return {
+        start: startOfMonth,
+        end: endOfMonth
+    };
+}
+const getAllOrderSpecificMonth = async (month, year, spid) => {
+    const startEndThisMonth = getSpecificMonthStartEnd(month, year);
+    // console.log(startEndThisMonth, ";;;;;;;;;;;;;;;;");
+    let ordersByProv = await Order.find({
+        // createdAt: {
+        //     $gte: startEndThisMonth.start,
+        //     $lte: startEndThisMonth.end,
+        // },
+        'info.0.provider': spid
+    })
+    .populate('info.service')
+    .populate('info.staff')
+    .populate('orderBy');
+
+    const res = ordersByProv.filter(order => {
+        const dates = order?.info[0]?.date?.split('/').map(Number);
+        // console.log(dates, "-----))))")
+
+        return dates[1] === month && dates[2] === year;
+    });
+
+    // console.log(res, ':::::::');
+
+    return res;
+}
+const getCustomerDataByMonth = asyncHandler(async (req, res) => {
+    const { currMonth, currYear, spid } = req.body;
+    if (!currMonth || !currYear || currMonth < 0 || currMonth > 12 || !spid) {
+        return res.status(400).json({
+            success: false,
+            error: 'Missing Input'
+        });
+    }
+
+
+    const allOrdersThisMonth = await getAllOrderSpecificMonth(currMonth, currYear, spid);
+
+    let allCustomersThisMonth = allOrdersThisMonth.map(order => {
+        return order.orderBy;
+    });
+    allCustomersThisMonth = allCustomersThisMonth.filter(function(item, pos, self) {
+        return self.indexOf(item) == pos;
+    })
+
+    let newCusCnt = 0;
+    for (const customer of allCustomersThisMonth) {
+        const pastOrder = await Order.find({
+            'info.0.provider': spid,
+            orderBy: customer._id
+        });
+
+        if (pastOrder?.length === 1) {
+            ++newCusCnt;
+        }
+    }
+
+    return res.json({
+        success: true,
+        newCustomers: newCusCnt,
+        returningCustomers: allCustomersThisMonth.length - newCusCnt
+    });
+});
+
+const getThisMonthRevenueAndOrderStatistic = asyncHandler(async (req, res) => {
+    const { currMonth, currYear, spid } = req.body;
+    if (!currMonth || !currYear || currMonth < 0 || currMonth > 12) {
+        return res.status(400).json({
+            success: false,
+            error: 'Missing Input'
+        });
+    }
+
+    let canceledOrderCurrMonth = 0;
+    let finishedOrderCurrMonth = 0;
+    // filter by current Month-Year and previous Month-Year
+    let allOrdersThisMonth = await getAllOrderSpecificMonth(currMonth, currYear, spid);
+
+    let numDaysInMonth = new Date(currYear, currMonth, 0).getDate();
+    let revenueMonthList = Array(numDaysInMonth).fill(0);
+    allOrdersThisMonth.forEach(order => {
+        if (order.status === 'Successful' && order.info[0]?.date) {
+            const dates = order.info[0].date.split('/');
+            // // Kết hợp formattedDate và time để tạo datetime
+            // const cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+
+            // const indexByDate = cDate.getDate()-1;
+
+            console.log(`============&&&&&&&&&&&&&&&&${dates}`)
+
+            revenueMonthList[dates[0]-1] += order.total;
+            ++finishedOrderCurrMonth;
+        }
+        else if (order.status === 'Cancelled') {
+            ++canceledOrderCurrMonth;
+        }
+    });
+    // canceledOrderCurrMonth = allOrder.filter(ele => ele.status === "canceled");
+    // finishedOrderCurrMonth = allOrder.filter(ele => ele.status === "finished");
+
+    return res.json({
+        success: true,
+        canceled: canceledOrderCurrMonth,
+        finished: finishedOrderCurrMonth,
+        revenueSeries: revenueMonthList
+    });
+});
+
+function getMinutesDifference(startTime, endTime) {
+    if (startTime?.length === 0 || endTime?.length === 0) {
+        return 0;
+    }
+    // Split the time strings into hours and minutes
+    const [startHours, startMinutes] = startTime.split(':').map(Number);
+    const [endHours, endMinutes] = endTime.split(':').map(Number);
+
+    // Convert both times to total minutes
+    const startTotalMinutes = startHours * 60 + startMinutes;
+    const endTotalMinutes = endHours * 60 + endMinutes;
+
+    // Calculate the difference in minutes
+    return endTotalMinutes - startTotalMinutes;
+}
+const getOccupancy3RecentStatistic = asyncHandler(async (req, res) => {
+    const { periodData,spid } = req.body;
+    if (!periodData || !spid) {
+        return res.status(400).json({
+            success: false,
+            error: 'Missing Input'
+        });
+    }
+
+    const serviceProviderInfo = await ServiceProvider.findById(spid);
+    let totalWorkingHoursOfProviderPerWeek = 0;
+    [
+        'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
+    ].forEach(day => {
+        totalWorkingHoursOfProviderPerWeek +=
+            getMinutesDifference(serviceProviderInfo?.time[`start${day}`], serviceProviderInfo?.time[`end${day}`]);
+    });
+
+    const last3Weeks = get3RecentWeekRange();
+    const last3Months = getLastThreeMonthsStartEnd(new Date());
+
+    let occupancyData = [0,0,0];
+    if (periodData === 'week') {
+        const currentWeekOrders = await Order.find({
+            createdAt: {
+                $gte: new Date(last3Weeks[0][0]),
+                $lte: new Date(last3Weeks[0][1]),
+            },
+            'info.0.provider': spid
+        }).populate('info.service').populate('orderBy');
+
+        // console.log('..........', currentWeekOrders);
+
+        let sumDurationsAllOrders = currentWeekOrders.reduce((acc, order) => {
+            return acc + order?.info[0].service?.duration;
+        }, 0);
+    
+        console.log('..//////////', sumDurationsAllOrders);
+
+        occupancyData[2] = sumDurationsAllOrders * 100 / (totalWorkingHoursOfProviderPerWeek || 1);
+
+        console.log('..//////////', totalWorkingHoursOfProviderPerWeek);
+
+
+        const lastWeekOrders = await Order.find({
+            createdAt: {
+                $gte: new Date(last3Weeks[1][0]),
+                $lte: new Date(last3Weeks[1][1]),
+            },
+            'info.0.provider': spid
+        }).populate('info.service').populate('orderBy');
+        // console.log('..........', currentWeekOrders);
+
+        sumDurationsAllOrders = lastWeekOrders.reduce((acc, order) => {
+            return acc + order?.info[0].service?.duration;
+        }, 0);
+    
+        console.log('..//////////', sumDurationsAllOrders);
+
+        occupancyData[1] = sumDurationsAllOrders * 100 / (totalWorkingHoursOfProviderPerWeek || 1);
+
+
+        const prevWeekOrders = await Order.find({
+            createdAt: {
+                $gte: new Date(last3Weeks[2][0]),
+                $lte: new Date(last3Weeks[2][1]),
+            },
+            'info.0.provider': spid
+        }).populate('info.service').populate('orderBy');
+        // console.log('..........', currentWeekOrders);
+
+        sumDurationsAllOrders = lastWeekOrders.reduce((acc, order) => {
+            return acc + order?.info[0].service?.duration;
+        }, 0);
+    
+        console.log('..//////////', sumDurationsAllOrders * 100 / (totalWorkingHoursOfProviderPerWeek || 1));
+
+        occupancyData[0] = sumDurationsAllOrders * 100 / (totalWorkingHoursOfProviderPerWeek || 1);
+    }
+    else if (periodData === 'month') {
+
+        console.log(last3Months[2].start);
+        console.log(last3Months[2].end);
+        const currentWeekOrders = await Order.find({
+            createdAt: {
+                $gte: new Date(last3Months[2].start),
+                $lte: new Date(last3Months[2].end),
+            },
+            'info.0.provider': spid
+        }).populate('info.service').populate('orderBy');
+
+        let currentWeekCustomers = currentWeekOrders.map((order) => {
+            return order.orderBy;
+        });
+        currentWeekCustomers = currentWeekCustomers.filter(function(item, pos, self) {
+            return self.indexOf(item) == pos;
+        })
+
+        let newCusCnt = 0;
+        for (const customer of currentWeekCustomers) {
+            const pastOrder = await Order.find({
+                'info.0.provider': spid,
+                orderBy: customer._id
+            });
+
+            if (pastOrder?.length === 1) {
+                ++newCusCnt;
+            }
+        }
+        newCustomerData[2] = newCusCnt;
+
+
+
+        const lastWeekOrders = await Order.find({
+            createdAt: {
+                $gte: new Date(last3Months[1].start),
+                $lte: new Date(last3Months[1].end),
+            },
+            'info.0.provider': spid
+        }).populate('info.service').populate('orderBy');
+
+        let lastWeekCustomers = lastWeekOrders.map((order) => {
+            return order.orderBy;
+        });
+        lastWeekCustomers = lastWeekCustomers.filter(function(item, pos, self) {
+            return self.indexOf(item) == pos;
+        })
+
+        newCusCnt = 0;
+        for (const customer of lastWeekCustomers) {
+            const pastOrder = await Order.find({
+                'info.0.provider': spid,
+                orderBy: customer._id
+            });
+
+            if (pastOrder?.length === 1) {
+                ++newCusCnt;
+            }
+        }
+        newCustomerData[1] = newCusCnt;
+
+
+
+        const prevWeekOrders = await Order.find({
+            createdAt: {
+                $gte: new Date(last3Months[0].start),
+                $lte: new Date(last3Months[0].end),
+            },
+            'info.0.provider': spid
+        }).populate('info.service').populate('orderBy');
+
+        let prevWeekCustomers = prevWeekOrders.map((order) => {
+            return order.orderBy;
+        });
+        prevWeekCustomers = prevWeekCustomers.filter(function(item, pos, self) {
+            return self.indexOf(item) == pos;
+        })
+
+        newCusCnt = 0;
+        for (const customer of prevWeekCustomers) {
+            const pastOrder = await Order.find({
+                'info.0.provider': spid,
+                orderBy: customer._id
+            });
+
+            if (pastOrder?.length === 1) {
+                ++newCusCnt;
+            }
+        }
+        newCustomerData[0] = newCusCnt;
+    }
+    return res.json({
+        success: occupancyData ? true : false,
+        occupancy: occupancyData
+    })
+});
+
+const getOccupancyByDayCurrentMonth = asyncHandler(async (req, res) => {
+    const { currMonth, currYear, spid } = req.body;
+    if (!currMonth || !currYear || currMonth < 0 || currMonth > 12) {
+        return res.status(400).json({
+            success: false,
+            error: 'Missing Input'
+        });
+    }
+
+    const workingHourByDayMap = [];
+    const serviceProviderInfo = await ServiceProvider.findById(spid);
+    // let totalWorkingHoursOfProviderPerWeek = 0;
+    // order of this correspond to number return by getDay() method
+    [
+         'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'
+    ].forEach(day => {
+        workingHourByDayMap.push(
+            getMinutesDifference(serviceProviderInfo?.time[`start${day}`], serviceProviderInfo?.time[`end${day}`])
+        );
+    });
+
+    let allOrdersThisMonth = await getAllOrderSpecificMonth(currMonth, currYear, spid);
+
+    // console.log('------', allOrdersThisMonth);
+
+    let numDaysInMonth = new Date(currYear, currMonth, 0).getDate();
+    let occupancyMonthList = Array(numDaysInMonth).fill(0);
+    let workingHoursList = Array(numDaysInMonth).fill(0);
+
+    // console.log('..........OOOOOO.....', workingHourByDayMap, '..........OOOOOO.....');
+
+    allOrdersThisMonth.forEach(order => {
+        // console.log(order.info, 'order.info++++++===;[;');
+        if (order.status === 'Successful' && order.info?.length > 0) {
+            for (const item of order.info) {
+                const [day, month, year] = item.date.split('/').map(e => e.padStart(2,'0'));
+                // console.log(`***********************************${year}-${month}-${day}T00:00:00Z`);
+                  // // Kết hợp formattedDate và time để tạo datetime
+                const cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+                console.log('CDate:  ' + cDate.toISOString());
+                const itemDate = cDate.getDate();
+                // const itemMonth = item.dateTime.getMonth()+1;
+                const itemDayWeek = cDate.getDay();
+
+                // console.log(';;;;;;;;;;;;;;;;', item.)
+                // console.log(';', currYear)
+                
+                    const indexByDate = itemDate - 1;
+                    // console.log(item.service, '++++++++==');
+                    occupancyMonthList[indexByDate] += item.service?.duration;
+                    console.log(occupancyMonthList[indexByDate])
+                    // console.log('----;;;;-;;;;', item?.service);
+                    workingHoursList[indexByDate] = workingHourByDayMap[itemDayWeek];
+
+            }
+        }
+    });
+    // console.log(occupancyMonthList);
+    for (const idx in occupancyMonthList) {
+        if (workingHoursList[idx] > 0) {
+            occupancyMonthList[idx] = Math.ceil(occupancyMonthList[idx] * 100 / workingHoursList[idx]);
+        }
+        else occupancyMonthList[idx] = 0;
+    }
+
+    // console.log(occupancyMonthList, '++++++++++');
+    // console.log(workingHoursList, '++++++++++');
+
+    return res.json({
+        success: true,
+        occupancySeries: occupancyMonthList
+    })
+});
+
+const getOccupancyByServices = asyncHandler(async (req, res) => {
+    const { currMonth, currYear, spid } = req.body;
+    if (!currMonth || !currYear || currMonth < 0 || currMonth > 12 || !spid) {
+        return res.status(400).json({
+            success: false,
+            error: 'Missing Input'
+        });
+    }
+
+    let allOrdersThisMonth = await getAllOrderSpecificMonth(currMonth, currYear, spid);
+    console.log('ALl Service In Orders: ', allOrdersThisMonth.length, currMonth, currYear);
+
+    let allServiceInOrders = [];
+    // console.log('ALl Service In Orders: ', allServiceInOrders);
+    // allServiceInOrders = allServiceInOrders.filter((serv, idx, self) => {
+    //     return self.indexOf()
+    // })
+
+    let orderCountByService = {};
+    let revenueCountByService = {};
+    let sumWorkedHourByService = {};
+
+    allOrdersThisMonth.forEach(order => {
+        if (order.info?.length > 0) {
+            for (const item of order.info) {
+                if (!item.service || !item.service?._id) continue;
+
+                if (allServiceInOrders.filter(serv => serv._id === item.service?._id).length === 0) {
+                    allServiceInOrders.push(item.service);
+                }
+                sumWorkedHourByService[item.service?._id] = (sumWorkedHourByService[item.service?._id] || 0) + item.service.duration;
+                orderCountByService[item.service?._id] = (orderCountByService[item.service?._id] || 0) + 1;
+                revenueCountByService[item.service?._id] = (revenueCountByService[item.service?._id] || 0) + item.service.price;
+            }
+        }
+    });
+
+
+    const serviceProviderInfo = await ServiceProvider.findById(spid);
+    let totalWorkingHoursOfProviderPerWeek = 0;
+    [
+        'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
+    ].forEach(day => {
+        totalWorkingHoursOfProviderPerWeek +=
+            getMinutesDifference(serviceProviderInfo?.time[`start${day}`], serviceProviderInfo?.time[`end${day}`]);
+    });
+
+    console.log("---||||-->", orderCountByService);
+    console.log("---||||-->", sumWorkedHourByService);
+    console.log("---||||-->", revenueCountByService);
+
+    // let numDaysInMonth = new Date(currYear, currMonth, 0).getDate();
+    for (const idx in allServiceInOrders) {
+        const serviceId = allServiceInOrders[idx]._id;
+
+        allServiceInOrders[idx] = {
+            ...(allServiceInOrders[idx].toObject()),
+            numberOrders: orderCountByService[serviceId],
+            revenue: revenueCountByService[serviceId],
+            occupancy: sumWorkedHourByService[serviceId] * 100 / totalWorkingHoursOfProviderPerWeek * 4
+        }
+        //     ;
+        // allServiceInOrders[idx].;
+        // allServiceInOrders[idx].
+    }
+
+    // desc sort then take only top 3
+    allServiceInOrders.sort((a,b) => {
+        return (a.revenue > b.revenue) ? -1 : ((b.revenue > a.revenue) ? 1 : 0)
+    });
+    allServiceInOrders = allServiceInOrders.slice(0, 3);
+
+    return res.json({
+        success: true,
+        performance: allServiceInOrders
+    })
+});
+
+const getOccupancyByStaffs = asyncHandler(async (req, res) => {
+    const { currMonth, currYear, spid } = req.body;
+    if (!currMonth || !currYear || currMonth < 0 || currMonth > 12) {
+        return res.status(400).json({
+            success: false,
+            error: 'Missing Input'
+        });
+    }
+
+    let allOrdersThisMonth = await getAllOrderSpecificMonth(currMonth, currYear, spid);
+    console.log('ALl Orders This Month: ', allOrdersThisMonth.length, currMonth, currYear);
+    let allStaffInOrders = [];
+
+    let orderCountByStaff = {};
+    let revenueCountByStaff = {};
+    let sumWorkedHourByStaff = {};
+
+    allOrdersThisMonth.forEach(order => {
+        if (order.info?.length > 0) {
+            for (const item of order.info) {
+                if (!item.staff || !item.staff?._id || !item.service) continue;
+
+                if (allStaffInOrders.filter(staff => staff._id === item.staff?._id).length === 0) {
+                    // console.log('---------JJJJJJJJ', item.staff);
+                    allStaffInOrders.push(item.staff);
+                }
+                sumWorkedHourByStaff[item.staff?._id] = (sumWorkedHourByStaff[item.staff?._id] || 0) + item.service?.duration;
+                orderCountByStaff[item.staff?._id] = (orderCountByStaff[item.staff?._id] || 0) + 1;
+                revenueCountByStaff[item.staff?._id] = (revenueCountByStaff[item.staff?._id] || 0) + item.service?.price;
+            }
+        }
+    });
+
+    // console.log('----:::::::', allStaffInOrders);
+
+    const serviceProviderInfo = await ServiceProvider.findById(spid);
+    let totalWorkingHoursOfProviderPerWeek = 0;
+    [
+        'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
+    ].forEach(day => {
+        totalWorkingHoursOfProviderPerWeek +=
+            getMinutesDifference(serviceProviderInfo?.time[`start${day}`], serviceProviderInfo?.time[`end${day}`]);
+    });
+
+    // console.log("----->", orderCountByService);
+
+    // let numDaysInMonth = new Date(currYear, currMonth, 0).getDate();
+    for (const idx in allStaffInOrders) {
+        const staffId = allStaffInOrders[idx]._id;
+
+        allStaffInOrders[idx] = {
+            ...(allStaffInOrders[idx].toObject()),
+            numberOrders: orderCountByStaff[staffId],
+            revenue: revenueCountByStaff[staffId],
+            occupancy: sumWorkedHourByStaff[staffId] * 100 / totalWorkingHoursOfProviderPerWeek * 4
+        }
+    }
+
+    // desc sort then take only top 3
+    allStaffInOrders.sort((a,b) => {
+        return (a.revenue > b.revenue) ? -1 : ((b.revenue > a.revenue) ? 1 : 0);
+    });
+    allStaffInOrders = allStaffInOrders.slice(0, 3);
+
+    return res.json({
+        success: true,
+        performance: allStaffInOrders
+    })
+});
 
 module.exports = {
     getRevenueByDateRange,
-    getRevenueStatistic
+    getRevenueStatistic,
+    getRevenue3RecentStatistic,
+    getNewCustomer3RecentStatistic,
+    getOccupancy3RecentStatistic,
+    getThisMonthRevenueAndOrderStatistic,
+    getCustomerDataByMonth,
+    getOccupancyByDayCurrentMonth,
+    getOccupancyByServices,
+    getOccupancyByStaffs
 }

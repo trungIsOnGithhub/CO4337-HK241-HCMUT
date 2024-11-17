@@ -3,7 +3,7 @@ const ctrls = require('../controllers/order')
 const {verifyAccessToken, isAdmin} = require('../middlewares/verify_token')
 
 router.post('/',[verifyAccessToken], ctrls.createNewOrder)
-router.put('/status/:oid',[verifyAccessToken, isAdmin], ctrls.updateStatus)
+router.put('/status/:oid',ctrls.updateStatus) 
 router.put('/update_email',[verifyAccessToken] , ctrls.updateEmailByBookingId)
 router.get('/admin',[verifyAccessToken, isAdmin], ctrls.getOrdersByAdmin)
 router.get('/admin/:bookingid', ctrls.getOneOrderByAdmin)

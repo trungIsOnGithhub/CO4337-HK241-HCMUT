@@ -46,6 +46,7 @@ export {default as ProductItem} from './Products/ProductItem'
 
 export {default as InputField} from './Input/InputField'
 export {default as InputSelect} from './Input/InputSelect'
+export {default as NewInputSelect} from './Input/NewInputSelect'
 export {default as InputForm} from './Input/InputForm'
 export {default as Select} from './Input/Select'
 export {default as MarkdownEditor} from './Input/MarkdownEditor'

@@ -120,7 +120,7 @@ const MessageBox = ({currentChat}) => {
 }
 
   return (
-    <div className='fixed bottom-0 right-0 mb-4 mr-8 z-50 w-[300px] h-[400px] bg-slate-200 border border-gray-400 rounded-md overflow-hidden shadow-lg flex flex-col z-1000'>
+    <div className='fixed bottom-0 right-0 mb-4 mr-8 z-50 w-[300px] h-[400px] bg-white border border-gray-400 rounded-md overflow-hidden shadow-lg flex flex-col z-1000'>
       <div className='flex justify-between px-4 py-2 border-b border-gray-400 items-center'>
         <div className='flex gap-4 justify-start'>
           <div className='avatar'>
@@ -164,7 +164,7 @@ const MessageBox = ({currentChat}) => {
           }
    {
                         openQuestionsMenu &&
-                        <div className='bg-slate-400 w-full px-2 py-6 flex flex-col justify-center rounded-md z-99 sticky top-0 left-1/4'>
+                        <div className='bg-slate-300 w-full px-2 py-6 flex flex-col justify-center rounded-md z-99 sticky top-0 left-1/4'>
                             <h4 className='text-center font-semibold text-sm'>Given Questions</h4>
                             {
                                     currentChatProvider?.chatGivenQuestions?.map(qna => {
@@ -201,6 +201,7 @@ const MessageBox = ({currentChat}) => {
             )
           })
         }
+
       </div>
       <div className='flex w-full gap-4 items-center px-2 py-1 border-t border-gray-400 bg-slate-200'>
         <div className='text-yellow-400 cursor-pointer text-xl font-semibold flex items-center relative'>
@@ -213,7 +214,7 @@ const MessageBox = ({currentChat}) => {
           }
         </div>
         <form className='flex-1 flex gap-1 items-center' onSubmit={(e)=>sendChat(e)}>
-            <input className='inline-block w-[90%] border border-gray-400 rounded-md outline-none px-1 py-1 placeholder:text-gray-400 placeholder:italic' type='text' placeholder='Type your message here ...' value={msg} onChange={(e)=>setMsg(e.target.value)}/>
+            <input className='inline-block w-[90%] border border-gray-400 bg-slate-500 rounded-md outline-none px-1 py-1 text-slate-600 placeholder:italic' type='text' placeholder='Your message here ...' value={msg} onChange={(e)=>setMsg(e.target.value)}/>
             <button className='text-xl font-semibold'>
                 <IoMdSend />
             </button>

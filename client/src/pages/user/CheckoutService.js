@@ -1,20 +1,22 @@
 import React, { memo, useEffect, useState } from 'react';
 import paypalLogo from 'assets/card-payment.svg';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { formatPrice, formatPricee } from 'ultils/helper';
 import { Congratulation, InputForm, Paypal } from 'components';
-import withBaseComponent from 'hocs/withBaseComponent';
+// import withBaseComponent from 'hocs/withBaseComponent';
 import { getCurrent } from 'store/user/asyncAction';
-import path from 'ultils/path';
+// import path from 'ultils/path';
 import axios from 'axios'; // Import Axios
 import { apiGetCurrent, apiValidateAndUseCoupon, apiUpdateCouponUsage } from 'apis/coupon'; // Thêm dòng này
-import { useLocation } from 'react-router-dom';
 import { MdOutlineDiscount } from 'react-icons/md';
 import { FaPaypal } from "react-icons/fa";
 import { SiZalo } from "react-icons/si";
 import { TbTruckDelivery } from "react-icons/tb";
+import { useNavigate, useLocation } from 'react-router-dom';
 
-const CheckoutService = ({ dispatch, navigate }) => {
+const CheckoutService = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { currentCartService, current: currentUser } = useSelector((state) => state.user);
   console.log(currentCartService)
   const [isSuccess, setIsSuccess] = useState(false);
@@ -238,4 +240,4 @@ const CheckoutService = ({ dispatch, navigate }) => {
   );
 };
 
-export default withBaseComponent(memo(CheckoutService));
+export default memo(CheckoutService);

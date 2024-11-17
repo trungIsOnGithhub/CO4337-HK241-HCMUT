@@ -19,7 +19,7 @@ import clsx from 'clsx'
 import { MdOutlineCategory } from 'react-icons/md'
 const {FaEye, FaHeart, FaCartPlus, BsCartCheckFill} = icons
 
-const Service = ({serviceData}) => {
+const Service = ({serviceData, keyToExtract='_source'}) => {
   const [isShowOption, setIsShowOption] = useState(false)
   const {current} = useSelector(state => state.user)
   const navigate = useNavigate()
@@ -27,7 +27,7 @@ const Service = ({serviceData}) => {
   const location = useLocation()
 
   const handleNavigateLearnMoreService = ( ) => {
-    navigate(`/service/${serviceData?.sv?.category?.toLowerCase()}/${serviceData?.sv?._id}/${serviceData?.sv?.name}`)
+    navigate(`/service/${serviceData?.[keyToExtract]?.category?.toLowerCase()}/${serviceData?.[keyToExtract]?._id}/${serviceData?.[keyToExtract]?.name}`)
   }
 
   const handleNavigateBookService = () => {
@@ -52,22 +52,22 @@ const Service = ({serviceData}) => {
     }
     else{
       navigate({
-        pathname:  `/${path.BOOKING}`,
-        search: createSearchParams({sid: serviceData?.sv?._id}).toString()
+        pathname: `/${path.BOOKING}`,
+        search: createSearchParams({sid: serviceData?.[keyToExtract]?._id}).toString()
     })
     }
   }
 
   return (
     <div className='cursor-pointer w-full h-fit rounded-md relative shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300'>
-        <div className='w-full h-[150px]' onClick={()=>{navigate(`/service/${serviceData?.sv?.category?.toLowerCase()}/${serviceData?.sv?._id}/${serviceData?.sv?.name}`)}}>
-            <img className='h-full w-full object-cover rounded-t-md' src={serviceData?.sv?.thumb} alt={serviceData?.sv?.name} />
+        <div className='w-full h-[150px]' onClick={()=>{navigate(`/service/${serviceData?.[keyToExtract]?.category?.toLowerCase()}/${serviceData?.[keyToExtract]?._id}/${serviceData?.[keyToExtract]?.name}`)}}>
+            <img className='h-full w-full object-cover rounded-t-md' src={serviceData?.[keyToExtract]?.thumb} alt={serviceData?.[keyToExtract]?.name} />
         </div>
         <div className='w-full h-[184px] rounded-b-md px-[16px] py-[12px] flex flex-col justify-between'>
             <div className='w-full flex flex-col gap-1'>
-                <span className='text-[18px] font-medium line-clamp-1'>{serviceData?.sv?.name}</span>
-                <span className='text-[14px] text-[#868e96] flex gap-2 items-center'>Duration <span className='text-black font-medium'>{`${serviceData?.sv?.duration}min`}</span></span>
-                <span className='text-[14px] text-[#868e96] flex items-center gap-2'><span className='flex gap-1 items-center'><MdOutlineCategory /> Category</span> <span className='font-medium'>{`${serviceData?.sv?.category}`}</span></span>
+                <span className='text-[18px] font-medium line-clamp-1'>{serviceData?.[keyToExtract]?.name}</span>
+                <span className='text-[14px] text-[#868e96] flex gap-2 items-center'>Duration <span className='text-black font-medium'>{`${serviceData?.[keyToExtract]?.duration}min`}</span></span>
+                <span className='text-[14px] text-[#868e96] flex items-center gap-2'><span className='flex gap-1 items-center'><MdOutlineCategory /> Category</span> <span className='font-medium'>{`${serviceData?.[keyToExtract]?.category}`}</span></span>
             </div>
             <div className='flex justify-between'>
             <Button handleOnclick={handleNavigateLearnMoreService} style={'px-[23px] rounded-md text-black border border-[#868e96] w-fit h-[40px] hover:bg-gray-400'}>Learn more</Button>
@@ -75,7 +75,7 @@ const Service = ({serviceData}) => {
             </div>
         </div>
         <div className='absolute right-2 top-2 w-fit h-fit px-[8px] py-[4px] bg-[#0a66c2] text-white rounded-md'>
-            <span className='text-[14px] flex items-center font-medium'>{`${formatPrice(formatPricee(serviceData?.sv?.price))} VNĐ`}</span>
+            <span className='text-[14px] flex items-center font-medium'>{`${formatPrice(formatPricee(serviceData?.[keyToExtract]?.price))} VNĐ`}</span>
         </div>
     </div>
   )

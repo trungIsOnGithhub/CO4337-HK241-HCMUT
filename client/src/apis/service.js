@@ -50,10 +50,20 @@ export const apiGetMostPurchasedServicesByYear = (data) => axios({
     method: 'post',
     data
 })
-
-
 export const apiGetServiceByProviderId = (prid, params) => axios({
     url: '/service/public/' + prid,
     method: 'get',
     params
+})
+
+export const apiSearchServicePublic = (params) => axios({
+    url: '/service/public_search',
+    method: 'get',
+    params
+})
+
+export const apiSearchServiceAdvanced = (data) => axios({
+    url: '/service/advanced_search',
+    method: 'post',
+    data
 })

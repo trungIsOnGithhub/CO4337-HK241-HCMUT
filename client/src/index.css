@@ -113,10 +113,10 @@
     /* border: 1px solid #ccc !important; */
     color: #ccc !important;
   }
-  .apexcharts-tooltip {
+  /* .apexcharts-tooltip {
     background: grey;
     color: lightseagreen  ;
-  }
+  } */
 
   @keyframes glow {
     0% {

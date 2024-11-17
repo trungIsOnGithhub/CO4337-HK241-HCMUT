@@ -7,7 +7,8 @@ const sendMail = require('../ultils/sendMail')
 const crypto = require('crypto')
 const makeToken = require('uniqid')
 const {users} = require('../ultils//constant')
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
+const Staff = require('../models/staff')
 
 const makeTokenNumber = () => {
     return Math.floor(100000 + Math.random() * 900000).toString(); // Tạo mã 6 chữ số
@@ -124,18 +125,22 @@ const login = asyncHandler(async(req, res)=>{
     
     const response = await User.findOne({email})
     if(response && await response.isCorrectPassword(password)){
-        const {isBlocked} = response.toObject()
-        if(isBlocked){
+        const objectResponse = response.toObject();
+        const {isBlocked} = objectResponse;
+
+        if (isBlocked) {
             return res.status(400).json({
                 success: false,
                 mes: "Account is blocked"
             })}
-        const {password, role, refresh_token, ...userData} = response.toObject()
+        const {password, role, refresh_token, ...userData} = objectResponse;
+
         const accessToken = generateAccessToken(response._id, role)
         const refreshToken = generateRefreshToken(response._id)
 
         //Luu refresh token vao database
-        await User.findByIdAndUpdate(response._id, {refresh_token: refreshToken}, {new: true})
+        // await User.findByIdAndUpdate(response._id, {refresh_token: refreshToken}, {new: true});
+        
 
         //Luu refresh token vao cookie
         res.cookie('refreshToken', refreshToken, {httpOnly: true, maxAge: 7*24*60*60*1000})
@@ -188,13 +193,22 @@ const getOneUser = asyncHandler(async(req, res)=>{
 const refreshAccessToken = asyncHandler(async(req, res) => {
     const cookie = req.cookies
     if(!cookie && !cookie.refreshToken){
-        throw new Error("No refresh token in cookie")
+        return res.status(400).json({
+            success: false,
+            newAccessToken: "",
+            msg: "Bad Request" 
+        })
     }
-    const rs = await jwt.verify(cookie.refreshToken, process.env.JWT_SECRET) // Neu co loi se quang ngay tai day
-    const response = await User.findOne({_id: rs._id, refresh_token: cookie.refreshToken})
+    const rs = await jwt.verify(cookie.refreshToken, process.env.JWT_SECRET);
+
+    let response = null;
+    if (rs._id) {
+        response = await User.findOne({_id: rs._id, refresh_token: cookie.refreshToken})
+    }
+
     return res.status(200).json({
         success: response ? true : false,
-        newAccessToken: response ? generateAccessToken(response._id, response.role) : "Refressh token not matched" 
+        newAccessToken: response ? generateAccessToken(response._id, response.role) : "Refresh token not matched" 
     })
 })
 
@@ -488,29 +502,52 @@ const updateUserAddress = asyncHandler(async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+function convertH2MInexact(timeInHour){
+    let timeParts = timeInHour.split(":");
+    return Number(timeParts[0]) * 60 + Number(timeParts[1]);
+}
 // update cart_service
 const updateCartService = asyncHandler(async (req, res) => {
     const {_id} = req.user;
     const {service, provider, staff, time, date, duration, originalPrice, discountPrice, dateTime, coupon=null} = req.body;
     
     if (!service || !provider || !staff || !time || !date || !duration || !originalPrice || !dateTime) {
-        throw new Error("Missing input");
+        throw new Error("Request missing input data!");
     } else {
         const user = await User.findById(_id).select('cart_service');
         let response;
+
+        const thisStaff = await Staff.findById(staff);
+        // console.log('???????????????????'+thisStaff.work);
+        // console.log('???????????????????======='+time);
+
+        const overlapped = thisStaff.work.some(work => {
+            if (work.date !== date) {
+                return false;
+            }
+
+            const wStartMMI = convertH2MInexact(work.time);
+            const startMMI = convertH2MInexact(time);
+            if (startMMI + duration <= wStartMMI) {
+                return false;
+            }
+
+            const wEndMMI = wStartMMI + work.duration;
+            if (startMMI >= wEndMMI) {
+                return false;
+            }
+
+            return true;
+        });
+
+        console.log('.>>>>>>>>', overlapped);
+
+        if (overlapped) {
+            return res.status(409).json({
+                success: false,
+                mes: 'Your times and staff options has overlapped booking, please book new slot!'
+            });
+        }
 
         // Xóa hết tất cả các phần tử trong mảng 'cart'
         await User.findByIdAndUpdate(_id, {$set: {cart_service: []}}, {new: true});

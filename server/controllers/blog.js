@@ -3,6 +3,8 @@ const PostTag = require('../models/postTag')
 const asyncHandler = require('express-async-handler');
 const User = require('../models/user');
 const { prependListener } = require('../models/ServiceProvider');
+const ES_CONSTANT = require('../services/constant');
+// const esDBModule = require('../services/es');
 
 const createNewBlogPost = asyncHandler(async(req, res)=>{
     const {_id} = req.user
@@ -24,38 +26,46 @@ const createNewBlogPost = asyncHandler(async(req, res)=>{
 })
 
 const getAllBlogTags = asyncHandler(async (req,res) => {
-    const response = await PostTag.find()
-    // const response = [
-    //     {
-    //         "_id": {
-    //           "$oid": "66377327edf989f1ae865513"
-    //         },
-    //         label: "Tag 68",
-    //       },
-    //       {
-    //         "_id": {
-    //           "$oid": "66377327edf989f1ae865513"
-    //         },
-    //         label: "Sample Tag 999",
-    //       },
-    //       {
-    //         "_id": {
-    //           "$oid": "66377327edf989f1ae865513"
-    //         },
-    //         label: "Label Tag 99",
-    //       },
-    //       {
-    //         "_id": {
-    //           "$oid": "66377327edf989f1ae865513"
-    //         },
-    //         label: "Tag 96",
-    //       }
-    //   ]
+    let { limit, orderBy } = req.query;
+    if (!limit) limit = 10;
+    
+    const sortObj = { tagCount: -1 };
+    if (orderBy?.indexOf('-numberView')) {
+        sortObj['tagViewCount'] = -1;
+    }
+
+    const resp = await Blog.aggregate([
+        // { $match: { isHidden: false } },
+        // { $addFields: {
+        //     numLikes: { "$size": "$likes" }
+        //     // numDislikes: { "$size": "$dislikes" }
+        // }},
+        // { $project: { _id:1, tags:1 } },
+        { $unwind: "$tags" },
+        // { $addFields: {
+        //     tagName: "$tags"
+        // }},
+        { $group: {
+            _id: "$tags",
+            tagCount: { $sum: 1 },
+            tagViewCount: { $sum: "$numberView" }
+        }},
+        // { $project: { _id:1, tags:1, tagName:1 } },
+        { $sort: sortObj }
+    ]);
+
     return res.status(200).json({
-        success: response ? true : false,
-        tags: response ? response : []
+        success: resp ? true : false,
+        tags: resp
     }) 
 });
+
+// const searchBlogsAdvanced = asyncHandler(async (req, res)=>{
+//     return res.status(200).json({
+//         success: response ? true : false,
+//         blogs: []
+//     });
+// });
 
 const getAllBlogs = asyncHandler(async (req, res)=>{
     const { title, sortBy, provinces } = req.body;
@@ -287,8 +297,8 @@ const createNewPostTag = asyncHandler(async(req, res)=>{
 })
 
 const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
-    let { searchTerm, selectedTags } = req.query;
-
+    let { searchTerm, selectedTags, selectedSort,
+            page, pageSize } = req.query;
 
     if (!searchTerm) {
         searchTerm = '';
@@ -296,10 +306,13 @@ const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
     if (!selectedTags) {
         selectedTags = [];
     }
+    if (!selectedSort) {
+        selectedSort = "";
+    }
 
     // Loại bỏ các trường đặc biệt ra khỏi query
-    const excludeFields = ['limit', 'sort', 'page', 'fields'];
-    excludeFields.forEach((el) => delete req.query[el]);
+    // const excludeFields = ['limit', 'sort', 'page', 'fields'];
+    // excludeFields.forEach((el) => delete req.query[el]);
 
     // Format lại các toán tử cho đúng cú pháp của mongoose
     // let queryString = JSON.stringify(queries);
@@ -312,38 +325,71 @@ const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
     if(searchTerm?.length){
         queryFinish = {
             $or: [
-                {title: {$regex: searchTerm, $options: 'i' }},
-                {author: {$regex: searchTerm, $options: 'i' }},
-                {'provider_id.bussinessName': {$regex: searchTerm, $options: 'i' }},
-                {'provider_id.province': {$regex: searchTerm, $options: 'i' }},
-                {tags: {$regex: searchTerm, $options: 'i' }}
+                {title: {$match: searchTerm}},
+                // {author: {$regex: searchTerm}}
+                {'provider_id.bussinessName': {$regex: searchTerm, $options: 'i' }}
+                // {'provider_id.province': {$regex: searchTerm, $options: 'i' }}
             ]
         }
     }
 
     const qr = { ...queryFinish }
 
-    let queryCommand = Blog.find({}).populate({
+    let queryCommand = Blog.find(qr).populate({
         path: 'provider_id',
         select: 'bussinessName province',
-    }).find(qr);
+    });
 
     let blogs = await queryCommand;
 
-    blogs = blogs.filter(blog => {
-        for (const tag of selectedTags) {
-            if (blog?.tags.includes(tag)) {
-                return true;
+    // console.log(blogs.length);
+
+    if (selectedTags?.length) {
+        blogs = blogs.filter(blog => {
+            for (const tag of selectedTags) {
+                if (blog?.tags.includes(tag)) {
+                    return true;
+                }
             }
-        }
-        return false;
-    })
+            return false;
+        });    
+    }
+
+    let fieldToSort = selectedSort;
+    if (selectedSort.indexOf('-') === 0) {
+        fieldToSort = selectedSort.slice(1);
+    }
+    if (selectedSort?.length && selectedSort.indexOf('-') === 0) {
+        blogs = blogs.sort(function(x, y) {
+            if (x[fieldToSort] > y[fieldToSort])
+              return -1;
+            if (x[fieldToSort] < y.createdAt)
+              return 1;
+            return 0;
+        });
+    }
+    else if (selectedSort?.length) {
+        blogs = blogs.sort(function(x, y) {
+            if (x.createdAt < y.createdAt)
+              return -1;
+            if (x.createdAt > y.createdAt)
+              return 1;
+            return 0;
+        });
+    }
+    
+
+    const startIdx = page * pageSize;
+    console.log('-->', page, pageSize);
+    const endIdx = startIdx + pageSize;
+    blogs = blogs.slice(startIdx, endIdx);
 
     return res.status(200).json({
-        success: blogs?.length ? true : false,
-        blogs: blogs?.length ? blogs : "Cannot Find Post Blogs"
+        success: blogs ? true : false,
+        counts: blogs.length,
+        blogs: blogs ? blogs : "Cannot Find Post Blogs"
     })
-})
+});
 
 const getTopBlogs = asyncHandler(async(req, res)=>{
     let { limit } = req.body
@@ -364,16 +410,89 @@ const getTopBlogs = asyncHandler(async(req, res)=>{
     })
 })
 
-const getTopTags = asyncHandler(async(req, res)=>{
-    let { limit } = req.body
+
+const searchBlogAdvanced = asyncHandler(async (req, res) => {
+    console.log("INCOMING REQUESTS:", req.body);
+
+    let { searchTerm, limit, offset, categories, sortBy,
+        clientLat, clientLon, distanceText } = req.body;
+
+    if ( (typeof(offset) != "number") ||
+        !limit || offset < 0 || limit > 20)
+    {
+        return res.status(400).json({
+            success: false,
+            searched: [],
+            msg: "Bad Request"
+        });
+    }
+
+    let sortOption = [];
+    let geoSortOption = null;
+    if (sortBy?.indexOf("-numberView") > -1) {
+        sortOption.push({numberView: {order : "desc"}});
+    }
+    else if (sortBy?.indexOf("numberView") > -1) {
+        sortOption.push({numberView : {order : "asc"}});
+    }
+    if (sortBy?.indexOf("-likes") > -1) {
+        sortOption.push({likes: {order : "desc"}});
+    }
+    else if (sortBy?.indexOf("price") > -1) {
+        sortOption.push({likes : {order : "asc"}});
+    }
+
+    // if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
+
+    let categoriesIncluded = [];
+    if (categories?.length) {
+        categoriesIncluded = categories.split(',');
+    }
+
+    let geoLocationQueryOption = null;
+    if ( clientLat <= 180 && clientLon <= 180 &&
+        clientLat >= -90 && clientLon >= -90 &&
+        /[1-9][0-9]*(km|m)/.test(distanceText) )
+    {
+        geoLocationQueryOption = { distanceText,  clientLat, clientLon };
+    }
+
+    const columnNamesToMatch = ["title", "category", "providername", "authorname"];
+    const columnNamesToGet = ["id", "title", "providername", "authorname", "numberView", "provider_id", "likes", "dislikes"];
+
+    let blogs = [];
+    // blogs = await esDBModule.fullTextSearchAdvanced(
+    //     ES_CONSTANT.BLOGS,
+    //     searchTerm,
+    //     columnNamesToMatch,
+    //     columnNamesToGet,
+    //     limit, offset,
+    //     sortOption,
+    //     geoLocationQueryOption,
+    //     geoSortOption,
+    //     categoriesIncluded
+    // );
+    // blogs = blogs?.hits;
+
+    // console.log("Query Input Parameter: ", blogs);
+    // console.log("REAL DATA RETURNED: ", blogs);
+
+    return res.status(200).json({
+        success: blogs ? true : false,
+        blogs
+    });
+});
+
+const getTopBlogWithSelectedTags = asyncHandler(async(req, res)=>{
+    let { limit, selectedTags } = req.body
     if(!limit){
         limit = 5;
     }
-    const response = await PostTag.find({}).limit(5)
+    const response = await Blog.find({tags: { $in: selectedTags }}).sort({ likes: -1 }).limit(limit);
 
     return res.status(200).json({
         success: response ? true : false,
-        tags: response ? response : "Cannot Get Post Tags!"
+        blogs: response ? response : "Cannot Get Post Tags!"
     })
 })
 
@@ -519,9 +638,10 @@ module.exports = {
     createNewBlogPost,
     createNewPostTag,
     getBlogsBySearchTerm,
+    getTopBlogWithSelectedTags,
     getTopBlogs,
-    getTopTags,
-    updateViewBlog,
     getAllBlogByProviderId,
-    getAllBlogsByAdmin
+    getAllBlogsByAdmin,
+    searchBlogAdvanced,
+    updateViewBlog
 }

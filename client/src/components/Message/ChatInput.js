@@ -38,7 +38,7 @@ const ChatInput = ({handleSendMsg}) => {
 
     return (
         <Container>
-            <div className='button-container'>
+            <div className='button-container rounded-b-md'>
                 <div className='emoji'>
                     <BsEmojiSmileFill onClick={handleEmojiPickerHideShow}/>
                     {
@@ -47,7 +47,7 @@ const ChatInput = ({handleSendMsg}) => {
                 </div>
             </div>
             <form className='input-container' onSubmit={(e)=>sendChat(e)}>
-                <input type='text' placeholder='type your message here' value={msg} onChange={(e)=>setMsg(e.target.value)}/>
+                <input type='text' placeholder='Your message here...' value={msg} onChange={(e)=>setMsg(e.target.value)}/>
                 <button className='submit'>
                     <IoMdSend />
                 </button>
@@ -60,7 +60,7 @@ const Container = styled.div`
     display: grid;
     grid-template-columns: 5% 95%;
     align-items: center;
-    background-color: #080420;
+    background-color: #0a66c2;
     padding: 0 2rem;
     padding-bottom: 0.3rem;
     @media screen and (min-width: 720px) and (max-width: 1080px){
@@ -86,7 +86,7 @@ const Container = styled.div`
                 box-shadow: 0 5px 10px #9a86f3;
                 border-color: #9186f3;
                 .emoji-scroll-wrapper::-webkit-scrollbar {
-                    background-color: #080420;
+                    background-color: #0a66c2;
                     width: 5px;
                     &-thumb {
                         background-color: #9a86f3;
@@ -102,7 +102,7 @@ const Container = styled.div`
                     border-color: #9186f3;
                 }
                 .emoji-group:before{
-                    background-color: #080420;
+                    background-color: #0a66c2;
 
                 }
             }
@@ -114,7 +114,7 @@ const Container = styled.div`
         display: flex;
         align-items: center;
         gap: 2rem;
-        background-color: #ffffff34;
+        background-color: white;
         input {
             width: 90%;
             background-color: transparent;

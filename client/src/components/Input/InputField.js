@@ -5,7 +5,7 @@ const InputField = ({value, setValue, nameKey, type, invalidField, setInvalidFie
     <div className={clsx('relative flex flex-col mb-2 text-gray-600', fullWidth && 'w-full')}>
         {!isHideLabel&& value?.trim() !== '' &&<label className='text-[10px] animate-slide-top-sm absolute top-[2px] left-[8px] block bg-white px-2' htmlFor={nameKey}>{nameKey?.slice(0,1)?.toUpperCase() + nameKey?.slice(1)}</label>}
         <input type={type||'text'} 
-        className= {clsx('px-4 py-2 rounded-sm border w-full mt-2 placeholder:text-sm placeholder:italic outline-none', style)} 
+        className= {clsx('px-4 py-2 rounded-sm border w-full mt-2 placeholder:text-base placeholder:italic outline-none', style)} 
         placeholder={placeholder || nameKey?.slice(0,1)?.toUpperCase() + nameKey?.slice(1)}
         value = {value}
         onChange={e => {

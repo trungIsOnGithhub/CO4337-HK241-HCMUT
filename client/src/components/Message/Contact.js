@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from 'react'
 import styled from 'styled-components'
-import Logo from '../../assets/logo.svg'
+// import Logo from '../../assets/logo.svg'
 import defaultAvatar from '../../assets/avatarDefault.png'
 import { useNavigate } from 'react-router-dom'
+import bgImage from '../../assets/clouds.svg'
 
 const Contact = ({contacts, currentUser, changeChat}) => {
   console.log(contacts)
@@ -36,27 +37,32 @@ const Contact = ({contacts, currentUser, changeChat}) => {
     {
       currentUserImage && currentUserName && (
         <Container>
-          <div className="brand" onClick={()=>navigate('/')}>
-            <span className="text-gray-600 text-2xl font-bold">Service&nbsp;</span>
-            <span className="text-[#0a66c2] text-2xl italic font-bold">Provider</span>
+          <div className="brand bg-[#0a66c2] rounded-tl-md" onClick={()=>navigate('/')}>
+            <span className="text-gray-600 text-lg text-white font-bold">Recent&nbsp;Chat</span>
+            {/* <span className="text-[#0a66c2] text-2xl italic font-bold">Provider</span> */}
           </div>
-          <div className='contacts'>
+
+          <div className='contacts bg-white'>
             {
               contacts.map((contact, index) => {
                 return (
-                  <div className={`contact ${index === currentSelected ? "selected" : ""}`} key={index} onClick={()=>changeCurrentChat(index, contact)}>
-                    <div className='avatar'>
+                  <div className={`contact border-b-2 ${index === currentSelected ? "selected" : ""}`}
+                    key={index}
+                    onClick={()=>changeCurrentChat(index, contact)}
+                  >
+                    <div className='avatar rounded-lg border'>
                       <img src={contact.avatar || defaultAvatar} alt='avatar'/>
                     </div>
                     <div className='username'>
-                      <h3>{`${contact.firstName} ${contact.lastName}`}</h3>
+                      <h3 className='text-gray-600'>{`${contact.firstName} ${contact.lastName}`}</h3>
                     </div>
                   </div>
                 )
               })
             }
           </div>
-          <div className='current-user'>
+
+          <div className='current-user bg-white rounded-bl-md border-blue-500'>
             <div className='avatar'>
               <img src={currentUserImage} alt='avatar'/>
             </div>
@@ -75,14 +81,12 @@ const Container = styled.div`
   display: grid;
   grid-template-rows: 10% 75% 15%;
   overflow: hidden;
-  background-color: #4B2C2C; // Màu nền nâu đỏ
   .brand{
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 4px;
     cursor: pointer;
-    color: #FFD700; // Màu vàng cho tiêu đề
   }
   .contacts{
     display: flex;
@@ -93,13 +97,12 @@ const Container = styled.div`
     &::-webkit-scrollbar{
       width: 0.2rem;
       &-thumb{
-        background-color: #ffffff39;
+        background-color: white;
         width: 0.1rem;
         border-radius: 1rem
       }
     }
     .contact{
-      background-color: #6A4B4B; // Màu nền cho contact
       min-height: 5rem;
       width: 90%;
       cursor: pointer;
@@ -114,31 +117,21 @@ const Container = styled.div`
           height: 3rem;
         }
       }
-      .username{
-        h3{
-          color: #FFFFFF; // Màu trắng cho tên người dùng
-        }
-      }
     }
     .selected{
       background-color: #9186f3;
     }
   }
   .current-user{
-    background-color: #3E1F1F; // Màu nền cho người dùng hiện tại
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 2rem;
+    border-top: 3px solid blue;
     .avatar{
       img{
-        height: 4rem;
+        height: 3rem;
         max-inline-size: 100%;
-      }
-    }
-    .username{
-      h2{
-        color: #FFD700; // Màu vàng cho tên người dùng hiện tại
       }
     }
     @media screen and (min-width: 720px) and (max-width: 1080px){

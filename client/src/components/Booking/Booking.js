@@ -1,23 +1,28 @@
-import { apiGetCouponsByServiceId, apiGetOneService, apiGetServiceProviderById } from 'apis';
+import { apiGetCouponsByServiceId, apiGetOneService, apiGetServiceProviderById, apiGetServiceTimeOptionAvailableCurrentDay } from 'apis';
 import clsx from 'clsx';
 import Button from 'components/Buttons/Button';
 import React, { useEffect, useState } from 'react';
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { formatPrice, formatPricee } from 'ultils/helper';
+import { convertH2M, formatPrice, formatPricee } from 'ultils/helper';
 import path from 'ultils/path';
 import { apiUpdateCartService } from 'apis';
 import withBaseComponent from 'hocs/withBaseComponent';
 import { useSelector, useDispatch } from 'react-redux';
 import { getCurrent } from 'store/user/asyncAction';
 import { CiSearch } from 'react-icons/ci';
-import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
+import { FaAngleDown, FaAngleUp, FaPhone } from 'react-icons/fa';
 import moment from 'moment';
+import { HashLoader } from 'react-spinners';
+import { convertM2H } from 'ultils/helper';
+import { toast } from 'react-toastify';
+
+// const dayOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 const Booking = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const [staffs, setStaffs] = useState(null);
+  const [staffs, setStaffs] = useState([]);
   const [service, setService] = useState(null);
   const [provider, setProvider] = useState(null);
   const [duration, setDuration] = useState(null);
@@ -33,6 +38,7 @@ const Booking = () => {
   const [originalPrice, setOriginalPrice] = useState(0);
   const [showVoucher, setShowVoucher] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState(null)
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const coupon = usableDiscountCodes?.find(el => el?.code === selectedVoucher?.code)
@@ -126,79 +132,32 @@ const Booking = () => {
   }, [service]);
 
   useEffect(() => {
-    const fetchData = () => {
-      if (provider) {
-        const getCurrentTime = () => {
-          const now = new Date();
-          const hour = now.getHours();
-          const minute = now.getMinutes();
-          return hour * 100 + minute;
-        };
-  
-        const getOpeningHoursForToday = () => {
-          const dayOfWeek = new Date().getDay();
-          const openingTimeKey = `start${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
-          const closingTimeKey = `end${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
-          
-          const parseTime = (timeString) => {
-            const [hour, minute] = timeString.split(':').map(Number);
-            return hour * 60 + minute;
-          };
-        
-          const openingTime = parseTime(provider?.time[openingTimeKey]);
-          const closingTime = parseTime(provider?.time[closingTimeKey]);
-          return { openingTime, closingTime };
-        };
-  
-        const currentTime = getCurrentTime();
-        const { openingTime, closingTime } = getOpeningHoursForToday();
-  
-        const generateTimeOptions = (openingTime, closingTime, currentTime, duration) => {
-          const timeOptions = [];
-          if (openingTime>=0 && closingTime>=0 && duration>=0) {
-            let currentHour = Math.floor(currentTime / 100);
-            let currentMinute = currentTime % 100;
-            let currentTimeInMinutes = currentHour * 60 + currentMinute;
-            let serviceDurationInMinutes = duration;
-            let saveOpeningTime = openingTime;
-
-            setCurrentTime(currentTimeInMinutes);
-            setTimeOptions([]);
-
-            while (saveOpeningTime <= (closingTime - serviceDurationInMinutes)) {
-              if (saveOpeningTime >= currentTimeInMinutes) {
-                const hour = Math.floor(saveOpeningTime / 60);
-                const minute = saveOpeningTime % 60;
-                const formattedHour = hour.toString().padStart(2, '0');
-                const formattedMinute = minute.toString().padStart(2, '0');
-                const formattedTime = `${formattedHour}:${formattedMinute}`;
-                timeOptions.push(formattedTime);
-                saveOpeningTime += serviceDurationInMinutes;
-              } else {
-                saveOpeningTime += serviceDurationInMinutes;
-              }
-            }
-          }
-
-          return timeOptions;
-        };
-  
-        setTimeOptions(generateTimeOptions(openingTime, closingTime, currentTime, duration));
+    const fetchData = async () => {
+      if (!service?._id) {
+        return;
       }
+
+      let now = new Date();
+      const mStarted = now.getHours() * 60 + now.getMinutes();
+      const dow = daysOfWeek[now.getDay()];
+
+      setIsLoading(true)
+      let resp = await apiGetServiceTimeOptionAvailableCurrentDay({ now:now.getTime(), dow, mStarted, svid: service._id });
+
+      // console.log('}}}}', resp.timeOptions);
+
+      if (resp.success && resp.timeOptions) {
+        setTimeOptions(resp.timeOptions);
+      }
+      setIsLoading(false);
     }
 
     fetchData(); 
-
-    const interval = setInterval(() => {
-      fetchData();
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [provider, duration]);
+  }, [service]);
 
   const handleBookDateTime = (el) => { 
     navigate({
-      pathname:  `/${path.BOOKING_DATE_TIME}`,
+      pathname: `/${path.BOOKING_DATE_TIME}`,
       search: createSearchParams({sid: service?._id, st: el?._id}).toString()
     })
   }
@@ -209,48 +168,178 @@ const Booking = () => {
   };
   
   const handleOnClick = async(time, el) => {
-    setSelectedStaff({time, staff:el, date:new Date().toLocaleDateString()});
+    // console.log('|'+time+'|');
+    const fetchData = async () => {
+      if (!service?._id) {
+        return;
+      }
 
-    const date = moment(new Date()).format("DD/MM/YYYY");
+      let now = new Date();
+      const mStarted = now.getHours() * 60 + now.getMinutes();
+      const dow = daysOfWeek[now.getDay()];
+
+      setIsLoading(true)
+      let resp = await apiGetServiceTimeOptionAvailableCurrentDay({ now:now.getTime(), dow, mStarted, svid: service._id });
+
+      if (resp.success && resp.timeOptions) {
+        setTimeOptions(resp.timeOptions);
+      }
+      setIsLoading(false);
+    };
+
+    const startMM = time.start;
+
+    time = convertM2H(time?.start);
+    setSelectedStaff({time, staff:el, date:new Date().toLocaleDateString()});
+    const nowDate = new Date();
+    const date = moment(nowDate).format("DD/MM/YYYY");
+
+    if (provider?.advancedSetting?.minTimeBookSameDay > 0) {
+      const nowMM = nowDate.getHours() * 60 + nowDate.getMinutes() + 1; // add 1 one more minute to fix delay
+
+      if (startMM - nowMM <= provider.advancedSetting.minTimeBookSameDay) {
+        const hNeed = provider.advancedSetting.minTimeBookSameDay / 60;
+        const mNeed = provider.advancedSetting.minTimeBookSameDay % 60;
+        let msg = `Provider required ${hNeed} hours ${mNeed} before booking this timeslot!`;
+        if (hNeed < 1) {
+          msg = `Provider required ${mNeed} minutes before booking this timeslot!`;
+        }
+
+        toast.error(msg);
+  
+        fetchData();
+        return;
+      }
+    }
+
     const [day, month, year] = date.split('/');
     const formattedDate = `${year}-${month}-${day}`;
     // // Kết hợp formattedDate và time để tạo datetime
     const dateTime = new Date(`${formattedDate}T${time}:00Z`);
 
-    await apiUpdateCartService({
+    // console.log('......', {
+    //   service: service?._id, 
+    //   provider: provider?._id,
+    //   staff: el?._id, 
+    //   time: time,
+    //   duration: service?.duration,
+    //   date,
+    //   price: +discountValue > 0 ? +discountValue : +originalPrice,
+    //   dateTime
+    // });
+
+    let resp = await apiUpdateCartService({
       service: service?._id, 
-      provider: provider?._id, 
+      provider: provider?._id,
       staff: el?._id, 
       time: time,
       duration: service?.duration,
-      date: date,
+      date,
       originalPrice: originalPrice,
       discountPrice: +discountValue > 0 ? +discountValue : 0,
       dateTime,
       coupon: selectedVoucher?._id
-    })
+    });
+
+    if (resp.success) {
+      toast.success("Service cart updated successfully!");
+    }
+    else if (resp.mes) {
+      // console.log('==============', resp);
+      toast.error(resp.mes);
+  
+      fetchData();
+    }
+    else  {
+      toast.error("Error add service to cart!");
+    }
   }
 
   const handleCheckout = async() => {
+  
+    const fetchData = async () => {
+      if (!service?._id) {
+        return;
+      }
+
+      let now = new Date();
+      const mStarted = now.getHours() * 60 + now.getMinutes();
+      const dow = daysOfWeek[now.getDay()];
+
+      setIsLoading(true)
+      let resp = await apiGetServiceTimeOptionAvailableCurrentDay({ now:now.getTime(), dow, mStarted, svid: service._id });
+
+      if (resp.success && resp.timeOptions) {
+        setTimeOptions(resp.timeOptions);
+      }
+      setIsLoading(false);
+    }
+  
+
+    const nowDate = new Date();
+    const startMM = convertH2M(selectedStaff?.time);
+
     const finalPrice = +discountValue > 0 ? +discountValue : +originalPrice;
-    const date = moment(new Date()).format("DD/MM/YYYY");
+    const date = moment().format("DD/MM/YYYY");
     const [day, month, year] = date.split('/');
     const formattedDate = `${year}-${month}-${day}`;
       // // Kết hợp formattedDate và time để tạo datetime
     const dateTime = new Date(`${formattedDate}T${selectedStaff?.time}:00Z`);
 
-    await apiUpdateCartService({
+    if (provider?.advancedSetting?.minTimeBookSameDay > 0) {
+      const nowMM = nowDate.getHours() * 60 + nowDate.getMinutes() + 1; // add 1 one more minute to fix delay
+
+      if (startMM - nowMM <= provider.advancedSetting.minTimeBookSameDay) {
+        const hNeed = provider.advancedSetting.minTimeBookSameDay / 60;
+        const mNeed = provider.advancedSetting.minTimeBookSameDay % 60;
+        let msg = `Provider required ${hNeed} hours ${mNeed} before booking this timeslot!`;
+        if (hNeed < 1) {
+          msg = `Provider required ${mNeed} minutes before booking this timeslot!`;
+        }
+
+        toast.error(msg);
+  
+        fetchData();
+        return;
+      }
+    }
+    // console.log('......', {
+    //   service: service?._id, 
+    //   provider: provider?._id, 
+    //   staff: selectedStaff?.staff?._id, 
+    //   time: selectedStaff?.time,
+    //   duration: service?.duration,
+    //   date,
+    //   price: finalPrice,
+    //   dateTime: dateTime
+    // });
+
+    let resp = await apiUpdateCartService({
       service: service?._id, 
       provider: provider?._id, 
       staff: selectedStaff?.staff?._id, 
       time: selectedStaff?.time,
       duration: service?.duration,
-      date: date,
+      date,
       originalPrice: originalPrice,
       discountPrice: +discountValue > 0 ? +discountValue : 0,
       dateTime: dateTime,
       coupon: selectedVoucher?._id
     })
+
+    if (resp.success) {
+      toast.success("Service cart updated successfully!");
+    }
+    else if (resp.mes) {
+      console.log('==============', resp);
+      toast.error(resp.mes);
+  
+      fetchData(); 
+    }
+    else  {
+      toast.error("Error add service to cart!");
+    }
+
     if(selectedVoucher){
       window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}&couponCode=${selectedVoucher?.code}`, '_blank');
     }
@@ -293,37 +382,52 @@ const Booking = () => {
     <div className='w-main'>
       <div className='w-main flex gap-2 h-fit my-5'>
         <div className='border border-gray-400 flex-7 flex-col p-[24px] rounded-md'>
-        <div className='flex w-full justify-between items-center'>
+        <div className='flex w-full justify-between items-center mb-4'>
           <span className='text-[18px] leading-6 font-semibold'>Choose Employee</span>
-          <div className='w-[187px] h-[40px] flex gap-1 items-center border border-[#0a66c2] rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px]'>
+          <div className='w-[40%] h-[40px] flex gap-1 items-center border border-[#0a66c2] rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px]'>
             <span className='text-xl'><CiSearch size={20}/></span>
-            <input className=' h-full w-[129px] bg-transparent outline-none text-[15px] text-[#00143c] placeholder:text-[#00143c]' placeholder='Search employee'/>
+            <input className=' h-full flex-1 bg-transparent outline-none text-[15px] text-[#00143c] placeholder:text-slate-400'
+              onChange={(event) => {
+
+                  const staffsSearched = service?.assigned_staff.filter(stf => {
+                    return stf.firstName.includes(event.target.value) || stf.lastName.includes(event.target.value)
+                          || stf.email.includes(event.target.value) || stf.mobile.includes(event.target.value);
+                  });
+                  console.log(staffsSearched);
+                  setStaffs(staffsSearched);
+
+              }}
+              placeholder='Search employee name, email...'/>
           </div>
         </div>
 
         <div>
-        {service?.assigned_staff?.map((el, index) => (
+        {staffs?.map((el, index) => (
           <div key={index} className='border border-gray-300 px-2 py-2 rounded-md my-2'>
             <div className='flex justify-between'>
               <div className='flex items-center gap-1'>
                 <img src={el?.avatar} className='w-16 h-16 rounded-full' alt={el?.firstName} />
-                <span>{`${el.lastName} ${el.firstName}`}</span>
+                <span className='flex flex-col gap-1'>
+                  <span className='text-lg'>{`${el.lastName} ${el.firstName}`}</span>
+                  <span className='text-md flex gap-2 items-center'><FaPhone size='12px'/> {el.mobile}</span>
+                </span>
               </div>
-              <Button style='px-6 rounded-md text-white bg-[#0a66c2] font-semibold h-fit py-2 w-fit' handleOnclick={()=>handleBookDateTime(el)}>Choose</Button>
+              <Button style='px-6 rounded-md text-white bg-[#0a66c2] font-semibold h-fit py-2 w-fit' handleOnclick={()=>handleBookDateTime(el)}>Choose other date</Button>
             </div>
             <div className='flex gap-2 items-center'>
-              <span className='text-xs leading-4'>Available</span>
-              <div className=' text-xs leading-4 font-medium w-fit h-fit bg-[#0a66c2] px-[2px] py-[1px] rounded-md text-white'>Today</div>
+              <span className='text-xs leading-4'>Availability</span>
+              <div className=' text-xs leading-4 font-medium w-fit h-fit bg-[#0a66c2] p-2 rounded-md text-white'>Today</div>
             </div>
             <div className='flex flex-wrap gap-2 my-3 justify-center'>
-              {timeOptions.length <= 0 ?
-                  <h5 className='text-[#0a66c2] italic font-semibold'>Service is not available today</h5>
+              {!(timeOptions[el?._id]?.length) ?
+                  <h5 className='text-red-400 font-semibold'>Service by this staff is not available today!</h5>
                   :
-                timeOptions.map((time, idx) => (
-                (!el.work || !isWorkingTime(time, el.work)) && (
-                  <div className={clsx('w-[15%] h-[46px] border border-[#0a66c2] rounded-md cursor-pointer flex items-center justify-center gap-1 hover:bg-blue-400 hover:border-none', (selectedStaff.time===time && selectedStaff.staff===el) && 'bg-blue-400 border-none')} key={idx} onClick={() =>{handleOnClick(time,el)}}>
-                    <span className='text-[14px] leading-5 font-medium'>{time}</span>
-                    <span className='text-[12px] leading-4 text-[#00143c]'>{parseInt(time.split(':')[0]) >= 12 ? 'pm' : 'am'}</span>
+                timeOptions[el?._id].map((time, idx) => (
+                (
+                  <div className={clsx('w-[15%] h-[46px] border border-[#0a66c2] rounded-md cursor-pointer flex items-center justify-center gap-1 hover:bg-blue-400 hover:border-none', (selectedStaff.time === convertM2H(time.start) && selectedStaff?.staff?._id === el?._id) && 'bg-blue-400 border-none')}
+                      key={idx} onClick={() =>{handleOnClick(time,el)}}>
+                    <span className='text-[14px] leading-5 font-medium'>{convertM2H(time.start)} - {convertM2H(time.end)}</span>
+                    {/* <span className='text-[12px] leading-4 text-[#00143c]'>{(time[0]/60) >= 12 ? 'pm' : 'am'}</span> */}
                   </div>
                 )
               ))}
@@ -358,7 +462,7 @@ const Booking = () => {
               </div>
               <div className='flex gap-2'>
                 <span className='text-gray-700 font-bold'>Date & Time:</span>
-                <span className='text-[#00143c] flex-1 line-clamp-1'>{(selectedStaff?.time && parseTimee(selectedStaff?.time) >= currentTime) ? `${selectedStaff?.time} ${selectedStaff?.date}` : ''}</span>
+                <span className='text-[#00143c] flex-1 line-clamp-1'>{(selectedStaff?.time && parseTimee(selectedStaff?.time) >= currentTime) ? `${selectedStaff?.time} - ${selectedStaff?.date}` : ''}</span>
               </div>
               <div className='flex gap-2'>
                 <span className='text-gray-700 font-bold'>Total Price:</span>
@@ -409,6 +513,12 @@ const Booking = () => {
             {(selectedStaff?.staff && parseTimee(selectedStaff?.time) >= currentTime) && <Button style='px-6 py-1 rounded-md text-white bg-[#0a66c2] font-semibold w-fit h-fit mt-2' handleOnclick={handleCheckout}>Checkout</Button>}
           </div>
         </div>
+
+        {isLoading && (
+        <div className='flex justify-center z-50 w-full h-full fixed top-0 left-0 items-center bg-overlay'>
+            <HashLoader className='z-50' color='#3B82F6' loading={isLoading} size={80} />
+        </div>
+        )}
       </div>
     </div>
   );

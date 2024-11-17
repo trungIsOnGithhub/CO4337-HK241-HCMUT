@@ -7,10 +7,10 @@ const Welcome = ({currentUser}) => {
   return (
     <Container>
         <img src={Robot} alt='robot'/>
-        <h1>
-            Welcome, <span>{`${currentUser?.firstName} ${currentUser?.lastName}`}</span>
+        <h1 className='text-gray-600'>
+            Welcome, <span className='text-gray-600'>{`${currentUser?.firstName} ${currentUser?.lastName}`}</span>
         </h1>
-        <h3>Please select a chat to Start Messaging.</h3>
+        <h3 className='text-gray-600'>Select a chat to start.</h3>
     </Container>
   )
 }
@@ -23,9 +23,6 @@ const Container = styled.div`
     color: white;
     img{
         height: 20rem;
-    }
-    span{
-        color: #4e00ff;
     }
 `
 export default Welcome

@@ -28,6 +28,8 @@ export {default as AddPost} from './AddPost'
 export {default as ManagePostDetail} from './ManagePostDetail'
 export {default as EditPostDetail} from './EditPostDetail'
 export {default as ManageChat} from './ManageChat'
+export {default as ManageSetting} from './ManageSetting'
+export {default as WeeklyOfficeHours} from './WeeklyOfficeHours'
 
 
 export {default as ManageThemeAndAppearance} from './ManageThemeAndAppearance'

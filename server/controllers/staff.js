@@ -1,30 +1,39 @@
-const asyncHandler = require("express-async-handler")
-const User = require('../models/user')
-const Staff = require('../models/staff')
+const asyncHandler = require("express-async-handler");
+const User = require('../models/user');
+const Staff = require('../models/staff');
 
 const addStaff = asyncHandler(async(req, res)=>{
+    console.log('---|||', req.body);
+    const {firstName, lastName, email, mobile, provider_id, shifts} = req.body
 
-    const {firstName, lastName, email, mobile, provider_id} = req.body
     if(!firstName || !lastName || !mobile || !email || !provider_id){
         throw new Error("Missing input")
     }
-    const data = {firstName, lastName, mobile, email, provider_id}
+    const data = {firstName, lastName, mobile, email, provider_id, shifts}
 
     if(req.file){
         data.avatar = req.file.path
     }
+
+    console.log('--->', data);
+
     const response = await Staff.create(data)
+
     return res.status(200).json({
         success: response ? true : false,
-        mes: response ? 'Created successfully' : "Cannot create new staff"
+        mes: response ? 'Created successfully' : "Cannot create new staff",
+        staff: response
     })
-})
+});
 
 // get all staffs
 const getAllStaffsByAdmin = asyncHandler(async (req, res) => {
     const {_id} = req.user
     const {provider_id} = await User.findById({_id}).select('provider_id')
     const queries = { ...req.query };
+
+    // console.log('=======', _id);
+    // console.log('=======', req);
     // Loại bỏ các trường đặc biệt ra khỏi query
     const excludeFields = ['limit', 'sort', 'page', 'fields'];
     excludeFields.forEach((el) => delete queries[el]);
@@ -98,6 +107,10 @@ const getAllStaffsByAdmin = asyncHandler(async (req, res) => {
 const updateStaffByAdmin = asyncHandler(async (req, res) => {
     const {staffId} = req.params
 
+    if(req.file){
+        req.body.avatar = req.file.path
+    }
+
     if(!staffId || Object.keys(req.body).length === 0){
         throw new Error("Missing input")
     }
@@ -148,27 +161,91 @@ const updateStaffWork = asyncHandler(async(req, res)=>{
     }
 })
 
-const deleteStaffShift = asyncHandler(async(req, res)=>{
-    const {service, provider, staff, duration, time, date} = req.body?.info[0];
-    if (!service || !provider || !staff || !time || !date || !duration) {
-        throw new Error("Missing input");
-    } else {
-        const response = await Staff.findByIdAndUpdate(staff, {$push: {work: {service, provider, time, date, duration}}}, {new: true});
-        return res.status(200).json({
-            success: response ? true : false,
-            mes: response ? 'Updated staff' : "Something went wrong"
-        });
-    }
-})
+// const deleteStaffShift = asyncHandler(async(req, res)=>{
+//     const {service, provider, staff, duration, time, date} = req.body?.info[0];
+//     if (!service || !provider || !staff || !time || !date || !duration) {
+//         throw new Error("Missing input");
+//     } else {
+//         const response = await Staff.findByIdAndUpdate(staff, {$push: {work: {service, provider, time, date, duration}}}, {new: true});
+//         return res.status(200).json({
+//             success: response ? true : false,
+//             mes: response ? 'Updated staff' : "Something went wrong"
+//         });
+//     }
+// })
+const convertH2M = (timeInHour) => {
+    let timeParts = timeInHour.split(":");
+    return Number(timeParts[0]) * 60 + Number(timeParts[1]);
+}
+const checkWeekdayValidStaffShift = (pT, staffShift) => {
+    for (const p of Object.entries(staffShift)) {
+        const lowerK = p[0].toLowerCase();
+        const startPK = `start${lowerK}`;
+        const endPK = `end${lowerK}`;
 
+        console.log('======', p);
+
+        if (!p[1]?.isEnabled || !p[1]?.periods) {
+            continue;
+        }
+        if (!pT[endPK] || !pT[startPK] ) {
+            return p[0];
+        }
+
+        const pEndMM = convertH2M(pT[endPK]);
+        const pStartMM = convertH2M(pT[startPK]);
+        const stStartMM = convertH2M(p[1].periods.start);
+        const stEndMM = convertH2M(p[1].periods.end);
+
+        console.log(pEndMM + '||||>' + pStartMM);
+        console.log(stEndMM + '------->' + stStartMM);
+
+        if (stEndMM > pEndMM || stStartMM > pEndMM ||
+            stEndMM < pStartMM || stStartMM < pStartMM
+        ) {
+            console.log(pEndMM + '||||>' + pStartMM);
+            console.log(stEndMM + '||||>' + stStartMM);
+            return p[0];
+        }
+    }
+
+    return null;
+}
 const updateStaffShift = asyncHandler(async(req, res)=>{
     const {staffId, newShifts} = req.body;
-
     if (!staffId || !newShifts) {
         throw new Error("Missing input");
     }
+    console.log("---|" + JSON.stringify(newShifts) + "|---");
+    const staffInfoWithProvider = await Staff.findById(staffId).populate('provider_id');
+    console.log(staffInfoWithProvider.provider_id);
+    if (!staffInfoWithProvider?.provider_id?.time) {
+        return res.status(400).json({
+            success: false,
+            msg: `Invalid Input!`
+        });
+    }
+
+    let weekDayViolated = checkWeekdayValidStaffShift(staffInfoWithProvider.provider_id.time, newShifts);
+
+    if (staffInfoWithProvider?.provider_id?.time && weekDayViolated?.length > 0) {
+        const lowerK = weekDayViolated.toLocaleLowerCase();
+        const startPK = `start${lowerK}`;
+        const endPK = `end${lowerK}`;
+
+        let msg = `Provider has no working hour on ${weekDayViolated}!`;
+        if (staffInfoWithProvider.provider_id.time[startPK] && staffInfoWithProvider.provider_id.time[endPK]) {
+            msg = `Staff working shift violated provider working hour: ${staffInfoWithProvider.provider_id.time[startPK]} - ${staffInfoWithProvider.provider_id.time[endPK]} on ${weekDayViolated}!`
+        }
+
+        return res.status(400).json({
+            success: false,
+            msg
+        });
+    }
 
     const response = await Staff.findByIdAndUpdate(staffId, {$set: {shifts: newShifts}}, {new: true});
+
     return res.status(200).json({
         success: response ? true : false,
         staff: response

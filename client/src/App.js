@@ -1,8 +1,7 @@
 import React, {useEffect} from 'react';
 import {Route, Routes, useLocation} from 'react-router-dom'
-
-import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageSaleEvent, ManagePostDetail, EditPostDetail, AddPost, ManageChat, ManageThemeAndAppearance, ManageHeroSection, ManageFooterSection, ManageServicePage, AddVariantProduct, UpdateService, UpdateProduct } from 'pages/admin'
-import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct, ViewBlog, DetailProvider} from 'pages/public'
+import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageSaleEvent, ManagePostDetail, EditPostDetail, AddPost, ManageChat, ManageThemeAndAppearance, ManageHeroSection, ManageFooterSection, ManageServicePage, AddVariantProduct, UpdateService, UpdateProduct, ManageSetting } from 'pages/admin'
+import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct, ViewBlog, DetailProvider} from 'pages/public';
 
 import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct, Calendarr, OrderHistory, WishListService} from 'pages/user'
 import path from './ultils/path'
@@ -96,6 +95,8 @@ function App() {
         <Route path={path.MANAGE_POST_DETAIL} element={<ManagePostDetail/>}/>
         <Route path={path.EDIT_POST_DETAIL} element={<EditPostDetail/>}/>
         <Route path={path.MANAGE_CHAT} element={<ManageChat/>}/>
+        <Route path={path.SETTING} element={<ManageSetting/>}/>
+        {/* <Route path={path.WORKING_HOURS} element={<WeeklyOfficeHours/>}/> */}
 
       </Route>
       <Route path={path.USER} element={<UserLayout />}>

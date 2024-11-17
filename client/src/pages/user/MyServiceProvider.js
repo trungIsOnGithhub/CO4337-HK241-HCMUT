@@ -1,8 +1,8 @@
-import clsx from 'clsx'
+// import clsx from 'clsx'
 import { Button, InputForm } from 'components'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux'
 import avatar from '../../assets/avatarDefault.png'
 import { apiUpdateCurrentServiceProvider, apiGetServiceProviderById } from 'apis'
@@ -62,7 +62,6 @@ const MyServiceProvider = ({navigate, dispatch}) => {
     for(let i of Object.entries(data)){
       formData.append(i[0],i[1])
     }
-
 
     const response = await apiUpdateCurrentServiceProvider(current.provider_id, data)
     if(response.success){

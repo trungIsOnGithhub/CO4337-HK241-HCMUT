@@ -6,7 +6,7 @@ import axios from 'axios'
 import {v4 as uuidv4} from 'uuid'
 import { apiAddMessage, apigetAllMessageFromSenderToReceiver } from 'apis/message'
 import defaultAvatar from '../../assets/avatarDefault.png'
-import { FaQuestion } from 'react-icons/fa'
+import { FaQuestionCircle } from 'react-icons/fa'
 
 const ChatContainer = ({currentChat, currentUser, socket}) => {
     const [messages, setMessages] = useState([])
@@ -19,6 +19,7 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
     const messagesEndRef = useRef(null)
 
     useEffect(() => {
+        setOpenQuestionsMenu(false);
         if(currentChat){
             console.log('//////////////////////////', currentChat);
             const fetchMessages = async() => {
@@ -73,8 +74,8 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
 
   return ( 
     <Container ref={messagesEndRef}>
-        <div className='chat-header'>
-            <div className='user-details'>
+        <div className='chat-header flex justify-between'>
+            <div className='user-details mb-2'>
                 <div className='avatar'>
                     <img src={currentChat?.avatar || defaultAvatar} alt='avatar'/>
                 </div>
@@ -83,12 +84,19 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
                         {`${currentChat?.firstName} ${currentChat?.lastName}`}
                     </h3>
                     { currentChat?.provider_id?.bussinessName &&
-                        <h4 className="p-1 bg-lime-600 rounded-md">
+                        <h4 className="p-1 text-blue-400 rounded-md">
                             { currentChat?.provider_id?.bussinessName }
                         </h4>
                     }  
                 </div>
             </div>
+
+            {currentChat?.provider_id && <span
+                onClick={() => {setOpenQuestionsMenu(prev => !prev);}}
+                className='text-gray-600 text-center cursor-pointer flex mb-2'
+            >
+                Suggested questions&nbsp;<FaQuestionCircle/>
+            </span>}
         </div>
 
         <div className='h-full overflow-y-auto relative'>
@@ -102,7 +110,7 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
                     </div>
                 </div>
             } */}
-            {
+            {/*
                 currentChat?.provider_id?.bussinessName && givenQuestionsHint &&
                 <div className='p-2 flex flex-col justify-start items-center text-slate-400 h-fit w-fit absolute top-4 sticky top-0 opacity-75 bg-black mx-auto rounded-md border-2 border-blue-500'>
                     <h4 className='text-center text-slate-400 font-semibold text-lg'>Suggested Questions</h4>
@@ -126,16 +134,16 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
                     }
                     <a href="#" onClick={() => {setOpenQuestionsMenu(true);}} className='underline mt-1'>View All Suggested Questions</a>
                 </div>
-            }
+            */}
 
             {
-                currentChat?.provider_id?.bussinessName && openQuestionsMenu &&
-                <div className='bg-slate-400 w-1/2 px-2 py-6 flex flex-col justify-center rounded-md z-99 sticky top-0 left-1/4'>
+                currentChat?.provider_id && openQuestionsMenu &&
+                <div className='bg-slate-400 w-1/2 px-2 py-6 flex flex-col justify-center rounded-t-md z-99 sticky top-0 left-1/4'>
                     <h4 className='text-center font-semibold text-lg'>Given Questions</h4>
                     {
                         currentChat?.provider_id?.chatGivenQuestions?.map(qna => {
                             return (
-                                <div class="p-2 bg-linme-500 rounded-md flex justify-center border m-4 p-4 hover:bg-blue-500"
+                                <div class="p-2 bg-linme-500 rounded-t-md flex justify-center border m-4 p-4 hover:bg-blue-500"
                                     onClick={() => {
                                         const newMessages = [...messages, {message:qna.question, fromSelf:true}];
                                         if (qna.answer) {
@@ -150,7 +158,7 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
                             );
                         })
                     }
-                    <button className='btn bg-red-500 py-2 px-4 w-fit m-auto rounded-md mt-3' onClick={() => {setOpenQuestionsMenu(false);}}>Close This Menu</button>
+                    <button className='btn bg-red-500 py-2 px-4 w-fit m-auto rounded-t-md mt-3' onClick={() => {setOpenQuestionsMenu(false);}}>Close This Menu</button>
                 </div>
             }
             <div className='chat-messages'>
@@ -194,6 +202,8 @@ const Container = styled.div`
         justify-content: space-between;
         align-items: center;
         padding: 0 2rem;
+        border-bottom: 3px solid blue;
+        padding-bottom: 4px;
         .user-details{
             display: flex;
             align-items: center;
@@ -201,12 +211,6 @@ const Container = styled.div`
             .avatar{
                 img{
                     height: 3rem;
-                }
-            }
-            .username{
-                h3{
-                    color: white;
-
                 }
             }
         }
@@ -234,7 +238,7 @@ const Container = styled.div`
                 padding: 1rem;
                 font-size: 1.1rem;
                 border-radius: 1rem;
-                color: #d1d1d1;
+                color: black;
             }
         }
     }
@@ -242,12 +246,14 @@ const Container = styled.div`
         justify-content: flex-end;
         .content{
             background-color: #4f04ff21;
+            color: black;
         }
     }
     .recieved{
         justify-content: flex-start;
         .content{
             background-color: #9900ff21;
+            color: black;
         }
     }
 `

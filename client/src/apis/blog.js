@@ -44,9 +44,10 @@ export const apiRatingBlog = (data) => axios({
     data
 })
 
-export const apiGetAllPostTags = (data) => axios({
+export const apiGetAllPostTags = (params) => axios({
     url: '/blog/tags',
     method: 'get',
+    params
 })
 
 export const apiLikeBlog = (data) => axios({
@@ -79,7 +80,7 @@ export const apiGetTopTags = (data) => axios({
     data
 })
 
-export const apiGetTopBlogs = (data) => axios({
+export const apiGetTopBlogsWithSelectedTags = (data) => axios({
     url: '/blog/top_blogs',
     method: 'post',
     data
@@ -101,4 +102,10 @@ export const apiGetAllBlogByAdmin = (params) => axios({
     url: '/blog/getAllBlogByAdmin',
     method: 'get',
     params
+})
+
+export const apiSearchBlogAdvanced = (data) => axios({
+    url: '/blog/advanced_search',
+    method: 'post',
+    data
 })

@@ -40,13 +40,13 @@ const Chat = () => {
   }, [current]);
 
   useEffect(() => {
-    const fetchData = async () => { 
+    const fetchData = async () => {
       if(current){
         const response = await apigetLastMessages({userId: current._id})
         setContacts(response)
       }
     }
-    fetchData()
+    fetchData();
   }, [current]);
 
   const handleChatChange = (chat) => {
@@ -56,11 +56,11 @@ const Chat = () => {
   return (
     
     <Container>
-      <div className='container'>
+      <div className='container bg-white p-6 rounded-md'>
         <Contact contacts={contacts} currentUser={current} changeChat={handleChatChange}/>
         {
-          isLoaded && (currentChat === undefined ? 
-          <Welcome currentUser={current}/> : 
+          isLoaded && (currentChat === undefined ?
+          <div className='bg-slate-300 rounded-r-md'><Welcome currentUser={current}/></div> : 
           <ChatContainer currentChat={currentChat} currentUser={current} socket={socket}/>)
         }
       </div>
@@ -76,11 +76,9 @@ const Container =styled.div`
   justify-content: center;
   gap: 1rem;
   align-items: center;
-  background-color: #1a0a0a;
   .container{
     height: 85vh;
     width: 85vw;
-    background-color: #00000076;
     display: grid;
     grid-template-columns: 25% 75%;
     @media screen and (min-width:720px) and (max-width: 1080px){

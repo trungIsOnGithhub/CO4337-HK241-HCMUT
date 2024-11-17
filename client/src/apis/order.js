@@ -34,13 +34,16 @@ export const apiUpdateEmailByBookingId = (data) => axios({
     data
 })
 
+export const apiUpdateOrderStatus = (data, oid) => axios({
+    url: `/order/status/${oid}`,
+    method: 'put',
+    data
+})
 export const apiRefundOrder = (captureId) => axios({
     url: '/order/refund',
     method: 'post',
     data: { captureId } // Truyền captureId vào body
 });
-
-
 export const apiUpdateStatusOrder = (data) => axios({
     url: '/order/updateStatus',
     method: 'post',

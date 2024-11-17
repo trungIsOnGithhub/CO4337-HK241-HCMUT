@@ -10,10 +10,10 @@ import { getCurrent } from 'store/user/asyncAction'
 import { toast } from 'react-toastify'
 import { getBase64 } from 'ultils/helper'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import withBaseComponent from 'hocs/withBaseComponent'
+// import withBaseComponent from 'hocs/withBaseComponent'
 import { FiUser, FiMail, FiPhone, FiMapPin, FiUpload, FiX, FiInfo } from "react-icons/fi";
 import goongjs from '@goongmaps/goong-js';
-import axios from 'axios'
+import axios from 'axios';
 
 const GOONG_API_KEY = 'HjmMHCMNz4xyFqc54FsgxrobHmt48vwp7U8xzQUC';
 const GOONG_MAPTILES_KEY = 'IXqHXe9w2riica5A829SuB6HUl5Fi1Yg7LC9OHF2';
@@ -53,7 +53,6 @@ const Personal = () => {
         map.current.resize(); // Resize the map when it becomes visible
     }
   }, [isMapVisible]);
-
 
   const handleAddressKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -283,6 +282,7 @@ const Personal = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result);
+        console.log(reader.result);
       };
       reader.readAsDataURL(file);
     }

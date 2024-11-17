@@ -155,37 +155,37 @@ export const sorts = [
     {
         id:1,
         value: '-sold',
-        text: 'Best selling'
+        text: 'Best sell'
     },
     {
         id:2,
         value: 'title',
-        text: 'Alphabetically, A-Z'
+        text: 'A-Z'
     },
     {
         id:3,
         value: '-title',
-        text: 'Alphabetically, Z-A'
+        text: 'Z-A'
     },
     {
         id:4,
         value: 'price',
-        text: 'Price, low to high'
+        text: 'Price'
     },
     {
         id:5,
         value: '-price',
-        text: 'Price, high to low'
+        text: 'Price'
     },
     {
         id:6,
         value: 'createdAt',
-        text: 'Date, old to new'
+        text: 'Date'
     },
     {
         id:7,
         value: '-createdAt',
-        text: 'Date, new to old'
+        text: 'Date'
     }, 
 ]
 
@@ -316,7 +316,7 @@ export const adminSidebar = [
     {
         id: 10,
         type: 'parent',
-        text: 'Manage Customer Program',
+        text: 'Customer Programs',
         submenu:[
             {
                 text: 'Add Vourcher Code',

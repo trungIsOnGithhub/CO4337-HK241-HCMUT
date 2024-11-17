@@ -1,0 +1,56 @@
+{
+    "staffId": "66377a64e479e46dab038104",
+    "newShifts": {
+  "times": {
+    "Tuesday": {
+      "periods": {
+        "start": "09:02",
+        "end": "14:34"
+      },
+      "isEnabled": true
+    },
+    "Wednesday": {
+      "periods": {
+        "start": "09:02",
+        "end": "14:34"
+      },
+      "isEnabled": true
+    },
+    "Monday": {
+      "periods": {
+        "start": "09:02",
+        "end": "14:34"
+      },
+      "isEnabled": true
+    },
+    "Thursday": {
+      "periods": {
+        "start": "09:02",
+        "end": "14:34"
+      },
+      "isEnabled": true
+    },
+    "Saturday": {
+      "periods": {
+        "start": "09:02",
+        "end": "09:04"
+      },
+      "isEnabled": true
+    },
+    "Friday": {
+      "periods": {
+        "start": "09:02",
+        "end": "19:44"
+      },
+      "isEnabled": true
+    },
+    "Sunday": {
+      "periods": {
+        "start": "09:02",
+        "end": "19:44"
+      },
+      "isEnabled": true
+    }
+  }
+}
+}
