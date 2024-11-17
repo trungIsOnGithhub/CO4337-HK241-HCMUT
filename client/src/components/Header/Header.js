@@ -62,7 +62,7 @@ const Header = () => {
                 <div onClick={()=> dispatch(showMessage())} className="cursor-pointer flex items-center justify-center gap-2 px-6 border-r relative">
                     <IoChatbubblesSharp color='white' />
                     {isShowMessage &&
-                       <div className="absolute top-[120%] left-[-100px] z-[1000]">
+                       <div className="absolute top-[120%] left-[-100px] z-[100]">
                             <Message />
                        </div>
                     }

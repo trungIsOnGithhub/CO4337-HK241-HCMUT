@@ -4,7 +4,7 @@ import {Route, Routes, useLocation} from 'react-router-dom'
 import { AdminLayout, ManageOrder, ManageBooking, ManageProduct, ManageUser, CreateProduct, DashBoard, ManageStaff, AddStaff, ManageService, AddService,StaffCalendar, ManageBookingDetail, AddVoucher, AddSaleEvent, ManageVoucher, ManageSaleEvent, ManagePostDetail, EditPostDetail, AddPost, ManageChat, ManageThemeAndAppearance, ManageHeroSection, ManageFooterSection, ManageServicePage, AddVariantProduct, UpdateService, UpdateProduct } from 'pages/admin'
 import {Login,Home,Public,OurProviders,DetailService,FAQ,Services,Products,Blogs,Final_Register,ResetPassword,DetailCart,ServiceProviderRegister, DetailProduct, ViewBlog, DetailProvider} from 'pages/public'
 
-import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct, Calendarr, OrderHistory} from 'pages/user'
+import { UserLayout, History, Personal, WishList, CheckoutService, MyServiceProvider, CheckoutProduct, Calendarr, OrderHistory, WishListService} from 'pages/user'
 import path from './ultils/path'
 import {getCategories} from 'store/app/asyncAction'
 import {getCategorieService} from 'store/category/asyncAction'
@@ -17,6 +17,7 @@ import ManagePost from 'pages/admin/ManagePost';
 import OrderHistoryDetail from 'pages/user/OrderHistoryDetail';
 import ManageOrderDetail from 'pages/admin/ManageOrderDetail';
 import UpdateBlog from 'pages/admin/UpdateBlog';
+import WishListProduct from 'pages/user/WishListProduct';
 
 function App() {
   const dispatch = useDispatch();
@@ -103,7 +104,8 @@ function App() {
         <Route path={path.HISTORY} element={<History/>}/>
         <Route path={path.ORDER_HISTORY} element={<OrderHistory/>}/>
         <Route path={path.ORDER_HISTORY_DETAIL} element={<OrderHistoryDetail />}/>
-        <Route path={path.WISHLIST} element={<WishList/>}/>
+        <Route path={path.WISHLIST_SERVICE} element={<WishListService/>}/>
+        <Route path={path.WISHLIST_PRODUCT} element={<WishListProduct/>}/>
         <Route path={path.MY_SERVICE_PROVIDER} element={<MyServiceProvider/>}/>
         <Route path={path.MY_CALENDAR} element={<Calendarr />}/>
       </Route>

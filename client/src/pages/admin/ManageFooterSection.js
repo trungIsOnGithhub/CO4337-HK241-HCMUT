@@ -406,8 +406,8 @@ const ManageFooterSection = () => {
                     </div>
                   </div>
                 </DragDropContext>
-                {renderContentEditor()}
                 <PreviewFooter />
+                {renderContentEditor()}
               </div>
             </div>
           </footer>

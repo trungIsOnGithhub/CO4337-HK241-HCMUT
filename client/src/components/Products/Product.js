@@ -18,8 +18,7 @@ import clsx from 'clsx'
 import { MdOutlineCategory } from 'react-icons/md'
 const {FaEye, FaHeart, FaCartPlus, BsCartCheckFill} = icons
 
-const Product = ({productData, isNew, normal, isNotBorder}) => {
-  const [isShowOption, setIsShowOption] = useState(false)
+const Product = ({productData}) => {
   const {current} = useSelector(state => state.user)
   const {isLogin} = useSelector(state => state.user)
   const navigate = useNavigate()

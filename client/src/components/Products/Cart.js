@@ -23,6 +23,8 @@ const Cart = () => {
         }    
     }
 
+    console.log(currentCartProduct)
+
     return (
     <div onClick={e=> e.stopPropagation()} className='w-[400px] h-screen bg-black grid grid-rows-10 text-white p-4'>
         <header className='border-b border-gray-800 flex justify-between items-center font-bold text-2xl row-span-1 h-full'>

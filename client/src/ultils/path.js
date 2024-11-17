@@ -80,7 +80,8 @@ const path = {
     HISTORY: 'history',
     ORDER_HISTORY: 'order_history',
     ORDER_HISTORY_DETAIL: 'order_history/:oid',
-    WISHLIST: 'wishlist',
+    WISHLIST_SERVICE: 'wishlist_service',
+    WISHLIST_PRODUCT: 'wishlist_product',
     MY_SERVICE_PROVIDER: 'my_sp',
     MY_CALENDAR: 'my_calendar'
 }

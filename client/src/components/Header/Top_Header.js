@@ -34,7 +34,7 @@ const Top_Header = () => {
   
   
   return (
-    <div className='w-full flex items-center justify-center h-[60px] py-2 px-6 sticky top-0 z-50 bg-white'>
+    <div className='w-full flex items-center justify-center h-[60px] py-2 px-6 sticky top-0 z-[1000] bg-white'>
         <div className='w-main flex items-center justify-between text-xs text-[#0a66c2] '>
             <Link to={`/${path.HOME}`} className='flex items-center py-2 gap-1 justify-center'>
                 <img src={logoWeb} className='w-12 h-12'/>

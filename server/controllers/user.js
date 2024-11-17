@@ -177,7 +177,7 @@ const getOneUser = asyncHandler(async(req, res)=>{
         populate:{
             path: 'provider'
         }
-    })
+    }).populate('wishlist').populate('wishlistProduct')
 
     return res.status(200).json({
         success: user? true : false,
