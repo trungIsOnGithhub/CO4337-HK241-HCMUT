@@ -43,7 +43,6 @@ const Services = () => {
   });
   const [clientLat, setClientLat] = useState(999999);
   const [clientLon, setClientLon] = useState(999999);
-
   const [totalServiceCount, setTotalServiceCount] = useState(0);
 
   // const prevSearchTermRef = useRef(searchFilter.term);
