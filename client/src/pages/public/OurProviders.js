@@ -20,7 +20,7 @@ import { apiModifyUser } from '../../apis/user';
 import Button from 'components/Buttons/Button';
 import { FaSortAmountDown, FaMoneyCheckAlt, FaCubes, FaBahai, FaSearch  } from "react-icons/fa";
 import ToggleButton from './ToggleButton';
-const REACT_APP_PAGINATION_LIMIT_DEFAULT = 8;
+const REACT_APP_PAGINATION_LIMIT_DEFAULT = process.env.REACT_APP_PAGINATION_LIMIT_DEFAULT;
 
 const OurProviders = () => {
   const navigate = useNavigate()

@@ -41,10 +41,8 @@ function ManageSetting() {
       daysInAdvance,
       dateFormat,
       timeFormat,
-      timeZone,
       firstDayOfWeek,
       phoneCountryCode,
-      firstPage,
       dashboardLanguage,
     };
     
@@ -158,31 +156,31 @@ function ManageSetting() {
                             <div>
                               <label className="text-gray-800 font-medium">Minimum time required before booking in same day</label>
                                 <span>
-                                <Select
-                                  defaultValue={""}
-                                  name="minTimeBookSameDay"
-                                  options={[
-                                    { value: 15, label: '15' },
-                                    { value: 30, label: '30' },
-                                    { value: 45, label: '45' },
-                                  ]}
-                                  className="basic-multi-select"
-                                  classNamePrefix="select"
-                                  onChange={(value) => {setMinTimeBeforeBookingSameDay(prev => prev + value)}}
-                                />
-                              </div>
-                              <Select
-                                defaultValue={""}
-                                name="minTimeBookSameDay"
-                                options={[
-                                  { value: 15, label: '15' },
-                                  { value: 30, label: '30' },
-                                  { value: 45, label: '45' },
-                                ]}
-                                className="basic-multi-select"
-                                classNamePrefix="select"
-                                onChange={(value) => {setMinTimeBeforeBookingSameDay(prev => prev + value)}}
-                              />
+                                  <Select
+                                    defaultValue={""}
+                                    name="minTimeBookSameDayM"
+                                    options={[
+                                      { value: 15, label: '15' },
+                                      { value: 30, label: '30' },
+                                      { value: 45, label: '45' }
+                                    ]}
+                                    className="basic-multi-select"
+                                    classNamePrefix="select"
+                                    onChange={(value) => {setMinTimeBeforeBookingSameDay(prev => prev + value)}}
+                                  />
+                                  <Select
+                                    defaultValue={""}
+                                    name="minTimeBookSameDayH"
+                                    options={[1,2,3,4,5,6,7,8,9,10,11,12].map(num => {
+                                      return {
+                                        value: num,
+                                        label: num.toString()
+                                      };
+                                    })}
+                                    className="basic-multi-select"
+                                    classNamePrefix="select"
+                                    onChange={(value) => {setMinTimeBeforeBookingSameDay(prev => prev + value*60)}}
+                                  />
                               </span>
                               </div>
                             <div>

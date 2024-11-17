@@ -3,7 +3,7 @@ import usePagination from '../../hook/usePagination'
 import {PageItem} from '..'
 import { useSearchParams} from 'react-router-dom'
 
-const REACT_APP_PAGINATION_LIMIT_DEFAULT = 8;
+const REACT_APP_PAGINATION_LIMIT_DEFAULT = process.env.REACT_APP_PAGINATION_LIMIT_DEFAULT;
 const Pagination = ({totalCount}) => {
   const [params] = useSearchParams()
   const pagination = usePagination(totalCount,+params.get('page')||1)

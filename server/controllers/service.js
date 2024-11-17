@@ -7,7 +7,7 @@ const asyncHandler = require("express-async-handler")
 const makeSku = require('uniqid')
 const Order = require('../models/order')
 const esIndexNameList = require('../services/constant');
-// const esDBModule = require('../services/es');
+const esDBModule = require('../services/es');
 const ES_CONSTANT = require('../services/constant');
 
 const createService = asyncHandler(async(req, res)=>{
@@ -86,24 +86,24 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
     }
 
     const columnNamesToMatch = ["name", "providername", "province"];
-    const columnNamesToGet = ["id", "title", "providername", "authorname", "numberView"];
+    const columnNamesToGet = ["id", "name","thumb","price","category","duration","provider_id", "province", "totalRatings"];
 
     let services = [];
-    // services = await esDBModule.fullTextSearchAdvanced(
-    //     ES_CONSTANT.SERVICES,
-    //     searchTerm,
-    //     columnNamesToMatch,
-    //     columnNamesToGet,
-    //     limit, offset,
-    //     sortOption,
-    //     geoLocationQueryOption,
-    //     geoSortOption,
-    //     categoriesIncluded
-    // );
-    // services = services?.hits;
+    services = await esDBModule.fullTextSearchAdvanced(
+        ES_CONSTANT.SERVICES,
+        searchTerm,
+        columnNamesToMatch,
+        columnNamesToGet,
+        limit, offset,
+        sortOption,
+        geoLocationQueryOption,
+        geoSortOption,
+        categoriesIncluded
+    );
+    services = services?.hits;
 
-    // console.log("Query Input Parameter: ", services);
-    // console.log("REAL DATA RETURNED: ", services);
+    console.log("Query Input Parameter: ", services);
+    console.log("REAL DATA RETURNED: ", services);
 
     return res.status(200).json({
         success: services ? true : false,

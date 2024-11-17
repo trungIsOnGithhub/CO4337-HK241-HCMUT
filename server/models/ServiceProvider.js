@@ -62,9 +62,7 @@ var ProviderServiceSchema = new mongoose.Schema({
         default: '',
     },
     mobile:{
-        type:String,
-        unique:true,
-        required:true,  
+        type:String
     },
     indexFooter: {
         type: [{

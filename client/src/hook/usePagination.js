@@ -8,7 +8,7 @@ import { useMemo } from 'react'
 import { generateRange } from '../ultils/helper'
 import { HiDotsHorizontal } from "react-icons/hi";
 
-const REACT_APP_PAGINATION_LIMIT_DEFAULT = 8;
+const REACT_APP_PAGINATION_LIMIT_DEFAULT = process.env.REACT_APP_PAGINATION_LIMIT_DEFAULT;
 const usePagination = (totalCount, currentPage, siblingCount = 1) => {
     const paginationArray = useMemo(() => {
         const pageSize = REACT_APP_PAGINATION_LIMIT_DEFAULT;

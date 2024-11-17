@@ -19,7 +19,7 @@ import Button from 'components/Buttons/Button';
 import { FaSortAmountDown, FaMoneyCheckAlt, FaCubes, FaBahai, FaSearch  } from "react-icons/fa";
 import ToggleButton from './ToggleButton';
 
-const REACT_APP_PAGINATION_LIMIT_DEFAULT = 8;
+const REACT_APP_PAGINATION_LIMIT_DEFAULT = process.env.REACT_APP_PAGINATION_LIMIT_DEFAULT;
 const Services = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -51,7 +51,7 @@ const Services = () => {
             && /^-?\d+$/.test(distanceText) && (unit === 'km' || unit === 'm');
   }
 
-  const fetchServiceCategories = async (queries, advancedQuery) => {
+  const fetchServicesAdvanced = async (queries, advancedQuery) => {
     let response = [];
     const currerntParamPage = params.get('page');
 
@@ -59,10 +59,10 @@ const Services = () => {
 
     // if (useAdvanced) {
       const categoriesChosen = filterCateg.map(cat => cat.value);
-      if(categoriesChosen && categoriesChosen !== 'services'){
-        advancedQuery.categories = categoriesChosen;
-      }
-  // const fetchServiceCategories = async (queries) =>{
+      // if(categoriesChosen){
+      //   advancedQuery.categories = categoriesChosen;
+      // }
+  // const fetchServicesAdvanced = async (queries) =>{
   //   if (sort) {
   //     queries.sort = sort;
   //   }
@@ -82,10 +82,10 @@ const Services = () => {
         lattitude: current.lastGeoLocation.coordinates[1]
       }
 
-      console.log('Elastic Pre Query', advancedQuery, 'Elastic Pre Query');
+      // console.log('Elastic Pre Query', advancedQuery, 'Elastic Pre Query');
       response = await apiSearchServiceAdvanced(advancedQuery);
 
-      console.log("-----------------RES ADVANCED:", response.services);
+      // console.log("-----------------RES ADVANCED:", response.services);
 
       if(response.success) setServices(response?.services?.hits || []);
 
@@ -95,12 +95,14 @@ const Services = () => {
       if(category && category !== 'services'){
         queries.category = category;
       }
-      console.log('Elastic Pre Query', advancedQuery, 'Elastic Pre Query');
+      // console.log('Elastic Pre Query', advancedQuery, 'Elastic Pre Query');
       response = await apiSearchServiceAdvanced(advancedQuery);
 
-      console.log("-----------------RESPONSE SERVICES ADVANCED:", response.services?.hits);
+      // console.log("-----------------RESPONSE SERVICES ADVANCED:", response.services?.hits);
 
       if(response.success) setServices(response?.services?.hits || []);
+
+      setTotalServiceCount(response?.services?.total?.value)
     }
 
     // response = await apiGetServicePublic(queries)
@@ -159,7 +161,7 @@ const Services = () => {
     let advancedQuery = {
       searchTerm: searchFilter.term,
       limit: REACT_APP_PAGINATION_LIMIT_DEFAULT , offset: 0,
-      sortBy: sort,
+      sortBy: sort?.value || '',
       // clientLat: 45, clientLon: 45,
       // distanceText: "2000km",
     };
@@ -175,7 +177,7 @@ const Services = () => {
     queries.page = 1;
     // setParams(queries);
 
-    fetchServiceCategories(q, advancedQuery);
+    fetchServicesAdvanced(q, advancedQuery);
   }, [searchedClick]);
 
 
@@ -220,10 +222,10 @@ const Services = () => {
     // queries.page = params.get('page')-1;
     // setParams(queries);
 
-    fetchServiceCategories(q, advancedQuery);
+    fetchServicesAdvanced(q, advancedQuery);
   // }, [params]);
 // =======
-    // fetchServiceCategories(q)
+    // fetchServicesAdvanced(q)
   }, [params]);
   
   // const changeActive = useCallback((name)=>{
@@ -549,7 +551,7 @@ const Services = () => {
 
         </div>
       <div className={clsx('mt-8 w-main m-auto flex gap-4 flex-wrap', isShowModal ? 'hidden' : '')}>
-        {services?.services?.map((service, index) => (
+        {services?.map((service, index) => (
           <div key={index} className='w-[32%]'>
             <Service serviceData={service}/>
           </div>
