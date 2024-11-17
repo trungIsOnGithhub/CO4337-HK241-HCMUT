@@ -1,13 +1,18 @@
 import Swal from "sweetalert2";
+import clsx from 'clsx'
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useState, useEffect, useRef } from 'react';
 import { apiUpdateCurrentServiceProvider, apiGetServiceProviderById } from 'apis';
 import { toast } from 'react-toastify';
 import { getCurrent } from 'store/user/asyncAction';
-import avatar from '../../assets/avatarDefault.png';
+// import avatar from '../../assets/avatarDefault.png';
 import { useForm } from 'react-hook-form';
-import { FiUpload, FiX } from "react-icons/fi";
+import goongjs from '@goongmaps/goong-js';
+import axios from 'axios';
+import { FiUser, FiMail, FiPhone, FiMapPin, FiUpload, FiX, FiInfo } from "react-icons/fi";
 
+const GOONG_API_KEY = 'HjmMHCMNz4xyFqc54FsgxrobHmt48vwp7U8xzQUC';
+const GOONG_MAPTILES_KEY = 'IXqHXe9w2riica5A829SuB6HUl5Fi1Yg7LC9OHF2';
 const BusinessDetailsForm = () => {
   const {current} = useSelector(state => state.user);
   const dispatch = useDispatch();
@@ -26,10 +31,15 @@ const BusinessDetailsForm = () => {
     ownerEmail: '',
   });
   const [previewImage, setPreviewImage] = useState('');
-
   // const [loading, setLoading] = useState(true);
   // const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
+  const [isMapVisible, setIsMapVisible] = useState(false); // State to control map visibility
+  const mapContainer = useRef(null);
+  const map = useRef(null);
+  const suggestionRef = useRef(null);
+  const [addressSuggestions, setAddressSuggestions] = useState([]); // State for address suggestions
+  const [coordinates, setCoordinates] = useState(null);
 
   const currentProviderEffectHanlder = async () => {
     if (!current?.provider_id) {
@@ -92,6 +102,22 @@ const BusinessDetailsForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  useEffect(() => {
+    goongjs.accessToken = GOONG_MAPTILES_KEY;
+
+    map.current = new goongjs.Map({
+        container: mapContainer.current,
+        style: 'https://tiles.goong.io/assets/goong_map_web.json',
+        center: [105.83991, 21.02800],
+        zoom: 9,
+    });
+  }, []);
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   // const handleSubmit = (e) => {
   //   e.preventDefault();
   //   console.log("Form submitted", formData);
@@ -144,6 +170,155 @@ const BusinessDetailsForm = () => {
       toast.error("Cannot update data of provider!");
     }
   }
+
+  const handleClickOutside = (event) => {
+    if (suggestionRef.current && !suggestionRef.current.contains(event.target)) {
+        setAddressSuggestions([]); // Ẩn gợi ý nếu nhấp ra ngoài
+    }
+  };
+  const updateAddressFromCoordinates = async (lat, lng) => {
+    try {
+        const response = await axios.get(`https://rsapi.goong.io/Geocode?latlng=${lat},${lng}&api_key=${GOONG_API_KEY}`);
+        const data = await response.data;
+
+        if (data.results && data.results.length > 0) {
+            const address = data.results[0].formatted_address; // Get the formatted address
+            setFormData(prev => ({ ...prev, address })); // Update the address in the formData
+        }
+    } catch (error) {
+        console.error('Error fetching address from coordinates:', error);
+    }
+  };
+  const handleCheckLocation = async () => {
+    try {
+        const response = await axios.get(`https://rsapi.goong.io/Geocode?address=${encodeURIComponent(formData.address)}&api_key=${GOONG_API_KEY}`);
+        const data = await response.data;
+
+        if (data.results && data.results.length > 0) {
+            const { lat, lng } = data.results[0].geometry.location;
+            setCoordinates({ lat, lng });
+            setIsMapVisible(true); // Show map when location is found
+
+            // Update the formData with the coordinates
+            setFormData(prev => ({ ...prev, longitude: lng, latitude: lat }));
+
+            if (map.current) {
+                map.current.setCenter([lng, lat]);
+                map.current.setZoom(15);
+
+                // Remove existing markers
+                const markers = document.getElementsByClassName('mapboxgl-marker');
+                while (markers[0]) {
+                    markers[0].parentNode.removeChild(markers[0]);
+                }
+
+                // Add new marker
+                const el = document.createElement('div');
+                el.className = 'marker';
+                el.innerHTML = `
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 0C7.02944 0 3 4.02944 3 9C3 13.9706 12 24 12 24C12 24 21 13.9706 21 9C21 4.02944 16.9706 0 12 0ZM12 12C10.3431 12 9 10.6569 9 9C9 7.34315 10.3431 6 12 6C13.6569 6 15 7.34315 15 9C15 10.6569 13.6569 12 12 12Z" fill="#3887be"/>
+                  </svg>
+                `;
+                el.style.width = '24px';
+                el.style.height = '24px';
+                el.style.cursor = 'pointer';
+
+                const marker = new goongjs.Marker(el)
+                    .setLngLat([lng, lat])
+                    .addTo(map.current)
+                    .setDraggable(true); // Make the marker draggable
+
+                // Enable dragging the marker
+                marker.on('dragend', async () => {
+                    const lngLat = marker.getLngLat();
+                    setCoordinates({ lat: lngLat.lat, lng: lngLat.lng });
+                    await updateAddressFromCoordinates(lngLat.lat, lngLat.lng); // Update address input
+                });
+            } else {
+                console.error('Map not initialized');
+            }
+        } else {
+            setCoordinates(null);
+        }
+    } catch (error) {
+        console.error('Error in handleCheckLocation:', error);
+        setCoordinates(null);
+    }
+  };
+  const handleSuggestionSelect = async (suggestion) => {
+    setFormData(prev => ({ ...prev, address: suggestion.description })); // Set selected address
+    setAddressSuggestions([]); // Clear suggestions
+
+    try {
+        // Fetch the coordinates for the selected address
+        const response = await axios.get(`https://rsapi.goong.io/Geocode?address=${encodeURIComponent(suggestion.description)}&api_key=${GOONG_API_KEY}`);
+        const data = await response.data;
+
+        if (data.results && data.results.length > 0) {
+            const { lat, lng } = data.results[0].geometry.location;
+            setCoordinates({ lat, lng });
+            setIsMapVisible(true);
+            if (map.current) {
+                map.current.setCenter([lng, lat]);
+                map.current.setZoom(15);
+
+                // Remove existing markers
+                const markers = document.getElementsByClassName('mapboxgl-marker');
+                while (markers[0]) {
+                    markers[0].parentNode.removeChild(markers[0]);
+                }
+
+                // Add new marker
+                const el = document.createElement('div');
+                el.className = 'marker';
+                el.innerHTML = `
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 0C7.02944 0 3 4.02944 3 9C3 13.9706 12 24 12 24C12 24 21 13.9706 21 9C21 4.02944 16.9706 0 12 0ZM12 12C10.3431 12 9 10.6569 9 9C9 7.34315 10.3431 6 12 6C13.6569 6 15 7.34315 15 9C15 10.6569 13.6569 12 12 12Z" fill="#3887be"/>
+                  </svg>
+                `;
+                el.style.width = '24px';
+                el.style.height = '24px';
+                el.style.cursor = 'pointer';
+
+                const marker = new goongjs.Marker(el)
+                    .setLngLat([lng, lat])
+                    .addTo(map.current)
+                    .setDraggable(true); // Make the marker draggable
+                
+                marker.on('dragend', async () => {
+                    const lngLat = marker.getLngLat();
+                    setCoordinates({ lat: lngLat.lat, lng: lngLat.lng });
+                    await updateAddressFromCoordinates(lngLat.lat, lngLat.lng); // Update address input
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching coordinates for selected address:');
+    }
+  };
+  const handleAddressInputChange = async (e) => {
+    const value = e.target.value;
+    setFormData(prev => ({ ...prev, address: value })); // Update address in payload
+
+    if (value.length > 2) {
+        try {
+            const response = await axios.get(`https://rsapi.goong.io/Place/AutoComplete?api_key=${GOONG_API_KEY}&input=${encodeURIComponent(value)}`);
+            const data = await response.data;
+            setAddressSuggestions(data.predictions || []); // Set suggestions
+        } catch (error) {
+            console.error('Error fetching address suggestions:', error);
+        }
+    } else {
+        setAddressSuggestions([]); // Clear suggestions if input is less than 3 characters
+    }
+  };
+  const handleAddressKeyPress = (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        handleCheckLocation();
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit(handleUpdateInfo)} className="w-3/4 mx-auto p-6 bg-white shadow-md rounded-md">
@@ -228,7 +403,53 @@ const BusinessDetailsForm = () => {
         />
       </label>
 
-      <label className="block mb-2">
+      <div>
+        <label
+          htmlFor="address"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >Address</label>
+        <div className="mt-1 relative rounded-lg shadow-sm" ref={suggestionRef}>
+          <div className="absolute inset-y-0 left-0 pl-3 pt-4">
+            <FiMapPin className="text-blue-400" />
+          </div>
+          <input
+              type="text"
+              value={formData.address}
+              id="address"
+              name="address"
+              onChange={handleAddressInputChange}
+              onKeyDown={handleAddressKeyPress}
+              className={`block w-full pl-10 px-4 py-3 rounded-lg border border-blue-300 focus:outline-none focus:ring-2 bg-white/50 transition-all duration-300 text-slate-700`}
+          />
+          {errors.address && (
+            <p className="mt-2 text-sm text-red-600" id="address-error">
+              {errors.address}
+            </p>
+          )}
+          <div className="w-[100%]">
+              {addressSuggestions.length > 0 && (
+                  <ul className="bg-white border border-gray-300 z-10 w-[100%] max-h-60 overflow-y-auto">
+                      {addressSuggestions.map((suggestion) => (
+                          <li
+                              key={suggestion.place_id}
+                              onClick={() => handleSuggestionSelect(suggestion)}
+                              className="p-2 cursor-pointer hover:bg-gray-200 text-slate-700"
+                          >
+                              {suggestion.description}
+                          </li>
+                      ))}
+                  </ul>
+              )}
+          </div>
+        </div>
+      </div>
+
+      <div className={clsx("absolute inset-0 w-screen h-screen", isMapVisible ? 'flex items-center justify-center' : 'hidden')}>
+        <div ref={mapContainer} className={`absolute w-[45%] h-[100px] border-2 border-gray-300 rounded-md ${isMapVisible ? 'block' : 'hidden'}`} style={{ zIndex: 1000 }}>
+            <button onClick={() => {setIsMapVisible(false);}} className={clsx("absolute top-2 right-2 bg-red-500 text-white p-2 rounded", isMapVisible ? 'block' : 'hidden')} style={{ zIndex: 1000 }}>X</button>
+        </div>
+      </div>
+      {/* <label className="block mb-2">
         <span className="text-gray-700">Address</span>
         <input
           type="text"
@@ -248,7 +469,7 @@ const BusinessDetailsForm = () => {
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring focus:ring-blue-300 focus:outline-none text-gray-500"
         />
-      </label>
+      </label> */}
 {/* 
       <label className="block mb-2">
         <span className="text-gray-700">Website</span>

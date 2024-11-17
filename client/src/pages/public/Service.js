@@ -312,7 +312,7 @@ const Services = () => {
       <div className='w-main p-2 flex justify-start m-auto mt-8'>
         <div className='flex-auto flex flex-col gap-3'>
           {/* <span className='font-semibold text-sm'>Filter by:</span> */}
-          <div className='flex items-center gap-4'>
+          <div className='flex items-center gap-4 mb-10 mt-2'>
             {/* <FaMoneyCheckAlt />
             <SearchItemService name='price' activeClick={active} changeActiveFilter={changeActive} type='input'/>
             <FaCubes />

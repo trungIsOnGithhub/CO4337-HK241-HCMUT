@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import Masonry from 'react-masonry-css';
 import Swal from 'sweetalert2';
 import { useParams, useSearchParams, createSearchParams, useNavigate } from 'react-router-dom'
-import { apiSearchServiceAdvanced, apiSearchServicePublic, apiGetServicePublic, apiGetCategorieService } from '../../apis'
+import { apiSearchServiceAdvanced, apiSearchServicePublic, apiGetServicePublic } from '../../apis'
 // import { Breadcrumb, Service, SearchItemService, InputSelect, Pagination, InputField} from '../../components'
 // import Masonry from 'react-masonry-css'
 // import { useParams, useSearchParams, createSearchParams, useNavigate} from 'react-router-dom'
@@ -34,7 +34,6 @@ const OurProviders = () => {
   const {isShowModal} = useSelector(state => state.app);
   const [filterCateg, setFilterCateg] = useState([]);
   const {current} = useSelector((state) => state.user);
-  const [svCategories, setSvCategories] = useState([]);
 
   const [searchedClick, setSearchedClick] = useState(0);
   const [searchFilter, setSearchFilter] = useState({
@@ -176,7 +175,7 @@ const OurProviders = () => {
 
       <div className='flex-auto flex flex-col gap-3'>
           {/* <span className='font-semibold text-sm'>Filter by:</span> */}
-          <div className='flex items-center gap-4'>
+          <div className='flex items-center gap-4 mb-10 mt-2'>
             {/* <FaMoneyCheckAlt />
             <SearchItemService name='price' activeClick={active} changeActiveFilter={changeActive} type='input'/>
             <FaCubes />
@@ -225,7 +224,7 @@ const OurProviders = () => {
                       <InputField nameKey='maxDistance'
                         value={searchFilter.maxDistance}
                         setValue={setSearchFilter}
-                        placeholder={"Maximum Distance(optional)"}
+                        placeholder={"Maximum distance..."}
                         style={'bg-white min-h-10 rounded-md pl-2 flex items-center border border-gray-300'}
                       />  
                     </span>
@@ -265,40 +264,6 @@ const OurProviders = () => {
             <div className='flex flex-col'>
               {/* <FaSortAmountDown />
               <NewInputSelect value={selectedSort} options={sortOptions} changeValue={(value) => {setSelectedSort(value);}} /> */}
-              <label className="text-gray-800 font-medium">Categories:</label>
-              <Select
-                value={filterCateg}
-                defaultValue={[]}
-                isMulti
-                name="filterCateg"
-                options={svCategories}
-                className="basic-multi-select"
-                classNamePrefix="select"
-                onChange={(newVal, actionMeta) => {
-                  if (actionMeta?.action === 'select-option') {
-                    setFilterCateg([
-                      ...newVal
-                    ]);
-                  }
-                  else if (actionMeta?.action === 'remove-value') {
-                    const newFilterCateg = filterCateg.filter(cat => cat.value !== actionMeta?.removedValue?.value);
-                    setFilterCateg([...newFilterCateg]);
-                  }
-                  else if (actionMeta?.action === 'clear') {
-                    setFilterCateg([]);
-                  }
-                  // console.log("||||||||", newVal, actionMeta);
-                }}
-                // onChange={(e) => {
-                //   console.log('------->', filterCateg);
-                //   if (!filterCateg.includes(e)) {
-                //     setFilterCateg([
-                //       ...filterCateg,
-                //       e
-                //     ]);
-                //   }
-                // }}
-              />
 
               {/* <select value={''}
                 onChange={(e) => {

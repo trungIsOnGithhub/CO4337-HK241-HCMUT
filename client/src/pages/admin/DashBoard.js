@@ -25,18 +25,16 @@ const MetricIndicator = ({ prev, current }) => {
     <span className='mt-3'>
       {
       current > prev &&
-        (<span className="flex items-center flex-col flex-wrap">
-            <span className="text-teal-500 text-xs">higher</span>
+        (<span className="flex">
+            <span className="text-teal-500 text-xs"><FaAngleDoubleUp style={{color: 'green' }} className='text-teal-500 rotate-45'/></span>
             <span className='text-teal-500 pr-1 text-base'>&nbsp;{(current > 0 ? (current - prev)/current*100.0 : 0)?.toFixed(1)} %</span>
-            <FaAngleDoubleUp style={{color: 'green' }} className='text-teal-500 rotate-45'/>
         </span>)
       }
       {
       current < prev && 
-        (<span className="flex items-center flex-col flex-wrap">
-            <span className="text-rose-700 text-xs">lower</span>
+        (<span className="flex">
+            <span className="text-rose-700 text-xs"><FaAngleDoubleDown className='text-rose-700 -rotate-45'/></span>
             <span className='text-rose-700 pr-1 text-base'>&nbsp;{(current > 0 ? (current - prev)/current*100.0 : 0)?.toFixed(1)} %</span>
-            <FaAngleDoubleDown className='text-rose-700 -rotate-45'/>
         </span>)
       }
       {current === prev && (<span className="flex items-center flex-col flex-wrap">
@@ -279,7 +277,7 @@ const DashBoard = () => {
               </select>
 
 
-              <div className="w-24 h-16 mt-2">     
+              <div className="w-28 h-18 mt-2 flex justify-center">     
                   <Line data={{
                     labels: ['p', 'c', 't'],
                     datasets: [

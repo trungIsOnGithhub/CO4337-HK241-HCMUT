@@ -52,7 +52,7 @@ const Service = ({serviceData, fullWidth = false, clientDistance = null}) => {
     }
     else{
       navigate({
-        pathname:  `/${path.BOOKING}`,
+        pathname: `/${path.BOOKING}`,
         search: createSearchParams({sid: serviceData?.sv?._id}).toString()
     })
     }
