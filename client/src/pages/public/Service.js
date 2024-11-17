@@ -60,7 +60,7 @@ const Services = () => {
     // if (useAdvanced) {
       const categoriesChosen = filterCateg.map(cat => cat.value);
       // if(categoriesChosen){
-      //   advancedQuery.categories = categoriesChosen;
+      advancedQuery.categories = categoriesChosen;
       // }
   // const fetchServicesAdvanced = async (queries) =>{
   //   if (sort) {

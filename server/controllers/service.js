@@ -74,7 +74,7 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
 
     let categoriesIncluded = [];
     if (categories?.length) {
-        categoriesIncluded = categories.split(',');
+        categoriesIncluded = categories;
     }
 
     let geoLocationQueryOption = null;
@@ -136,7 +136,7 @@ const getAllServicesByAdmin = asyncHandler(async (req, res) => {
     if (queries?.name) formatedQueries.name = { $regex: queries.name, $options: 'i' };
     if (queries?.category){
         delete formatedQueries.category
-        const categoryArray = queries.category?.split(',')
+        const categoryArray = queries.category;
         const categoryQuery = categoryArray.map(el => ({
             category: {$regex: el, $options: 'i' }
         }))
