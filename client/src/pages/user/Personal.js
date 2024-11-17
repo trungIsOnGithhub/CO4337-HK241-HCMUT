@@ -282,6 +282,7 @@ const Personal = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result);
+        console.log(reader.result);
       };
       reader.readAsDataURL(file);
     }

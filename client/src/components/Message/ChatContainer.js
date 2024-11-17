@@ -19,6 +19,7 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
     const messagesEndRef = useRef(null)
 
     useEffect(() => {
+        setOpenQuestionsMenu(false);
         if(currentChat){
             console.log('//////////////////////////', currentChat);
             const fetchMessages = async() => {
@@ -90,12 +91,12 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
                 </div>
             </div>
 
-            <span
-                onClick={() => {setOpenQuestionsMenu(true);}}
+            {currentChat?.provider_id && <span
+                onClick={() => {setOpenQuestionsMenu(prev => !prev);}}
                 className='text-gray-600 text-center cursor-pointer flex mb-2'
             >
                 Suggested questions&nbsp;<FaQuestionCircle/>
-            </span>
+            </span>}
         </div>
 
         <div className='h-full overflow-y-auto relative'>
@@ -136,7 +137,7 @@ const ChatContainer = ({currentChat, currentUser, socket}) => {
             */}
 
             {
-                currentChat?.provider_id?.bussinessName && openQuestionsMenu &&
+                currentChat?.provider_id && openQuestionsMenu &&
                 <div className='bg-slate-400 w-1/2 px-2 py-6 flex flex-col justify-center rounded-t-md z-99 sticky top-0 left-1/4'>
                     <h4 className='text-center font-semibold text-lg'>Given Questions</h4>
                     {

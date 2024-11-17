@@ -84,11 +84,11 @@ const Header = () => {
                     {isShowOptions &&
                         <span className="z-68">
                         <div onClick={(e)=>{e.stopPropagation()}} className="flex flex-col absolute top-full left-0 bg-gray-100 text-[#0a66c2] font-medium border min-w-[150px] py-2">
-                            {+current.role === 202 &&
+                            {/* {+current.role === 202 && */}
                                 <Link className="p-2 w-full hover:bg-sky-100" to={`/${path.USER}/${path.PERSONAL}`}>
                                     Personal
                                 </Link>
-                            }
+                            
 
                             {+current.role === 1411 &&
                                 <Link className="p-2 w-full hover:bg-sky-100 " to={`/${path.ADMIN}/${path.DASHBOARD}`}>

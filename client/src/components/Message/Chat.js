@@ -39,11 +39,11 @@ const Chat = () => {
   }, [current]);
 
   useEffect(() => {
-    const fetchData = async () => { 
+    const fetchData = async () => {
       if(current){
         const response = await apiGetAllContact(current._id)
         console.log('||||||||||==================', response);
-        // console.log(location?.state?.currenRedirectedChatUserId, '|||||||||||++++++++++++++++');
+        console.log(location?.state?.currenRedirectedChatUserId, '|||||||||||++++++++++++++++');
         setContacts(response)
 
         if (location?.state?.currenRedirectedChatUserId) {
@@ -53,7 +53,7 @@ const Chat = () => {
         }
       }
     }
-    fetchData()
+    fetchData();
   }, [current]);
 
   const handleChatChange = (chat) => {

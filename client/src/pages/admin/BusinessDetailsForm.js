@@ -16,9 +16,9 @@ const GOONG_MAPTILES_KEY = 'IXqHXe9w2riica5A829SuB6HUl5Fi1Yg7LC9OHF2';
 const BusinessDetailsForm = () => {
   const {current} = useSelector(state => state.user);
   const dispatch = useDispatch();
-  const {register, formState:{errors, isDirty}, handleSubmit, reset, watch} = useForm();
+  // const {register, formState:{errors, isDirty}, handleSubmit, reset, watch} = useForm();
   const [currentProvider, setCurrentProvider] = useState({});
-  const [previewUrls, setPreviewUrls] = useState([]);
+  const [previewUrls, setPreviewUrls] = useState('');
   const [formData, setFormData] = useState({
     bussinessName: '',
     address: '',
@@ -118,18 +118,18 @@ const BusinessDetailsForm = () => {
         document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log("Form submitted", formData);
+  const handleSubmit = (e) => {
+    e.target.preventDefault();
+    console.log("Form submitted", formData);
 
-  //   handleUpdateInfo(formData);
-  // };
+    // handleUpdateInfo(formData);
+  };
 
   // if (loading) return <p>Loading...</p>;
   // if (error) return <p>Error: {error}</p>;
   const removeAvatar = (_url) => {
     setFormData((prev) => ({ ...prev, avatar: null }));
-    setPreviewUrls(prev => prev.filter(url => url === _url));
+    setPreviewUrls('');
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -140,7 +140,8 @@ const BusinessDetailsForm = () => {
       setFormData((prev) => ({ ...prev, avatar: file }));
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewUrls(prev => [...reader.result]);
+        setPreviewUrls(reader.result);
+        console.log(reader.result);
       };
       reader.readAsDataURL(file);
     }
@@ -321,45 +322,39 @@ const BusinessDetailsForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(handleUpdateInfo)} className="w-3/4 mx-auto p-6 bg-white shadow-md rounded-md">
-      <h2 className="text-xl font-semibold mb-4">My Business</h2>
-
-      <div className='flex gap-3 mb-4 justify-start'>
+    <form onSubmit={(e) => {e.target.preventDefault();}} className="w-3/4 mx-auto p-6 bg-white shadow-md rounded-md">
+      <div className='flex gap-3 justify-center'>
         {/* <label htmlFor='avatar'>
           <img src={previewImage||avatar} alt='avatar' className='cursor-pointer h-[200px] object-cover border-2 rounded-md'></img>
         </label> */}
 
-        <span className='font-medium'>Uploaded Images: {currentProvider.images?.length}</span>
-          <div className='flex gap-2'>
+        <span className='text-sm text-gray-500'>Uploaded {currentProvider.images?.length} images</span>
+          <div className='flex flex-col justify-center items-center gap-2'>
             {currentProvider.images?.length > 0 &&
+
             currentProvider.images.map(image => {
-              return <img src={image} alt='avatar' className='cursor-pointer w-[200px] h-[200px] ml-8 object-cover border-gray-500 border-4'></img>
+              return <img src={image} alt='avatar' className='cursor-pointer w-[80%] h-80%] object-cover'></img>
             })}
 
-              {previewUrls &&
+              {
+              previewUrls &&
                 <div className="relative">
-                  {
-                    previewUrls.map(url => (
-                      <>
-                        <img
-                          src={url}
-                          alt="Avatar preview"
-                          className="w-36 h-36 rounded-full object-cover border-4 border-blue-300 group-hover:border-blue-400 transition-colors duration-300 shadow-lg"
-                        />
+                  <img
+                    src={previewUrls}
+                    alt="Avatar preview"
+                    className="w-48 h-48 rounded-full object-cover border-4 border-blue-300 group-hover:border-blue-400 transition-colors duration-300 shadow-lg"
+                  />
 
-                        <button
-                          type="button"
-                          onClick={() => {removeAvatar(url)}}
-                          className="absolute -top-2 -right-2 bg-[#0a66c2] text-white rounded-full p-2 hover:bg-red-600 transition-all duration-300 transform hover:scale-110 shadow-lg"
-                          aria-label="Remove avatar"
-                        >
-                          <FiX size={20} />
-                        </button>
-                      </>
-                    ))
-                  }
+                  <button
+                    type="button"
+                    onClick={() => {removeAvatar(previewUrls)}}
+                    className="absolute -top-2 -right-2 bg-[#0a66c2] text-white rounded-full p-2 hover:bg-red-600 transition-all duration-300 transform hover:scale-110 shadow-lg"
+                    aria-label="Remove avatar"
+                  >
+                    <FiX size={20} />
+                  </button>
                 </div>
-            }
+              }
 
             <input
               type="file"
@@ -371,13 +366,13 @@ const BusinessDetailsForm = () => {
             />
             <label
               htmlFor="avatar-upload"
-              className="h-6 mt-4 items-center px-6 py-3 border border-transparent text-sm font-medium rounded-full text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer transform hover:scale-105 shadow-md"
+              className="flex justify-center h-fit p-1 border border-transparent text-sm text-gray-500 rounded-md bg-slate-300 shadow-md"
             >
               <FiUpload className="mr-2" />
               Upload Image
             </label>
         </div>
-
+{/* 
         <label className="block flex mb-2 flex-col justify-end grow">
           <span className="text-gray-700">Thumb Image URL</span>
           <input
@@ -385,10 +380,10 @@ const BusinessDetailsForm = () => {
             name="thumbImage"
             value={formData.thumbImage}
             onChange={handleChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring focus:ring-blue-300 focus:outline-none text-gray-500"
+            className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring focus:ring-blue-300 focus:outline-none text-gray-500 mb-4 px-3 y-4"
             placeholder="URL of the thumbnail image"
           />
-        </label>
+        </label> */}
       </div>
 
       <label className="block mb-2">
@@ -409,23 +404,23 @@ const BusinessDetailsForm = () => {
           className="block text-sm font-medium text-gray-700 mb-1"
         >Address</label>
         <div className="mt-1 relative rounded-lg shadow-sm" ref={suggestionRef}>
-          <div className="absolute inset-y-0 left-0 pl-3 pt-4">
-            <FiMapPin className="text-blue-400" />
-          </div>
+          {/* <div className="absolute inset-y-0 left-0 pl-3 pt-4">
+            <FiMapPin />
+          </div> */}
           <input
-              type="text"
+            type="text"
               value={formData.address}
               id="address"
               name="address"
               onChange={handleAddressInputChange}
               onKeyDown={handleAddressKeyPress}
-              className={`block w-full pl-10 px-4 py-3 rounded-lg border border-blue-300 focus:outline-none focus:ring-2 bg-white/50 transition-all duration-300 text-slate-700`}
+              className={`block w-full rounded-md border focus:outline-none focus:ring-2 bg-white/50 transition-all duration-300 text-slate-500 focus:ring focus:ring-blue-300 focus:outline-none p-2`}
           />
-          {errors.address && (
+          {/* {errors.address && (
             <p className="mt-2 text-sm text-red-600" id="address-error">
               {errors.address}
             </p>
-          )}
+          )} */}
           <div className="w-[100%]">
               {addressSuggestions.length > 0 && (
                   <ul className="bg-white border border-gray-300 z-10 w-[100%] max-h-60 overflow-y-auto">
@@ -444,11 +439,17 @@ const BusinessDetailsForm = () => {
         </div>
       </div>
 
-      <div className={clsx("absolute inset-0 w-screen h-screen", isMapVisible ? 'flex items-center justify-center' : 'hidden')}>
-        <div ref={mapContainer} className={`absolute w-[45%] h-[100px] border-2 border-gray-300 rounded-md ${isMapVisible ? 'block' : 'hidden'}`} style={{ zIndex: 1000 }}>
+      {/* isMapVisible && <div className="flex items-center justify-center mt-4">
+        <div ref={mapContainer} className={`absolute w-[45%] h-[100px] border-2 border-gray-300 rounded-md block`} style={{ zIndex: 1000 }}>
             <button onClick={() => {setIsMapVisible(false);}} className={clsx("absolute top-2 right-2 bg-red-500 text-white p-2 rounded", isMapVisible ? 'block' : 'hidden')} style={{ zIndex: 1000 }}>X</button>
         </div>
-      </div>
+      </div> */}
+        <div className={clsx("", isMapVisible ? 'flex items-center justify-center' : 'hidden')}>
+          <div ref={mapContainer} className={clsx("w-full h-[20%] order-2 border-gray-300 rounded-md", isMapVisible ? 'block' : 'hidden')}>
+              <button onClick={() => {setIsMapVisible(false);}} className={clsx("bg-red-500 text-white p-2 rounded", isMapVisible ? 'block' : 'hidden')} style={{ zIndex: 999 }}>X</button>
+          </div>
+        </div>
+      {/* { !isMapVisible && <div ref={mapContainer}></div> } */}
       {/* <label className="block mb-2">
         <span className="text-gray-700">Address</span>
         <input
