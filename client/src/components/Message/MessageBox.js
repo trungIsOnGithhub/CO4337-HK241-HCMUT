@@ -32,14 +32,14 @@ const MessageBox = ({currentChat}) => {
   useEffect(() => {
     const fetchCurrentChatProvider = async() => {
       let response = await apiGetProviderByOwnerId({owner:currentChat?.id});
-      console.log("------", response.provider.chatGivenQuestions);
+      console.log("111111111111111>>>>", response.provider);
       if (response?.success && response?.provider) {
         // console.log('[[[[[[[[[[');
         setCurrentChatProvider(response.provider)
       }
     }
     fetchCurrentChatProvider()
-  }, []);
+  }, [openQuestionsMenu]);
 
   const handleEmojiPickerHideShow = () => { 
     setShowEmojiPicker(!showEmojiPicker)
