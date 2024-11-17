@@ -160,10 +160,10 @@ const DetailProvider = () => {
           // Call the function to show the route using latitude and longitude
           showRoute(latitude, longitude);
         }, () => {
-          Swal.fire('Không thể lấy vị trí của bạn.');
+          Swal.fire('Cannot get your position.');
         });
       } else {
-        Swal.fire('Geolocation không khả dụng.');
+        Swal.fire('Geolocation is not available.');
       }
     }
 
