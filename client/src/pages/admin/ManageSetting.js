@@ -183,7 +183,7 @@ function ManageSetting() {
                                   <span className="flex gap-1">
                                     <Select
                                       defaultValue={0}
-                                      value={Math.trunc(minutesBeforeSameDayBook/60)}
+                                      value={{value: Math.trunc(minutesBeforeSameDayBook/60), label: Math.trunc(minutesBeforeSameDayBook/60).toString() }}
                                       name="minTimeBookSameDayH"
                                       options={[0,1,2,3,4,5,6,7,8,9,10,11,12].map(num => {
                                         return {
@@ -201,7 +201,7 @@ function ManageSetting() {
                                   <span className="flex gap-1">
                                     <Select
                                       defaultValue={0}
-                                      value={45}
+                                      value={{value: minutesBeforeSameDayBook%60, label: (minutesBeforeSameDayBook%60).toString() }}
                                       name="minTimeBookSameDayM"
                                       options={[
                                         { value: 0, label: '0' },

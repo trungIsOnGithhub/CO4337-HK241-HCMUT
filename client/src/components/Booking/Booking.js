@@ -204,10 +204,13 @@ const Booking = () => {
         if (hNeed < 1) {
           msg = `Provider required ${mNeed} minutes before booking this timeslot!`;
         }
-
         toast.error(msg);
-  
         fetchData();
+        setSelectedStaff({
+          time: null,
+          date: null,
+          staff: null
+        });
         return;
       }
     }
@@ -296,10 +299,13 @@ const Booking = () => {
         if (hNeed < 1) {
           msg = `Provider required ${mNeed} minutes before booking this timeslot!`;
         }
-
         toast.error(msg);
-  
         fetchData();
+        setSelectedStaff({
+          time: null,
+          date: null,
+          staff: null
+        });
         return;
       }
     }
