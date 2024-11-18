@@ -1,8 +1,6 @@
 import React from 'react'
-import useWindowSize from 'react-use/lib/useWindowSize'
 
 const HomeSearchBar = () => {
-    // const { width, height } = useWindowSize()
     return (
         <div className="flex-row flex-gap-2 justify-start">
             <div className='mx-auto'>

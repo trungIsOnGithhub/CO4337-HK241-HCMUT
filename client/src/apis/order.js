@@ -22,6 +22,12 @@ export const apiGetOrdersByUser = (params) => axios({
     params
 })
 
+export const apiGetOrdersUserByAdmin = (params, userId) => axios({
+    url: '/order/admin/getOrder/' + userId,
+    method: 'get',
+    params
+})
+
 export const apiGetOrdersForStaffCalendar = (data) => axios({
     url: '/order/admin/staff_calendar',
     method: 'post',

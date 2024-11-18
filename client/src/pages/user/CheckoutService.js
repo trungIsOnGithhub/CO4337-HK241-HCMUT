@@ -13,12 +13,13 @@ import { FaPaypal } from "react-icons/fa";
 import { SiZalo } from "react-icons/si";
 import { TbTruckDelivery } from "react-icons/tb";
 import { useNavigate, useLocation } from 'react-router-dom';
+import { apiCreateOrder } from 'apis';
+import Swal from 'sweetalert2'; 
 
 const CheckoutService = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { currentCartService, current: currentUser } = useSelector((state) => state.user);
-  console.log(currentCartService)
   const [isSuccess, setIsSuccess] = useState(false);
   const [exchangeRate, setExchangeRate] = useState(null); // State để lưu trữ tỉ giá hối đoái
   const location = useLocation();
@@ -39,15 +40,15 @@ const CheckoutService = () => {
     setShowPaypal(false);
   };
 
-  console.log(couponCodeFromURL)
-
+  
   const [selectedPayment, setSelectedPayment] = useState("");
   const paymentMethods = [
     { id: "paypal", name: "PayPal", icon: FaPaypal },
-    { id: "zalopay", name: "ZaloPay", icon: SiZalo },
+    // { id: "zalopay", name: "ZaloPay", icon: SiZalo },
     { id: "cod", name: "Cash on Delivery", icon: TbTruckDelivery, iconColor: "text-green-600" }
   ];
-
+  console.log(selectedPayment)
+  
   const fetchCheckoutData = async () => {
     dispatch(getCurrent());
   };
@@ -84,15 +85,6 @@ const CheckoutService = () => {
 
   const handlePayment = async (paymentResult) => {
     try {
-      if (couponCodeFromURL) {
-        const validateResponse = await apiValidateAndUseCoupon({ couponCode: couponCodeFromURL, userId: currentUser._id });
-        if (!validateResponse.success) {
-          console.error('Coupon validation failed:', validateResponse.message);
-          // Hiển thị thông báo lỗi cho người dùng
-          return;
-        }
-      }
-
       if (paymentResult.success) {
         // Cập nhật sử dụng coupon chỉ sau khi thanh toán thành công
         if (couponCodeFromURL) {
@@ -109,7 +101,7 @@ const CheckoutService = () => {
     }
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async() => {
     if (!selectedPayment) {
       alert("Please select a payment method");
       return;
@@ -117,8 +109,22 @@ const CheckoutService = () => {
 
     if (selectedPayment === 'paypal') {
       setShowPaypal(true); // Hiển thị PaypalProduct nếu chọn PayPal
-    } else {
-      alert(`Order placed successfully with ${selectedPayment} payment method!`);
+    }
+    else if(selectedPayment === 'cod'){
+      const payloadCOD = {...payload, status: 'Pending', paymentMethod: 'cod'}
+      console.log(payloadCOD)
+      const response = await apiCreateOrder(payloadCOD)
+      if(response.success){
+        if (couponCodeFromURL) {
+          await apiUpdateCouponUsage({ couponCode: couponCodeFromURL, userId: currentUser._id });
+        }
+        setIsSuccess(true);
+        setTimeout(()=>{
+          Swal.fire('Congratulation !!!', 'Your order has been successfully completed', 'success').then(()=>{
+              navigate('/')
+          })
+        }, 1500)
+      }
     }
   };
 
@@ -222,7 +228,7 @@ const CheckoutService = () => {
             </div>
 
             {showPaypal && (
-              <Paypal amount={Math.round(totalPriceUSD)} payload={payload} setIsSuccess={setIsSuccess} />
+              <Paypal amount={Math.round(totalPriceUSD)} payload={payload} setIsSuccess={setIsSuccess} onSuccess={handlePayment}/>
             )}
 
             <button

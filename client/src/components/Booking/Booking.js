@@ -377,13 +377,24 @@ const Booking = () => {
 
   const canUseDiscount = (coupon) => {
     if (!currentUser) return false;
-    
+    console.log(coupon)
+    const { date, time } = coupon.expirationDate;
+    const expirationDateTime = new Date(`${date.split('/').reverse().join('-')}T${time}:00`); // Chuyển đổi sang ISO format
+
+    // Kiểm tra nếu thời gian hết hạn đã qua
+    const now = new Date();
+    console.log(expirationDateTime)
+    console.log(now)
+
+    if (expirationDateTime < now) return false;
+
     const userUsage = coupon.usedBy.find(usage => usage.user.toString() === currentUser._id);
     
     return coupon.noLimitPerUser || !userUsage || userUsage.usageCount < coupon.limitPerUser;
   };
 
   const usableDiscountCodes = discountCodes.filter(canUseDiscount);
+  
   return (
     <div className='w-main'>
       <div className='w-main flex gap-2 h-fit my-5'>

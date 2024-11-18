@@ -1,9 +1,15 @@
-import { apiGetOneOrderProduct } from 'apis/orderProduct';
+import { apiGetAdminData } from 'apis';
+import { apiGetOneOrderProduct, apiUpdatePaymentStatusOrderProduct } from 'apis/orderProduct';
+import clsx from 'clsx';
 import React, {useEffect, useState} from 'react'
 import { FiPackage, FiTruck, FiCheck } from "react-icons/fi";
+import { TbMessageCirclePlus } from 'react-icons/tb';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { showMessageBox } from 'store/app/appSlice';
 import { formatPrice } from 'ultils/helper';
 
 const OrderHistoryDetail = () => {
@@ -11,17 +17,33 @@ const OrderHistoryDetail = () => {
     const [showCancelModal, setShowCancelModal] = useState(false);
     const [orderProductData, setOrderProductData] = useState(null)
     const {oid} = useParams()
-    console.log(oid)
+    const [adminData, setAdminData] = useState(null)
+    const [providerData, setProviderData] = useState(null)
+    const {current} = useSelector(state => state.user)
+    const dispatch = useDispatch()
+
+    const fetOrderProduct = async () => {
+        const response = await apiGetOneOrderProduct(oid)
+        if(response?.success){
+            setOrderProductData(response?.order)
+        }
+    }
+    useEffect(() => {
+      fetOrderProduct()
+    }, [oid]);
 
     useEffect(() => {
-        const fetOrderProduct = async () => {
-            const response = await apiGetOneOrderProduct(oid)
-            if(response?.success){
-                setOrderProductData(response?.order)
-            }
-        }
-        fetOrderProduct()
-    }, [oid]);
+      setProviderData(orderProductData?.provider)
+    }, [orderProductData]);
+
+
+    useEffect(() => {
+      const fetchAdminData = async () => {
+        const response = await apiGetAdminData({prid: providerData?._id})
+        setAdminData(response?.admin)
+      }
+      fetchAdminData()
+    }, [providerData]);
 
     const StatusIndicator = ({ status }) => {
         const stages = ["Pending", "Shipping", "Delivered"];
@@ -45,14 +67,25 @@ const OrderHistoryDetail = () => {
         );
       };
 
-    const handleCancelOrder = () => {
+    const handleCancelOrder = async() => {
         setIsLoading(true);
-        setTimeout(() => {
-          toast.success("Order cancelled successfully");
+        const response = await apiUpdatePaymentStatusOrderProduct({orderId: orderProductData?._id, status: 'Cancelled'})
+        console.log(response)
+        if(response?.success){
+          toast.success("Order has been cancelled successfully");
           setShowCancelModal(false);
           setIsLoading(false);
-        }, 1500);
+          fetOrderProduct()
+        }
       };
+
+    const handleContactSeller = () => {
+      const to = {
+        id: adminData[0]?._id, firstName: adminData[0]?.firstName, lastName: adminData[0]?.lastName, avatar: adminData[0]?.avatar
+      }
+      dispatch(showMessageBox({from:current?._id, to: to}))
+    }
+
     return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg my-4">
         <h1 className="text-2xl font-bold mb-6">Track Your Order</h1>
@@ -106,9 +139,18 @@ const OrderHistoryDetail = () => {
 
         <button
         onClick={() => setShowCancelModal(true)}
-        className="w-full py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200"
+        disabled={isLoading || orderProductData?.statusShipping !== 'Pending' || orderProductData?.statusPayment !== 'Pending'}
+        className={clsx("w-full py-3 text-white rounded-lg transition-colors duration-200 font-medium", orderProductData?.statusShipping === "Pending" && orderProductData?.statusPayment === "Pending" ? "bg-red-600 hover:bg-red-700 cursor-pointer" : "bg-gray-400 cursor-not-allowed")}
         >
         Cancel Order
+        </button>
+
+        <button
+        onClick={() => handleContactSeller()}
+        className= "w-full py-3 text-white rounded-lg transition-colors duration-200 bg-[#0a66c2] mt-4 flex gap-2 justify-center items-center font-medium"
+        >
+        <TbMessageCirclePlus />
+        Contact the seller
         </button>
 
         {showCancelModal && (
@@ -135,7 +177,7 @@ const OrderHistoryDetail = () => {
         </div>
         )}
 
-        <ToastContainer position="bottom-right" />
+        <ToastContainer position="top-right" />
     </div>
   )
 }

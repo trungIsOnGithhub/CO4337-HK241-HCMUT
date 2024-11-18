@@ -68,7 +68,7 @@ const ViewBlog = () => {
 
     const fetchCurrentBlogCommentList = async () => {
       // setIsLoading(true);
-      let response = await apiGetAllBlogComment({ blogCommentId: params?.get('id'), limit: 5 });
+      let response = await apiGetAllBlogComment({ blogCommentId: params?.get('id')});
       if(response?.success){
         setCommentList(response?.allComments);
         // setIsLoading(false);
@@ -84,7 +84,7 @@ const ViewBlog = () => {
 
     const fetchCurrentReplyComment = async () => {
       // setIsLoading(true);
-      let response = await apiGetAllReplyComment({ blogCommentId: params?.get('id'), limit: 5 });
+      let response = await apiGetAllReplyComment({ blogCommentId: params?.get('id')});
       if(response?.success){
         setAllReplyComments(response?.replies);
         // setIsLoading(false);

@@ -62,7 +62,6 @@ const Container = styled.div`
     align-items: center;
     background-color: #0a66c2;
     padding: 0 2rem;
-    padding-bottom: 0.3rem;
     @media screen and (min-width: 720px) and (max-width: 1080px){
         padding: 0 1rem;
         gap: 1rem;
@@ -118,7 +117,7 @@ const Container = styled.div`
         input {
             width: 90%;
             background-color: transparent;
-            color: white;
+            color: #0a66c2;
             border: none;
             padding-left: 1rem;
             font-size: 1.2rem;

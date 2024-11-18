@@ -18,6 +18,7 @@ const Chat = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const messagesEndRef = useRef(null)
 
   const {current} = useSelector(state => state.user)
   const socket = useRef()
@@ -53,15 +54,16 @@ const Chat = () => {
     setCurrentChat(chat)
   }
 
+
   return (
     
-    <Container>
+    <Container className='mb-[48px] p-6' ref={messagesEndRef}>
       <div className='container bg-white p-6 rounded-md'>
         <Contact contacts={contacts} currentUser={current} changeChat={handleChatChange}/>
         {
           isLoaded && (currentChat === undefined ?
-          <div className='bg-slate-300 rounded-r-md'><Welcome currentUser={current}/></div> : 
-          <ChatContainer currentChat={currentChat} currentUser={current} socket={socket}/>)
+          <div className='bg-slate-300 rounded-r-md border-t border-b border-r border-[#0a66c2]'><Welcome currentUser={current}/></div> : 
+          <ChatContainer messagesEndRef={messagesEndRef} currentChat={currentChat} currentUser={current} socket={socket}/>)
         }
       </div>
     </Container>

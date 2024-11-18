@@ -17,6 +17,12 @@ export const apiGetUserOrderProduct = (params) => axios({
     params
 })
 
+export const apiGetUserOrderProductByUserId = (params, userId) => axios({
+    url: '/order_product/getOrderProduct/' + userId,
+    method: 'get',
+    params
+})
+
 export const apiGetOneOrderProduct = (oid) => axios({
     url: '/order_product/' + oid,
     method: 'get',

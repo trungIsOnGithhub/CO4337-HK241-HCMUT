@@ -30,26 +30,27 @@ const ManagePost = ({ dispatch, navigate }) => {
       // setCounts(sortedPosts?.blogs.length);
     // }
   };
-  console.log(post)
-
-  const handleOnClickDetail = (id) => {
-    navigate({
-      pathname: `/${path.ADMIN}/${path.MANAGE_POST_DETAIL}`,
-      search: createSearchParams({ id }).toString()
-    });
-  };
 
   useEffect(() => {
     const searchParams = Object.fromEntries([...params]);
     fetchPost(searchParams);
   }, [params]);
 
-  console.log(post)
-
   const handleNavigateEditBlog = (blogId) => {
     navigate(`/admin/update_blog/${blogId}`)
   }
 
+  const handleViewDetailBlog = (blogId) => {
+    navigate({
+      pathname: `/${path.ADMIN}/${path.MANAGE_POST_DETAIL}`,
+      search: createSearchParams({ blogId }).toString()
+    });
+  }
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
+  }, []);
+  
   return (
     <div className='w-full h-full relative'>
       <div className='inset-0 absolute z-0'>
@@ -93,7 +94,7 @@ const ManagePost = ({ dispatch, navigate }) => {
                 <div className='w-[10%] px-2 py-2 text-[#00143c] flex justify-center items-center'>{el?.isHidden ? 'Hidden' : 'Visible'}</div>
                 <div className='w-[20%] px-2 py-2 text-[#00143c] flex justify-center items-center gap-2'>
                   <span onClick={()=>{handleNavigateEditBlog(el?._id)}} className='text-blue-600 hover:text-blue-900 cursor-pointer'><FiEdit className="h-5 w-5" /></span>
-                  <span className={clsx(!el?.isHidden ? "text-green-600 hover:text-green-900" : "text-gray-600 hover:text-gray-900 cursor-pointer")}>{!el.isHidden ? <FiEye className="h-5 w-5" /> : <FiEyeOff className="h-5 w-5" />}</span>
+                  <span onClick={()=>handleViewDetailBlog(el?._id)} className= "text-green-600 hover:text-green-900 cursor-pointer"><FiEye className="h-5 w-5" /></span>
                   <span className='text-red-600 hover:text-red-900 cursor-pointer'><FiTrash2 className='h-5 w-5'/></span>
                 </div>
                </div>

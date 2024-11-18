@@ -9,7 +9,7 @@ import avatarDefault from '../../assets/avatarDefault.png'
 import { FaHome } from "react-icons/fa";
 
 const activeStyle = 'px-4 py-2 flex items-center gap-2 text-gray-100 bg-[#0a66c2]'
-const notActiveStyle = 'px-4 py-2 flex items-center gap-2 hover:bg-blue-200'
+const notActiveStyle = 'px-4 py-2 flex items-center gap-2 hover:bg-gray-600'
 
 const {FaCaretDown, FaCaretRight} = icons
 const UserSideBar = () => {
@@ -24,7 +24,7 @@ const UserSideBar = () => {
     }
   }
   return (
-    <div className='bg-white h-full py-4 w-[250px] flex-none border-r border-[#0a66c2]'>
+    <div className='bg-[#00143c] text-white h-full py-4 w-[250px] flex-none'>
         <div className='w-full flex flex-col items-center justify-center py-4'>
             <img src={current?.avatar || avatarDefault} alt='logo' className='w-16 h-16 object-cover'></img>
             <span>{`${current?.lastName} ${current?.firstName}`}</span>
@@ -43,7 +43,7 @@ const UserSideBar = () => {
               </NavLink>}
               {el?.type === 'parent' &&
               <div onClick={() => handleShowTab(+el.id)} className='flex flex-col'>
-                <div className='px-4 py-2 flex items-center justify-between cursor-pointer hover:bg-blue-200'> 
+                <div className='px-4 py-2 flex items-center justify-between cursor-pointer hover:bg-gray-600'> 
                   <div className='flex items-center gap-2'>
                   <span>{el?.icon}</span>
                   <span>{el?.text}</span>

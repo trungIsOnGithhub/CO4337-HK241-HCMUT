@@ -9,7 +9,6 @@ const dbConnect = async () => {
         else{
             // console.log("*************DBCONN");
         }
-        console.log("@@@@@@@@@@@@@@@DBCONN");
     } catch(error){
         console.error(JSON.stringify(error));
         throw new Error(error)
