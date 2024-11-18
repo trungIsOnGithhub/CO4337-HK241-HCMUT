@@ -388,10 +388,10 @@ const BookingDateTIme = () => {
       toast.success("Service cart updated successfully!");
 
       if(selectedVoucher){
-        window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}&couponCode=${selectedVoucher?.code}`, '_blank');
+        navigate(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}&couponCode=${selectedVoucher?.code}`);
       }
       else {
-        window.open(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}`, '_blank');
+        navigate(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}`);
       }
     }
     else if (resp.mes) {

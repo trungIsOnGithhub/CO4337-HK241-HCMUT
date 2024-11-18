@@ -238,7 +238,7 @@ const ManageProduct = () => {
 
             <div>
               {staffs?.map((el,index) => (
-                <div key={index} className='w-full flex border-b border-[#f4f6fa] gap-1 h-[56px] px-[8px] py-[12px]'>
+                <div key={index} className='w-full flex border-b border-[#f4f6fa] gap-1 px-[8px] py-[12px]'>
                   <span className='w-[10%] py-2 text-[#00143c]'><img src={el.avatar} alt='thumb' className='w-12 h-12 object-cover'></img></span>
                   <span className='w-[25%] py-2 text-[#00143c] text-sm line-clamp-1 text-center font-semibold'>{el?.email}</span>
                   <span className='w-[25%] py-2 text-[#00143c] text-sm line-clamp-1 text-center'>{`${el?.firstName} ${el?.lastName}`}</span>

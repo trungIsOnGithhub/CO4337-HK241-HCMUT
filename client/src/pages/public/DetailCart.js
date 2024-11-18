@@ -306,16 +306,7 @@ const DetailCart = () => {
         sessionStorage.setItem('totalShippingPrice', JSON.stringify(totalShippingPrice));
         sessionStorage.setItem('totalSavings', JSON.stringify(totalSavings));
         
-        const newWindow = window.open(`/${path.CHECKOUT_PRODUCT}`, '_blank');
-        if (newWindow) {
-            window.close();
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Cannot close the current tab',
-                text: 'Please allow pop-ups in your browser settings.'
-            });
-        }
+        navigate(`/${path.CHECKOUT_PRODUCT}`);
     }
   }
 

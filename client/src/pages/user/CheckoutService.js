@@ -131,6 +131,7 @@ const CheckoutService = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 via-blue-100 to-pink-100 py-12 px-4 sm:px-6 lg:px-8 animate-gradient-x">
+      {isSuccess && <Congratulation />}
       <div className="max-w-4xl mx-auto">
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden">
           <div className="px-6 py-8">
