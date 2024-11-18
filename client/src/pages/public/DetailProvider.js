@@ -29,7 +29,7 @@ import {showMessageBox} from '../../store/app/appSlice'
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import logoWeb from '../../assets/logoWeb.png'
-import { IoChatbubbleEllipsesSharp } from 'react-icons/io5';
+// import { IoChatbubbleEllipsesSharp } from 'react-icons/io5';
 
 const DetailProvider = () => {
     const navigate = useNavigate()
@@ -708,8 +708,12 @@ const DetailProvider = () => {
           {renderFooter()}
         </div>
 
-        <div className='fixed w-[50px] h-[50px] right-12 bottom-12'>
-          <span onClick={()=>handleShowChat()} className='cursor-pointer'><IoChatbubbleEllipsesSharp size={64} color='#0a66c2'/></span>
+        <div className='fixed right-12 bottom-12'>
+          <span onClick={()=>handleShowChat()}
+            className="cursor-pointer bg-[#0a66c2] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#084a93] transition-all"
+          >
+          💬 Chat with Us
+          </span>
         </div>
       </div>
   )
