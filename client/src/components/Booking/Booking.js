@@ -194,12 +194,12 @@ const Booking = () => {
     const nowDate = new Date();
     const date = moment(nowDate).format("DD/MM/YYYY");
 
-    if (provider?.advancedSetting?.minTimeBookSameDay > 0) {
+    if (provider?.advancedSetting?.minutesBeforeSameDayBook > 0) {
       const nowMM = nowDate.getHours() * 60 + nowDate.getMinutes() + 1; // add 1 one more minute to fix delay
 
-      if (startMM - nowMM <= provider.advancedSetting.minTimeBookSameDay) {
-        const hNeed = provider.advancedSetting.minTimeBookSameDay / 60;
-        const mNeed = provider.advancedSetting.minTimeBookSameDay % 60;
+      if (startMM - nowMM <= provider.advancedSetting.minutesBeforeSameDayBook) {
+        const hNeed = Math.trunc(provider.advancedSetting.minutesBeforeSameDayBook / 60);
+        const mNeed = provider.advancedSetting.minutesBeforeSameDayBook % 60;
         let msg = `Provider required ${hNeed} hours ${mNeed} before booking this timeslot!`;
         if (hNeed < 1) {
           msg = `Provider required ${mNeed} minutes before booking this timeslot!`;
@@ -286,12 +286,12 @@ const Booking = () => {
       // // Kết hợp formattedDate và time để tạo datetime
     const dateTime = new Date(`${formattedDate}T${selectedStaff?.time}:00Z`);
 
-    if (provider?.advancedSetting?.minTimeBookSameDay > 0) {
+    if (provider?.advancedSetting?.minutesBeforeSameDayBook > 0) {
       const nowMM = nowDate.getHours() * 60 + nowDate.getMinutes() + 1; // add 1 one more minute to fix delay
 
-      if (startMM - nowMM <= provider.advancedSetting.minTimeBookSameDay) {
-        const hNeed = provider.advancedSetting.minTimeBookSameDay / 60;
-        const mNeed = provider.advancedSetting.minTimeBookSameDay % 60;
+      if (startMM - nowMM <= provider.advancedSetting.minutesBeforeSameDayBook) {
+        const hNeed = Math.trunc(provider.advancedSetting.minutesBeforeSameDayBook / 60);
+        const mNeed = provider.advancedSetting.minutesBeforeSameDayBook % 60;
         let msg = `Provider required ${hNeed} hours ${mNeed} before booking this timeslot!`;
         if (hNeed < 1) {
           msg = `Provider required ${mNeed} minutes before booking this timeslot!`;

@@ -29,10 +29,10 @@ export const apiGetServiceProviders = (params) => axios({
     method: 'get',
     params
 })
-export const apiGetServiceProvidersGivenQnA = () => axios({
-    url: `/service_provider/qna`,
-    method: 'get'
-})
+// export const apiGetServiceProvidersGivenQnA = () => axios({
+//     url: `/service_provider/qna`,
+//     method: 'get'
+// })
 export const apiAddServiceProvidersGivenQnA = (data) => axios({
     url: `/service_provider/qna`,
     method: 'post',

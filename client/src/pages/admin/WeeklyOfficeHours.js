@@ -314,7 +314,7 @@ const WeeklyOfficeHours = () => {
 
           if (swalResult.isConfirmed) {
             const workingTime = transfotmOfficeHoutToWorkingTimeFormat(officeHours);
-            console.log('----><>><><><.', workingTime);
+            // console.log('----><>><><><.', workingTime);
   
             let resp = await apiUpdateCurrentServiceProvider(current.provider_id?._id, { time: workingTime });
 

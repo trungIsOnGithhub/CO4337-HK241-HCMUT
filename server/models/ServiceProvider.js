@@ -106,6 +106,9 @@ var ProviderServiceSchema = new mongoose.Schema({
         type: String,
         enum: ['small', 'large'],
         default: 'small',
+    },
+    advancedSetting: {
+        type: Object
     }
 },{
     timestamps: true
