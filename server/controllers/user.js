@@ -190,6 +190,42 @@ const getOneUser = asyncHandler(async(req, res)=>{
     })
 })
 
+const getOneUserById = asyncHandler(async(req, res)=>{
+    const {userId} = req.params
+    console.log(userId)
+
+    const user = await User.findById(userId).select('-refresh_token -password').populate({
+        path: 'cart_service',
+        populate:{
+            path: 'service',
+            select: 'name duration'
+        },
+    }).populate({
+        path: 'cart_service',
+        populate:{
+            path: 'provider',
+            select: 'bussinessName address'
+        },
+    }).populate({
+        path: 'cart_service',
+        populate:{
+            path: 'staff',
+            select: 'firstName lastName'
+        },
+    }).populate('provider_id')
+    .populate({
+        path: 'cart_product',
+        populate:{
+            path: 'provider'
+        }
+    }).populate('wishlist').populate('wishlistProduct')
+
+    return res.status(200).json({
+        success: user? true : false,
+        res: user? user : "User not found"
+    })
+})
+
 const refreshAccessToken = asyncHandler(async(req, res) => {
     const cookie = req.cookies
     if(!cookie && !cookie.refreshToken){
@@ -794,5 +830,6 @@ module.exports = {
     getAllContact,
     addContact,
     updateWishlistProduct,
-    getAdmin
+    getAdmin,
+    getOneUserById
 }

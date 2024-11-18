@@ -14,6 +14,7 @@ import avatarUser from '../../assets/avatarDefault.png'
 import { FcExport } from "react-icons/fc";
 import { MdBlock } from "react-icons/md";
 import { TfiExport } from 'react-icons/tfi'
+import { FaChartArea } from 'react-icons/fa'
 
 const ManageUser = () => {
   const navigate = useNavigate()
@@ -101,6 +102,9 @@ const ManageUser = () => {
     })
   }
   
+  const handleNavigateUserStatistics = (userId) => {
+    navigate(`/admin/view_statistics/${userId}`)
+  }
    
   return (
     <div className="w-full h-full relative">
@@ -163,13 +167,13 @@ const ManageUser = () => {
                       </div>
                       
                       <div className="relative group inline-block">
-                        <span className='inline-block hover:underline cursor-pointer text-[#0a66c2] hover:text-orange-500 px-0.5'>
-                          <MdBlock size={24}/>
+                        <span onClick={()=>handleNavigateUserStatistics(el?._id)} className='inline-block hover:underline cursor-pointer text-[#0a66c2] hover:text-orange-500 px-0.5'>
+                          <FaChartArea size={24}/>
                         </span>
 
                         {/* Tooltip */}
                         <div className="absolute left-1/2 top-[-2px] transform -translate-x-1/2 translate-y-full mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-[#00143c] border border-[##dee1e6] text-xs p-1 rounded">
-                          Block
+                          View statistics
                         </div>
                       </div>
                     </span>

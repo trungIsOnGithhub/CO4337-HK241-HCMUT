@@ -1,45 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { createSearchParams, useSearchParams } from 'react-router-dom';
-import { apiGetOneOrderByAdmin, apiUpdateStatusOrder } from 'apis/order';
-import moment from 'moment';
-import { Pagination } from 'components';
-import { FiCalendar, FiUser, FiBriefcase, FiClock, FiDollarSign, FiTag, FiPhone, FiMail } from 'react-icons/fi';
-import { IoIosTimer } from "react-icons/io";
-import { FaTags } from "react-icons/fa";
-import { AiOutlineUser, AiOutlineTeam } from 'react-icons/ai';  // New icons for Customer and Staff
-import path from 'ultils/path';
-import withBaseComponent from 'hocs/withBaseComponent';
-import { formatPrice, formatPricee } from 'ultils/helper';
-import bgImage from '../../assets/clouds.svg'
-import avatarDefault from '../../assets/avatarDefault.png'
-import { IoReturnDownBack } from 'react-icons/io5';
-import { toast } from 'react-toastify';
+import { apiGetOneOrderByAdmin } from 'apis';
+import React, { useEffect, useState } from 'react'
+import { FiCalendar, FiClock, FiMail, FiPhone, FiTag } from 'react-icons/fi';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { formatPrice } from 'ultils/helper';
 
-const ManageBookingDetail = ({ dispatch, navigate }) => {
-  const [params] = useSearchParams();
+const BookingHistoryDetail = () => {
   const [booking, setBooking] = useState(null);
+  const {bid} = useParams()
   const [status, setStatus] = useState("Pending");
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' }); 
-  }, []);
-
   const fetchBookingData = async () => {
-    const response = await apiGetOneOrderByAdmin(params?.get('bookingid'));
+    const response = await apiGetOneOrderByAdmin(bid);
     if (response?.success) {
       setBooking(response?.booking);
     }
   };
 
   useEffect(() => {
-    fetchBookingData();
-  }, []);
-
-  useEffect(() => {
     setStatus(booking?.status)
   }, [booking])
-  
-  console.log(booking)
+
+  useEffect(() => {
+    fetchBookingData();
+  }, [bid]);
 
   const getStatusClass = (status) => {
     switch(status) {
@@ -54,40 +37,8 @@ const ManageBookingDetail = ({ dispatch, navigate }) => {
     }
   };
 
-  const handleBackManageBooking = () => {
-    window.history.back()
-  }
-
-  const handleStatusChange = async (status) => {
-    if (!booking?._id) {
-      toast.error("Booking ID is missing.");
-      return;
-    }
-    
-    const response = await apiUpdateStatusOrder({ bookingId: booking._id, status });
-    if (response?.success) {
-      toast.success(response?.mes);
-      fetchBookingData()
-    } else {
-      toast.error(response?.mes);
-    }
-  };
-
   return (
-    <div className="w-full h-full relative">
-      <div className='inset-0 absolute z-0'>
-        <img src={bgImage} className='w-full h-full object-cover'/>
-      </div>
-      <div className="relative z-10"> {/* Thêm lớp này để đảm bảo dòng chữ không bị che mất */}
-        <div className='w-full h-20 flex items-end gap-1 p-4'>
-          <div onClick={handleBackManageBooking} className='text-[#00143c] cursor-pointer'><IoReturnDownBack size={28}/></div>
-          <span className='text-[#00143c] text-3xl font-semibold'>Booking Detail</span>
-        </div>
-        <div className='w-[95%] min-h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
-          <div className='w-full h-fit flex justify-between items-center'>
-            <h1 className='text-[#00143c] font-medium text-[16px]'>{`Booking ID: ${booking?._id}`}</h1>
-          </div>
-          <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
               <div className="bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
                 <div className="relative h-64 overflow-hidden">
@@ -140,20 +91,6 @@ const ManageBookingDetail = ({ dispatch, navigate }) => {
 
                     <div className="space-y-6">
                       <div className="p-6 bg-green-50/50 rounded-2xl border border-green-100">
-                        <div className="flex items-center space-x-4 mb-4">
-                          <img
-                            src={booking?.orderBy?.avatar || avatarDefault}
-                            alt={`${booking?.orderBy?.lastName} ${booking?.orderBy?.firstName}`}
-                            className="w-20 h-20 rounded-2xl object-cover ring-4 ring-green-200"
-                            onError={(e) => {
-                              e.target.src = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e";
-                            }}
-                          />
-                          <div>
-                            <h2 className="text-xl font-semibold text-green-900">Customer Details</h2>
-                            <p className="text-green-700">{`${booking?.orderBy?.lastName} ${booking?.orderBy?.firstName}`}</p>
-                          </div>
-                        </div>
                         <div className="space-y-3">
                           <div className="flex items-center text-green-700">
                             <FiMail className="mr-2" />
@@ -217,29 +154,6 @@ const ManageBookingDetail = ({ dispatch, navigate }) => {
                           <div className={`inline-block px-4 py-2 rounded-xl text-sm font-semibold ${getStatusClass(status)}`}>
                             {status}
                           </div>
-                          {
-                            status !== 'Cancelled' && 
-                            <div className="flex space-x-2 mt-2">
-                              <button
-                                onClick={() => handleStatusChange("Pending")}
-                                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors duration-300 ${status === "Pending" ? "bg-yellow-200 text-yellow-800" : "bg-gray-200 text-gray-600 hover:bg-yellow-100"}`}
-                              >
-                                Pending
-                              </button>
-                              <button
-                                onClick={() => handleStatusChange("Successful")}
-                                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors duration-300 ${status === "Successful" ? "bg-green-200 text-green-800" : "bg-gray-200 text-gray-600 hover:bg-green-100"}`}
-                              >
-                                Successful
-                              </button>
-                              <button
-                                onClick={() => handleStatusChange("Cancelled")}
-                                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors duration-300 ${status === "Cancelled" ? "bg-red-200 text-red-800" : "bg-gray-200 text-gray-600 hover:bg-red-100"}`}
-                              >
-                                Cancelled
-                              </button>
-                            </div>
-                          }
                         </div>
                       </div>
                     </div>
@@ -248,10 +162,7 @@ const ManageBookingDetail = ({ dispatch, navigate }) => {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+  )
+}
 
-export default withBaseComponent(ManageBookingDetail);
+export default BookingHistoryDetail

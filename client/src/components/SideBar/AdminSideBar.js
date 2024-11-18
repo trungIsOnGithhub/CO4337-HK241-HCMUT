@@ -7,7 +7,7 @@ import logoWeb from '../../assets/logoWeb.png'
 import icons from 'ultils/icon'
 import path from 'ultils/path'
 
-const activeStyle = 'px-4 py-2 flex items-center gap-2 text-gray-200 bg-gray-500'
+const activeStyle = 'px-4 py-2 flex items-center gap-2 text-gray-200 bg-[#0a66c2]'
 const notActiveStyle = 'px-4 py-2 flex items-center gap-2 text-gray-200 hover:bg-gray-600'
 
 const {FaCaretDown, FaCaretRight} = icons
@@ -39,7 +39,7 @@ const AdminSideBar = () => {
               </NavLink>}
               {el?.type === 'parent' &&
               <div onClick={() => handleShowTab(+el.id)} className='flex flex-col text-white opacity-85 '>
-                <div className='px-4 py-2 flex items-center justify-between hover:bg-gray-400 cursor-pointer'> 
+                <div className='px-4 py-2 flex items-center justify-between hover:bg-gray-600 cursor-pointer'> 
                   <div className='flex items-center gap-2'>
                   <span>{el?.icon}</span>
                   <span>{el?.text}</span>

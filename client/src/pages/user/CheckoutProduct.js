@@ -12,6 +12,9 @@ import { FaPaypal } from "react-icons/fa";
 import { SiZalo } from "react-icons/si";
 import { TbTruckDelivery } from "react-icons/tb";
 import axios from 'axios';
+import { apiUpdateCouponUsage } from 'apis';
+import { apiCreateOrder } from "apis/orderProduct";
+import Swal from 'sweetalert2';
 
 
 const CheckoutProduct = ({dispatch, navigate}) => {
@@ -36,7 +39,6 @@ const CheckoutProduct = ({dispatch, navigate}) => {
   const [selectedPayment, setSelectedPayment] = useState("");
   const paymentMethods = [
     { id: "paypal", name: "PayPal", icon: FaPaypal },
-    { id: "zalopay", name: "ZaloPay", icon: SiZalo },
     { id: "cod", name: "Cash on Delivery", icon: TbTruckDelivery, iconColor: "text-green-600" }
   ];
 
@@ -45,7 +47,7 @@ const CheckoutProduct = ({dispatch, navigate}) => {
     setShowPaypal(false);
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async() => {
     if (!selectedPayment) {
       alert("Please select a payment method");
       return;
@@ -53,9 +55,63 @@ const CheckoutProduct = ({dispatch, navigate}) => {
 
     if (selectedPayment === 'paypal') {
       setShowPaypal(true); // Hiển thị PaypalProduct nếu chọn PayPal
-    } else {
-      alert(`Order placed successfully with ${selectedPayment} payment method!`);
     }
+    else if(selectedPayment === 'cod'){
+      for (let i = 0; i < providerProductDetails.length; i++) {
+        const provider = providerProductDetails[i];
+        const providerId = provider.providerId;
+        
+        // Tìm các thông tin liên quan đến provider hiện tại
+        const totalProductPriceObj = providerTotalProductPrice.find(item => item.providerId === providerId);
+        const totalPriceObj = providerTotalPrice.find(item => item.providerId === providerId);
+        const totalSavingPriceObj = providerTotalSavingPrice.find(item => item.providerId === providerId);
+        const shippingPriceObj = providerTotalShippingPrice.find(item => item.providerId === providerId);
+        const discountObj = providerSelectedDiscount.find(item => item.providerId === providerId);
+        
+        // Tạo đối tượng dữ liệu cho yêu cầu tạo đơn hàng
+        const orderData = {
+            products: provider.products.map(product => ({
+                productId: product?.productId,
+                variantId: product?.variantId,
+                quantity: product?.quantity,
+                color: product?.color,
+                colorCode: product?.colorCode,
+                thumb: product?.thumb,
+                title: product?.title,
+                originalPrice: product?.originalPrice,
+                discountPrice: product?.discountPrice,
+            })),
+            shippingPrice: shippingPriceObj ? shippingPriceObj.shippingPrice : 0,
+            totalProductPrice: totalProductPriceObj ? totalProductPriceObj.totalPrice : 0,
+            totalPrice: totalPriceObj ? totalPriceObj.totalPrice : 0,
+            savingPrice: totalSavingPriceObj ? totalSavingPriceObj.totalSavings : 0,
+            provider: providerId,
+            discountCode: discountObj && discountObj.selectedDiscount ? discountObj.selectedDiscount : null, // Kiểm tra selectedDiscount
+            statusPayment: 'Pending',
+            statusShipping: 'Pending'
+        };
+
+        // Gửi yêu cầu tạo đơn hàng lên backend
+        const response = await apiCreateOrder(orderData);
+
+        if (response.success) {
+            console.log(`Order created successfully for provider ${providerId}`);
+            if(discountObj?.selectedDiscount){
+              await apiUpdateCouponUsage({ couponCode: discountObj?.selectedDiscount?.code, userId: current._id });
+            }
+        } else {
+            console.log(`Failed to create order for provider ${providerId}`);
+        }
+      }
+
+      // Thông báo khi hoàn tất
+      setIsSuccess(true);
+      setTimeout(() => {
+          Swal.fire('Congratulation !!!', 'Your order has been successfully completed', 'success').then(() => {
+              navigate('/');
+          });
+      }, 1500);
+      }
   };
 
   

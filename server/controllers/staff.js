@@ -3,7 +3,6 @@ const User = require('../models/user');
 const Staff = require('../models/staff');
 
 const addStaff = asyncHandler(async(req, res)=>{
-    console.log('---|||', req.body);
     const {firstName, lastName, email, mobile, provider_id, shifts} = req.body
 
     if(!firstName || !lastName || !mobile || !email || !provider_id){
@@ -14,8 +13,6 @@ const addStaff = asyncHandler(async(req, res)=>{
     if(req.file){
         data.avatar = req.file.path
     }
-
-    console.log('--->', data);
 
     const response = await Staff.create(data)
 
@@ -30,6 +27,7 @@ const addStaff = asyncHandler(async(req, res)=>{
 const getAllStaffsByAdmin = asyncHandler(async (req, res) => {
     const {_id} = req.user
     const {provider_id} = await User.findById({_id}).select('provider_id')
+    console.log(provider_id)
     const queries = { ...req.query };
 
     // console.log('=======', _id);
@@ -183,8 +181,6 @@ const checkWeekdayValidStaffShift = (pT, staffShift) => {
         const startPK = `start${lowerK}`;
         const endPK = `end${lowerK}`;
 
-        console.log('======', p);
-
         if (!p[1]?.isEnabled || !p[1]?.periods) {
             continue;
         }
@@ -197,14 +193,9 @@ const checkWeekdayValidStaffShift = (pT, staffShift) => {
         const stStartMM = convertH2M(p[1].periods.start);
         const stEndMM = convertH2M(p[1].periods.end);
 
-        console.log(pEndMM + '||||>' + pStartMM);
-        console.log(stEndMM + '------->' + stStartMM);
-
         if (stEndMM > pEndMM || stStartMM > pEndMM ||
             stEndMM < pStartMM || stStartMM < pStartMM
         ) {
-            console.log(pEndMM + '||||>' + pStartMM);
-            console.log(stEndMM + '||||>' + stStartMM);
             return p[0];
         }
     }
@@ -216,9 +207,7 @@ const updateStaffShift = asyncHandler(async(req, res)=>{
     if (!staffId || !newShifts) {
         throw new Error("Missing input");
     }
-    console.log("---|" + JSON.stringify(newShifts) + "|---");
     const staffInfoWithProvider = await Staff.findById(staffId).populate('provider_id');
-    console.log(staffInfoWithProvider.provider_id);
     if (!staffInfoWithProvider?.provider_id?.time) {
         return res.status(400).json({
             success: false,

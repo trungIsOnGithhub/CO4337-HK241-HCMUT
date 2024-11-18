@@ -233,12 +233,10 @@ const DetailCart = () => {
           };
         });
 
-        // console.log(providerProductDetails)
         const providerTotalProductPrice = Object.keys(groupedProducts).map(providerId => {
           const provider = groupedProducts[providerId];
           
           // Tính tổng tiền của các sản phẩm trong provider
-          console.log(provider.products);
           const totalPrice = provider.products.reduce((sum, product) => sum + product.price * product.quantity, 0);
           
           return {
@@ -246,7 +244,6 @@ const DetailCart = () => {
             totalPrice: totalPrice
           };
         });
-        // console.log(providerTotalProductPrice)
         const providerTotalSavingPrice = Object.keys(groupedProducts).map(providerId => {
           const provider = groupedProducts[providerId];
           
@@ -297,7 +294,6 @@ const DetailCart = () => {
         const totalShippingPrice = calculateTotalShippingPrice();
         const totalSavings = calculateTotalSavings();
 
-        console.log(providerProductDetails)
         // Lưu vào sessionStorage
         sessionStorage.setItem('providerProductDetails', JSON.stringify(providerProductDetails));
         sessionStorage.setItem('providerTotalProductPrice', JSON.stringify(providerTotalProductPrice));
@@ -310,7 +306,16 @@ const DetailCart = () => {
         sessionStorage.setItem('totalShippingPrice', JSON.stringify(totalShippingPrice));
         sessionStorage.setItem('totalSavings', JSON.stringify(totalSavings));
         
-        window.open(`/${path.CHECKOUT_PRODUCT}`, '_blank')
+        const newWindow = window.open(`/${path.CHECKOUT_PRODUCT}`, '_blank');
+        if (newWindow) {
+            window.close();
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Cannot close the current tab',
+                text: 'Please allow pop-ups in your browser settings.'
+            });
+        }
     }
   }
 
@@ -368,6 +373,26 @@ const DetailCart = () => {
       }
     }
     return totalSavings;
+  };
+
+  console.log(couponsByProvider)
+
+  const canUseDiscount = (coupon) => {
+    if (!current) return false;
+    console.log(coupon)
+    const { date, time } = coupon.expirationDate;
+    const expirationDateTime = new Date(`${date.split('/').reverse().join('-')}T${time}:00`); // Chuyển đổi sang ISO format
+
+    // Kiểm tra nếu thời gian hết hạn đã qua
+    const now = new Date();
+    console.log(expirationDateTime)
+    console.log(now)
+
+    if (expirationDateTime < now) return false;
+
+    const userUsage = coupon.usedBy.find(usage => usage.user.toString() === current._id);
+    
+    return coupon.noLimitPerUser || !userUsage || userUsage.usageCount < coupon.limitPerUser;
   };
 
     return (
@@ -520,10 +545,10 @@ const DetailCart = () => {
                   </div>
                   {showVoucher?.some(el => el === seller?.provider?._id) && 
                     (
-                      couponsByProvider[seller.provider._id]?.length > 0 
+                      couponsByProvider[seller.provider._id]?.filter(canUseDiscount)?.length > 0 
                         ? 
                         <div className='flex flex-col gap-1 w-full p-[6px] bg-white h-fit max-h-[180px] overflow-y-scroll scrollbar-thin'>
-                          {couponsByProvider[seller.provider._id]?.map((el, index) => (
+                          {couponsByProvider[seller.provider._id]?.filter(canUseDiscount)?.map((el, index) => (
                           <div
                               onClick={() => handleSelectedVoucher(seller?.provider?._id, el)}
                               key={index}
@@ -567,22 +592,22 @@ const DetailCart = () => {
             <div className="space-y-4">
               <div className="flex justify-between items-center text-gray-600">
                 <span>Total Product Price</span>
-                <span>{`${formatPrice(formatPricee(calculateTotalProductPrice()))} VND`}</span>
+                <span>{`${formatPrice(calculateTotalProductPrice())} VND`}</span>
               </div>
               <div className="flex justify-between items-center text-gray-600">
                 <span>Shipping Fee</span>
-                <span>{`${formatPrice(formatPricee(calculateTotalShippingPrice()))} VND`}</span>
+                <span>{`${formatPrice(calculateTotalShippingPrice())} VND`}</span>
               </div>
               <div className="flex justify-between items-center text-green-600 font-semibold">
                 <span>Savings</span>
-                <span>-{`${formatPrice(formatPricee(calculateTotalSavings()))} VND`}</span>
+                <span>-{`${formatPrice(calculateTotalSavings())} VND`}</span>
               </div>
               <div className="border-t border-gray-200 pt-4 flex justify-between items-center">
                 <span className="text-2xl font-bold text-gray-900">Total</span>
                 <span className="text-3xl font-bold text-indigo-600">
-                  {`${formatPrice(formatPricee(
+                  {`${formatPrice(
                     calculateTotalProductPrice() + calculateTotalShippingPrice() - calculateTotalSavings()
-                  ))} VND`}
+                  )} VND`}
                 </span>
               </div>
             </div>

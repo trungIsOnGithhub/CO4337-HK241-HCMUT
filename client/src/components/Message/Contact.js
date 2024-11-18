@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom'
 import bgImage from '../../assets/clouds.svg'
 
 const Contact = ({contacts, currentUser, changeChat}) => {
-  console.log(contacts)
   const navigate = useNavigate()
 
   const [currentUserName, setCurrentUserName] = useState(undefined)
@@ -24,6 +23,7 @@ const Contact = ({contacts, currentUser, changeChat}) => {
     }
   }, [currentUser]);
 
+  console.log(contacts)
   console.log(currentUserImage)
   console.log(currentUserName)
   
@@ -36,9 +36,9 @@ const Contact = ({contacts, currentUser, changeChat}) => {
     <>
     {
       currentUserImage && currentUserName && (
-        <Container>
+        <Container className='h-full border border-[#0a66c2] rounded-l-md'>
           <div className="brand bg-[#0a66c2] rounded-tl-md" onClick={()=>navigate('/')}>
-            <span className="text-gray-600 text-lg text-white font-bold">Recent&nbsp;Chat</span>
+            <span className="text-lg text-white font-bold">Recent&nbsp;Chat</span>
             {/* <span className="text-[#0a66c2] text-2xl italic font-bold">Provider</span> */}
           </div>
 
@@ -54,7 +54,7 @@ const Contact = ({contacts, currentUser, changeChat}) => {
                       <img src={contact.avatar || defaultAvatar} alt='avatar'/>
                     </div>
                     <div className='username'>
-                      <h3 className='text-gray-600'>{`${contact.firstName} ${contact.lastName}`}</h3>
+                      <h3 className='text-gray-600'>{`${contact.firstname} ${contact.lastname}`}</h3>
                     </div>
                   </div>
                 )
@@ -127,7 +127,7 @@ const Container = styled.div`
     justify-content: center;
     align-items: center;
     gap: 2rem;
-    border-top: 3px solid blue;
+    border-top: 1px solid #0a66c2;
     .avatar{
       img{
         height: 3rem;

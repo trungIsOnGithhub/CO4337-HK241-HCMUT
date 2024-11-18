@@ -15,6 +15,10 @@ const ManageOrderDetail = () => {
   const [params] = useSearchParams();
   const [order, setOrder] = useState(null)
   const [paymentStatus, setPaymentStatus] = useState("Pending");
+  
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
+  }, []);
 
   const fetchOrderData = async () => {
     const response = await apiGetOneOrderProduct(params?.get('orderId'));
@@ -144,6 +148,7 @@ const ManageOrderDetail = () => {
               </div>
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-gray-700">Payment Status</label>
+                {order?.statusPayment !== "Cancelled" ? 
                 <select
                   value={order?.statusPayment}
                   onChange={(e) => handleChangePaymentStatus(e.target.value)}
@@ -153,7 +158,9 @@ const ManageOrderDetail = () => {
                   <option value="Pending">Pending</option>
                   <option value="Successful">Successful</option>
                   <option value="Cancelled">Cancelled</option>
-                </select>
+                </select> : 
+                <div className='w-full p-2 border rounded-md bg-white shadow-sm focus:ring-2 focus:ring-blue-500 text-[#00143c] cursor-pointer'>Cancelled</div>
+                }
               </div>
             </div>
 

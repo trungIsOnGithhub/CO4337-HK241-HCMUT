@@ -73,11 +73,14 @@ const path = {
     FOOTERSECTION: 'footersection',
     SERVICEPAGE: 'servicepage',
 
+    VIEW_STATISTICS: 'view_statistics/:userId',
+
     //User
     USER: 'user',
     PERSONAL: 'personal',
     MYCART: 'mycart',
     HISTORY: 'history',
+    HISTORY_DETAIL: 'history/:bid',
     ORDER_HISTORY: 'order_history',
     ORDER_HISTORY_DETAIL: 'order_history/:oid',
     WISHLIST_SERVICE: 'wishlist_service',

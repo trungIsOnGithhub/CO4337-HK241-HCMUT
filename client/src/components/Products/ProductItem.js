@@ -2,10 +2,19 @@ import React from 'react'
 import { MdOutlineCategory } from "react-icons/md";
 import { formatPrice, formatPricee } from 'ultils/helper';
 import { Button } from 'components'
+import { useNavigate } from 'react-router-dom';
 
 
 const ProductItem = ({productData}) => {
     console.log(productData)
+    const navigate = useNavigate()
+
+    const handleNavigateProductDetail  = () => {
+        navigate(`/product/${productData.category?.toLowerCase()}/${productData?._id}/${productData?.title}`)
+    }
+    const handleOrderProduct = () => {
+
+    }
   return (
     <div className='w-full h-fit rounded-md border border-[#868e96] relative'>
         <div className='w-full h-[200px]'>
@@ -21,8 +30,8 @@ const ProductItem = ({productData}) => {
                 <span className='text-[14px] text-[#868e96] flex items-center gap-2'><span className='flex gap-1 items-center'><MdOutlineCategory /> Category</span> <span className='font-medium'>{`${productData?.category}`}</span></span>
             </div>
             <div className='flex justify-between'>
-            <Button style={'px-[23px] rounded-md text-white border border-[#868e96] w-fit h-[40px]'}> Learn more</Button>
-            <Button style={'px-[23px] rounded-md text-white bg-[#15a9e8] w-fit h-[40px]'}> Buy now</Button>
+            <Button handleOnclick={handleNavigateProductDetail} style={'px-[23px] rounded-md text-white border border-[#868e96] w-fit h-[40px]'}> Learn more</Button>
+            <Button handleOnclick={handleOrderProduct} style={'px-[23px] rounded-md text-white bg-[#15a9e8] w-fit h-[40px]'}> Add to cart</Button>
             </div>
         </div>
         <div className='absolute right-2 top-2 w-fit h-fit px-[8px] py-[4px] bg-[rgba(52,58,64,1)] rounded-md'>

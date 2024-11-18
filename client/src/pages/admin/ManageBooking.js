@@ -391,7 +391,7 @@ const ManageBooking = () => {
                       <FaAngleDown size={10}/>
                     </div>
                    {
-                    showOptionStatus === el?._id &&
+                    (showOptionStatus === el?._id && el?.status !== 'Cancelled') &&
                     <div ref={optionRef} className='w-full bg-white border shadow-xl absolute top-8 left-0 px-[7px] py-[5px] flex flex-col gap-1 z-50'>
                       <span onClick={()=>handleChangeStatusBooking(el?._id, 'Successful')} className={clsx('w-full flex gap-1 items-center p-2 cursor-pointer', el?.status === 'Successful' ? 'text-[#005aee] bg-[#f2f6fe]' : 'hover:bg-gray-100')}><FaCircleHalfStroke style={{ transform: 'rotate(90deg)'}} color='green'/> Successful</span>
                       <span onClick={()=>handleChangeStatusBooking(el?._id, 'Pending')} className={clsx('w-full flex gap-1 items-center p-2 cursor-pointer', el?.status === 'Pending' ? 'text-[#005aee] bg-[#f2f6fe]' : 'hover:bg-gray-100')}><FaCircleHalfStroke style={{ transform: 'rotate(90deg)'}} color='orange'/> Pending</span>

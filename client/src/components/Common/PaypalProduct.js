@@ -4,6 +4,7 @@ import {
     usePayPalScriptReducer
 } from "@paypal/react-paypal-js";
 import { current } from "@reduxjs/toolkit";
+import { apiUpdateCouponUsage } from "apis";
 import { apiCreateOrder } from "apis/orderProduct";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -71,6 +72,9 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload, setIsSuccess}) 
     
                 if (response.success) {
                     console.log(`Order created successfully for provider ${providerId}`);
+                    if(discountObj?.selectedDiscount){
+                        await apiUpdateCouponUsage({ couponCode: discountObj?.selectedDiscount?.code, userId: current._id });
+                    }
                 } else {
                     console.log(`Failed to create order for provider ${providerId}`);
                 }

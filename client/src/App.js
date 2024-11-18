@@ -17,6 +17,8 @@ import OrderHistoryDetail from 'pages/user/OrderHistoryDetail';
 import ManageOrderDetail from 'pages/admin/ManageOrderDetail';
 import UpdateBlog from 'pages/admin/UpdateBlog';
 import WishListProduct from 'pages/user/WishListProduct';
+import ViewStatistics from 'pages/admin/ViewStatistics';
+import BookingHistoryDetail from 'pages/user/BookingHistoryDetail';
 
 function App() {
   const dispatch = useDispatch();
@@ -30,7 +32,7 @@ function App() {
     
     <div className="w-screen h-screen relative">
       {isShowCart && 
-        <div onClick={()=>dispatch(showCart())} className='absolute inset-0 bg-overlay z-[999] flex justify-end'>
+        <div onClick={()=>dispatch(showCart())} className='absolute inset-0 bg-overlay z-[1001] flex justify-end'>
         <Cart />
         </div>
       }
@@ -98,11 +100,15 @@ function App() {
         <Route path={path.SETTING} element={<ManageSetting/>}/>
         {/* <Route path={path.WORKING_HOURS} element={<WeeklyOfficeHours/>}/> */}
 
+        <Route path={path.VIEW_STATISTICS} element={<ViewStatistics/>}/>
+
       </Route>
       <Route path={path.USER} element={<UserLayout />}>
         <Route path={path.PERSONAL} element={<Personal />}/>
         <Route path={path.MYCART} element={<DetailCart />}/>
         <Route path={path.HISTORY} element={<History/>}/>
+        <Route path={path.HISTORY_DETAIL} element={<BookingHistoryDetail />}/>
+
         <Route path={path.ORDER_HISTORY} element={<OrderHistory/>}/>
         <Route path={path.ORDER_HISTORY_DETAIL} element={<OrderHistoryDetail />}/>
         <Route path={path.WISHLIST_SERVICE} element={<WishListService/>}/>

@@ -13,7 +13,7 @@ var orderSchema = new mongoose.Schema({
     }],
     status:{
         type: String,
-        default: 'Cancelled',
+        default: 'Pending',
         enum: ['Cancelled', 'Successful', 'Pending'] //pending thi user co the huy, con Success thi phai nhan voi admin neu muon huy
     },
     total:{
