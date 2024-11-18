@@ -22,7 +22,7 @@ import { IoIosArrowBack } from "react-icons/io";
 
 
 const GOONG_API_KEY = 'HjmMHCMNz4xyFqc54FsgxrobHmt48vwp7U8xzQUC';
-const GOONG_MAPTILES_KEY = 'IXqHXe9w2riica5A829SuB6HUl5Fi1Yg7LC9OHF2';
+const GOONG_MAPTILES_KEY = 'hzX8cXab72XCozZSYvZqkV26qMMQ8JdpkiUwK1Iy';
 
 const ServiceProviderRegister = () => {
     const navigate = useNavigate()

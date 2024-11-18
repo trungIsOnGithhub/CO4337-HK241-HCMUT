@@ -12,7 +12,7 @@ import axios from 'axios';
 import { FiUser, FiMail, FiPhone, FiMapPin, FiUpload, FiX, FiInfo } from "react-icons/fi";
 
 const GOONG_API_KEY = 'HjmMHCMNz4xyFqc54FsgxrobHmt48vwp7U8xzQUC';
-const GOONG_MAPTILES_KEY = 'IXqHXe9w2riica5A829SuB6HUl5Fi1Yg7LC9OHF2';
+const GOONG_MAPTILES_KEY = 'hzX8cXab72XCozZSYvZqkV26qMMQ8JdpkiUwK1Iy';
 const BusinessDetailsForm = () => {
   const {current} = useSelector(state => state.user);
   const dispatch = useDispatch();
