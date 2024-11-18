@@ -192,15 +192,29 @@ const getAllServiceProvider = asyncHandler(async(req, res) => {
 
 const updateServiceProvider = asyncHandler(async(req, res)=>{
     const spid = req.params.spid
-
     console.log('vuivuiuviuv', req.body, spid);
 
     if(Object.keys(req.body).length === 0){
-        throw new Error('Missing input')
+        throw new Error('Missing input');
     }
-    // if(req.body.expiry){
-    //     req.body.expiry = Date.now() + +req.body.expiry * 24 * 60 * 60 * 1000
-    // }
+
+    console.log('files: ', req.files);
+    if(req.file){
+        console.log('file: ', req.file);
+        req.body.images = [req.file.path];
+        // console.log('HAS FILE');
+        // req.body.images = [req.files.avatar.path];
+    }
+
+    if (req.body.mobile) {
+        const uresp = await User.updateOne({ provider_id: spid }, { $set: { mobile: req.body.mobile } });
+        console.log(uresp);
+
+        if (!uresp) {
+            throw new Error('Cannot update corresponding id.');
+        }
+    }
+
     const response = await ServiceProvider.findByIdAndUpdate(spid, req.body, {new: true})
 
     console.log(response);

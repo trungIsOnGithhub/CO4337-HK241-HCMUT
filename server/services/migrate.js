@@ -105,7 +105,7 @@ async function migrateBlogDataFromMongoDBToElasticDB() {
 
             const newObjectToAdd = allBlogs[idx].toObject();
 
-            newObjectToAdd.provider_id = await ServiceProvider.find({_id: allBlogs[idx].provider_id});
+            newObjectToAdd.provider_id = (await ServiceProvider.find({_id: allBlogs[idx].provider_id}))[0];
             console.log("===++++====>", newObjectToAdd.provider_id);
 
             const author = await User.findById(allBlogs[idx].author);
@@ -153,21 +153,9 @@ async function migrateBlogDataFromMongoDBToElasticDB() {
             // delete newObjectToAdd.provider_id;
             delete newObjectToAdd.author;
 
-        //     delete newObjectToAdd.provider_id.time;
-        //     delete newObjectToAdd.provider_id.images;
-        //     // delete newObjectToAdd.provider_id.__v;
-        //     delete newObjectToAdd.provider_id.chatGivenQuestions;
-        //     delete newObjectToAdd.provider_id.chatgivenquestions;
+            // await esDBModule.addToElasticDB(esDBConstant.BLOGS, newObjectToAdd);// TO SWITCH
 
-        //     delete newObjectToAdd.provider_id.ward;
-        //     delete newObjectToAdd.provider_id.district;
-        //     delete newObjectToAdd.provider_id.geolocation;
-
-        //     // newObjectToAdd.
-
-            await esDBModule.addToElasticDB(esDBConstant.BLOGS, newObjectToAdd);// TO SWITCH
-
-            // console.log("============", newObjectToAdd);// TO SWITCH
+            console.log("============", newObjectToAdd);// TO SWITCH
         }
     }
     else {

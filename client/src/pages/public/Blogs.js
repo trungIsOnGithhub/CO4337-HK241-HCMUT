@@ -1,6 +1,6 @@
 import React, {useState, useCallback, useEffect } from 'react'
 import { InputFormm, NewInputSelect, Pagination } from 'components';
-import { apiGetAllBlogs, apiSearchBlogAdvanced, apiGetAllPostTags, apiSearchBlogByParams } from 'apis/blog';
+import { apiGetAllBlogs, apiSearchBlogAdvanced, apiGetAllPostTags } from 'apis/blog';
 import Button from 'components/Buttons/Button';
 import { HashLoader } from 'react-spinners';
 import path from 'ultils/path';
@@ -84,7 +84,17 @@ const Blogs = () => {
   const fetchCurrentBlogList = async () => {
     setIsLoading(true);
 
-    const sortBy = selectedSort
+    const sortBy = selectedSort.value;
+
+    console.log('<><>><><><><><><><><><><><><>', {
+      searchTerm,
+      limit: parseInt(process.env.REACT_APP_LIMIT),
+      sortBy,
+      selectedTags,
+      offset: 1
+      // categories
+    });
+
     let response = await apiSearchBlogAdvanced({
       searchTerm,
       limit: parseInt(process.env.REACT_APP_LIMIT),
@@ -95,7 +105,7 @@ const Blogs = () => {
     });
     // let response = await await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
     if(response?.success && response?.blogs){
-      console.log('Blog Response: >>>>>>>>>>>>>>', response.blogs.length, response.blogs[0]);
+      console.log('Blog Response: >>>>>>>>>>>>>>', response.blogs);
       setCurrBlogList(response.blogs);
       setCounts(response.counts);
     }
@@ -104,9 +114,9 @@ const Blogs = () => {
     }
     setIsLoading(false);
   }
-  // useEffect(() => {
-  //   fetchCurrentBlogList();
-  // }, [selectedSort, selectedTags, searchTerm]);
+  useEffect(() => {
+    fetchCurrentBlogList();
+  }, [selectedSort, selectedTags, searchTerm]);
 
   // const fetchTopTags = async () => {
   //   setIsLoading(true);
@@ -248,7 +258,7 @@ const Blogs = () => {
                   <p className="text-gray-600">No blog posts found matching your search criteria.</p>
                 </div>
               ) : (
-                currBlogList.map((blog) => (
+                currBlogList?.map((blog) => (
                   <div
                     onClick={() => handleChooseBlogPost(blog?._id || blog?.id)}
                     key={blog.id}

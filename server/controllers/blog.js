@@ -449,15 +449,15 @@ const searchBlogAdvanced = asyncHandler(async (req, res) => {
         categoriesIncluded = categories.split(',');
     }
 
-    let geoLocationQueryOption = null;
-    if ( clientLat <= 180 && clientLon <= 180 &&
-        clientLat >= -90 && clientLon >= -90 &&
-        /[1-9][0-9]*(km|m)/.test(distanceText) )
-    {
-        geoLocationQueryOption = { distanceText,  clientLat, clientLon };
-    }
+    // let geoLocationQueryOption = null;
+    // if ( clientLat <= 180 && clientLon <= 180 &&
+    //     clientLat >= -90 && clientLon >= -90 &&
+    //     /[1-9][0-9]*(km|m)/.test(distanceText) )
+    // {
+    //     geoLocationQueryOption = { distanceText,  clientLat, clientLon };
+    // }
 
-    const columnNamesToMatch = ["title", "category", "providername", "authorname"];
+    const columnNamesToMatch = ["title", "providername", "authorname"];
     const columnNamesToGet = ["id", "title", "providername", "authorname", "numberView", "provider_id", "likes", "dislikes"];
 
     let blogs = [];
