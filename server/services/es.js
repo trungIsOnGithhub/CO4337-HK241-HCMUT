@@ -196,7 +196,16 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
 
     if (categoriesIncluded?.length && queryObject?.query) {
     if (!queryObject.query.bool) queryObject.query.bool = {};
-        queryObject.query.bool.filter = categoriesIncluded.map(categoryLabel => { return { term: { catergory: categoryLabel } }; });
+        // queryObject.query.bool.filter = categoriesIncluded.map(categoryLabel => { return { term: { catergory: categoryLabel } }; });
+        if (!queryObject.query.bool.must) queryObject.query.bool.must = [];
+
+        for (const categoryLabel of categoriesIncluded) {
+            queryObject.query.bool.must.push({
+                match: {
+                    category: categoryLabel
+                }
+            });
+        }
 
         delete queryObject.query.match_all;
     }
