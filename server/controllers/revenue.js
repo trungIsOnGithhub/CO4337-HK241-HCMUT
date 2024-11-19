@@ -1,12 +1,12 @@
-const mongoose = require('mongoose');
-const asyncHandler = require("express-async-handler")
-const Order = require('../models/order')
-const Service = require('../models/service');
-const ServiceProvider = require('../models/ServiceProvider');
-//  const Interaction = require('../models/interaction')
+let mongoose = require('mongoose');
+let asyncHandler = require("express-async-handler")
+let Order = require('../models/order')
+let Service = require('../models/service');
+let ServiceProvider = require('../models/ServiceProvider');
+//  let Interaction = require('../models/interaction')
 
-const getRevenueByDateRange = asyncHandler(async(req, res) => {
-    const { provider_id, start_date, end_date } = req.body;
+let getRevenueByDateRange = asyncHandler(async(req, res) => {
+    let { provider_id, start_date, end_date } = req.body;
 
     if (!provider_id || !start_date || !end_date) {
         return res.status(400).json({
@@ -15,28 +15,28 @@ const getRevenueByDateRange = asyncHandler(async(req, res) => {
         });
     }
 
-    const providerObjectId = new mongoose.Types.ObjectId(provider_id)
+    let providerObjectId = new mongoose.Types.ObjectId(provider_id)
 
-    const orders = await Order.find({
+    let orders = await Order.find({
         'info.provider': providerObjectId
     });
 
-    const revByDate = new Map();
+    let revByDate = new Map();
     orders.forEach(order => {
         if(!order?.info[0]?.date || !order?.total) return;
 
         if (!revByDate.has(order.info[0].date)) {
             revByDate.set(order.info[0].date, 0)
         }
-        const currRev = revByDate.get(order.info[0].date)
+        let currRev = revByDate.get(order.info[0].date)
         revByDate.set(order.info[0].date, currRev + order.total)
     })
 
 
-    const dailyRevenue = []
-    for(const dateKey of revByDate.keys()) {
-        const ddmmyyArr = dateKey.split('/').map(Number)
-        const revDate = new Date(ddmmyyArr[2], ddmmyyArr[1]-1, ddmmyyArr[0], 0, 0, 0)
+    let dailyRevenue = []
+    for(let dateKey of revByDate.keys()) {
+        let ddmmyyArr = dateKey.split('/').map(Number)
+        let revDate = new Date(ddmmyyArr[2], ddmmyyArr[1]-1, ddmmyyArr[0], 0, 0, 0)
 
 
         dailyRevenue.push([revDate, revByDate.get(dateKey)])
@@ -48,8 +48,8 @@ const getRevenueByDateRange = asyncHandler(async(req, res) => {
     })
 })
 
-const getRevenueStatistic = asyncHandler(async (req, res) => {
-    const { provider_id } = req.body;
+let getRevenueStatistic = asyncHandler(async (req, res) => {
+    let { provider_id } = req.body;
 
     if (!provider_id) {
         return res.status(400).json({
@@ -58,23 +58,23 @@ const getRevenueStatistic = asyncHandler(async (req, res) => {
         });
     }
 
-    const providerObjectId = new mongoose.Types.ObjectId(provider_id)
+    let providerObjectId = new mongoose.Types.ObjectId(provider_id)
 
-    const totalOrders = await Order.find({
+    let totalOrders = await Order.find({
         'info.provider': providerObjectId
     });
 
-    const totalRevenue = totalOrders.reduce((acc, curr) => acc + curr.total, 0);
+    let totalRevenue = totalOrders.reduce((acc, curr) => acc + curr.total, 0);
 
-    const thisMonthOrders = totalOrders.filter(order => {
+    let thisMonthOrders = totalOrders.filter(order => {
         if(!order?.info[0]?.date || !order?.total) return false;
 
-        const ddmmyyArr = order.info[0].date.split('/').map(Number)
+        let ddmmyyArr = order.info[0].date.split('/').map(Number)
 
         return (new Date()).getMonth() === ddmmyyArr[1]-1
     });
 
-    const customerByNumOrdered = thisMonthOrders.reduce(function (acc, curr) {
+    let customerByNumOrdered = thisMonthOrders.reduce(function (acc, curr) {
         // if (acc[curr]) {
         //     acc[curr] = ++acc[curr];
         // } else {
@@ -84,9 +84,9 @@ const getRevenueStatistic = asyncHandler(async (req, res) => {
         return acc;
     }, {});
 
-    const totalMonthRevenue = thisMonthOrders.reduce((acc, curr) => acc + curr.total, 0);
+    let totalMonthRevenue = thisMonthOrders.reduce((acc, curr) => acc + curr.total, 0);
 
-    const totalServices = await Service.countDocuments({ provider_id: providerObjectId });
+    let totalServices = await Service.countDocuments({ provider_id: providerObjectId });
 
     res.json({
         success: true,
@@ -100,21 +100,21 @@ const getRevenueStatistic = asyncHandler(async (req, res) => {
     })
 });
 
-const getMondayOfWeek = (date) => {
-    const d = new Date(date);
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
-    return new Date(d.setDate(diff));
+let getMondayOfWeek = (date) => {
+    let d = new Date(date);
+    let day = d.getDay();
+    let diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
+    return new Date(d.setDate(diff)).setHours(0, 0, 0, 0);
 }
-const get3RecentWeekRange = () => {
-    const nowDate = new Date();
-    const currentWeekMonday = getMondayOfWeek(nowDate);
+let get3RecentWeekRange = () => {
+    let nowDate = new Date();
+    let currentWeekMonday = getMondayOfWeek(nowDate);
 
-    const sundayOfLastWeek = currentWeekMonday - 1;
-    const mondayOfLastWeek = getMondayOfWeek(sundayOfLastWeek);
+    let sundayOfLastWeek = moment(currentWeekMonday).subtract(1, 'days').toDate();
+    let mondayOfLastWeek = getMondayOfWeek(sundayOfLastWeek);
 
-    const sundayOfPreviousWeek = mondayOfLastWeek - 1;
-    const mondayOfPreviousWeek = getMondayOfWeek(sundayOfPreviousWeek);
+    let sundayOfPreviousWeek = moment(mondayOfLastWeek).subtract(1, 'days').toDate();
+    let mondayOfPreviousWeek = getMondayOfWeek(sundayOfPreviousWeek);
 
     return [
         [currentWeekMonday, nowDate],
@@ -124,21 +124,21 @@ const get3RecentWeekRange = () => {
 }
 function getLastThreeMonthsStartEnd(date) {
     // Clone the date to avoid mutating the original
-    const inputDate = new Date(date);
-    const results = [];
+    let inputDate = new Date(date);
+    let results = [];
 
     // Loop through the last three months
     for (let i = 0; i < 3; i++) {
         // Calculate the year and month for the current iteration
-        const year = inputDate.getFullYear();
-        const month = inputDate.getMonth() - i; // Go back i months
+        let year = inputDate.getFullYear();
+        let month = inputDate.getMonth() - i; // Go back i months
 
         // Start of the month
-        const startOfMonth = new Date(year, month, 1);
+        let startOfMonth = new Date(year, month, 1);
         startOfMonth.setHours(0, 0, 0, 0); // Set to start of the day
 
         // End of the month
-        const endOfMonth = new Date(year, month + 1, 0); // 0 gets the last day of the previous month
+        let endOfMonth = new Date(year, month + 1, 0); // 0 gets the last day of the previous month
         endOfMonth.setHours(23, 59, 59, 999); // Set to end of the day
 
         // Push the result into the array
@@ -151,9 +151,8 @@ function getLastThreeMonthsStartEnd(date) {
     return results;
 }
 
-
-const getRevenue3RecentStatistic = asyncHandler(async (req, res) => {
-    const { periodData, spid } = req.body;
+let getRevenue3RecentStatistic = asyncHandler(async (req, res) => {
+    let { periodData, spid } = req.body;
     if (!periodData || !spid) {
         return res.status(400).json({
             success: false,
@@ -161,95 +160,101 @@ const getRevenue3RecentStatistic = asyncHandler(async (req, res) => {
         });
     }
 
-    const last3Weeks = get3RecentWeekRange();
-    const last3Months = getLastThreeMonthsStartEnd(new Date());
+    let last3Weeks = get3RecentWeekRange();
+    let last3Months = getLastThreeMonthsStartEnd(new Date());
 
     let revenueData = [0,0,0];
     if (periodData === 'week') {
-        const currentWeekOrders = await Order.find({
-            createdAt: {
-                $gte: new Date(last3Weeks[0][0]),
-                $lte: new Date(last3Weeks[0][1]),
-            },
-            'info.0.provider': spid
+        let providerOrders = await Order.find({
+            'info.0.provider': spid,
+            status: 'Successful'
         }).populate('info.service');
 
+        let currentWeekOrders = providerOrders.filter(order => {
+            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+
+            return cDate < last3Weeks[0][1] && cDate > last3Weeks[0][0];
+        });
         //  console.log('{{{{{{', currentWeekOrders[0].info[0].service);
 
         revenueData[2] = currentWeekOrders.reduce((acc, order) => {
-            return acc + order?.info[0].service?.price;
+            return acc + order.total;
         }, 0);
 
         console.log('|||||||||||||||||', revenueData[2]);
 
 
-        const lastWeekOrders = await Order.find({
-            createdAt: {
-                $gte: new Date(last3Weeks[1][0]),
-                $lte: new Date(last3Weeks[1][1]),
-            },
-            'info.0.provider': spid
-        }).populate('info.service');
+        let lastWeekOrders = providerOrders.filter(order => {
+            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+
+            return cDate < last3Weeks[1][1] && cDate > last3Weeks[1][0];
+        });
 
         revenueData[1] = lastWeekOrders.reduce((acc, order) => {
-            return acc + order?.info[0].service?.price;
+            return acc + order.total;
         }, 0);
 
 
-        const prevWeekOrders = await Order.find({
-            createdAt: {
-                $gte: new Date(last3Weeks[2][0]),
-                $lte: new Date(last3Weeks[2][1]),
-            },
-            'info.0.provider': spid
-        }).populate('info.service');
+        let prevWeekOrders = providerOrders.filter(order => {
+            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+
+            return cDate < last3Weeks[2][1] && cDate > last3Weeks[2][0];
+        });
 
         revenueData[0] = prevWeekOrders.reduce((acc, order) => {
-            return acc + order?.info[0].service?.price;
+            return acc + order.total;
         }, 0);
+
     }
     else if (periodData === 'month') {
 
-        const currentWeekOrders = await Order.find({
-            createdAt: {
-                $gte: last3Months[2].start,
-                $lte: last3Months[2].end,
-            },
-            'info.0.provider': spid
+        let providerOrders = await Order.find({
+            'info.0.provider': spid,
+            status: 'Successful'
         }).populate('info.service');
 
+        let currentWeekOrders = providerOrders.filter(order => {
+            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+
+            return cDate < last3Months[2].end && cDate > last3Months[2].start;
+        })
+        //  console.log('{{{{{{', currentWeekOrders[0].info[0].service);
         revenueData[2] = currentWeekOrders.reduce((acc, order) => {
-            return acc + order?.info[0].service?.price;
+            return acc + order.total;
         }, 0);
 
 
-        const lastWeekOrders = await Order.find({
-            createdAt: {
-                $gte: last3Months[1].start,
-                $lte: last3Months[1].end,
-            },
-            'info.0.provider': spid
-        }).populate('info.service');
 
+        let lastWeekOrders = providerOrders.filter(order => {
+            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+
+            return cDate < last3Months[1].end && cDate > last3Months[1].start;
+        })
+        //  console.log('{{{{{{', currentWeekOrders[0].info[0].service);
         revenueData[1] = lastWeekOrders.reduce((acc, order) => {
-            return acc + order?.info[0].service?.price;
+            return acc + order.total;
         }, 0);
 
 
-        const prevWeekOrders = await Order.find({
-            createdAt: {
-                $gte: last3Months[0].start,
-                $lte: last3Months[0].end,
-            },
-            'info.0.provider': spid
-        }).populate('info.service');
+        let prevWeekOrders = providerOrders.filter(order => {
+            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
+            return cDate < last3Months[0].end && cDate > last3Months[0].start;
+        })
+        //  console.log('{{{{{{', currentWeekOrders[0].info[0].service);
         revenueData[0] = prevWeekOrders.reduce((acc, order) => {
-            return acc + order?.info[0].service?.price;
+            return acc + order.total;
         }, 0);
+ 
     }
 
-    console.log('----><<', revenueData, '------<><>', periodData);
+    // console.log('----><<', revenueData, '------<><>', periodData);
 
     return res.json({
         success: revenueData ? true : false,
@@ -258,8 +263,8 @@ const getRevenue3RecentStatistic = asyncHandler(async (req, res) => {
 });
 
 
-const getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
-    const { periodData, spid } = req.body;
+let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
+    let { periodData, spid } = req.body;
     if (!periodData) {
         return res.status(400).json({
             success: false,
@@ -267,65 +272,81 @@ const getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
         });
     }
 
-    const last3Weeks = get3RecentWeekRange();
-    const last3Months = getLastThreeMonthsStartEnd(new Date());
+    let last3Weeks = get3RecentWeekRange();
+    let last3Months = getLastThreeMonthsStartEnd(new Date());
 
-    console.log('..........', last3Weeks);
+    // console.log('..........', last3Weeks);
 
     let newCustomerData = [0,0,0];
     if (periodData === 'week') {
         // console.log('......', last3Weeks[0]);
         // console.log('......', spid);
 
-        const currentWeekOrders = await Order.find({
-            'info.0.provider': spid
-        }).populate('info.service').populate('orderBy');
+        let providerOrders = await Order.find({
+            'info.0.provider': spid,
+            status: 'Successful'
+        }).populate('info.service');
+        // let currentWeekOrders = await Order.find({
+        //     'info.0.provider': spid
+        // }).populate('info.service').populate('orderBy');
 
         // console.log('..........', currentWeekOrders);
 
-        let currentWeekCustomers = currentWeekOrders.map((order) => {
-            return order.orderBy;
+        let currentWeekOrders = providerOrders.filter(order => {
+            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+
+            return cDate < last3Weeks[0][1] && cDate > last3Weeks[0][0];
         });
-        currentWeekCustomers = currentWeekCustomers.filter(function(item, pos, self) {
-            return self.indexOf(item) == pos;
-        })
+        let currentWeekCustomers = currentWeekOrders.map(order => {
+            return order.orderBy._id.toString();
+        });
+        console.log('Curr Week Customer: =====', currentWeekCustomers);
+        currentWeekCustomers = currentWeekCustomers.filter((item, pos, self) => {
+            return self.indexOf(item) === pos;
+        });
     
         // console.log('..........', currentWeekCustomers);
 
         let newCusCnt = 0;
-        for (const customer of currentWeekCustomers) {
-            const pastOrder = await Order.find({
+        for (let customerId of currentWeekCustomers) {
+            let pastOrder = await Order.exists({
                 'info.0.provider': spid,
-                orderBy: customer._id
+                orderBy: customerId
             });
-
             // console.log('....:::::---', pastOrder.length);
 
-            if (pastOrder?.length === 1) {
+            if (pastOrder) {
                 ++newCusCnt;
             }
         }
         newCustomerData[2] = newCusCnt;
 
 
-        const lastWeekOrders = await Order.find({
-            createdAt: {
-                $gte: new Date(last3Months[1].start),
-                $lte: new Date(last3Months[1].end),
-            },
-            'info.0.provider': spid
-        }).populate('info.service').populate('orderBy');
+        let lastWeekOrders = providerOrders.filter(order => {
+            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
-        let lastWeekCustomers = lastWeekOrders.map((order) => {
-            return order.orderBy;
+            return cDate < last3Months[1].end && cDate > last3Months[1].start;
+        })
+        // let lastWeekOrders = await Order.find({
+        //     createdAt: {
+        //         $gte: new Date(last3Months[1].start),
+        //         $lte: new Date(last3Months[1].end),
+        //     },
+        //     'info.0.provider': spid
+        // }).populate('info.service').populate('orderBy');
+
+        let lastWeekCustomers = lastWeekOrders.map(order => {
+            return order.orderBy._id.toString();
         });
         lastWeekCustomers = lastWeekCustomers.filter(function(item, pos, self) {
             return self.indexOf(item) == pos;
         })
 
         newCusCnt = 0;
-        for (const customer of lastWeekCustomers) {
-            const pastOrder = await Order.find({
+        for (let customer of lastWeekCustomers) {
+            let pastOrder = await Order.find({
                 'info.0.provider': spid,
                 orderBy: customer._id
             });
@@ -337,13 +358,12 @@ const getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
         newCustomerData[1] = newCusCnt;
 
 
-        const prevWeekOrders = await Order.find({
-            createdAt: {
-                $gte: new Date(last3Months[2].start),
-                $lte: new Date(last3Months[2].end),
-            },
-            'info.0.provider': spid
-        }).populate('info.service').populate('orderBy');
+        let prevWeekOrders = providerOrders.filter(order => {
+            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+
+            return cDate < last3Weeks[2][1] && cDate > last3Weeks[2][0];
+        });
 
         let prevWeekCustomers = prevWeekOrders.map((order) => {
             return order.orderBy;
@@ -353,8 +373,8 @@ const getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
         })
 
         newCusCnt = 0;
-        for (const customer of prevWeekCustomers) {
-            const pastOrder = await Order.find({
+        for (let customer of prevWeekCustomers) {
+            let pastOrder = await Order.find({
                 'info.0.provider': spid,
                 orderBy: customer._id
             });
@@ -369,7 +389,7 @@ const getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
 
         console.log(last3Months[2].start);
         console.log(last3Months[2].end);
-        const currentWeekOrders = await Order.find({
+        let currentWeekOrders = await Order.find({
             createdAt: {
                 $gte: new Date(last3Months[2].start),
                 $lte: new Date(last3Months[2].end),
@@ -385,8 +405,8 @@ const getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
         })
 
         let newCusCnt = 0;
-        for (const customer of currentWeekCustomers) {
-            const pastOrder = await Order.find({
+        for (let customer of currentWeekCustomers) {
+            let pastOrder = await Order.find({
                 'info.0.provider': spid,
                 orderBy: customer._id
             });
@@ -399,7 +419,7 @@ const getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
 
 
 
-        const lastWeekOrders = await Order.find({
+        let lastWeekOrders = await Order.find({
             createdAt: {
                 $gte: new Date(last3Months[1].start),
                 $lte: new Date(last3Months[1].end),
@@ -415,8 +435,8 @@ const getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
         })
 
         newCusCnt = 0;
-        for (const customer of lastWeekCustomers) {
-            const pastOrder = await Order.find({
+        for (let customer of lastWeekCustomers) {
+            let pastOrder = await Order.find({
                 'info.0.provider': spid,
                 orderBy: customer._id
             });
@@ -429,7 +449,7 @@ const getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
 
 
 
-        const prevWeekOrders = await Order.find({
+        let prevWeekOrders = await Order.find({
             createdAt: {
                 $gte: new Date(last3Months[0].start),
                 $lte: new Date(last3Months[0].end),
@@ -445,8 +465,8 @@ const getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
         })
 
         newCusCnt = 0;
-        for (const customer of prevWeekCustomers) {
-            const pastOrder = await Order.find({
+        for (let customer of prevWeekCustomers) {
+            let pastOrder = await Order.find({
                 'info.0.provider': spid,
                 orderBy: customer._id
             });
@@ -474,11 +494,11 @@ function getSpecificMonthStartEnd(month, year) {
     }
 
     // Start of the month (set to the 1st day of the specified month and year)
-    const startOfMonth = new Date(year, month - 1, 1); // month - 1 because Date months are 0-indexed
+    let startOfMonth = new Date(year, month - 1, 1); // month - 1 because Date months are 0-indexed
     startOfMonth.setHours(0, 0, 0, 0); // Set to start of the day
 
     // End of the month (set to the last day of the specified month and year)
-    const endOfMonth = new Date(year, month, 0); // 0 gets the last day of the previous month
+    let endOfMonth = new Date(year, month, 0); // 0 gets the last day of the previous month
     endOfMonth.setHours(23, 59, 59, 999); // Set to end of the day
 
     return {
@@ -486,8 +506,8 @@ function getSpecificMonthStartEnd(month, year) {
         end: endOfMonth
     };
 }
-const getAllOrderSpecificMonth = async (month, year, spid) => {
-    const startEndThisMonth = getSpecificMonthStartEnd(month, year);
+let getAllOrderSpecificMonth = async (month, year, spid) => {
+    let startEndThisMonth = getSpecificMonthStartEnd(month, year);
     // console.log(startEndThisMonth, ";;;;;;;;;;;;;;;;");
     let ordersByProv = await Order.find({
         // createdAt: {
@@ -500,8 +520,8 @@ const getAllOrderSpecificMonth = async (month, year, spid) => {
     .populate('info.staff')
     .populate('orderBy');
 
-    const res = ordersByProv.filter(order => {
-        const dates = order?.info[0]?.date?.split('/').map(Number);
+    let res = ordersByProv.filter(order => {
+        let dates = order?.info[0]?.date?.split('/').map(Number);
         // console.log(dates, "-----))))")
 
         return dates[1] === month && dates[2] === year;
@@ -511,8 +531,8 @@ const getAllOrderSpecificMonth = async (month, year, spid) => {
 
     return res;
 }
-const getCustomerDataByMonth = asyncHandler(async (req, res) => {
-    const { currMonth, currYear, spid } = req.body;
+let getCustomerDataByMonth = asyncHandler(async (req, res) => {
+    let { currMonth, currYear, spid } = req.body;
     if (!currMonth || !currYear || currMonth < 0 || currMonth > 12 || !spid) {
         return res.status(400).json({
             success: false,
@@ -521,7 +541,7 @@ const getCustomerDataByMonth = asyncHandler(async (req, res) => {
     }
 
 
-    const allOrdersThisMonth = await getAllOrderSpecificMonth(currMonth, currYear, spid);
+    let allOrdersThisMonth = await getAllOrderSpecificMonth(currMonth, currYear, spid);
 
     let allCustomersThisMonth = allOrdersThisMonth.map(order => {
         return order.orderBy;
@@ -531,8 +551,8 @@ const getCustomerDataByMonth = asyncHandler(async (req, res) => {
     })
 
     let newCusCnt = 0;
-    for (const customer of allCustomersThisMonth) {
-        const pastOrder = await Order.find({
+    for (let customer of allCustomersThisMonth) {
+        let pastOrder = await Order.find({
             'info.0.provider': spid,
             orderBy: customer._id
         });
@@ -549,8 +569,8 @@ const getCustomerDataByMonth = asyncHandler(async (req, res) => {
     });
 });
 
-const getThisMonthRevenueAndOrderStatistic = asyncHandler(async (req, res) => {
-    const { currMonth, currYear, spid } = req.body;
+let getThisMonthRevenueAndOrderStatistic = asyncHandler(async (req, res) => {
+    let { currMonth, currYear, spid } = req.body;
     if (!currMonth || !currYear || currMonth < 0 || currMonth > 12) {
         return res.status(400).json({
             success: false,
@@ -567,11 +587,11 @@ const getThisMonthRevenueAndOrderStatistic = asyncHandler(async (req, res) => {
     let revenueMonthList = Array(numDaysInMonth).fill(0);
     allOrdersThisMonth.forEach(order => {
         if (order.status === 'Successful' && order.info[0]?.date) {
-            const dates = order.info[0].date.split('/');
+            let dates = order.info[0].date.split('/');
             // // Kết hợp formattedDate và time để tạo datetime
-            // const cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+            // let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
-            // const indexByDate = cDate.getDate()-1;
+            // let indexByDate = cDate.getDate()-1;
 
             console.log(`============&&&&&&&&&&&&&&&&${dates}`)
 
@@ -598,18 +618,18 @@ function getMinutesDifference(startTime, endTime) {
         return 0;
     }
     // Split the time strings into hours and minutes
-    const [startHours, startMinutes] = startTime.split(':').map(Number);
-    const [endHours, endMinutes] = endTime.split(':').map(Number);
+    let [startHours, startMinutes] = startTime.split(':').map(Number);
+    let [endHours, endMinutes] = endTime.split(':').map(Number);
 
     // Convert both times to total minutes
-    const startTotalMinutes = startHours * 60 + startMinutes;
-    const endTotalMinutes = endHours * 60 + endMinutes;
+    let startTotalMinutes = startHours * 60 + startMinutes;
+    let endTotalMinutes = endHours * 60 + endMinutes;
 
     // Calculate the difference in minutes
     return endTotalMinutes - startTotalMinutes;
 }
-const getOccupancy3RecentStatistic = asyncHandler(async (req, res) => {
-    const { periodData,spid } = req.body;
+let getOccupancy3RecentStatistic = asyncHandler(async (req, res) => {
+    let { periodData,spid } = req.body;
     if (!periodData || !spid) {
         return res.status(400).json({
             success: false,
@@ -617,7 +637,7 @@ const getOccupancy3RecentStatistic = asyncHandler(async (req, res) => {
         });
     }
 
-    const serviceProviderInfo = await ServiceProvider.findById(spid);
+    let serviceProviderInfo = await ServiceProvider.findById(spid);
     let totalWorkingHoursOfProviderPerWeek = 0;
     [
         'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
@@ -626,12 +646,12 @@ const getOccupancy3RecentStatistic = asyncHandler(async (req, res) => {
             getMinutesDifference(serviceProviderInfo?.time[`start${day}`], serviceProviderInfo?.time[`end${day}`]);
     });
 
-    const last3Weeks = get3RecentWeekRange();
-    const last3Months = getLastThreeMonthsStartEnd(new Date());
+    let last3Weeks = get3RecentWeekRange();
+    let last3Months = getLastThreeMonthsStartEnd(new Date());
 
     let occupancyData = [0,0,0];
     if (periodData === 'week') {
-        const currentWeekOrders = await Order.find({
+        let currentWeekOrders = await Order.find({
             createdAt: {
                 $gte: new Date(last3Weeks[0][0]),
                 $lte: new Date(last3Weeks[0][1]),
@@ -652,7 +672,7 @@ const getOccupancy3RecentStatistic = asyncHandler(async (req, res) => {
         console.log('..//////////', totalWorkingHoursOfProviderPerWeek);
 
 
-        const lastWeekOrders = await Order.find({
+        let lastWeekOrders = await Order.find({
             createdAt: {
                 $gte: new Date(last3Weeks[1][0]),
                 $lte: new Date(last3Weeks[1][1]),
@@ -670,7 +690,7 @@ const getOccupancy3RecentStatistic = asyncHandler(async (req, res) => {
         occupancyData[1] = sumDurationsAllOrders * 100 / (totalWorkingHoursOfProviderPerWeek || 1);
 
 
-        const prevWeekOrders = await Order.find({
+        let prevWeekOrders = await Order.find({
             createdAt: {
                 $gte: new Date(last3Weeks[2][0]),
                 $lte: new Date(last3Weeks[2][1]),
@@ -691,7 +711,7 @@ const getOccupancy3RecentStatistic = asyncHandler(async (req, res) => {
 
         console.log(last3Months[2].start);
         console.log(last3Months[2].end);
-        const currentWeekOrders = await Order.find({
+        let currentWeekOrders = await Order.find({
             createdAt: {
                 $gte: new Date(last3Months[2].start),
                 $lte: new Date(last3Months[2].end),
@@ -707,8 +727,8 @@ const getOccupancy3RecentStatistic = asyncHandler(async (req, res) => {
         })
 
         let newCusCnt = 0;
-        for (const customer of currentWeekCustomers) {
-            const pastOrder = await Order.find({
+        for (let customer of currentWeekCustomers) {
+            let pastOrder = await Order.find({
                 'info.0.provider': spid,
                 orderBy: customer._id
             });
@@ -721,7 +741,7 @@ const getOccupancy3RecentStatistic = asyncHandler(async (req, res) => {
 
 
 
-        const lastWeekOrders = await Order.find({
+        let lastWeekOrders = await Order.find({
             createdAt: {
                 $gte: new Date(last3Months[1].start),
                 $lte: new Date(last3Months[1].end),
@@ -737,8 +757,8 @@ const getOccupancy3RecentStatistic = asyncHandler(async (req, res) => {
         })
 
         newCusCnt = 0;
-        for (const customer of lastWeekCustomers) {
-            const pastOrder = await Order.find({
+        for (let customer of lastWeekCustomers) {
+            let pastOrder = await Order.find({
                 'info.0.provider': spid,
                 orderBy: customer._id
             });
@@ -751,7 +771,7 @@ const getOccupancy3RecentStatistic = asyncHandler(async (req, res) => {
 
 
 
-        const prevWeekOrders = await Order.find({
+        let prevWeekOrders = await Order.find({
             createdAt: {
                 $gte: new Date(last3Months[0].start),
                 $lte: new Date(last3Months[0].end),
@@ -767,8 +787,8 @@ const getOccupancy3RecentStatistic = asyncHandler(async (req, res) => {
         })
 
         newCusCnt = 0;
-        for (const customer of prevWeekCustomers) {
-            const pastOrder = await Order.find({
+        for (let customer of prevWeekCustomers) {
+            let pastOrder = await Order.find({
                 'info.0.provider': spid,
                 orderBy: customer._id
             });
@@ -785,8 +805,8 @@ const getOccupancy3RecentStatistic = asyncHandler(async (req, res) => {
     })
 });
 
-const getOccupancyByDayCurrentMonth = asyncHandler(async (req, res) => {
-    const { currMonth, currYear, spid } = req.body;
+let getOccupancyByDayCurrentMonth = asyncHandler(async (req, res) => {
+    let { currMonth, currYear, spid } = req.body;
     if (!currMonth || !currYear || currMonth < 0 || currMonth > 12) {
         return res.status(400).json({
             success: false,
@@ -794,8 +814,8 @@ const getOccupancyByDayCurrentMonth = asyncHandler(async (req, res) => {
         });
     }
 
-    const workingHourByDayMap = [];
-    const serviceProviderInfo = await ServiceProvider.findById(spid);
+    let workingHourByDayMap = [];
+    let serviceProviderInfo = await ServiceProvider.findById(spid);
     // let totalWorkingHoursOfProviderPerWeek = 0;
     // order of this correspond to number return by getDay() method
     [
@@ -819,20 +839,19 @@ const getOccupancyByDayCurrentMonth = asyncHandler(async (req, res) => {
     allOrdersThisMonth.forEach(order => {
         // console.log(order.info, 'order.info++++++===;[;');
         if (order.status === 'Successful' && order.info?.length > 0) {
-            for (const item of order.info) {
-                const [day, month, year] = item.date.split('/').map(e => e.padStart(2,'0'));
+            for (let item of order.info) {
+                let [day, month, year] = item.date.split('/').map(e => e.padStart(2,'0'));
                 // console.log(`***********************************${year}-${month}-${day}T00:00:00Z`);
-                  // // Kết hợp formattedDate và time để tạo datetime
-                const cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+                let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
                 console.log('CDate:  ' + cDate.toISOString());
-                const itemDate = cDate.getDate();
-                // const itemMonth = item.dateTime.getMonth()+1;
-                const itemDayWeek = cDate.getDay();
+                let itemDate = cDate.getDate();
+                // let itemMonth = item.dateTime.getMonth()+1;
+                let itemDayWeek = cDate.getDay();
 
                 // console.log(';;;;;;;;;;;;;;;;', item.)
                 // console.log(';', currYear)
                 
-                    const indexByDate = itemDate - 1;
+                    let indexByDate = itemDate - 1;
                     // console.log(item.service, '++++++++==');
                     occupancyMonthList[indexByDate] += item.service?.duration;
                     console.log(occupancyMonthList[indexByDate])
@@ -843,7 +862,7 @@ const getOccupancyByDayCurrentMonth = asyncHandler(async (req, res) => {
         }
     });
     // console.log(occupancyMonthList);
-    for (const idx in occupancyMonthList) {
+    for (let idx in occupancyMonthList) {
         if (workingHoursList[idx] > 0) {
             occupancyMonthList[idx] = Math.ceil(occupancyMonthList[idx] * 100 / workingHoursList[idx]);
         }
@@ -859,8 +878,8 @@ const getOccupancyByDayCurrentMonth = asyncHandler(async (req, res) => {
     })
 });
 
-const getOccupancyByServices = asyncHandler(async (req, res) => {
-    const { currMonth, currYear, spid } = req.body;
+let getOccupancyByServices = asyncHandler(async (req, res) => {
+    let { currMonth, currYear, spid } = req.body;
     if (!currMonth || !currYear || currMonth < 0 || currMonth > 12 || !spid) {
         return res.status(400).json({
             success: false,
@@ -883,7 +902,7 @@ const getOccupancyByServices = asyncHandler(async (req, res) => {
 
     allOrdersThisMonth.forEach(order => {
         if (order.info?.length > 0) {
-            for (const item of order.info) {
+            for (let item of order.info) {
                 if (!item.service || !item.service?._id) continue;
 
                 if (allServiceInOrders.filter(serv => serv._id === item.service?._id).length === 0) {
@@ -897,7 +916,7 @@ const getOccupancyByServices = asyncHandler(async (req, res) => {
     });
 
 
-    const serviceProviderInfo = await ServiceProvider.findById(spid);
+    let serviceProviderInfo = await ServiceProvider.findById(spid);
     let totalWorkingHoursOfProviderPerWeek = 0;
     [
         'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
@@ -911,8 +930,8 @@ const getOccupancyByServices = asyncHandler(async (req, res) => {
     console.log("---||||-->", revenueCountByService);
 
     // let numDaysInMonth = new Date(currYear, currMonth, 0).getDate();
-    for (const idx in allServiceInOrders) {
-        const serviceId = allServiceInOrders[idx]._id;
+    for (let idx in allServiceInOrders) {
+        let serviceId = allServiceInOrders[idx]._id;
 
         allServiceInOrders[idx] = {
             ...(allServiceInOrders[idx].toObject()),
@@ -937,8 +956,8 @@ const getOccupancyByServices = asyncHandler(async (req, res) => {
     })
 });
 
-const getOccupancyByStaffs = asyncHandler(async (req, res) => {
-    const { currMonth, currYear, spid } = req.body;
+let getOccupancyByStaffs = asyncHandler(async (req, res) => {
+    let { currMonth, currYear, spid } = req.body;
     if (!currMonth || !currYear || currMonth < 0 || currMonth > 12) {
         return res.status(400).json({
             success: false,
@@ -956,7 +975,7 @@ const getOccupancyByStaffs = asyncHandler(async (req, res) => {
 
     allOrdersThisMonth.forEach(order => {
         if (order.info?.length > 0) {
-            for (const item of order.info) {
+            for (let item of order.info) {
                 if (!item.staff || !item.staff?._id || !item.service) continue;
 
                 if (allStaffInOrders.filter(staff => staff._id === item.staff?._id).length === 0) {
@@ -972,7 +991,7 @@ const getOccupancyByStaffs = asyncHandler(async (req, res) => {
 
     // console.log('----:::::::', allStaffInOrders);
 
-    const serviceProviderInfo = await ServiceProvider.findById(spid);
+    let serviceProviderInfo = await ServiceProvider.findById(spid);
     let totalWorkingHoursOfProviderPerWeek = 0;
     [
         'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
@@ -984,8 +1003,8 @@ const getOccupancyByStaffs = asyncHandler(async (req, res) => {
     // console.log("----->", orderCountByService);
 
     // let numDaysInMonth = new Date(currYear, currMonth, 0).getDate();
-    for (const idx in allStaffInOrders) {
-        const staffId = allStaffInOrders[idx]._id;
+    for (let idx in allStaffInOrders) {
+        let staffId = allStaffInOrders[idx]._id;
 
         allStaffInOrders[idx] = {
             ...(allStaffInOrders[idx].toObject()),

@@ -1,4 +1,5 @@
 /node_modules
 .env
 sb-gjeks30568206@personal.example.com
+mongoimport --db dbName --collection collectionName --file fileName.json --jsonArray
 {"index":"datnhk241services","track_scores":true,"query":{"bool":{"filter":[{"term":{"catergory":"Gym"}}]}},"size":"10","from":0,"_source":["id","name","thumb","price","category","duration","provider_id","province","totalRatings"],"sort":[]}

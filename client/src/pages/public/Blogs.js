@@ -31,7 +31,7 @@ const Blogs = () => {
   const [tags, setTags] = useState([]);
   // const [sort, setSort] = useState([]);
   const [counts, setCounts] = useState(0);
-  const [selectedSort, setSelectedSort] = useState([]);
+  const [selectedSort, setSelectedSort] = useState({});
   const [selectedTags, setSelectedTags] = useState([]);
   const [provinceFilter, setProvinceFilter] = useState([]);
   const handleSortByChange = () => {};
@@ -85,6 +85,7 @@ const Blogs = () => {
     setIsLoading(true);
 
     const sortBy = selectedSort.value;
+<<<<<<< Updated upstream
 
     console.log('<><>><><><><><><><><><><><><>', {
       searchTerm,
@@ -95,6 +96,8 @@ const Blogs = () => {
       // categories
     });
 
+=======
+>>>>>>> Stashed changes
     let response = await apiSearchBlogAdvanced({
       searchTerm,
       limit: parseInt(process.env.REACT_APP_LIMIT),
