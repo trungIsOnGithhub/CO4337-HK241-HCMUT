@@ -230,14 +230,14 @@ function ManageSetting() {
                                 <option>24 hours</option>
                               </select>
                             </div>
-                            <div>
+                            {/* <div>
                               <label className="text-gray-800 font-medium">Minimum time required before rescheduling</label>
                               <select value={minTimeRescheduling} onChange={(e) => setMinTimeRescheduling(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
                                 <option>Disabled</option>
                                 <option>1 hour</option>
                                 <option>24 hours</option>
                               </select>
-                            </div>
+                            </div> */}
                             <div>
                               <label className="text-gray-800 font-medium">The number of days available for booking in advance</label>
                               <input
@@ -300,12 +300,12 @@ function ManageSetting() {
                                   <option>Dashboard</option>
                                 </select>
                               </div> */}
-                              <div>
+                              {/* <div>
                                 <label className="text-gray-700 font-medium">Dashboard language</label>
                                 <select className="border rounded-lg p-2 w-full mt-1">
                                   <option>English</option>
                                 </select>
-                              </div>
+                              </div> */}
                             </div>
 
                             <div className="mt-4 flex justify-end space-x-2 gap-4">

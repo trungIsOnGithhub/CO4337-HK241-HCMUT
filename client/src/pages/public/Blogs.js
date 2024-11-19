@@ -85,7 +85,6 @@ const Blogs = () => {
     setIsLoading(true);
 
     const sortBy = selectedSort.value;
-<<<<<<< Updated upstream
 
     console.log('<><>><><><><><><><><><><><><>', {
       searchTerm,
@@ -96,8 +95,6 @@ const Blogs = () => {
       // categories
     });
 
-=======
->>>>>>> Stashed changes
     let response = await apiSearchBlogAdvanced({
       searchTerm,
       limit: parseInt(process.env.REACT_APP_LIMIT),

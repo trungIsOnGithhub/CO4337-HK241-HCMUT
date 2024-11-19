@@ -14,7 +14,7 @@ import { IoMdSend } from "react-icons/io";
 import Picker from "emoji-picker-react";
 import styled from "styled-components";
 import { GoDotFill } from "react-icons/go";
-import { apiGetProviderByOwnerId } from 'apis'
+import { apiGetProviderByOwnerId } from 'apis';
 
 const MessageBox = ({currentChat}) => {
   const [isQuickMenuOpen, setIsQuickMenuOpen] = useState(false);
@@ -123,29 +123,29 @@ const MessageBox = ({currentChat}) => {
     msgs.push({fromSelf: true, message: msg})
     setMessages(msgs)
   }
-  const handleSendMsgReversed = async(msg) => {
-    await apiAddMessage({
-        to: current._id,
-        from: currentChat.id,
-        message: msg
-    })
-    socket.current.emit("send-msg", {
-        to: current._id,
-        from: currentChat.id,
-        message: msg
-    })
-    const msgs = [...messages]
-    msgs.push({fromSelf: false, message: msg})
-    setMessages(msgs)
-  }
+  // const handleSendMsgReversed = async(msg) => {
+  //   await apiAddMessage({
+  //       to: current._id,
+  //       from: currentChat.id,
+  //       message: msg
+  //   })
+  //   socket.current.emit("send-msg", {
+  //       to: current._id,
+  //       from: currentChat.id,
+  //       message: msg
+  //   })
+  //   const msgs = [...messages]
+  //   msgs.push({fromSelf: false, message: msg})
+  //   setMessages(msgs)
+  // }
 
-  useEffect(() => {
-    if(socket.current){
-        socket.current.on('msg-recieve', (msg) => {
-            setArrivalMessage({fromSelf: false, message: msg})
-        })
-    }
-  }, []);
+  // useEffect(() => {
+  //   if(socket.current){
+  //       socket.current.on('msg-recieve', (msg) => {
+  //           setArrivalMessage({fromSelf: false, message: msg})
+  //       })
+  //   }
+  // }, []);
 
 
   useEffect(() => {
@@ -242,11 +242,11 @@ const MessageBox = ({currentChat}) => {
                     key={idx}
                     onClick={() => {
                       const newMessages = [...messages, {message:item.question, fromSelf:true}];
-                      handleSendMsg(item.question);
+                      // handleSendMsg(item.question);
 
                       if (item.answer) {
                           newMessages.push({message:item.answer, fromSelf:false});
-                          handleSendMsgReversed(item.answer);
+                          // handleSendMsgReversed(item.answer);
                       }
                       setMessages(newMessages);
                       setIsQuickMenuOpen(false);

@@ -3,6 +3,7 @@ let asyncHandler = require("express-async-handler")
 let Order = require('../models/order')
 let Service = require('../models/service');
 let ServiceProvider = require('../models/ServiceProvider');
+let moment = require('moment');
 //  let Interaction = require('../models/interaction')
 
 let getRevenueByDateRange = asyncHandler(async(req, res) => {
@@ -299,13 +300,12 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
             return cDate < last3Weeks[0][1] && cDate > last3Weeks[0][0];
         });
         let currentWeekCustomers = currentWeekOrders.map(order => {
-            return order.orderBy._id.toString();
+            return order.orderBy.toString();
         });
         console.log('Curr Week Customer: =====', currentWeekCustomers);
         currentWeekCustomers = currentWeekCustomers.filter((item, pos, self) => {
             return self.indexOf(item) === pos;
         });
-    
         // console.log('..........', currentWeekCustomers);
 
         let newCusCnt = 0;
@@ -314,9 +314,9 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
                 'info.0.provider': spid,
                 orderBy: customerId
             });
-            // console.log('....:::::---', pastOrder.length);
 
-            if (pastOrder) {
+            if (!pastOrder) {
+                console.log('..:::::::CURRENTWEEEK', customerId);
                 ++newCusCnt;
             }
         }
@@ -328,30 +328,24 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
             let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
             return cDate < last3Months[1].end && cDate > last3Months[1].start;
-        })
-        // let lastWeekOrders = await Order.find({
-        //     createdAt: {
-        //         $gte: new Date(last3Months[1].start),
-        //         $lte: new Date(last3Months[1].end),
-        //     },
-        //     'info.0.provider': spid
-        // }).populate('info.service').populate('orderBy');
+        });
 
         let lastWeekCustomers = lastWeekOrders.map(order => {
-            return order.orderBy._id.toString();
+            return order.orderBy.toString();
         });
         lastWeekCustomers = lastWeekCustomers.filter(function(item, pos, self) {
             return self.indexOf(item) == pos;
         })
 
         newCusCnt = 0;
-        for (let customer of lastWeekCustomers) {
-            let pastOrder = await Order.find({
+        for (let customerId of lastWeekCustomers) {
+            let pastOrder = await Order.exists({
                 'info.0.provider': spid,
-                orderBy: customer._id
+                orderBy: customerId
             });
 
-            if (pastOrder?.length === 1) {
+            if (!pastOrder) {
+                console.log('.::::::::LASTWEEK', customerId);
                 ++newCusCnt;
             }
         }
@@ -364,9 +358,8 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
 
             return cDate < last3Weeks[2][1] && cDate > last3Weeks[2][0];
         });
-
-        let prevWeekCustomers = prevWeekOrders.map((order) => {
-            return order.orderBy;
+        let prevWeekCustomers = prevWeekOrders.map(order => {
+            return order.orderBy.toString();
         });
         prevWeekCustomers = prevWeekCustomers.filter(function(item, pos, self) {
             return self.indexOf(item) == pos;
@@ -374,44 +367,50 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
 
         newCusCnt = 0;
         for (let customer of prevWeekCustomers) {
-            let pastOrder = await Order.find({
+            let pastOrder = await Order.exists({
                 'info.0.provider': spid,
-                orderBy: customer._id
+                orderBy: customerId
             });
 
-            if (pastOrder?.length === 1) {
+            if (!pastOrder) {
+                console.log('.::::::::PREVWEEK', customerId);
                 ++newCusCnt;
             }
         }
         newCustomerData[0] = newCusCnt;
+
     }
     else if (periodData === 'month') {
 
         console.log(last3Months[2].start);
         console.log(last3Months[2].end);
-        let currentWeekOrders = await Order.find({
-            createdAt: {
-                $gte: new Date(last3Months[2].start),
-                $lte: new Date(last3Months[2].end),
-            },
-            'info.0.provider': spid
-        }).populate('info.service').populate('orderBy');
+        let providerOrders = await Order.find({
+            'info.0.provider': spid,
+            status: 'Successful'
+        }).populate('info.service');
 
-        let currentWeekCustomers = currentWeekOrders.map((order) => {
-            return order.orderBy;
+        let currentMonthOrders = providerOrders.filter(order => {
+            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+
+            return cDate < last3Months[2].end && cDate > last3Months[2].start;
         });
-        currentWeekCustomers = currentWeekCustomers.filter(function(item, pos, self) {
-            return self.indexOf(item) == pos;
-        })
+        let currentMonthCustomers = currentMonthOrders.map(order => {
+            return order.orderBy.toString();
+        });
+        console.log('Curr Week Customer: =====', currentMonthCustomers);
+        currentMonthCustomers = currentMonthCustomers.filter((item, pos, self) => {
+            return self.indexOf(item) === pos;
+        });
 
         let newCusCnt = 0;
-        for (let customer of currentWeekCustomers) {
-            let pastOrder = await Order.find({
+        for (let customerId of currentMonthCustomers) {
+            let pastOrder = await Order.exists({
                 'info.0.provider': spid,
-                orderBy: customer._id
+                orderBy: customerId
             });
 
-            if (pastOrder?.length === 1) {
+            if (!pastOrder) {
                 ++newCusCnt;
             }
         }
@@ -419,59 +418,72 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
 
 
 
-        let lastWeekOrders = await Order.find({
-            createdAt: {
-                $gte: new Date(last3Months[1].start),
-                $lte: new Date(last3Months[1].end),
-            },
-            'info.0.provider': spid
-        }).populate('info.service').populate('orderBy');
+        let lastMonthOrders = providerOrders.filter(order => {
+            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
-        let lastWeekCustomers = lastWeekOrders.map((order) => {
-            return order.orderBy;
+            return cDate < last3Months[1].end && cDate > last3Months[1].start;
+            // return order.orderBy;
         });
-        lastWeekCustomers = lastWeekCustomers.filter(function(item, pos, self) {
-            return self.indexOf(item) == pos;
-        })
+        let lastMonthCustomers = lastMonthOrders.map(order => {
+            return order.orderBy.toString();
+        });
+        console.log('Last Week Customer: =====', lastMonthCustomers);
+        lastMonthCustomers = lastMonthCustomers.filter((item, pos, self) => {
+            return self.indexOf(item) === pos;
+        });
 
         newCusCnt = 0;
-        for (let customer of lastWeekCustomers) {
-            let pastOrder = await Order.find({
+        for (let customer of lastMonthCustomers) {
+            let pastOrder = await Order.exists({
                 'info.0.provider': spid,
                 orderBy: customer._id
             });
 
-            if (pastOrder?.length === 1) {
+            if (!pastOrder) {
                 ++newCusCnt;
             }
         }
         newCustomerData[1] = newCusCnt;
 
 
+        // newCusCnt = 0;
+        // for (let customer of lastMonthCustomers) {
+        //     let pastOrder = await Order.exists({
+        //         'info.0.provider': spid,
+        //         orderBy: customer._id
+        //     });
 
-        let prevWeekOrders = await Order.find({
-            createdAt: {
-                $gte: new Date(last3Months[0].start),
-                $lte: new Date(last3Months[0].end),
-            },
-            'info.0.provider': spid
-        }).populate('info.service').populate('orderBy');
+        //     if (!pastOrder) {
+        //         ++newCusCnt;
+        //     }
+        // }
+        // newCustomerData[1] = newCusCnt;
 
-        let prevWeekCustomers = prevWeekOrders.map((order) => {
-            return order.orderBy;
+
+        let prevMonthOrders = providerOrders.filter(order => {
+            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+
+            return cDate < last3Months[0].end && cDate > last3Months[0].start;
+            // return order.orderBy;
         });
-        prevWeekCustomers = prevWeekCustomers.filter(function(item, pos, self) {
-            return self.indexOf(item) == pos;
-        })
+        let prevMonthCustomers = prevMonthOrders.map(order => {
+            return order.orderBy.toString();
+        });
+        // console.log('Last Week Customer: =====', lastMonthCustomers);
+        prevMonthCustomers = lastMonthCustomers.filter((item, pos, self) => {
+            return self.indexOf(item) === pos;
+        });
 
         newCusCnt = 0;
-        for (let customer of prevWeekCustomers) {
-            let pastOrder = await Order.find({
+        for (let customerId of prevMonthCustomers) {
+            let pastOrder = await Order.exists({
                 'info.0.provider': spid,
-                orderBy: customer._id
+                orderBy: customerId
             });
 
-            if (pastOrder?.length === 1) {
+            if (!pastOrder) {
                 ++newCusCnt;
             }
         }
