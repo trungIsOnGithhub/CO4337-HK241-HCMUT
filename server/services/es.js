@@ -122,7 +122,7 @@ async function resetElasticConnection(indexToDelete) {
 
 async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMatch,
                 fieldNameArrayToGet, limit, offset, elasticSortScheme,
-                geoFilter, geoSort, categoriesIncluded) {
+                geoFilter, geoSort, categoriesIncluded, province) {
     const esClient = initializeElasticClient();
 
     const queryObject = {
@@ -147,6 +147,18 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
                 fields: fieldNameArrayToMatch,
                 fuzziness : "AUTO",
                 prefix_length : 2
+            }
+        });
+
+        delete queryObject.query.match_all;
+    }
+
+    if (province?.length) {
+        if (!queryObject.query.bool.must) queryObject.query.bool.must = [];
+
+        queryObject.query.bool.must.push({
+            match: {
+                province
             }
         });
 
@@ -197,10 +209,10 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
     if (categoriesIncluded?.length && queryObject?.query) {
     if (!queryObject.query.bool) queryObject.query.bool = {};
         // queryObject.query.bool.filter = categoriesIncluded.map(categoryLabel => { return { term: { catergory: categoryLabel } }; });
-        if (!queryObject.query.bool.must) queryObject.query.bool.must = [];
+        if (!queryObject.query.bool.should) queryObject.query.bool.should = [];
 
         for (const categoryLabel of categoriesIncluded) {
-            queryObject.query.bool.must.push({
+            queryObject.query.bool.should.push({
                 match: {
                     category: categoryLabel
                 }

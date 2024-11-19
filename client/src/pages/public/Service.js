@@ -77,14 +77,14 @@ const Services = () => {
     //   queries.name = searchFilter.term
     // }
     if (nearMeOption && searchFilter.province) {
-      queries.province = tinh_thanhpho[searchFilter.province].name
+      advancedQuery.province = tinh_thanhpho[searchFilter.province].name;
     }
 
     if (nearMeOption && current?.lastGeoLocation?.coordinates?.length === 2) {
-      queries.current_client_location = {
-        longtitude: current.lastGeoLocation.coordinates[0],
-        lattitude: current.lastGeoLocation.coordinates[1]
-      }
+      // queries.current_client_location = {
+      //   longtitude: current.lastGeoLocation.coordinates[0],
+      //   lattitude: current.lastGeoLocation.coordinates[1]
+      // }
 
       // console.log('Elastic Pre Query', advancedQuery, 'Elastic Pre Query');
       response = await apiSearchServiceAdvanced(advancedQuery);
@@ -96,9 +96,9 @@ const Services = () => {
       setTotalServiceCount(response?.services?.total?.value)
     } 
     else {
-      if(category && category !== 'services'){
-        queries.category = category;
-      }
+      // if(category && category !== 'services'){
+      //   queries.category = category;
+      // }
       // console.log('Elastic Pre Query', advancedQuery, 'Elastic Pre Query');
       response = await apiSearchServiceAdvanced(advancedQuery);
 
@@ -160,7 +160,6 @@ const Services = () => {
     const q = {
       // ...priceQuery,
       ...queries}
-// <<<<<<< HEAD
   
     console.log(`PRE FETCH === ${JSON.stringify(searchFilter)}`);
     // console.log("YYAY", params.get('page'), "udias");
@@ -173,12 +172,13 @@ const Services = () => {
       // distanceText: "2000km",
     };
 
-    if (isClientLocationValid(clientLat, clientLon, searchFilter.maxDistance, searchFilter.unit)) {
+    if (nearMeOption && isClientLocationValid(clientLat, clientLon, searchFilter.maxDistance, searchFilter.unit)) {
       advancedQuery = {
         ...advancedQuery,
         clientLat, clientLon,
         distanceText: searchFilter.maxDistance + searchFilter.unit
       }
+      advancedQuery.sortBy += ' location';
     }
 
     queries.page = 1;
@@ -218,12 +218,14 @@ const Services = () => {
       sortBy: queries?.sort
     };
 
-    if (isClientLocationValid(clientLat, clientLon, searchFilter.maxDistance, searchFilter.unit)) {
+
+    if (nearMeOption && isClientLocationValid(clientLat, clientLon, searchFilter.maxDistance, searchFilter.unit)) {
       advancedQuery = {
         ...advancedQuery,
         clientLat, clientLon,
         distanceText: searchFilter.maxDistance + searchFilter.unit
       }
+      advancedQuery.sortBy += ' location';
     }
 
     // queries.page = params.get('page')-1;

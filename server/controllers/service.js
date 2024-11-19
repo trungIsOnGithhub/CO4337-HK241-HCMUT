@@ -49,7 +49,7 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
     console.log("INCOMING REQUESTS:", req.body);
 
     let { searchTerm, limit, offset, categories, sortBy,
-        clientLat, clientLon, distanceText } = req.body;
+        clientLat, clientLon, distanceText, province } = req.body;
 
     if ( (typeof(offset) != "number") ||
         !limit || offset < 0 || limit > 20)
@@ -78,11 +78,11 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
     }
 
     let geoLocationQueryOption = null;
-    if ( clientLat <= 180 && clientLon <= 180 &&
-        clientLat >= -90 && clientLon >= -90 &&
+    if ( clientLat <= 180.0 && clientLon <= 180.0 &&
+        clientLat >= -90.0 && clientLon >= -90.0 &&
         /[1-9][0-9]*(km|m)/.test(distanceText) )
     {
-        geoLocationQueryOption = { distanceText,  clientLat, clientLon };
+        geoLocationQueryOption = { distanceText, clientLat, clientLon };
     }
 
     const columnNamesToMatch = ["name", "providername", "province"];
@@ -98,11 +98,12 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
         sortOption,
         geoLocationQueryOption,
         geoSortOption,
-        categoriesIncluded
+        categoriesIncluded,
+        province
     );
     services = services?.hits;
 
-    console.log("Query Input Parameter: ", services);
+    // console.log("Query Input Parameter: ", services);
     console.log("REAL DATA RETURNED: ", services);
 
     return res.status(200).json({
