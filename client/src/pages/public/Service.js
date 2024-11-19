@@ -16,16 +16,17 @@ import { tinh_thanhpho } from 'tinh_thanhpho'
 import { apiModifyUser } from '../../apis/user'
 import Swal from "sweetalert2";
 import Button from 'components/Buttons/Button';
-import { FaSortAmountDown, FaMoneyCheckAlt, FaCubes, FaBahai, FaSearch  } from "react-icons/fa";
+import { FaBahai, FaSearch  } from "react-icons/fa";
+import { HashLoader } from 'react-spinners';
 import ToggleButton from './ToggleButton';
 
 const REACT_APP_PAGINATION_LIMIT_DEFAULT = process.env.REACT_APP_PAGINATION_LIMIT_DEFAULT;
 const Services = () => {
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
   const dispatch = useDispatch()
   const [services, setServices] = useState(null)
   // const [active, setActive] = useState(null)
-  const [params] = useSearchParams()
+  const [params, setParams] = useSearchParams()
   const [sort, setSort] = useState('')
   const [nearMeOption, setNearMeOption] = useState(false)
   const {category} = useParams()
@@ -34,7 +35,8 @@ const Services = () => {
   const {current} = useSelector((state) => state.user);
   const [svCategories, setSvCategories] = useState([]);
 
-  const [searchedClick, setSearchedClick] = useState(0);
+  const [searchedClick, setSearchedClick] = useState(false);
+  const [resetClicked, setResetClicked] = useState(false);
   const [searchFilter, setSearchFilter] = useState({
     term: '',
     province: '',
@@ -44,6 +46,7 @@ const Services = () => {
   const [clientLat, setClientLat] = useState(999999);
   const [clientLon, setClientLon] = useState(999999);
   const [totalServiceCount, setTotalServiceCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   // const prevSearchTermRef = useRef(searchFilter.term);
   const isClientLocationValid = (clientLat, clientLon, distanceText, unit) => {
@@ -52,6 +55,7 @@ const Services = () => {
   }
 
   const fetchServicesAdvanced = async (queries, advancedQuery) => {
+    setIsLoading(true);
     let response = [];
     const currerntParamPage = params.get('page');
 
@@ -110,6 +114,7 @@ const Services = () => {
     // if(response.success) setServices(response)
     dispatch(getCurrent())
   // }
+    setIsLoading(false);
 }
 
   useEffect(() => {
@@ -135,24 +140,26 @@ const Services = () => {
 
 
   useEffect(() => {
-    window.scrollTo(0,0)
+    window.scrollTo(0,0);
     // console.log('=====>>>>>>', current);
     const queries = Object.fromEntries([...params])
-    let priceQuery =  {}
-    if(queries.to && queries.from){
-      priceQuery = {$and: [
-        {price: {gte: queries.from}},
-        {price: {lte: queries.to}},
-      ]}
-      delete queries.price
-    }
-    else{
-      if(queries.from) queries.price = {gte:queries.from}
-      if(queries.to) queries.price = {gte:queries.to}
-    }
-    delete queries.from
-    delete queries.to
-    const q = {...priceQuery, ...queries}
+    // let priceQuery =  {}
+    // if(queries.to && queries.from){
+    //   priceQuery = {$and: [
+    //     {price: {gte: queries.from}},
+    //     {price: {lte: queries.to}},
+    //   ]}
+    //   delete queries.price
+    // }
+    // else{
+    //   if(queries.from) queries.price = {gte:queries.from}
+    //   if(queries.to) queries.price = {gte:queries.to}
+    // }
+    // delete queries.from
+    // delete queries.to
+    const q = {
+      // ...priceQuery,
+      ...queries}
 // <<<<<<< HEAD
   
     console.log(`PRE FETCH === ${JSON.stringify(searchFilter)}`);
@@ -175,10 +182,10 @@ const Services = () => {
     }
 
     queries.page = 1;
-    // setParams(queries);
+    setParams(queries);
 
     fetchServicesAdvanced(q, advancedQuery);
-  }, [searchedClick]);
+  }, [searchedClick, resetClicked]);
 
 
 //   // for page changing
@@ -391,7 +398,7 @@ const Services = () => {
                   { value: "", label: "No Order" },
                   { value: "-price", label: "Price Descending" },
                   { value: "price", label: "Price Ascending" },
-                  { value: "-discount", label: "Hot Discount" }
+                  { value: "-totalRatings", label: "Highest Rating" }
                 ]}
                 className="basic-multi-select"
                 classNamePrefix="select"
@@ -461,7 +468,7 @@ const Services = () => {
             </div>
 
               <Button
-                handleOnclick={() => { console.log(searchFilter); setSearchedClick(prev => prev+1); }}
+                handleOnclick={() => { console.log(searchFilter); setSearchedClick(prev => !prev); }}
               >
               <span className="flex justify-center gap-1 items-center">
                 <FaSearch /><span>Search</span>
@@ -482,6 +489,7 @@ const Services = () => {
                 setSort('');
                 setFilterCateg([]);
                 // setSvCategories([]);
+                setResetClicked(prev => !prev);
               }}
               style="px-4 py-2 rounded-md text-white bg-slate-400 font-semibold my-2"
             >
@@ -564,6 +572,12 @@ const Services = () => {
       </div>
       <div className='w-full h-[200px]'>
       </div>
+
+      { isLoading &&
+        <div className='flex justify-center z-50 w-full h-full fixed top-0 left-0 items-center bg-overlay'>
+          <HashLoader className='z-50' color='#3B82F6' loading={isLoading} size={80} />
+        </div>
+      }
     </div>
 
   )

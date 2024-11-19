@@ -3,3 +3,8 @@
 sb-gjeks30568206@personal.example.com
 mongoimport --db dbName --collection collectionName --file fileName.json --jsonArray
 {"index":"datnhk241services","track_scores":true,"query":{"bool":{"filter":[{"term":{"catergory":"Gym"}}]}},"size":"10","from":0,"_source":["id","name","thumb","price","category","duration","provider_id","province","totalRatings"],"sort":[]}
+
+https://www.elastic.co/guide/en/cloud/current/ec-getting-started-search-use-cases-db-logstash.html
+https://www.reddit.com/r/CryptoMarkets/comments/1e3kr7m/what_are_the_best_crypto_accountscreators_to/?rdt=63267
+
+{"index":"datnhk241services","track_scores":true,"query":{"bool":{"filter":[{"term":{"catergory":"Barber"}}]}},"size":"4","from":0,"_source":["id","name","thumb","price","category","duration","provider_id","province","totalRatings"],"sort":[{"price":{"order":"desc"}}]}

@@ -153,9 +153,9 @@ async function migrateBlogDataFromMongoDBToElasticDB() {
             // delete newObjectToAdd.provider_id;
             delete newObjectToAdd.author;
 
-            // await esDBModule.addToElasticDB(esDBConstant.BLOGS, newObjectToAdd);// TO SWITCH
+            await esDBModule.addToElasticDB(esDBConstant.BLOGS, newObjectToAdd);// TO SWITCH
 
-            console.log("============", newObjectToAdd);// TO SWITCH
+            console.log("============", newObjectToAdd);
         }
     }
     else {
