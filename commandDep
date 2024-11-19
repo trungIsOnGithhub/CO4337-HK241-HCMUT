@@ -1,0 +1,105 @@
+    1  yum check-update
+    2  yum update
+    3  cd /etc/yum.repos.d
+    4  pwd
+    5  vi mongodb-org-6.0.repo
+    6  ls
+    7  sudo
+    8  sudo vi mongodb-org-6.0.repo
+    9  ls
+   10  sudo vi mongodb-org-6.0.repo
+ 
+   16  ls
+   17  vim mongodb-org-6.0.repo
+   18  sudo chown root:root mongodb-org-6.0.repo
+   19  sudo chmod 775 mongodb-org-6.0.repo
+   20  ls
+   21  vim mongodb-org-6.0.repo
+   22  cat mongodb-org-6.0.repo
+   23  sudo vim mongodb-org-6.0.repo
+   24  find / *.swp
+   25  find / mongodb-org-6.0*.swp
+   26  pwd
+   27  ls
+   28  sudo vim mongodb-org-6.0.repo
+   29  cat mongodb-org-6.0.repo
+   30  systemctl
+   31  sudo yum install -y mongodb-org
+   32  sudo yum install -y mongodb-org-6.0.17 mongodb-org-database-6.0.17 mongodb-org-server-6.0.17 mongodb-org-mongos-6.0.17 mongodb-org-tools-6.0.17
+   33  sudo systemctl start mongod
+   34  sudo systemctl status mongod
+   35  mongoexport
+   36  yum install -y nodejs18
+   37  sudo yum install -y nodejs
+   38  sudo yum install -y nodejs18
+   39  yum update
+   40  sudo yum update
+   41  sudo yum install epel-release
+   42  sudo amazon-linux-extras install epel
+   43  yum-complete-transaction
+   44  sudo yum-complete-transaction
+   45  sudo yum install nodejs
+   46  sudo yum install nodejs18
+   47  curl
+   48  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+   49  source .bashrc
+   50  cd /
+   51  source .bashrc
+   52  nvm
+   53  ls
+   54  export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+   55  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+   56  nvm
+   57  nvm install v18.20.0
+   58  node --v
+   59  node -version
+
+   61  nvm install 16
+   62  node --v
+   63  node -v
+   64  npm
+   65  npm i -g serve
+   66  cd ~
+   67  ls
+   68  cd /
+   69  l
+   70  ls
+   71  mkdir web
+   72  sudo mkdir web
+   73  l
+   74  ls
+   75  sudo chmod 777 /web/
+   76  ls /web/
+   77  cd /web
+   78  tar -xzf build.tar # z only for gzip
+   79  file build.tar
+   80  tar -xvf build.tar
+   81  ls
+   82  serve
+   83  cd build/
+   84  ls
+   85  serve --help
+   86  serve --listen 80 --single --no-port-switching
+   87  fuser
+   88  fuser 80/tcp
+
+   90  lsof -i4
+   91  serve --listen 3001 --single --no-port-switching
+   92  serve --listen 3001 --single --no-port-switching &
+   93  sudo kill -9 5360
+   94  l
+   95  ls
+   96  cd ..
+   97  tar -xvf server.tar
+   98  ls
+   99  npm run start &
+  100  rm -r node_modules/
+  101  ls
+  102  npm i
+  103  npm run start &
+  104  systemctl status mongod
+  105  mongosh
+  106  server ./build -l 3001 --single &
+  107  serve ./build -l 3001 --single &
+  108  npm run start
+  109  history
