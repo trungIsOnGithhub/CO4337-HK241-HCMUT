@@ -102,10 +102,10 @@ const MessageBox = ({currentChat}) => {
 }, [currentChat]);
 
   useEffect(() => {
-    // if(current){
-    //   socket.current = io(host)
-    //   // socket.current.emit("add-user", current._id)
-    // }
+    if(current){
+      socket.current = io(host)
+      socket.current.emit("add-user", current._id)
+    }
   }, [current]);
 
   const handleSendMsg = async(msg) => {
@@ -114,22 +114,37 @@ const MessageBox = ({currentChat}) => {
         to: currentChat.id,
         message: msg
     })
-    // socket.current.emit("send-msg", {
-    //     to: currentChat.id,
-    //     from: current?._id,
-    //     message: msg
-    // })
+    socket.current.emit("send-msg", {
+        to: currentChat.id,
+        from: current?._id,
+        message: msg
+    })
     const msgs = [...messages]
     msgs.push({fromSelf: true, message: msg})
     setMessages(msgs)
   }
+  const handleSendMsgReversed = async(msg) => {
+    await apiAddMessage({
+        to: current._id,
+        from: currentChat.id,
+        message: msg
+    })
+    socket.current.emit("send-msg", {
+        to: current._id,
+        from: currentChat.id,
+        message: msg
+    })
+    const msgs = [...messages]
+    msgs.push({fromSelf: false, message: msg})
+    setMessages(msgs)
+  }
 
   useEffect(() => {
-    // if(socket.current){
-    //     socket.current.on('msg-recieve', (msg) => {
-    //         setArrivalMessage({fromSelf: false, message: msg})
-    //     })
-    // }
+    if(socket.current){
+        socket.current.on('msg-recieve', (msg) => {
+            setArrivalMessage({fromSelf: false, message: msg})
+        })
+    }
   }, []);
 
 
@@ -227,11 +242,15 @@ const MessageBox = ({currentChat}) => {
                     key={idx}
                     onClick={() => {
                       const newMessages = [...messages, {message:item.question, fromSelf:true}];
+                      handleSendMsg(item.question);
+
                       if (item.answer) {
                           newMessages.push({message:item.answer, fromSelf:false});
+                          handleSendMsgReversed(item.answer);
                       }
                       setMessages(newMessages);
                       setIsQuickMenuOpen(false);
+
                   }}
                     className="w-full text-left bg-gray-200 px-3 py-2 rounded-md hover:bg-gray-300 transition overflow-y-auto max-h-16"
                   >

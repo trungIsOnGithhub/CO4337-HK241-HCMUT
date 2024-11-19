@@ -142,7 +142,7 @@ function ManageSetting() {
                   {viewOption === "general" &&
                       <div className="w-3/4 pl-8">
                         {/* Appointment Settings */}
-                        <h2 className="font-semibold text-xl text-gray-800 mb-6">General</h2>
+                        <h2 className="font-semibold text-xl text-gray-800 mb-6">Booking</h2>
                         <div className="space-y-6">
                           
                           {/* Default Time Slot Step */}
@@ -156,7 +156,7 @@ function ManageSetting() {
                           </div>
                           
                           {/* Use Service Duration as Booking Slot */}
-                          <div className="flex items-center justify-between">
+                          {/* <div className="flex items-center justify-between">
                             <label className="text-gray-800 font-medium">Use service duration as booking time slot</label>
                             <input
                               type="checkbox"
@@ -164,16 +164,16 @@ function ManageSetting() {
                               onChange={(e) => setUseServiceDuration(e.target.checked)}
                               className="form-checkbox h-5 w-5 text-blue-600"
                             />
-                          </div>
+                          </div> */}
                           
                           {/* Default Appointment Status */}
-                          <div className="flex items-center justify-between">
+                          {/* <div className="flex items-center justify-between">
                             <label className="text-gray-800 font-medium">Default Appointment Status</label>
                             <select value={appointmentStatus} onChange={(e) => setAppointmentStatus(e.target.value)} className="border rounded-lg p-2 w-1/2 text-gray-800">
                               <option>Approved</option>
                               <option>Pending</option>
                             </select>
-                          </div>
+                          </div> */}
 
                           {/* Minimum Time Settings */}
                           <div className="grid grid-cols-2 gap-6">
@@ -193,7 +193,10 @@ function ManageSetting() {
                                       })}
                                       className="text-gray-700"
                                       classNamePrefix="select"
-                                      onChange={(o) => {setminutesBeforeSameDayBook(prev => prev + parseInt(o.value)*60)}}
+                                      onChange={(o) => {setminutesBeforeSameDayBook(prev => {
+                                        // console.log('=====>' + JSON.stringify(o), " prev:", prev);
+                                        return prev%60 + o.value*60;
+                                      })}}
                                     />
                                     <label className="text-gray-600 text-sm pl-1">hours</label>
                                   </span>
@@ -211,7 +214,10 @@ function ManageSetting() {
                                       ]}
                                       className="text-gray-700"
                                       classNamePrefix="select"
-                                      onChange={(o) => {setminutesBeforeSameDayBook(prev => prev + o.value)}}
+                                      onChange={(o) => {setminutesBeforeSameDayBook(prev => {
+                                        // console.log('=====>' + JSON.stringify(o), " prev:", prev);
+                                        return Math.trunc(prev/60)*60 + o.value;
+                                      })}}
                                     />
                                     <label className="text-gray-600 text-sm pl-1">minutes</label>
                                   </span>
