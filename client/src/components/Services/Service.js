@@ -19,7 +19,7 @@ import clsx from 'clsx'
 import { MdOutlineCategory } from 'react-icons/md'
 const {FaEye, FaHeart, FaCartPlus, BsCartCheckFill} = icons
 
-const Service = ({serviceData, keyToExtract='_source'}) => {
+const Service = ({serviceData, nearMeOption=false, keyToExtract='_source'}) => {
   const [isShowOption, setIsShowOption] = useState(false)
   const {current} = useSelector(state => state.user)
   const navigate = useNavigate()
@@ -68,7 +68,7 @@ const Service = ({serviceData, keyToExtract='_source'}) => {
             <div className='w-full flex flex-col gap-1'>
                 <span className='text-[18px] font-medium line-clamp-1'>{serviceData?.[keyToExtract]?.name}</span>
                 <span className='text-[14px] text-[#868e96] flex gap-2 items-center'>Duration <span className='text-black font-medium'>{`${serviceData?.[keyToExtract]?.duration}min`}</span></span>
-                { serviceData?.sort?.length &&
+                { serviceData?.sort?.length && nearMeOption &&
                     <span className='text-[14px] text-[#868e96] flex gap-2 items-center text-black font-medium'>
                       Distance <span className='text-[#0a66c2] font-medium'>{`${Math.trunc(serviceData.sort[0])} km`}</span>
                     </span>

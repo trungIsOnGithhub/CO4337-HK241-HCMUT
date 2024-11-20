@@ -533,7 +533,7 @@ const Services = () => {
       <div className={clsx('mt-8 w-main m-auto flex gap-4 flex-wrap', isShowModal ? 'hidden' : '')}>
         {services?.map((service, index) => (
           <div key={index} className='w-[32%]'>
-            <Service serviceData={service}/>
+            <Service serviceData={service} nearMeOption={nearMeOption}/>
           </div>
         ))}
       </div>
