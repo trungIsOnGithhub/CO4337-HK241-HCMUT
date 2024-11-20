@@ -14,26 +14,6 @@ const makeTokenNumber = () => {
     return Math.floor(100000 + Math.random() * 900000).toString(); // Tạo mã 6 chữ số
 };
 
-// const register = asyncHandler(async(req, res)=>{
-//     const {email, password, firstName, lastName} = req.body
-//     if(!email || !password || !firstName || !lastName){
-//         return res.status(400).json({
-//             success: false,
-//             mes: "Missing input"
-//         })}
-    
-//     const user = await User.findOne({email})
-//     if(user){
-//         throw new Error("User has existed already")
-//     }
-//     else{
-//         const newUser = await User.create(req.body)
-//         return res.status(200).json({
-//             success: newUser ? true : false,
-//             mes: newUser ? "Register is successful" : "Something went wrong"
-//         })
-//     }
-// })
 
 const register = asyncHandler(async(req, res) => {
     const {email, password, firstName, lastName, mobile, role} = req.body;
@@ -83,7 +63,7 @@ const register = asyncHandler(async(req, res) => {
                         </span>
                     </div>
                     <p style="font-size: 16px;">This code is valid for 15 minutes. If you didn’t request this, please ignore this email.</p>
-                    <p style="font-size: 16px;">Best regards,<br>Your Company Team</p>
+                    <p style="font-size: 16px;">Best regards,<br>BizServ Team</p>
                 </div>
             `;
             await sendMail({ email, html, subject: 'Complete Registration' });
@@ -286,7 +266,78 @@ const forgotPassword = asyncHandler(async(req, res)=>{
         const resetToken = user.createPasswordResetToken()
         await user.save()
 
-        const html = `Xin vui long click vao link ben duoi de doi mat khau. Link nay se het han sau 15 phut.<a href= ${process.env.CLIENT_URL}/reset_password/${resetToken}>Click here</a>`
+        const html = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+            <style>
+                body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 0;
+                }
+                .email-container {
+                max-width: 600px;
+                margin: 20px auto;
+                background-color: #ffffff;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                }
+                .header {
+                background-color: #0a66c2;
+                color: #ffffff;
+                text-align: center;
+                padding: 20px;
+                }
+                .content {
+                padding: 20px;
+                color: #333333;
+                line-height: 1.6;
+                }
+                .content a {
+                    display: inline-block;
+                    margin-top: 20px;
+                    padding: 10px 20px;
+                    background-color: #0a66c2; /* Màu gốc */
+                    color: #ffffff;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    font-weight: bold;
+                    transition: background-color 0.3s ease;
+                }
+                .content a:hover {
+                    background-color: #084a9e; /* Màu khi hover */
+                }
+                .footer {
+                text-align: center;
+                padding: 10px;
+                background-color: #f4f4f4;
+                color: #777777;
+                font-size: 12px;
+                }
+            </style>
+            </head>
+            <body>
+            <div class="email-container">
+                <div class="header">
+                <h1>Reset Your Password</h1>
+                </div>
+                <div class="content">
+                <p>Hello,</p>
+                <p>We received a request to reset your password. Please click the button below to proceed. This link will expire in 15 minutes.</p>
+                <a href="${process.env.CLIENT_URL}/reset_password/${resetToken}">Reset Password</a>
+                <p>If you did not request this, please ignore this email or contact our support team for help.</p>
+                </div>
+                <div class="footer">
+                <p>&copy; ${new Date().getFullYear()} BizServ. All rights reserved.</p>
+                </div>
+            </div>
+            </body>
+            </html>
+            `;
+
 
         const data = {
             email,

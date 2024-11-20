@@ -511,23 +511,80 @@ const updateViewBlog = asyncHandler(async(req, res)=>{
 })
 
 const getAllBlogByProviderId = asyncHandler(async(req, res)=>{
-    console.log('aaa')
-    console.log(req?.query)
-    const {prid} = req.query
-    if(!prid){
+    const {provider_id} = req.params
+    if(!provider_id){
         throw new Error("Missing input")
     }
-    else{
-        const response = await Blog.find({provider_id: prid}).populate({
-            path: 'author',
-            select: 'firstName lastName',
-        });
-        
-        return res.status(200).json({
-            success: response ? true : false,
-            blogs: response ? response : "Cannot get blogs by provider ID"
-        })
+
+    const queries = { ...req.query };
+
+    // Loại bỏ các trường đặc biệt ra khỏi query
+    const excludeFields = ['limit', 'sort', 'page', 'fields'];
+    excludeFields.forEach((el) => delete queries[el]);
+
+    // Format lại các toán tử cho đúng cú pháp của mongoose
+    let queryString = JSON.stringify(queries);
+    queryString = queryString.replace(
+        /\b(gte|gt|lt|lte)\b/g,
+        (matchedEl) => `$${matchedEl}`
+    );
+
+    // chuyen tu chuoi json sang object
+    const formatedQueries = JSON.parse(queryString);
+    let queryFinish = {}
+    if(queries?.q){
+        delete formatedQueries.q
+        queryFinish = {
+            $or: [
+                {title: {$regex: queries.q, $options: 'i' }},
+                {category: {$regex: queries.q, $options: 'i' }},
+            ]
+        }
     }
+    
+    const qr = {...formatedQueries, ...queryFinish, provider_id}
+    let queryCommand =  Blog.find(qr).populate({
+        path: 'author'
+    })
+
+    try {
+        // sorting
+        if(req.query.sort){
+            const sortBy = req.query.sort.split(',').join(' ')
+            queryCommand.sort(sortBy)
+        }
+
+        //filtering
+        if(req.query.fields){
+            const fields = req.query.fields.split(',').join(' ')
+            queryCommand.select(fields)
+        }
+
+        //pagination
+        //limit: so object lay ve 1 lan goi API
+        //skip: n, nghia la bo qua n cai dau tien
+        //+2 -> 2
+        //+dgfbcxx -> NaN
+        const page = +req.query.page || 1
+        const limit = +req.query.limit || process.env.LIMIT_PRODUCT
+        const skip = (page-1)*limit
+        queryCommand.skip(skip).limit(limit)
+        
+        const blogs = await queryCommand
+        const counts = await Blog.countDocuments(qr);
+        return res.status(200).json({
+            success: true,
+            counts: counts,
+            blogs: blogs,
+            });
+    } catch (error) {
+        // Xử lý lỗi nếu có
+        return res.status(500).json({
+        success: false,
+        error: 'Cannot get blog',
+        });
+    }
+    
 })
 
 const getAllBlogsByAdmin = asyncHandler(async (req, res) => {

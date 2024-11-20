@@ -276,6 +276,10 @@ const Login = () => {
         }
     };
 
+    const handleNavigateForgotPasswordPage = () => {
+        navigate(`/${path.FORGOT_PASSWORD}`)
+    }
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-cover bg-center relative">
             <div className="absolute top-4 right-4 z-20 flex gap-2">
@@ -374,7 +378,7 @@ const Login = () => {
                         )}
                     </div>
                     <div className="flex justify-end items-center">
-                        <button className="text-sm text-[#0a66c2] hover:underline transition-colors duration-200">
+                        <button onClick={()=>handleNavigateForgotPasswordPage()} className="text-sm text-[#0a66c2] hover:underline transition-colors duration-200">
                             Forgot Password?
                         </button>
                     </div>

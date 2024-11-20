@@ -237,12 +237,6 @@ const ManageBooking = () => {
     }
   }, [queryDebounce])
 
-  useEffect(() => {
-    if(startDate && endDate){
-
-    }
-  }, [startDate, endDate]);
-
 
   const handleShowOptionStatus = (bookingId) => {
     setShowOptionStatus(bookingId)
@@ -309,7 +303,7 @@ const ManageBooking = () => {
                 </InputFormm>
               </form>
             </div>
-            <div className="relative w-[25%] h-[36px] m-[6px]">
+            <div className="relative w-[35%] h-[36px] m-[6px]">
               <div className="relative" onClick={handleInputClick}>
                 <input
                   type="text"
@@ -357,12 +351,6 @@ const ManageBooking = () => {
                 </div>
               )}
             </div>
-            <div className='w-[10%] h-[36px] m-[6px]'>
-              <Button style={'w-full px-4 py-2 bg-[#dee1e6] rounded-md text-[#00143c] flex gap-1 items-center justify-center font-semibold'}>
-                <span className='font-bold text-xl'><RxMixerVertical /></span>
-                <span>Filters</span>
-              </Button>
-            </div>
           </div>
           <div className='text-[#99a1b1]'>
             <div className='w-full flex gap-1 border-b border-[##dee1e6] p-[8px]'>
@@ -371,8 +359,7 @@ const ManageBooking = () => {
               <span className='w-[15%] flex items-center justify-center'>Customer</span>
               <span className='w-[10%] flex items-center justify-center'>Duration</span>
               <span className='w-[15%] flex items-center justify-center'>Status</span>
-              <span className='w-[20%] flex items-center justify-center'>Employee</span>
-              <span className='w-[5%]'>Note</span>
+              <span className='w-[25%] flex items-center justify-center'>Employee</span>
             </div>
             <div>
               {booking?.map((el,index) => (
@@ -399,10 +386,9 @@ const ManageBooking = () => {
                     </div>
                    }
                   </span>
-                  <span className='w-[20%] py-2 text-[#00143c] flex items-center justify-center'>
+                  <span className='w-[25%] py-2 text-[#00143c] flex items-center justify-center'>
                     <img className='w-[32px] h-[32px] rounded-full ml-[-10px] mr-[0px]' src={el?.staffDetails?.avatar}/>
                   </span>
-                  <span className='w-[5%] px-2 py-2 text-[#00143c] font-bold text-xl'><GoPlusCircle /></span>
                 </div>
               ))}
             </div>

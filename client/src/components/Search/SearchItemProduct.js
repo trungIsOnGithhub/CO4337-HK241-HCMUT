@@ -67,13 +67,13 @@ const SearchItemProduct = ({name, activeClick, changeActiveFilter, type='checkbo
   }, [selected])
   
 
-  useEffect(() => {
-    if(price.from && price.to){
-      if(Number(price.from) > Number(price.to)){
-        alert('From cannot be greater than To')
-      }
-    }
-  }, [price])
+  // useEffect(() => {
+  //   if(price.from && price.to){
+  //     if(Number(price.from) > Number(price.to)){
+  //       alert('From cannot be greater than To')
+  //     }
+  //   }
+  // }, [price])
   
   
   const fetchHighestPrice = async() =>{

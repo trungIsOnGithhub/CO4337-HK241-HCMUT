@@ -89,7 +89,7 @@ const Products = ({dispatch}) => {
         </div>
         <div className='w-1/5 flex flex-col gap-3'>
           <span className='font-semibold text-sm'>Sort by:</span>
-          <div className='w-full'> 
+          <div className='w-full cursor-pointer'> 
             <InputSelect value={sort} options={sorts} changeValue={changeValue} />
           </div>
         </div>

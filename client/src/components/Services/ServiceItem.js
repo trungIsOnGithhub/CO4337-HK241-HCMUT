@@ -46,8 +46,8 @@ const ServiceItem = ({serviceData, providerData}) => {
     }
 
   return (
-    <div className='w-full h-fit rounded-md border border-[#868e96] relative'>
-        <div className='w-full h-[150px]'>
+    <div className='w-full h-fit rounded-md border border-[#868e96] relative cursor-pointer'>
+        <div className='w-full h-[150px]' onClick={()=>{navigate(`/service/${serviceData?.category?.toLowerCase()}/${serviceData?._id}/${serviceData?.name}`)}}>
             <img className='h-full w-full object-cover rounded-t-md' src={serviceData?.thumb} alt={serviceData?.name} />
         </div>
         <div className='w-full h-[184px] bg-[#212529] rounded-b-md px-[16px] py-[12px] flex flex-col justify-between'>

@@ -24,6 +24,7 @@ import { FaTags } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
 import { IoMdClose } from "react-icons/io";
 import { motion, AnimatePresence } from "framer-motion";
+import path from 'ultils/path';
 const localizer = momentLocalizer(moment);
 
 const StaffCalendar = () => {
@@ -149,7 +150,7 @@ const StaffCalendar = () => {
     const response = await apiGetOrdersForStaffCalendar(payload)
 
     if (response?.orders) {
-      const mappedEvents = response.orders.map((order, index) => {
+      const mappedEvents = response.orders.map((order) => {
         const { date, time } = order?.info[0];
         const { name } = order?.info[0]?.service;
         const { duration } = order?.info[0]?.service || 0;
@@ -158,7 +159,7 @@ const StaffCalendar = () => {
         const staff = order?.info[0]?.staff;
         
         return {
-            id: index,
+            id: order?._id,
             title: selectedOption === "Service name" ? name : `${staff?.lastName} ${staff?.firstName}`,
             start: datepair[0],
             end: datepair[1].toDate(),
@@ -250,8 +251,12 @@ const StaffCalendar = () => {
   });
   
   const handleSelectEvent = (event) => {
+    console.log(event)
+    console.log(calendarEvents)
     setSelectedOrder(calendarEvents.find(order => order.id === event.id));
   };
+
+  console.log(selectedOrder)
 
   const filteredServices = services.filter((service) =>
     service.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -521,6 +526,12 @@ const StaffCalendar = () => {
                       <button
                         className="flex items-center gap-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                         aria-label="Edit appointment"
+                        onClick={() => {
+                          navigate({
+                            pathname: `/${path.ADMIN}/${path.MANAGE_BOOKING_DETAIL}`,
+                            search: createSearchParams({bookingid: selectedOrder?.id}).toString()
+                          });
+                        }}
                       >
                         <IoNavigate className="w-4 h-4" />
                         Go to detail

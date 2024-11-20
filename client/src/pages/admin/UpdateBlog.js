@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import bgImage from '../../assets/clouds.svg'
-import { IoReturnDownBack } from 'react-icons/io5'
 import { apiGetAllPostTags, apiGetOneBlog, apiUpdateBlogByAdmin } from 'apis/blog'
 import { useForm } from 'react-hook-form'
 import { Button, InputFormm, MarkdownEditor, SelectCategory } from 'components'
 import { useSelector } from 'react-redux'
 import { FiX } from 'react-icons/fi'
-import { FaSpinner } from 'react-icons/fa'
+import { FaArrowLeft, FaSpinner } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import { getBase64 } from 'ultils/helper'
 
@@ -163,7 +162,7 @@ const UpdateBlog = () => {
         </div>
         <div className='relative z-10 w-full'>
             <div className='w-full h-fit flex items-end p-4'>
-                <div onClick={handleBackManageBlog} className='text-[#00143c] cursor-pointer'><IoReturnDownBack size={28}/></div>
+                <div onClick={handleBackManageBlog} className='text-[#00143c] cursor-pointer'><FaArrowLeft size={28}/></div>
                 <span className='text-[#00143c] text-3xl h-fit font-semibold'>Update Blog</span>
             </div>
             <div className='w-[95%] h-fit shadow-2xl rounded-md bg-white ml-4 mb-[50px] px-4 py-2 flex flex-col gap-4'>

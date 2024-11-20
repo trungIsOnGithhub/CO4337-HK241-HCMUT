@@ -79,8 +79,6 @@ const getAllProduct = asyncHandler(async(req, res)=>{
                 {color: {$regex: queries.q, $options: 'i' }},
                 {title: {$regex: queries.q, $options: 'i' }},
                 {category: {$regex: queries.q, $options: 'i' }},
-                {brand: {$regex: queries.q, $options: 'i' }},
-               
             ]
         }
     }
@@ -166,8 +164,6 @@ const getAllProductByAdmin = asyncHandler(async(req, res)=>{
                 {color: {$regex: queries.q, $options: 'i' }},
                 {title: {$regex: queries.q, $options: 'i' }},
                 {category: {$regex: queries.q, $options: 'i' }},
-                {brand: {$regex: queries.q, $options: 'i' }},
-               
             ]
         }
     }
@@ -351,6 +347,55 @@ const addVariant = asyncHandler(async (req, res) => {
     });
 });
 
+const updateVariant = asyncHandler(async (req, res) => {
+    const {productId, variantId} = req.params
+    const files = req?.files
+    if(files?.thumb){
+        req.body.thumb = files?.thumb[0]?.path
+    }
+    if(files?.images){
+        req.body.image = files?.images?.map(el => el.path)
+    }
+    const { title, color, quantity, colorCode } = req.body;
+    if (!title || !color || !quantity || !colorCode) {
+        throw new Error("Missing input");
+    }
+    const product = await Product.findById(productId)
+
+    if(product?.colorCode === colorCode){
+        return res.status(400).json({ success: false, mes: "Color already exists" });
+    }
+
+    const isDuplicate = product.variants.some(
+        variant => (variant?.colorCode === colorCode && variant?._id.toString() !== variantId)
+    );
+
+    if (isDuplicate) {
+        return res.status(400).json({ success: false, mes: "Color already exists" });
+    }
+    else{
+        const response = await Product.updateOne(
+            { _id: productId, "variants._id": variantId },
+            {
+                $set: {
+                    "variants.$.title": title,
+                    "variants.$.color": color,
+                    "variants.$.quantity": quantity,
+                    "variants.$.colorCode": colorCode,
+                    "variants.$.thumb": req.body.thumb,
+                    "variants.$.image": req.body.image
+                }
+            }
+        );
+        return res.status(200).json({
+            success: response ? true : false,
+            mes: response ? 'Updated variant successfully' : "Cannot update variant"
+        });
+    }
+
+    
+})
+
 const getAllProductByProviderId = asyncHandler(async(req, res)=>{
     const {provider_id} = req.params
     const queries = { ...req.query };
@@ -388,8 +433,6 @@ const getAllProductByProviderId = asyncHandler(async(req, res)=>{
                 {color: {$regex: queries.q, $options: 'i' }},
                 {title: {$regex: queries.q, $options: 'i' }},
                 {category: {$regex: queries.q, $options: 'i' }},
-                {brand: {$regex: queries.q, $options: 'i' }},
-               
             ]
         }
     }
@@ -446,5 +489,6 @@ module.exports = {
     uploadImage,
     addVariant,
     getAllProductByAdmin,
-    getAllProductByProviderId
+    getAllProductByProviderId,
+    updateVariant
 }

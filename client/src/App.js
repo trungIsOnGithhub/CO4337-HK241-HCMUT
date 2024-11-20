@@ -19,6 +19,8 @@ import UpdateBlog from 'pages/admin/UpdateBlog';
 import WishListProduct from 'pages/user/WishListProduct';
 import ViewStatistics from 'pages/admin/ViewStatistics';
 import BookingHistoryDetail from 'pages/user/BookingHistoryDetail';
+import ForgotPassword from 'pages/public/ForgotPassword';
+import UpdateVariantProduct from 'pages/admin/UpdateVariantProduct';
 
 function App() {
   const dispatch = useDispatch();
@@ -56,7 +58,6 @@ function App() {
         <Route path={path.OUR_PROVIDERS_CATEGORY} element={<OurProviders />} />
         <Route path={path.SERVICES_CATEGORY} element={<Services />} />
         <Route path={path.PRODUCTS_CATEGORY} element={<Products />} />
-        <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
         <Route path={path.BOOKING} element={<Booking />} />
         <Route path={path.BOOKING_DATE_TIME} element={<BookingDateTIme />} />
         <Route path={path.CHAT} element={<Chat />} />
@@ -76,6 +77,7 @@ function App() {
         <Route path={path.MANAGE_SERVICE} element={<ManageService/>}/>
         <Route path={path.CREATE_PRODUCT} element={<CreateProduct/>}/>
         <Route path={path.ADD_VARIANT_PRODUCT} element={<AddVariantProduct/>}/>
+        <Route path={path.UPDATE_VARIANT_PRODUCT} element={<UpdateVariantProduct/>}/>
         <Route path={path.UPDATE_SERVICE} element={<UpdateService/>}/>
         <Route path={path.UPDATE_PRODUCT} element={<UpdateProduct/>}/>
         <Route path={path.UPDATE_BLOG} element={<UpdateBlog/>}/>
@@ -119,6 +121,8 @@ function App() {
       <Route path={path.FINAL_REGISTER} element={<Final_Register />} />
       <Route path={path.SERVICE_PROVIDER_REGISTER} element={<ServiceProviderRegister />} />
       <Route path={path.LOGIN} element={<Login />} />
+      <Route path={path.FORGOT_PASSWORD} element={<ForgotPassword />} />
+      <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
      </Routes>
       <ToastContainer
         position="top-right"

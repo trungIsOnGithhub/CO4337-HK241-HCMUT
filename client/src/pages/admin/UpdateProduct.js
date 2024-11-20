@@ -7,10 +7,11 @@ import { validate, getBase64 } from 'ultils/helper'
 import {apiGetOneProduct, apiUpdateProduct} from 'apis/product'
 import { showModal } from 'store/app/appSlice'
 import bgImage from '../../assets/clouds.svg'
-import { IoColorPaletteOutline, IoReturnDownBack } from 'react-icons/io5'
-import { useParams } from 'react-router-dom'
+import { IoColorPaletteOutline } from 'react-icons/io5'
+import { useNavigate, useParams } from 'react-router-dom'
 import { MdAdd, MdDelete } from 'react-icons/md'
-import { FaSpinner } from 'react-icons/fa'
+import { FaArrowLeft, FaSpinner } from 'react-icons/fa'
+import path from 'ultils/path'
 
 const UpdateProduct = () => {
   const {product_id} = useParams()
@@ -23,6 +24,9 @@ const UpdateProduct = () => {
   const [specifications, setSpecifications] = useState([])
   const [errorSpecification, setErrorSpecification] = useState({});
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+
+  console.log(editProduct)
   const [payload, setPayload] = useState({
     description: ''
   })
@@ -88,7 +92,6 @@ const UpdateProduct = () => {
       quantity: editProduct?.quantity || '',
       color: editProduct?.color || '',
       category: editProduct?.category || '',
-      brand: editProduct?.brand?.toUpperCase() || '',
     })
     setPayload({description: typeof editProduct?.description === 'object' ? editProduct?.description?.join(', ') : editProduct?.description})
     setPreview({
@@ -193,6 +196,10 @@ const UpdateProduct = () => {
   const handleBackManageProduct = () => {
     window.history.back()
   }
+
+  const handleNavigateUpdateVariant = (varianId) => {
+    navigate(`/${path.ADMIN}/update_variant_product/${editProduct?._id}/${varianId}`)
+  }
   return (
     <div className='w-full h-full relative'>
       <div className='inset-0 absolute z-0'>
@@ -200,7 +207,7 @@ const UpdateProduct = () => {
       </div>
       <div className='relative z-10 w-full'>
         <div className='w-full h-fit flex items-end p-4'>
-          <div onClick={handleBackManageProduct} className='text-[#00143c] cursor-pointer'><IoReturnDownBack size={28}/></div>
+          <div onClick={handleBackManageProduct} className='text-[#00143c] cursor-pointer'><FaArrowLeft size={28}/></div>
           <span className='text-[#00143c] text-3xl h-fit font-semibold'>Update Product</span>
         </div>
         <div className='w-[95%] h-fit shadow-2xl rounded-md bg-white ml-4 mb-[50px] px-4 py-2 flex flex-col gap-4'>
@@ -424,6 +431,29 @@ const UpdateProduct = () => {
               </div>
               }
             </div>
+            {
+              editProduct?.variants?.length > 0 &&
+              <div className='w-full flex flex-col gap-2'>
+                <span className='text-[#00143c] text-lg font-medium'>Edit variants:</span>
+                <div className='w-full flex gap-2'>
+                  {
+                    editProduct?.variants?.map((el, index) => (
+                      <div onClick={()=>{handleNavigateUpdateVariant(el?._id)}} key={index} className='w-[30%] p-2 rounded-md border flex gap-2 shadow-md cursor-pointer bg-gray-100 hover:bg-gray-200'>
+                        <img src={el?.thumb} className='w-[100px] h-[100px] object-contain'></img>
+                        <div className='p-2 flex flex-col justify-center'>
+                          <span className='text-[#00143c] text-sm font-medium'>{el?.title}</span>
+                          <span className='text-[#00143c] text-sm font-medium'>{`Color: ${el?.color}`}</span>
+                          <div
+                            className="w-8 h-8 rounded-full border-2 border-white"
+                            style={{ backgroundColor: el?.colorCode || '#111111' }}
+                          ></div>
+                        </div>
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+            }
             <div className='w-full mt-6 mb-4 flex justify-center'>
               <Button type='submit' style={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center'}>
                 {isLoading ? (

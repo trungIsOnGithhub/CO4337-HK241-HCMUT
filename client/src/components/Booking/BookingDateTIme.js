@@ -38,6 +38,10 @@ const BookingDateTIme = () => {
   const [displayTime, setDisplayTime] = useState(startOfWeek(new Date()));
   const navigate = useNavigate();
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
+  }, []);
+
   const getISOStringDateOnly = (dateTime) => {
     if (dateTime?.length < 4) {
       return '';

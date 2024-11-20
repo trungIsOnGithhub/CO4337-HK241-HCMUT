@@ -23,6 +23,7 @@ const path = {
     DETAIL_PROVIDER_FINDUS_PRID: 'detail_provider/find-us/:prid',
 
     FINAL_REGISTER: 'final_register/:status',
+    FORGOT_PASSWORD: 'forgot_password',
     RESET_PASSWORD: 'reset_password/:token',
     DETAIL_CART: 'detail_cart',
     CHECKOUT_SERVICE: 'checkout_service',
@@ -48,6 +49,7 @@ const path = {
     MANAGE_BOOKING_DETAIL: 'manage_booking_dt',
     CREATE_PRODUCT: 'create_product',
     ADD_VARIANT_PRODUCT: 'add_variant_product/:product_id',
+    UPDATE_VARIANT_PRODUCT: 'update_variant_product/:product_id/:variant_id',
     ADD_STAFF: 'add_staff',
     ADD_SERVICE: 'add_service',
     STAFF_CALENDAR: 'staff_calendar',

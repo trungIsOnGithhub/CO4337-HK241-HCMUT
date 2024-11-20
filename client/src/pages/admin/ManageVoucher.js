@@ -1,5 +1,5 @@
 import { apiGetAllCouponsByAdmin } from 'apis'
-import { Button } from 'components'
+import { Button, InputFormm, Pagination } from 'components'
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { FaPlus } from "react-icons/fa6";
@@ -7,19 +7,47 @@ import bgImage from '../../assets/clouds.svg'
 import { RxMixerVertical } from "react-icons/rx";
 import { CiSearch } from "react-icons/ci";
 import { format, differenceInDays, differenceInHours, differenceInMinutes, isBefore, isAfter, addMinutes } from 'date-fns';
+import { createSearchParams, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import useDebounce from 'hook/useDebounce';
 
 const ManageVoucher = () => {
   const [coupons, setCoupons] = useState([])
-  useEffect(() => {
-    const fetchAllCouponsByAdmin = async () => {
-      const response = await apiGetAllCouponsByAdmin()
-      console.log(response)
-      if(response?.success){
-        setCoupons(response?.coupons)
-      }
+  const navigate = useNavigate()
+  const {register,formState:{errors}, handleSubmit, watch} = useForm()
+  const location = useLocation()
+  const [params] = useSearchParams()
+  const [counts, setCounts] = useState(0)
+
+  const fetchAllCouponsByAdmin = async (params) => {
+    const response = await apiGetAllCouponsByAdmin({...params, limit: process.env.REACT_APP_LIMIT})
+    console.log(response)
+    if(response?.success){
+      setCoupons(response?.coupons)
+      setCounts(response?.counts)
     }
-    fetchAllCouponsByAdmin()
-  }, []);
+  }
+
+  useEffect(() => {
+    const searchParams = Object.fromEntries([...params]);
+    fetchAllCouponsByAdmin(searchParams);
+  }, [params]);
+
+  const queryDebounce = useDebounce(watch('q'),800)
+
+  useEffect(() => {
+    if(queryDebounce) {
+      navigate({
+        pathname: location.pathname,
+        search: createSearchParams({q:queryDebounce}).toString()
+      })
+    }
+    else{
+      navigate({
+        pathname: location.pathname,
+      })
+    }
+  }, [queryDebounce])
   
 
 
@@ -31,6 +59,7 @@ const ManageVoucher = () => {
     const [hours, minutes] = time.split(':');
     const expirationDateTime = new Date(year, month - 1, day, hours, minutes);
     const now = new Date();
+    
   
     if (isBefore(now, expirationDateTime)) {
       return { status: 'Valid', expiration: `${date} ${time}` };
@@ -38,6 +67,10 @@ const ManageVoucher = () => {
       return { status: 'Expired', expiration: `${date} ${time}` };
     }
   };
+
+  const handleNavigateAddVoucher = () => {
+    navigate(`/admin/add_voucher`)
+  }
 
   return (
     <div className="w-full h-full relative">
@@ -51,17 +84,24 @@ const ManageVoucher = () => {
         <div className='w-[95%] h-[702px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
           <div className='w-full h-fit flex justify-between items-center'>
             <h1 className='text-[#00143c] font-medium text-[16px]'>Vouchers</h1>
-            <Button style={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center'}><FaPlus /> Add Voucher</Button>
+            <Button handleOnclick={handleNavigateAddVoucher} style={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center'}><FaPlus /> Add Voucher</Button>
           </div>
           <div className='text-[#00143c] flex gap-4'>
-            <div className='w-[90%] h-10 bg-[#f4f6fa] rounded-md text-[#99a1b1] flex gap-2 items-center pl-2'>
+            <div className='w-full h-10 bg-[#f4f6fa] rounded-md text-[#99a1b1] flex gap-2 items-center pl-2'>
               <span className='text-xl'><CiSearch /></span>
-              <input className='bg-transparent outline-none text-[#00143c]' placeholder='Search for flash sale ...'/>
+              <form className='flex-1' >
+                <InputFormm
+                  id='q'
+                  register={register}
+                  errors={errors}
+                  fullWidth
+                  placeholder= 'Search for voucher'
+                  style={'w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'}
+                  styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
+                >
+                </InputFormm>
+              </form>
             </div>
-            <Button style={'w-[10%] bg-[#dee1e6] rounded-md text-[#00143c] flex gap-1 items-center justify-center font-semibold'}>
-              <span className='font-bold text-xl'><RxMixerVertical /></span>
-              <span>Filters</span>
-            </Button>
           </div>
           <div className='text-[#99a1b1]'>
             <div className='w-full flex gap-1 border-b border-[##dee1e6] py-1'>
@@ -125,6 +165,9 @@ const ManageVoucher = () => {
               
               )}
             </div>
+          </div>
+          <div className='text-[#00143c] flex-1 flex items-end'>
+            <Pagination totalCount={counts} />
           </div>
         </div>
       </div>

@@ -5,14 +5,13 @@ import moment from 'moment';
 import { Pagination } from 'components';
 import { FiCalendar, FiUser, FiBriefcase, FiClock, FiDollarSign, FiTag, FiPhone, FiMail } from 'react-icons/fi';
 import { IoIosTimer } from "react-icons/io";
-import { FaTags } from "react-icons/fa";
+import { FaArrowLeft, FaTags } from "react-icons/fa";
 import { AiOutlineUser, AiOutlineTeam } from 'react-icons/ai';  // New icons for Customer and Staff
 import path from 'ultils/path';
 import withBaseComponent from 'hocs/withBaseComponent';
 import { formatPrice, formatPricee } from 'ultils/helper';
 import bgImage from '../../assets/clouds.svg'
 import avatarDefault from '../../assets/avatarDefault.png'
-import { IoReturnDownBack } from 'react-icons/io5';
 import { toast } from 'react-toastify';
 
 const ManageBookingDetail = ({ dispatch, navigate }) => {
@@ -80,7 +79,7 @@ const ManageBookingDetail = ({ dispatch, navigate }) => {
       </div>
       <div className="relative z-10"> {/* Thêm lớp này để đảm bảo dòng chữ không bị che mất */}
         <div className='w-full h-20 flex items-end gap-1 p-4'>
-          <div onClick={handleBackManageBooking} className='text-[#00143c] cursor-pointer'><IoReturnDownBack size={28}/></div>
+          <div onClick={handleBackManageBooking} className='text-[#00143c] cursor-pointer'><FaArrowLeft size={28}/></div>
           <span className='text-[#00143c] text-3xl font-semibold'>Booking Detail</span>
         </div>
         <div className='w-[95%] min-h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>

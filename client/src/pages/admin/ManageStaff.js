@@ -168,63 +168,10 @@ const ManageProduct = () => {
                 <Button
                   handleOnclick={() => { staffDataEffectHandler() }}
                   style={'w-full px-4 py-2 bg-[#dee1e6] rounded-md text-[#00143c] flex gap-1 items-center justify-center font-semibold'}>
-                  <span className='font-bold text-xl'><FaSearch /></span>
+                  <span className='text-lg'><FaSearch /></span>
                   <span>Search</span>
                 </Button>
-                {/* <Button
-                  handleOnclick={() => { resetParam() }}
-                  style={'w-full px-4 py-2 bg-[#dee1e6] rounded-md text-[#00143c] flex gap-1 items-center justify-center font-semibold'}>
-                  <span className='font-bold text-xl'><FaBahai /></span>
-                  <span>Reset</span>
-                </Button> */}
               </div>
-            {/* <div className="relative w-[25%] h-[36px] m-[6px]">
-              <div className="relative" onClick={handleInputClick}>
-                <input
-                  type="text"
-                  readOnly
-                  value={
-                    startDate && endDate
-                      ? `${format(startDate, "MMM d, yyyy")} - ${format(endDate, "MMM d, yyyy")}`
-                      : "Select date range"
-                  }
-                  className="w-full px-4 py-2 border rounded-lg cursor-pointer focus:outline-none text-[#00143c] text-sm"
-                  aria-label="Date range picker"
-                />
-                {startDate && endDate ? (
-                  <FiX
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#00143c] cursor-pointer"
-                    onClick={handleClearDates}
-                  />
-                ) : (
-                  <FiCalendar className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#00143c] cursor-pointer" />
-                )}
-              </div> */}
-
-              {/* {error && <p className="text-[#0a66c2] mt-2 text-xs font-medium">{error}</p>}
-
-              {showCalendar && (
-                <div className="absolute w-fit right-[-100px] z-10 mt-2 px-4 py-3 bg-white rounded-lg shadow-xl border animate-fade-in-down">
-                  <div className="flex gap-4">
-                    <Calendar month={currentMonth} />
-                    <Calendar month={addMonths(currentMonth, 1)} />
-                  </div>
-                  <div className="mt-3 flex justify-end">
-                    <button
-                      onClick={handleConfirm}
-                      disabled={!startDate || !endDate}
-                      className={`
-                        px-4 py-2 rounded-lg transition-all
-                        ${startDate && endDate
-                          ? "text-white bg-[#005aee] hover:bg-blue-600"
-                          : "bg-gray-200 text-gray-500 cursor-not-allowed"}
-                      `}
-                    >
-                      Confirm
-                    </button>
-                  </div>
-                </div>
-              )} */}
             </div>
 
             <div className='text-[#99a1b1]'>
@@ -239,11 +186,11 @@ const ManageProduct = () => {
             <div>
               {staffs?.map((el,index) => (
                 <div key={index} className='w-full flex border-b border-[#f4f6fa] gap-1 px-[8px] py-[12px]'>
-                  <span className='w-[10%] py-2 text-[#00143c]'><img src={el.avatar} alt='thumb' className='w-12 h-12 object-cover'></img></span>
-                  <span className='w-[25%] py-2 text-[#00143c] text-sm line-clamp-1 text-center font-semibold'>{el?.email}</span>
-                  <span className='w-[25%] py-2 text-[#00143c] text-sm line-clamp-1 text-center'>{`${el?.firstName} ${el?.lastName}`}</span>
-                  <span className='w-[20%] px-2 py-2 text-[#00143c] text-sm line-clamp-1 text-center'>{`${el?.mobile}`}</span>
-                  <span className='w-[20%] px-2 py-2 text-[#00143c] text-sm line-clamp-1 text-center'>
+                  <span className='w-[10%] py-2 text-[#00143c] flex items-center justify-center'><img src={el.avatar} alt='thumb' className='w-12 h-12 object-cover'></img></span>
+                  <span className='w-[25%] py-2 text-[#00143c] text-sm line-clamp-1 font-semibold flex items-center justify-center'>{el?.email}</span>
+                  <span className='w-[25%] py-2 text-[#00143c] text-sm line-clamp-1 flex items-center justify-center'>{`${el?.firstName} ${el?.lastName}`}</span>
+                  <span className='w-[20%] px-2 py-2 text-[#00143c] text-sm line-clamp-1 flex items-center justify-center'>{`${el?.mobile}`}</span>
+                  <span className='w-[20%] px-2 py-2 text-[#00143c] text-sm line-clamp-1 flex items-center justify-center'>
                       <span onClick={() => setEditStaff(el)} 
                         className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'>
                           <MdModeEdit size={24}/>

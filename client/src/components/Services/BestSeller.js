@@ -1,11 +1,11 @@
 import React, {useState, useEffect, memo} from 'react'
 import {apiGetProduct} from 'apis/product'
 import {Service, CustomSliderService} from '..'
-import {getNewProducts} from 'store/product/asyncAction'
 import { useDispatch, useSelector} from 'react-redux'
 import clsx from 'clsx'
 import { apiGetServicePublic } from 'apis/service'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import { createSearchParams } from 'react-router-dom'
 
 const serviceData = [
     {
@@ -21,7 +21,7 @@ const serviceData = [
     {
       id: 3,
       name: "Nail",
-      image: "https://hocvienmyanh.vn/upload/images/hoc-nail-di-nuoc-ngoai-3.jpg"
+      image: "kbeauty.fpt.edu.vn/wp-content/uploads/2020/07/FPT_Polytechnic_-nail.1.jpg"
     },
     {
       id: 4,
@@ -62,9 +62,8 @@ const BestSeller = () => {
 
     useEffect(() => {
         const fetchServiceData = async () => {
-            const response = await apiGetServicePublic()
-            console.log(response)
-            setServices(response.services)
+          const response = await apiGetServicePublic({limit: 10})
+          setServices(response.services)
         }
         fetchServiceData()
     }, [])
@@ -86,7 +85,7 @@ const BestSeller = () => {
             <div className='mx-[-10px]'>
                 <CustomSliderService services={services} normal={false}/>
             </div>
-            <div className="relative w-full min-h-[400px]">
+            <div className="relative w-full">
                 <div className="max-w-6xl mx-auto">
                     <div className="flex flex-col md:flex-row justify-center items-center gap-6 relative">
                     {[currentIndex, currentIndex + 1].map((index) => (

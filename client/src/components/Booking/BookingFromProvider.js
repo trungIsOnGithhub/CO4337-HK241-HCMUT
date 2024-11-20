@@ -40,8 +40,8 @@ const BookingFromProvider = ({providerData, serviceData}) => {
     }
    }
   return (
-    <div className='w-full h-[110px] bg-[#343a40] border border-[#868e96] rounded-md shadow-sm flex justify-between items-center px-[16px] py-[12px]'>
-      <div className='flex gap-4 items-start h-full'>
+    <div className='w-full h-[110px] bg-[#343a40] border border-[#868e96] rounded-md shadow-sm flex justify-between items-center px-[16px] py-[12px] cursor-pointer'>
+      <div className='flex gap-4 items-start h-full' onClick={()=>{navigate(`/service/${serviceData?.category?.toLowerCase()}/${serviceData?._id}/${serviceData?.name}`)}}>
         <img src={serviceData?.thumb} alt='serviceImage' className='w-[84px] h-[84px] object-cover rounded-md border border-gray-500 shadow-md'/>
         <div className='flex flex-col h-full justify-between'>
           <div className='flex flex-col gap-1'>

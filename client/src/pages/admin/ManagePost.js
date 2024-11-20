@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { createSearchParams, useSearchParams } from 'react-router-dom';
+import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { apiGetAllBlogByAdmin, apiGetAllBlogs } from 'apis/blog';
 import moment from 'moment';
 import { Button, Pagination } from 'components';
@@ -14,7 +14,9 @@ import { toast } from 'react-toastify';
 import bgImage from '../../assets/clouds.svg'
 import clsx from 'clsx';
 
-const ManagePost = ({ dispatch, navigate }) => {
+const ManagePost = () => {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [params] = useSearchParams();
   const [post, setPosts] = useState(null);
   const [counts, setCounts] = useState(0);
@@ -51,6 +53,9 @@ const ManagePost = ({ dispatch, navigate }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' }); 
   }, []);
   
+  const handleNavigateCreateBlog = () => {
+    navigate(`/admin/add_post`)
+  }
   return (
     <div className='w-full h-full relative'>
       <div className='inset-0 absolute z-0'>
@@ -63,7 +68,7 @@ const ManagePost = ({ dispatch, navigate }) => {
         <div className='w-[95%] h-[702px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
           <div className='w-full h-fit flex justify-between items-center'>
             <h1 className='text-[#00143c] font-medium text-[16px]'>Blogs</h1>
-            <Button style={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center'}><FaPlus /> Create Blog</Button>
+            <Button handleOnclick={handleNavigateCreateBlog} style={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center'}><FaPlus /> Create Blog</Button>
           </div>
           <div className='text-[#99a1b1]'>
             <div className='w-full flex gap-1 border-b border-[##dee1e6] py-1'>
@@ -107,4 +112,4 @@ const ManagePost = ({ dispatch, navigate }) => {
   );
 };
 
-export default withBaseComponent(ManagePost);
+export default ManagePost;

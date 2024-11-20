@@ -41,6 +41,12 @@ export const apiUpdateProduct = (data, pid) => axios({
     data
 })
 
+export const apiUpdateVariant = (data, pid, vid) => axios({
+    url: '/product/update_variant/'+pid+'/'+vid,
+    method: 'put',
+    data
+})
+
 export const apiDeleteProduct = (pid) => axios({
     url: '/product/'+pid,
     method: 'delete',
