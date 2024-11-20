@@ -91,7 +91,7 @@ async function setUpElasticConnection() {
                     type: "text"
                 },
                 tags:{
-                    type: "text"
+                    type: "keyword"
                 },
                 createdAt:{
                     type: "date"

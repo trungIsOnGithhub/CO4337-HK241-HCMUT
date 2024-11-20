@@ -8,8 +8,7 @@ var blogSchema = new mongoose.Schema({
         required:true
     },
     category: {
-        type:String,
-        required:true,
+        type:String
     },
     content:{
         type:Array,

@@ -7,7 +7,7 @@ const esDBConstant = require('./constant');
 const {default: mongoose} = require('mongoose');
 const Blog = require('../models/blog');
 
-const MONGO_DB_URL = 'mongodb://127.0.0.1:27017/ecom';
+const MONGO_DB_URL = 'mongodb://127.0.0.1:27017/dacn-tv1';
 
 async function migrateServiceDataFromMongoDBToElasticDB() {
     const conn = await mongoose.connect(MONGO_DB_URL);
@@ -171,13 +171,14 @@ async function checkAfter() {
     // console.log("***********");
     // console.log("**********");
     // console.log("**********");
-    const allBlogAdded = await esDBModule.queryElasticDB(esDBConstant.BLOGS, {"query":{match_all: {}}});
-    console.log("BLOG CHECK:  ", allBlogAdded?.hits?.hits, "DONE BLGG");
+    // const allBlogAdded = await esDBModule.queryElasticDB(esDBConstant.BLOGS, {"query":{ "bool":{"must":[{"term":{"tags":"dia-diem-vui-choi"}},{"term":{"tags":"1vuichoi"}}]} }});
+    const allBlogAdded = await esDBModule.queryElasticDB(esDBConstant.BLOGS, {"query":{match_all:{}}});
+    console.log("BLOG CHECK:  ", allBlogAdded?.hits?.hits?.map(h => h._source), "DONE BLGG");
 }
 
 // var prom1 = migrateServiceDataFromMongoDBToElasticDB();
-var prom2 = migrateBlogDataFromMongoDBToElasticDB();
+// var prom2 = migrateBlogDataFromMongoDBToElasticDB();
 
-Promise.all([prom2]).then(() => {
+Promise.all([]).then(() => {
     checkAfter();    
 })

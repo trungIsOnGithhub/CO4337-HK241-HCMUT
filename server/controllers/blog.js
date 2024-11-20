@@ -434,11 +434,12 @@ const searchBlogAdvanced = asyncHandler(async (req, res) => {
     else if (sortBy?.indexOf("numberView") > -1) {
         sortOption.push({numberView : {order : "asc"}});
     }
+
     if (sortBy?.indexOf("-likes") > -1) {
         sortOption.push({likes: {order : "desc"}});
     }
-    else if (sortBy?.indexOf("-createdAt") > -1) {
-        sortOption.push({createdAt : {order : "asc"}});
+    if (sortBy?.indexOf("-createdAt") > -1) {
+        sortOption.push({createdAt : {order : "desc"}});
     }
 
     // if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
@@ -452,7 +453,7 @@ const searchBlogAdvanced = asyncHandler(async (req, res) => {
     // }
 
     const columnNamesToMatch = ["title", "providername", "authorname"];
-    const columnNamesToGet = ["id", "title", "providername", "authorname", "numberView", "provider_id", "likes", "dislikes", "tags"];
+    const columnNamesToGet = ["id", "title", "providername", "authorname", "numberView", "provider_id", "likes", "dislikes", "tags", "createdAt"];
 
     let blogs;
     blogs = await esDBModule.fullTextSearchAdvanced(

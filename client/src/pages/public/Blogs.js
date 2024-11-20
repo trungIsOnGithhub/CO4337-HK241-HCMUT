@@ -6,11 +6,11 @@ import { HashLoader } from 'react-spinners';
 import path from 'ultils/path';
 // import DOMPurify from 'dompurify';
 import { useNavigate, createSearchParams, useLocation } from "react-router-dom";
-import { FaCheck, FaRegThumbsUp, FaRegThumbsDown, FaLocationArrow } from 'react-icons/fa';
+// import { FaCheck, FaRegThumbsUp, FaRegThumbsDown, FaLocationArrow } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import { tinh_thanhpho } from 'tinh_thanhpho';
 import { useForm } from 'react-hook-form';
-import { FiBook, FiClock, FiEye, FiTag, FiUser } from 'react-icons/fi';
+import { FiBook, FiClock, FiEye, FiTag, FiThumbsDown, FiThumbsUp, FiUser } from 'react-icons/fi';
 import { formatDistanceToNow } from 'date-fns';
 import { FaSearch, FaUndo, FaBahai } from "react-icons/fa";
 import { toast } from 'react-toastify';
@@ -59,12 +59,14 @@ const Blogs = () => {
   //   },
   // ] 
 
-  const provinces = Object.entries(tinh_thanhpho).map(pair => {
-    return {
-      text: pair[1].name,
-      value: pair[1].name
-    }
-  });
+  // const provinces = Object.entries(tinh_thanhpho).map(pair => {
+  //   return {
+  //     text: pair[1].name,
+  //     value: pair[1].name
+  //   }
+  // });
+
+  console.log(selectedTags);
 
   const fetchTags = async() => {
     let resp = await apiGetAllPostTags({ limit: 10, orderBy: '-numberView -likes' });
@@ -93,13 +95,15 @@ const Blogs = () => {
 
     let response = await apiSearchBlogAdvanced({
       searchTerm,
-      limit: parseInt(process.env.REACT_APP_LIMIT),
+      limit: 3,
       sortBy,
       selectedTags: selectedTags.map(t => t),
       offset: 0
       // categories
     });
     // let response = await await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
+    console.log(response?.blogs?.hits);
+  
     if(response?.success && response?.blogs?.hits){
       setCurrBlogList(response.blogs.hits);
       setCounts(response?.blogs?.total?.value);
@@ -112,35 +116,41 @@ const Blogs = () => {
     setIsLoading(false);
   }
   useEffect(() => {
+    console.log('HHEHEEHEHEEHEHHE');
     fetchCurrentBlogList();
 },  [searchedClick, resetClicked, selectedTags]);
 
 // // loadmore handler
 useEffect(() => {
-  (async () => {
-    setIsLoading(true);
-    const sortBy = selectedSort.value;
+  if (offset === 0) { return; }
 
-    let response = await apiSearchBlogAdvanced({
-      searchTerm,
-      limit: parseInt(process.env.REACT_APP_LIMIT),
-      sortBy,
-      selectedTags: selectedTags.map(t => t),
-      offset
-      // categories
-    });
-    // let response = await await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
-    if(response?.success && response?.blogs?.hits){
-      setCurrBlogList(prev => [...prev, ...response.blogs.hits]);
-      setCounts(response?.blogs?.total?.value);
-    }
-    else {
-      setCurrBlogList([]);
-      setCounts(0);
-      Swal.fire("Error Occured!", "Cannot fetch Blog Data", "error");
-    }
-    setIsLoading(false);
-  })();
+  console.log('OFFSET CHANGEEEEEEEEEEEEEEEED');
+
+    (async () => {
+      setIsLoading(true);
+      const sortBy = selectedSort.value;
+
+      let response = await apiSearchBlogAdvanced({
+        searchTerm,
+        limit: 3,
+        sortBy,
+        selectedTags: selectedTags.map(t => t),
+        offset
+        // categories
+      });
+      // let response = await await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
+      if(response?.success && response?.blogs?.hits){
+        setCurrBlogList(prev => [...prev, ...response.blogs.hits]);
+        setCounts(response?.blogs?.total?.value);
+      }
+      else {
+        setCurrBlogList([]);
+        setCounts(0);
+        Swal.fire("Error Occured!", "Cannot fetch Blog Data", "error");
+      }
+      setIsLoading(false);
+    })();
+
 },  [offset]);
 
   // const fetchTopTags = async () => {
@@ -257,6 +267,7 @@ useEffect(() => {
             <Button
               handleOnclick={() => {
                 setSearchedClick(prev => !prev);
+                setOffset(0);
               }}
               style="px-4 py-2 rounded-md text-white bg-blue-600 font-semibold"
             >
@@ -271,6 +282,7 @@ useEffect(() => {
                 setSearchTerm('');
                 setSelectedSort('no');
                 setResetClicked(prev => !prev);
+                setOffset(0);
               }}
               style="px-4 py-2 rounded-md text-white bg-slate-400 font-semibold"
             >
@@ -291,12 +303,12 @@ useEffect(() => {
                   <p className="text-gray-600">No blog posts found matching your search criteria.</p>
                 </div>
               ) : (
-                currBlogList?.map((blog) => {
+                currBlogList?.map((blog, idx) => {
                   // console.log('====', blog);
                   blog = blog['_source'];
                   return (<div
                       onClick={() => handleChooseBlogPost(blog?._id || blog?.id)}
-                      key={blog.id}
+                      key={idx}
                       className="cursor-pointer bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:transform hover:scale-[1.02]"
                     >
                       <div className="md:flex">
@@ -315,19 +327,28 @@ useEffect(() => {
                             </div>
                             <div className="flex items-center text-gray-500">
                               <FiClock className="h-4 w-4 mr-1" />
-                              {/* <span className="text-sm">
+                              <span className="text-sm">
                                 {formatDistanceToNow(new Date(blog?.createdAt), { addSuffix: true })}
-                              </span> */}
+                              </span>
                             </div>
                             <div className="flex items-center text-gray-500">
                               <FiEye className="h-4 w-4 mr-1" />
                               <span className="text-sm">{blog?.numberView}</span>
                             </div>
+
+                            <div className="flex items-center text-gray-500">
+                              <FiThumbsUp className="h-4 w-4 mr-1" />
+                              <span className="text-sm">{blog?.likes}</span>
+                            </div>
+                            <div className="flex items-center text-gray-500">
+                              <FiThumbsDown className="h-4 w-4 mr-1" />
+                              <span className="text-sm">{blog?.dislikes}</span>
+                            </div>
                           </div>
                           <h2 className="text-xl font-semibold text-gray-900 mb-2">
                             {blog.title}
                           </h2>
-                          <p className="text-gray-600 mb-4">{blog.excerpt}</p>
+                          {/* <p className="text-gray-600 mb-4">{blog.excerpt}</p> */}
                           <div className="flex flex-wrap gap-2">
                             {blog.tags.map((tag) => (
                               <span
