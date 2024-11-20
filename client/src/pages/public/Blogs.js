@@ -282,7 +282,6 @@ const Blogs = () => {
                         <h2 className="text-xl font-semibold text-gray-900 mb-2">
                           {blog.title}
                         </h2>
-                        <p className="text-gray-600 mb-4">{blog.excerpt}</p>
                         <div className="flex flex-wrap gap-2">
                           {blog.tags.map((tag) => (
                             <span
