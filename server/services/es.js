@@ -127,6 +127,10 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
                 geoFilter, geoSort, categoriesIncluded, province, tagsIncluded) {
     const esClient = initializeElasticClient();
 
+    const numLimit = +limit;
+    const numOffset = +offset;
+    const elementOffset = numOffset * numLimit;
+
     const queryObject = {
         index: indexName,
         track_scores: true,
@@ -134,8 +138,8 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
             bool: {},
             match_all: {}
         },
-        size: limit,
-        from: offset,
+        size: numLimit,
+        from: elementOffset,
         _source: fieldNameArrayToGet,
         sort:[]
     };
@@ -192,7 +196,8 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
     }
 
     if (geoSort?.unit && geoSort?.order) {
-        queryObject.sort.push(            {
+        console.log('========:::::::', geoFilter);
+        queryObject.sort.push({
             _geo_distance:{
                 locations: {
                     lat: geoFilter.clientLat,

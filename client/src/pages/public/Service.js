@@ -28,7 +28,7 @@ const Services = () => {
   // const [active, setActive] = useState(null)
   const [params, setParams] = useSearchParams()
   const [sort, setSort] = useState('')
-  const [nearMeOption, setNearMeOption] = useState(true)
+  const [nearMeOption, setNearMeOption] = useState(false);
   const {category} = useParams()
   const {isShowModal} = useSelector(state => state.app);
   const [filterCateg, setFilterCateg] = useState([]);
@@ -48,10 +48,16 @@ const Services = () => {
   const [totalServiceCount, setTotalServiceCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
+  console.log(nearMeOption);
+  console.log(clientLat);
+  console.log(clientLon);
+
   // const prevSearchTermRef = useRef(searchFilter.term);
-  const isClientLocationValid = (clientLat, clientLon, distanceText, unit) => {
-    return clientLat >= -90 && clientLon >= -90 && clientLat <= 180 && clientLon <= 180
-            && /^-?\d+$/.test(distanceText) && (unit === 'km' || unit === 'm');
+  const isClientLatLongValid = (clientLat, clientLon) => {
+    return clientLat >= -90 && clientLon >= -90 && clientLat <= 180 && clientLon <= 180;
+  }
+  const isClientDistanceValid = (distanceText, unit) => {
+    return /^-?\d+$/.test(distanceText) && (unit === 'km' || unit === 'm');
   }
 
   const fetchServicesAdvanced = async (queries, advancedQuery) => {
@@ -143,6 +149,53 @@ const Services = () => {
     window.scrollTo(0,0);
     // console.log('=====>>>>>>', current);
     const queries = Object.fromEntries([...params])
+
+    const q = {
+      // ...priceQuery,
+      ...queries}
+  
+    console.log(`PRE FETCH === ${JSON.stringify(searchFilter)}`);
+    // console.log("YYAY", params.get('page'), "udias");
+
+    let advancedQuery = {
+      searchTerm: searchFilter.term,
+      limit: REACT_APP_PAGINATION_LIMIT_DEFAULT,
+      offset: 0,
+      sortBy: sort?.value || '',
+      // clientLat: 45, clientLon: 45,
+      // distanceText: "2000km",
+    };
+
+    if (nearMeOption && isClientLatLongValid(clientLat, clientLon)) {
+      console.log(clientLat, clientLon);
+      advancedQuery = {
+        ...advancedQuery,
+        clientLat,
+        clientLon
+      }
+      advancedQuery.sortBy += ' location';
+
+      if (isClientDistanceValid(searchFilter.maxDistance, searchFilter.unit)) {
+        advancedQuery = {
+          ...advancedQuery,
+          distanceText: searchFilter.maxDistance + searchFilter.unit
+        }
+      }
+    }
+
+
+    queries.page = 1;
+    setParams(queries);
+
+    fetchServicesAdvanced(q, advancedQuery);
+  }, [searchedClick, resetClicked, nearMeOption]);
+
+
+//   // for page changing
+  useEffect(() => {
+    window.scrollTo(0,0)
+    const queries = Object.fromEntries([...params]);
+
     // let priceQuery =  {}
     // if(queries.to && queries.from){
     //   priceQuery = {$and: [
@@ -157,84 +210,36 @@ const Services = () => {
     // }
     // delete queries.from
     // delete queries.to
-    const q = {
-      // ...priceQuery,
-      ...queries}
-  
-    console.log(`PRE FETCH === ${JSON.stringify(searchFilter)}`);
-    // console.log("YYAY", params.get('page'), "udias");
+    const q = {...queries}
 
-    let advancedQuery = {
-      searchTerm: searchFilter.term,
-      limit: REACT_APP_PAGINATION_LIMIT_DEFAULT , offset: 0,
-      sortBy: sort?.value || '',
-      // clientLat: 45, clientLon: 45,
-      // distanceText: "2000km",
-    };
-
-    if (nearMeOption && isClientLocationValid(clientLat, clientLon, searchFilter.maxDistance, searchFilter.unit)) {
-      advancedQuery = {
-        ...advancedQuery,
-        clientLat, clientLon,
-        distanceText: searchFilter.maxDistance + searchFilter.unit
-      }
-      advancedQuery.sortBy += ' location';
-    }
-
-    queries.page = 1;
-    setParams(queries);
-
-    fetchServicesAdvanced(q, advancedQuery);
-  }, [searchedClick, resetClicked]);
-
-
-//   // for page changing
-  useEffect(() => {
-    window.scrollTo(0,0)
-    const queries = Object.fromEntries([...params]);
-
-    let priceQuery =  {}
-    if(queries.to && queries.from){
-      priceQuery = {$and: [
-        {price: {gte: queries.from}},
-        {price: {lte: queries.to}},
-      ]}
-      delete queries.price
-    }
-    else{
-      if(queries.from) queries.price = {gte:queries.from}
-      if(queries.to) queries.price = {gte:queries.to}
-    }
-    delete queries.from
-    delete queries.to
-    const q = {...priceQuery, ...queries}
-
-    console.log(`PRE FETCH === ${JSON.stringify(q)}`);
+    // console.log(`PRE FETCH === ${JSON.stringify(q)}`);
     // console.log("YYAY", params.get('page'), "udias");
 
     let advancedQuery = {
       searchTerm: searchFilter.term,
       limit: REACT_APP_PAGINATION_LIMIT_DEFAULT , offset: parseInt(params.get('page')) ? params.get('page')-1 : 0,
-      sortBy: queries?.sort
+      sortBy: sort?.value || ''
     };
 
 
-    if (nearMeOption && isClientLocationValid(clientLat, clientLon, searchFilter.maxDistance, searchFilter.unit)) {
+    if (nearMeOption && isClientLatLongValid(clientLat, clientLon)) {
+      console.log(clientLat, clientLon);
       advancedQuery = {
         ...advancedQuery,
-        clientLat, clientLon,
-        distanceText: searchFilter.maxDistance + searchFilter.unit
+        clientLat,
+        clientLon
       }
       advancedQuery.sortBy += ' location';
+
+      if (isClientDistanceValid(searchFilter.maxDistance, searchFilter.unit)) {
+        advancedQuery = {
+          ...advancedQuery,
+          distanceText: searchFilter.maxDistance + searchFilter.unit
+        }
+      }
     }
 
-    // queries.page = params.get('page')-1;
-    // setParams(queries);
-
     fetchServicesAdvanced(q, advancedQuery);
-  // }, [params]);
-// =======
-    // fetchServicesAdvanced(q)
   }, [params]);
   
   // const changeActive = useCallback((name)=>{
@@ -286,26 +291,37 @@ const Services = () => {
     // }).then((result) => {
     //   if (result.isConfirmed) {
         if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(async (position) => {
-            const { latitude, longitude } = position.coords;
-            await apiModifyUser({ lastGeoLocation: {
-              type: "Point",
-              coordinates: [longitude, latitude]
-            } }, current._id);
-            // Call the function to show the route using latitude and longitude
-            //  showRoute(latitude, longitude);
-            setClientLat(latitude);
-            setClientLon(longitude);
+            console.log(clientLat + "1111111==========" + clientLon);
 
-            setNearMeOption(true);
+            setIsLoading(true);
+
+            navigator.geolocation.getCurrentPosition(async (position) => {
+              console.log(clientLat + "222222222==========" + clientLon);
+
+              const { latitude, longitude } = position.coords;
+
+              await apiModifyUser({ lastGeoLocation: {
+                type: "Point",
+                coordinates: [longitude, latitude]
+              } }, current._id);
+              // Call the function to show the route using latitude and longitude
+              //  showRoute(latitude, longitude);
+              setClientLat(latitude);
+              setClientLon(longitude);
+
+              setNearMeOption(true);
+
+              setIsLoading(false);
           }, () => {
-            Swal.fire('Cannot get location!', 'Check your internet connection or browser setting!' ,'error');
+            setIsLoading(false);
             setNearMeOption(false);
+            Swal.fire('Cannot get location!', 'Check your internet connection or browser setting!' ,'error');
           });
         }
         else {
-          Swal.fire('Geolocation is not avaialable!');
+          setIsLoading(false);
           setNearMeOption(false);
+          Swal.fire('Geolocation is not avaialable!');
         }
     // });
   };
@@ -322,7 +338,7 @@ const Services = () => {
       <div className='w-main p-2 flex justify-start m-auto mt-8'>
         <div className='flex-auto flex flex-col gap-3'>
           {/* <span className='font-semibold text-sm'>Filter by:</span> */}
-          <div className='flex items-center gap-4 mb-10 mt-2'>
+          <div className='flex items-end gap-4 mb-10 mt-2'>
             {/* <FaMoneyCheckAlt />
             <SearchItemService name='price' activeClick={active} changeActiveFilter={changeActive} type='input'/>
             <FaCubes />
@@ -373,6 +389,7 @@ const Services = () => {
                         setValue={setSearchFilter}
                         placeholder={"Maximum Distance(optional)"}
                         style={'bg-white min-h-10 rounded-md pl-2 flex items-center border border-gray-300'}
+                        type="number"
                       />  
                     </span>
                   }
@@ -470,6 +487,7 @@ const Services = () => {
             </div>
 
               <Button
+                style="px-4 py-2 rounded-md text-white bg-[#0a66c2] font-semibold"
                 handleOnclick={() => { console.log(searchFilter); setSearchedClick(prev => !prev); }}
               >
               <span className="flex justify-center gap-1 items-center">
@@ -509,58 +527,8 @@ const Services = () => {
           </div>
         </div> */}
       </div>
-      <div className='w-main border p-4 flex justify-start m-auto mt-8'>
-          {/* <span className='font-semibold text-sm p-5'>Search By:</span> */}
-          {/* <div className='w-full'> */}
-{/* <<<<<<< HEAD
-          <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} />
-          <span className='font-semibold text-sm p-5'>Near Me Search:</span>
-          <input className='ml-3 p-5' onInput={(event) => {
-            if (event.target.checked) {
-              // console.log("....", typeof event.target.value);
-              handleGetDirections();
-            }
-            else {
-              setNearMeOption(false);
-              setClientLat(9999.99);
-              setClientLon(9999.99);
-              setSearchFilter(prev => {
-                return {
-                  ...prev,
-                  maxDistance: '',
-                  unit: 'km'
-                };
-              })
-            }
-          }} type="checkbox"/>
-          { nearMeOption &&
-            <>
-              <span className='font-semibold text-sm p-3'>Province:</span>
-              <InputSelect
-                value={searchFilter?.province}
-                options={Object.entries(tinh_thanhpho).map(ele => { return {id:ele[0], text:ele[1]?.name, value:ele[0]}})}
-                changeValue={(value) => {setSearchFilter(function(prev) {return {...prev, province: value};}) }}
-              />
-            </>
-          }
-          { nearMeOption &&
-            (
-              <>
-                <InputField nameKey='maxDistance' value={searchFilter.maxDistance}
-                      setValue={setSearchFilter} placeholder={"Maximum Distance(optional)"} />
-                <select id="unit" value={searchFilter.unit || "km"} onChange={(event) => { setSearchFilter(prev => { return {...prev, unit: event.target.value || "km"}; }) }}>
-                  <option value="km">km</option>
-                  <option value="m">m</option>
-                </select>
-              </>
-            )
-          }
-          </div>
-======= */}
-          {/* <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} /> */}
 
-        </div>
-      <div className={clsx('mt-8 w-main m-auto flex gap-4 flex-wrap justify-center', isShowModal ? 'hidden' : '')}>
+      <div className={clsx('mt-8 w-main m-auto flex gap-4 flex-wrap', isShowModal ? 'hidden' : '')}>
         {services?.map((service, index) => (
           <div key={index} className='w-[32%]'>
             <Service serviceData={service}/>

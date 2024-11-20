@@ -70,7 +70,7 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
         sortOption.push({price : {order : "asc"}});
     }
 
-    if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
+    if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "asc" }; }
 
     let categoriesIncluded = [];
     if (categories?.length) {
@@ -79,11 +79,15 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
 
     let geoLocationQueryOption = null;
     if ( clientLat <= 180.0 && clientLon <= 180.0 &&
-        clientLat >= -90.0 && clientLon >= -90.0 &&
-        /[1-9][0-9]*(km|m)/.test(distanceText) )
+        clientLat >= -90.0 && clientLon >= -90.0 )
     {
-        geoLocationQueryOption = { distanceText, clientLat, clientLon };
+        geoLocationQueryOption = { clientLat, clientLon };
     }
+    if (/[1-9][0-9]*(km|m)/.test(distanceText)) {
+        geoLocationQueryOption = { ...geoLocationQueryOption, distanceText };
+    }
+
+    // console.log('+++++++', geoLocationQueryOption);
 
     const columnNamesToMatch = ["name", "providername", "province"];
     const columnNamesToGet = ["id", "name","thumb","price","category","duration","provider_id", "province", "totalRatings"];
@@ -99,7 +103,8 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
         geoLocationQueryOption,
         geoSortOption,
         categoriesIncluded,
-        province
+        province,
+        null
     );
     services = services?.hits;
 
