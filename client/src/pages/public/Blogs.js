@@ -37,6 +37,9 @@ const Blogs = () => {
   const handleSortByChange = () => {};
   const [topTags, setTopTags] = useState([]);
 
+  const [searchedClick, setSearchedClick] = useState(false);
+  const [resetClicked, setResetClicked] = useState(false);
+
   const sortOptions = [
     {
       id: 1,
@@ -116,7 +119,7 @@ const Blogs = () => {
   }
   useEffect(() => {
     fetchCurrentBlogList();
-  }, [selectedSort, selectedTags, searchTerm]);
+},  [searchedClick, resetClicked]);
 
   // const fetchTopTags = async () => {
   //   setIsLoading(true);
