@@ -29,7 +29,7 @@ router.delete('/remove_cart_product', [verifyAccessToken], ctrls.removeProductFr
 router.delete('/:userId', [verifyAccessToken, isAdmin], ctrls.deleteUser)
 router.put('/wishlist/:sid', [verifyAccessToken], ctrls.updateWishlist)
 router.put('/wishlistProduct/:pid', [verifyAccessToken], ctrls.updateWishlistProduct)
-router.put('/:userId', [verifyAccessToken, isAdmin], ctrls.updateUserByAdmin)
+router.put('/:userId', [verifyAccessToken], ctrls.updateUserByAdmin)
 
 router.get('/getAllContact/:userId', ctrls.getAllContact)
 router.post('/add_contact', ctrls.addContact)
