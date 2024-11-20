@@ -24,12 +24,12 @@ import likedIn from '../../assets/likedin.png'
 import youTube from '../../assets/youtube.png'
 import twitter from '../../assets/twitter.jpg'
 import tiktok from '../../assets/tiktok.jpg'
-import { TbMessageCircleFilled } from 'react-icons/tb';
+// import { TbMessageCircleFilled } from 'react-icons/tb';
 import {showMessageBox} from '../../store/app/appSlice'
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import logoWeb from '../../assets/logoWeb.png'
-import { IoChatbubbleEllipsesSharp } from 'react-icons/io5';
+// import { IoChatbubbleEllipsesSharp } from 'react-icons/io5';
 import useDebounce from 'hook/useDebounce'
 import { useForm } from 'react-hook-form';
 
@@ -813,8 +813,12 @@ const DetailProvider = () => {
           {renderFooter()}
         </div>
 
-        <div className='fixed w-[50px] h-[50px] right-12 bottom-12'>
-          <span onClick={()=>handleShowChat()} className='cursor-pointer'><IoChatbubbleEllipsesSharp size={64} color='#0a66c2'/></span>
+        <div className='fixed right-12 bottom-12'>
+          <span onClick={()=>handleShowChat()}
+            className="cursor-pointer bg-[#0a66c2] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#084a93] transition-all"
+          >
+          💬 Chat with Us
+          </span>
         </div>
       </div>
   )

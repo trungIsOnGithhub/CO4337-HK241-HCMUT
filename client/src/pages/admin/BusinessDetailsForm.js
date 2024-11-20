@@ -19,18 +19,9 @@ const BusinessDetailsForm = () => {
   // const {register, formState:{errors, isDirty}, handleSubmit, reset, watch} = useForm();
   const [currentProvider, setCurrentProvider] = useState({});
   const [previewUrls, setPreviewUrls] = useState('');
-  const [formData, setFormData] = useState({
-    bussinessName: '',
-    address: '',
-    province: '',
-    phoneNumber: '',
-    // bankAccountNumber: '',
-    thumbImage: '',
-    ownerFirstName: '',
-    ownerLastName: '',
-    ownerEmail: '',
-  });
-  const [previewImage, setPreviewImage] = useState('');
+  const [formData, setFormData] = useState({});
+  // const [previewImage, setPreviewImage] = useState('');
+  const [province, setProvince] = useState('');
   // const [loading, setLoading] = useState(true);
   // const [error, setError] = useState(null);
   const fileInputRef = useRef(null);
@@ -49,22 +40,25 @@ const BusinessDetailsForm = () => {
 
     // console.log('------>', current);
     const response = await apiGetServiceProviderById(current.provider_id._id)
-    console.log(':::::>', response);
+    // console.log(':::::>', response);
 
     if (!response?.success && !response?.payload) {
       Swal.fire('Oops!', "Cannot Get Data", 'error');
       return;
     }
+
+    setPreviewUrls(response.payload.images[0]);
     setCurrentProvider(response.payload);
 
     setFormData({
-      ...response.payload,
+      // ...response.payload,
+      bussinessName: response.payload.bussinessName,
+      address: response.payload.address,
       ownerFirstName: current?.firstName || '',
       ownerLastName: current?.lastName || '',
       ownerEmail: current?.email || '',
-      phoneNumber: current?.provider_id?.phone || '',
+      mobile: current?.provider_id?.mobile || '',
     });
-    setPreviewImage(current?.avatar);
     // reset({
     //   bussinessName: response.payload?.bussinessName,
     //   province: response.payload?.province,
@@ -84,7 +78,7 @@ const BusinessDetailsForm = () => {
   //   //   address: data.address || '',
   //   //   province: data.province || '',
   //   //   website: data.website || '',
-  //   //   phoneNumber: data.phoneNumber || '',
+  //   //   mobile: data.mobile || '',
   //   //   bankAccountNumber: data.bankAccountNumber || '',
   //   //   thumbImage: data.thumbImage || '',
   //   //   ownerFirstName: data.ownerFirstName || '',
@@ -94,7 +88,6 @@ const BusinessDetailsForm = () => {
   // }, []);
   useEffect(() => {
     currentProviderEffectHanlder();
-    //console.log('hehhehehehehe');
   }, [current])
 
   const handleChange = (e) => {
@@ -102,15 +95,21 @@ const BusinessDetailsForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  // const handleSubmitFormData = () => {
+  //   // console.log('=====>', formData);
+  // }
+
   useEffect(() => {
     goongjs.accessToken = GOONG_MAPTILES_KEY;
 
-    map.current = new goongjs.Map({
+    if (!map.current) {
+      map.current = new goongjs.Map({
         container: mapContainer.current,
         style: 'https://tiles.goong.io/assets/goong_map_web.json',
         center: [105.83991, 21.02800],
         zoom: 9,
-    });
+      });
+    }
   }, []);
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -118,18 +117,13 @@ const BusinessDetailsForm = () => {
         document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  const handleSubmit = (e) => {
-    e.target.preventDefault();
-    console.log("Form submitted", formData);
-
-    // handleUpdateInfo(formData);
-  };
 
   // if (loading) return <p>Loading...</p>;
   // if (error) return <p>Error: {error}</p>;
   const removeAvatar = (_url) => {
     setFormData((prev) => ({ ...prev, avatar: null }));
-    setPreviewUrls('');
+    setPreviewUrls(currentProvider.images[0]);
+
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -141,7 +135,7 @@ const BusinessDetailsForm = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrls(reader.result);
-        console.log(reader.result);
+        // console.log(reader.result);
       };
       reader.readAsDataURL(file);
     }
@@ -153,16 +147,34 @@ const BusinessDetailsForm = () => {
       return;
     }
 
+    const newFormDataObj = {
+      ...formData
+    }
+
+    if (coordinates) {
+      newFormDataObj['latitude'] = coordinates.lat;
+      newFormDataObj['longitude'] = coordinates.lng;
+    }
+    if (province) {
+      newFormDataObj['province'] = province
+    }
+
     // console.log('=====>', data);
-    // const formData = new FormData();
-    // for (let i of Object.entries(data)) {
-    //     formData.append(i[0], i[1]);
-    // }
+    const fData = new FormData();
+    for (let i of Object.entries(newFormDataObj)) {
+      // console.log(i);
+      fData.append(i[0], i[1]);
+    }
 
-    // formData.delete('avatar');
-    // if (data.avatar) formData.append('avatar', data.avatar[0]);
+    fData.delete('avatar');
+    if (newFormDataObj.avatar) fData.append('avatar', newFormDataObj.avatar);
 
-    const response = await apiUpdateCurrentServiceProvider(current.provider_id._id, formData)
+    for (let p of fData.entries()) {
+      console.log("kkkkkkkkkkkkkkkk", p);
+    }
+    // console.log('=========;;;;;;;;;' + );
+
+    const response = await apiUpdateCurrentServiceProvider(current.provider_id._id, fData)
     if(response.success){
       dispatch(getCurrent())
       toast.success("Update Provider Info OK!")
@@ -198,10 +210,13 @@ const BusinessDetailsForm = () => {
         if (data.results && data.results.length > 0) {
             const { lat, lng } = data.results[0].geometry.location;
             setCoordinates({ lat, lng });
+            setProvince(data.results[0].compound.province);
             setIsMapVisible(true); // Show map when location is found
 
             // Update the formData with the coordinates
-            setFormData(prev => ({ ...prev, longitude: lng, latitude: lat }));
+            // setFormData(prev => ({ ...prev,
+            //   longitude: lng, latitude: lat,
+            //   province: data.results[0].compound.province }));
 
             if (map.current) {
                 map.current.setCenter([lng, lat]);
@@ -259,6 +274,13 @@ const BusinessDetailsForm = () => {
         if (data.results && data.results.length > 0) {
             const { lat, lng } = data.results[0].geometry.location;
             setCoordinates({ lat, lng });
+            setProvince(data.results[0].compound.province);
+
+            // Update the formData with the coordinates
+            // setFormData(prev => ({ ...prev,
+            //   longitude: lng, latitude: lat,
+            //   province: data.results[0].compound.province }));
+
             setIsMapVisible(true);
             if (map.current) {
                 map.current.setCenter([lng, lat]);
@@ -300,6 +322,13 @@ const BusinessDetailsForm = () => {
   };
   const handleAddressInputChange = async (e) => {
     const value = e.target.value;
+
+    // if (!coordinates || !province) {
+    //   Swal.fire('Error Occured!', 'Cannot find address location info', 'error');
+    //   return;
+    // }
+    // console.log('aaaaaaaa');
+
     setFormData(prev => ({ ...prev, address: value })); // Update address in payload
 
     if (value.length > 2) {
@@ -314,6 +343,7 @@ const BusinessDetailsForm = () => {
         setAddressSuggestions([]); // Clear suggestions if input is less than 3 characters
     }
   };
+
   const handleAddressKeyPress = (e) => {
     if (e.key === 'Enter') {
         e.preventDefault();
@@ -321,20 +351,26 @@ const BusinessDetailsForm = () => {
     }
   };
 
+// useEffect(() => {
+//   window.alert('=====>' + JSON.stringify(coordinates));
+// }, [coordinates]);
+
+console.log(formData)
   return (
-    <form onSubmit={(e) => {e.target.preventDefault();}} className="w-3/4 mx-auto p-6 bg-white shadow-md rounded-md">
+    <div className="w-3/4 mx-auto p-6 bg-white shadow-md rounded-md">
       <div className='flex gap-3 justify-center'>
         {/* <label htmlFor='avatar'>
           <img src={previewImage||avatar} alt='avatar' className='cursor-pointer h-[200px] object-cover border-2 rounded-md'></img>
         </label> */}
 
-        <span className='text-sm text-gray-500'>Uploaded {currentProvider.images?.length} images</span>
+        <span className='text-sm text-gray-500 flex items-center'>Uploaded image:</span>
           <div className='flex flex-col justify-center items-center gap-2'>
-            {currentProvider.images?.length > 0 &&
+            {/* {currentProvider.images?.length > 0 &&
 
-            currentProvider.images.map(image => {
+            {!previewUrls && currentProvider.images.map(image => {
               return <img src={image} alt='avatar' className='cursor-pointer w-[80%] h-80%] object-cover'></img>
             })}
+            } */}
 
               {
               previewUrls &&
@@ -344,7 +380,7 @@ const BusinessDetailsForm = () => {
                     alt="Avatar preview"
                     className="w-48 h-48 rounded-full object-cover border-4 border-blue-300 group-hover:border-blue-400 transition-colors duration-300 shadow-lg"
                   />
-
+                  { previewUrls !== currentProvider?.images[0] &&
                   <button
                     type="button"
                     onClick={() => {removeAvatar(previewUrls)}}
@@ -353,6 +389,7 @@ const BusinessDetailsForm = () => {
                   >
                     <FiX size={20} />
                   </button>
+                  }
                 </div>
               }
 
@@ -390,11 +427,10 @@ const BusinessDetailsForm = () => {
         <span className="text-gray-700">Business Name<span className="text-red-500">*</span></span>
         <input
           type="text"
-          name="businessName"
+          name="bussinessName"
           value={formData.bussinessName}
           onChange={handleChange}
           className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring focus:ring-blue-300 focus:outline-none text-gray-500"
-          required
         />
       </label>
 
@@ -439,14 +475,12 @@ const BusinessDetailsForm = () => {
         </div>
       </div>
 
-      {/* isMapVisible && <div className="flex items-center justify-center mt-4">
-        <div ref={mapContainer} className={`absolute w-[45%] h-[100px] border-2 border-gray-300 rounded-md block`} style={{ zIndex: 1000 }}>
-            <button onClick={() => {setIsMapVisible(false);}} className={clsx("absolute top-2 right-2 bg-red-500 text-white p-2 rounded", isMapVisible ? 'block' : 'hidden')} style={{ zIndex: 1000 }}>X</button>
-        </div>
-      </div> */}
-        <div className={clsx("", isMapVisible ? 'flex items-center justify-center' : 'hidden')}>
+
+        <div className={clsx("relative mt-2", isMapVisible ? '' : 'hidden')}>
           <div ref={mapContainer} className={clsx("w-full h-[20%] order-2 border-gray-300 rounded-md", isMapVisible ? 'block' : 'hidden')}>
-              <button onClick={() => {setIsMapVisible(false);}} className={clsx("bg-red-500 text-white p-2 rounded", isMapVisible ? 'block' : 'hidden')} style={{ zIndex: 999 }}>X</button>
+            <button onClick={() => {setIsMapVisible(false);}}
+                  className={clsx("absolute top-2 right-2 bg-red-500 text-white p-2 rounded", isMapVisible ? 'block' : 'hidden')}
+                  style={{ zIndex: 999 }}>X</button>
           </div>
         </div>
       {/* { !isMapVisible && <div ref={mapContainer}></div> } */}
@@ -491,8 +525,8 @@ const BusinessDetailsForm = () => {
           </select>
           <input
             type="tel"
-            name="phoneNumber"
-            value={formData.phoneNumber}
+            name="mobile"
+            value={formData.mobile}
             onChange={handleChange}
             className="w-full border border-gray-300 rounded-r-md p-2 focus:ring focus:ring-blue-300 focus:outline-none text-gray-500"
             placeholder="Phone number"
@@ -537,21 +571,22 @@ const BusinessDetailsForm = () => {
       <label className="block mb-2">
         <span className="text-gray-700">Business Owner Email</span>
         <input
+          disabled={true}
           type="email"
           name="ownerEmail"
           value={formData.ownerEmail}
           onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring focus:ring-blue-300 focus:outline-none text-gray-500"
+          className="mt-1 block w-full border border-gray-300 rounded-md p-2 focus:ring focus:ring-blue-300 focus:outline-none text-gray-500 cursor-not-allowed"
         />
       </label>
 
       <button
-        type="submit"
+        onClick={() => {handleUpdateInfo();}}
         className="mt-4 w-full bg-blue-600 text-white font-semibold p-2 rounded-md hover:bg-blue-700 focus:outline-none"
       >
         Submit
       </button>
-    </form>
+    </div>
   );
 };
 

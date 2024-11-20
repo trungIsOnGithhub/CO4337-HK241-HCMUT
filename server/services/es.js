@@ -38,7 +38,7 @@ async function setUpElasticConnection() {
             //   number_of_shards: 1, // default only 1 shard
             // },
             mappings: {
-              properties: {
+            properties: {
                 id: {
                     type: "text"
                 },
@@ -55,7 +55,7 @@ async function setUpElasticConnection() {
                     type: "text"
                 },
                 price: {
-                     type: "float"
+                    type: "float"
                 },
                 locations : {
                     type : "geo_point"
@@ -63,7 +63,7 @@ async function setUpElasticConnection() {
                 totalRatings: {
                     type: "integer"
                 }
-              },
+            },
             },
         });
         console.log('CREATE SERVICES IDX RESPONSE', response);
@@ -76,7 +76,7 @@ async function setUpElasticConnection() {
             //   number_of_shards: 1, // default only 1 shard
             // },
             mappings: {
-              properties: {
+            properties: {
                 title: {
                     type: "text"
                 },
@@ -90,10 +90,12 @@ async function setUpElasticConnection() {
                 providername: {
                     type: "text"
                 },
-                // tags:{
-                //     type:Array,
-                //     required:true
-                // },
+                tags:{
+                    type: "keyword"
+                },
+                createdAt:{
+                    type: "date"
+                },
                 numberView: {
                     type: "integer"
                 },
@@ -106,7 +108,7 @@ async function setUpElasticConnection() {
                 authorname: {
                     type: "text"
                 },
-              },
+            },
             },
         });
         console.log('CREATE BLOGS IDX RESPONSE', response);
@@ -122,8 +124,12 @@ async function resetElasticConnection(indexToDelete) {
 
 async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMatch,
                 fieldNameArrayToGet, limit, offset, elasticSortScheme,
-                geoFilter, geoSort, categoriesIncluded) {
+                geoFilter, geoSort, categoriesIncluded, province, tagsIncluded) {
     const esClient = initializeElasticClient();
+
+    const numLimit = +limit;
+    const numOffset = +offset;
+    const elementOffset = numOffset * numLimit;
 
     const queryObject = {
         index: indexName,
@@ -132,8 +138,8 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
             bool: {},
             match_all: {}
         },
-        size: limit,
-        from: offset,
+        size: numLimit,
+        from: elementOffset,
         _source: fieldNameArrayToGet,
         sort:[]
     };
@@ -147,6 +153,18 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
                 fields: fieldNameArrayToMatch,
                 fuzziness : "AUTO",
                 prefix_length : 2
+            }
+        });
+
+        delete queryObject.query.match_all;
+    }
+
+    if (province?.length) {
+        if (!queryObject.query.bool.must) queryObject.query.bool.must = [];
+
+        queryObject.query.bool.must.push({
+            match: {
+                province
             }
         });
 
@@ -178,7 +196,8 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
     }
 
     if (geoSort?.unit && geoSort?.order) {
-        queryObject.sort.push(            {
+        console.log('========:::::::', geoFilter);
+        queryObject.sort.push({
             _geo_distance:{
                 locations: {
                     lat: geoFilter.clientLat,
@@ -195,14 +214,38 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
     }
 
     if (categoriesIncluded?.length && queryObject?.query) {
-    if (!queryObject.query.bool) queryObject.query.bool = {};
-        queryObject.query.bool.filter = categoriesIncluded.map(categoryLabel => { return { term: { catergory: categoryLabel } }; });
+        if (!queryObject.query.bool) queryObject.query.bool = {};
+        // queryObject.query.bool.filter = categoriesIncluded.map(categoryLabel => { return { term: { catergory: categoryLabel } }; });
+        if (!queryObject.query.bool.should) queryObject.query.bool.should = [];
+
+        for (const categoryLabel of categoriesIncluded) {
+            queryObject.query.bool.should.push({
+                match: {
+                    category: categoryLabel
+                }
+            });
+        }
+
+        delete queryObject.query.match_all;
+    }
+
+    if (tagsIncluded?.length && queryObject?.query) {
+        if (!queryObject.query.bool) queryObject.query.bool = {};
+        // queryObject.query.bool.filter = categoriesIncluded.map(categoryLabel => { return { term: { catergory: categoryLabel } }; });
+        if (!queryObject.query.bool.must) queryObject.query.bool.must = [];
+
+        for (const tagLabel of tagsIncluded) {
+            queryObject.query.bool.must.push({
+                term: {
+                    tags: tagLabel
+                }
+            });
+        }
 
         delete queryObject.query.match_all;
     }
 
     console.log("QUERY OBJECT: ",JSON.stringify(queryObject), "END QUERY OBJECT");
-    console.log("============================================");
 
     const elasticResponse = await esClient.search(queryObject);
     console.log(elasticResponse?.hits);
@@ -326,15 +369,15 @@ const multiFunc = async function(indexName, init, reset) {
     }
     if (reset) {
         const esClient = initializeElasticClient();
-        if (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.SERVICES })) {
-            resetElasticConnection(ELASTIC_INDEX_NAME_MAP.SERVICES);
-        }
+        // if (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.SERVICES })) {
+        //     resetElasticConnection(ELASTIC_INDEX_NAME_MAP.SERVICES);
+        // }
         if (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.BLOGS })) {
             resetElasticConnection(ELASTIC_INDEX_NAME_MAP.BLOGS);
         }
         return;
     }
-   
+
 //     //  }
 //     // else {
 //         // const stats = await esClient?.indices?.stats({ index: indexName });
@@ -379,7 +422,7 @@ const multiFunc = async function(indexName, init, reset) {
     //     "vung tau",
     //     ["name", "category", "providername", "province"],
     //     ["id", "name", "providername", "category"], 10, 0,
-	// 	[ {price : {order : "asc"}} ],
+    // 	[ {price : {order : "asc"}} ],
     //     { distanceText: "2000km", clientLat: 45, clientLon: 45 },
     //     { unit: "km", order: "desc" }, []);
 
@@ -415,8 +458,7 @@ const multiFunc = async function(indexName, init, reset) {
 (async function () {
     // // COMMENT THIS WHEN RUN MIGRATE OR ANY OTHE FILE INCLUDED THIS
     // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, false, true); // TO SWITCH
-    // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, true, false); // TO SWITCH
-    // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, false, false);
+    await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, true, false); // TO SWITCH
 })();
 
 // initializeElasticClient().indices.get({

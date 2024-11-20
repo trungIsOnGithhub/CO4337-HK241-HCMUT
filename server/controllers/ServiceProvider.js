@@ -192,15 +192,29 @@ const getAllServiceProvider = asyncHandler(async(req, res) => {
 
 const updateServiceProvider = asyncHandler(async(req, res)=>{
     const spid = req.params.spid
-
     console.log('vuivuiuviuv', req.body, spid);
 
     if(Object.keys(req.body).length === 0){
-        throw new Error('Missing input')
+        throw new Error('Missing input');
     }
-    if(req.body.expiry){
-        req.body.expiry = Date.now() + +req.body.expiry * 24 * 60 * 60 * 1000
+
+    console.log('files: ', req.files);
+    if(req.file){
+        console.log('file: ', req.file);
+        req.body.images = [req.file.path];
+        // console.log('HAS FILE');
+        // req.body.images = [req.files.avatar.path];
     }
+
+    if (req.body.mobile) {
+        const uresp = await User.updateOne({ provider_id: spid }, { $set: { mobile: req.body.mobile } });
+        console.log(uresp);
+
+        if (!uresp) {
+            throw new Error('Cannot update corresponding id.');
+        }
+    }
+
     const response = await ServiceProvider.findByIdAndUpdate(spid, req.body, {new: true})
 
     console.log(response);
@@ -239,11 +253,13 @@ const addServiceProviderQuestion = asyncHandler(async(req, res)=>{
     if(!qna && !provider_id){
         throw new Error('Missing input')
     }
-    console.log(req.body);
+    // console.log('--{{{{{{{{{{{{}}}}}}}}}}}}>'+JSON.stringify(req.body));
+
     const response = await ServiceProvider.findByIdAndUpdate(provider_id, {chatGivenQuestions:qna}, {new:true});
+    // console.log('--{{{{{{{{{{{{}}0000000000000>'+response);
     return res.status(200).json({
         success: response ? true : false,
-        qna: response ? response : "Cannot delete service provider"
+        qna: response ? response : "Cannot modify service provider"
     })
 })
 
@@ -252,11 +268,11 @@ const getServiceProviderByOwnerId = asyncHandler(async(req, res)=>{
     if(!owner){
         throw new Error('Missing input')
     }
-    console.log(req.body);
-    const response = await ServiceProvider.findOne({});
+    // console.log(req.body);
+    const response = await User.findById(owner).populate('provider_id');
     return res.status(200).json({
         success: response ? true : false,
-        provider: response ? response : "Cannot get service provider"
+        provider: response?.provider_id?._id ? response.provider_id : "Cannot get service provider"
     })
 })
 
@@ -341,6 +357,78 @@ const updateFooterSection = asyncHandler(async(req,res) => {
     }
 });
 
+
+
+
+const searchSPAdvanced = asyncHandler(async (req, res) => {
+    console.log("INCOMING REQUESTS:", req.body);
+
+    let { searchTerm, limit, offset, categories, sortBy,
+        clientLat, clientLon, distanceText } = req.body;
+
+    if ( (typeof(offset) != "number") ||
+        !limit || offset < 0 || limit > 20)
+    {
+        return res.status(400).json({
+            success: false,
+            searched: [],
+            msg: "Bad Request"
+        });
+    }
+
+    let sortOption = [];
+    let geoSortOption = null;
+    if (sortBy?.indexOf("-price") > -1) {
+        sortOption.push({price : {order : "desc"}});
+    }
+    else if (sortBy?.indexOf("price") > -1) {
+        sortOption.push({price : {order : "asc"}});
+    }
+
+    if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
+
+    let categoriesIncluded = [];
+    if (categories?.length) {
+        categoriesIncluded = categories;
+    }
+
+    let geoLocationQueryOption = null;
+    if ( clientLat <= 180 && clientLon <= 180 &&
+        clientLat >= -90 && clientLon >= -90 &&
+        /[1-9][0-9]*(km|m)/.test(distanceText) )
+    {
+        geoLocationQueryOption = { distanceText,  clientLat, clientLon };
+    }
+
+    const columnNamesToMatch = ["name", "providername", "province"];
+    const columnNamesToGet = ["id", "name","thumb","price","category","duration","provider_id", "province", "totalRatings"];
+
+    let services = [];
+    services = await esDBModule.fullTextSearchAdvanced(
+        ES_CONSTANT.SERVICES,
+        searchTerm,
+        columnNamesToMatch,
+        columnNamesToGet,
+        limit, offset,
+        sortOption,
+        geoLocationQueryOption,
+        geoSortOption,
+        categoriesIncluded
+    );
+    services = services?.hits;
+
+    console.log("Query Input Parameter: ", services);
+    console.log("REAL DATA RETURNED: ", services);
+
+    return res.status(200).json({
+        success: services ? true : false,
+        services: services
+    });
+});
+
+
+
+
 module.exports = {
     createServiceProvider,
     getAllServiceProvider,
@@ -352,5 +440,6 @@ module.exports = {
     updateServiceProviderTheme,
     finalRegisterProvider,
     getServiceProviderByAdmin,
-    updateFooterSection
+    updateFooterSection,
+    searchSPAdvanced
 }

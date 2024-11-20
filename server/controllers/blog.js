@@ -4,7 +4,7 @@ const asyncHandler = require('express-async-handler');
 const User = require('../models/user');
 const { prependListener } = require('../models/ServiceProvider');
 const ES_CONSTANT = require('../services/constant');
-// const esDBModule = require('../services/es');
+const esDBModule = require('../services/es');
 
 const createNewBlogPost = asyncHandler(async(req, res)=>{
     const {_id} = req.user
@@ -415,7 +415,7 @@ const searchBlogAdvanced = asyncHandler(async (req, res) => {
     console.log("INCOMING REQUESTS:", req.body);
 
     let { searchTerm, limit, offset, categories, sortBy,
-        clientLat, clientLon, distanceText } = req.body;
+        selectedTags } = req.body;
 
     if ( (typeof(offset) != "number") ||
         !limit || offset < 0 || limit > 20)
@@ -428,53 +428,50 @@ const searchBlogAdvanced = asyncHandler(async (req, res) => {
     }
 
     let sortOption = [];
-    let geoSortOption = null;
     if (sortBy?.indexOf("-numberView") > -1) {
         sortOption.push({numberView: {order : "desc"}});
     }
     else if (sortBy?.indexOf("numberView") > -1) {
         sortOption.push({numberView : {order : "asc"}});
     }
+
     if (sortBy?.indexOf("-likes") > -1) {
         sortOption.push({likes: {order : "desc"}});
     }
-    else if (sortBy?.indexOf("price") > -1) {
-        sortOption.push({likes : {order : "asc"}});
+    if (sortBy?.indexOf("-createdAt") > -1) {
+        sortOption.push({createdAt : {order : "desc"}});
     }
 
     // if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
 
-    let categoriesIncluded = [];
-    if (categories?.length) {
-        categoriesIncluded = categories.split(',');
-    }
+    // let geoLocationQueryOption = null;
+    // if ( clientLat <= 180 && clientLon <= 180 &&
+    //     clientLat >= -90 && clientLon >= -90 &&
+    //     /[1-9][0-9]*(km|m)/.test(distanceText) )
+    // {
+    //     geoLocationQueryOption = { distanceText,  clientLat, clientLon };
+    // }
 
-    let geoLocationQueryOption = null;
-    if ( clientLat <= 180 && clientLon <= 180 &&
-        clientLat >= -90 && clientLon >= -90 &&
-        /[1-9][0-9]*(km|m)/.test(distanceText) )
-    {
-        geoLocationQueryOption = { distanceText,  clientLat, clientLon };
-    }
+    const columnNamesToMatch = ["title", "providername", "authorname"];
+    const columnNamesToGet = ["id", "title", "providername", "authorname", "numberView", "provider_id", "likes", "dislikes", "tags", "createdAt"];
 
-    const columnNamesToMatch = ["title", "category", "providername", "authorname"];
-    const columnNamesToGet = ["id", "title", "providername", "authorname", "numberView", "provider_id", "likes", "dislikes"];
+    let blogs;
+    blogs = await esDBModule.fullTextSearchAdvanced(
+        ES_CONSTANT.BLOGS,
+        searchTerm,
+        columnNamesToMatch,
+        columnNamesToGet,
+        limit,
+        offset,
+        sortOption,
+        null,
+        null,
+        null,
+        null,
+        selectedTags
+    );
+    blogs = blogs?.hits;
 
-    let blogs = [];
-    // blogs = await esDBModule.fullTextSearchAdvanced(
-    //     ES_CONSTANT.BLOGS,
-    //     searchTerm,
-    //     columnNamesToMatch,
-    //     columnNamesToGet,
-    //     limit, offset,
-    //     sortOption,
-    //     geoLocationQueryOption,
-    //     geoSortOption,
-    //     categoriesIncluded
-    // );
-    // blogs = blogs?.hits;
-
-    // console.log("Query Input Parameter: ", blogs);
     // console.log("REAL DATA RETURNED: ", blogs);
 
     return res.status(200).json({

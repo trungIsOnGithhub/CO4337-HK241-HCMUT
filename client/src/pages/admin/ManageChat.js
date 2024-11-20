@@ -6,8 +6,10 @@ import "react-toastify/dist/ReactToastify.css";
 import bgImage from '../../assets/clouds.svg';
 import {useDispatch, useSelector} from 'react-redux';
 import Swal from "sweetalert2";
+import { getCurrent } from 'store/user/asyncAction'
 
 const ManageChat = () => {
+  const dispatch = useDispatch()
   const { current } = useSelector(state => state.user);
   const [qaItems, setQaItems] = useState(
     current?.provider_id?.chatGivenQuestions.map(
@@ -27,6 +29,10 @@ const ManageChat = () => {
   const [editingId, setEditingId] = useState(null);
   const [errors, setErrors] = useState({ question: "", answer: "" });
   const [expandedId, setExpandedId] = useState(null);
+
+  // useEffect(() => {
+
+  // }, [qaItems])
 
   const validateForm = () => {
     const newErrors = {};
@@ -49,33 +55,39 @@ const ManageChat = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
+      let newQna = qaItems;
       if (editingId) {
-        setQaItems(qaItems.map(item =>
+        newQna = qaItems.map(item =>
           item.id === editingId ? { ...item, question: newQuestion, answer: newAnswer } : item
-        ));
-
-        // toast.success("Q&A pair updated successfully!");
+        );
       } else {
-        setQaItems([...qaItems, { id: Date.now(), question: newQuestion, answer: newAnswer }]);
-        // toast.success("New Q&A pair added successfully!");
+        newQna = [...qaItems, { id: Date.now(), question: newQuestion, answer: newAnswer }];
       }
+
+      newQna.forEach(q => {
+        delete q._id;
+        delete q.id
+      })
+      // console.log(newQna)
 
     let resp = await apiAddServiceProvidersGivenQnA({
         provider_id: current.provider_id._id,
-        qna: qaItems
+        qna: newQna
     });
 
-    if (resp.success && resp.qna) {
+      if (resp.success && resp.qna) {
+        setQaItems(newQna);
+        dispatch(getCurrent())
         if (editingId) {
             toast.success("Q&A pair updated successfully!");
         }
         else {
             toast.success("New Q&A pair added successfully!");
         }
-    }
-    else {
-        toast.success("Error ocurred!!");
-    }
+      }
+      else {
+          toast.success("Error ocurred!!");
+      }
       
       setNewQuestion("");
       setNewAnswer("");
@@ -102,14 +114,23 @@ const ManageChat = () => {
       })
 
     if(rs.isConfirmed){
-        setQaItems(qaItems.filter(item => item.id !== id));
+        let newQna = qaItems.filter(item => item.id !== id);
 
+        newQna.forEach(q => {
+          delete q._id;
+          delete q.id
+        });
+
+        // console.log("3412424231>>>>>>>", newQna);
+        // let resp;
         let resp = await apiAddServiceProvidersGivenQnA({
             provider_id: current.provider_id._id,
-            qna: qaItems
+            qna: newQna
         });
     
         if (resp.success && resp.qna) {
+            setQaItems(newQna);
+            dispatch(getCurrent());
             toast.success("Q&A pair deleted successfully!");
         }
         else {

@@ -3,6 +3,9 @@ import WeeklyOfficeHours from './WeeklyOfficeHours';
 import BusinessDetailsForm from './BusinessDetailsForm';
 import bgImage from '../../assets/clouds.svg';
 import Select from 'react-select';
+import { apiUpdateCurrentServiceProvider } from 'apis';
+import Swal from 'sweetalert2';
+import { useSelector } from 'react-redux'
 
 function ManageSetting() {
   // State variables for all inputs
@@ -21,17 +24,29 @@ function ManageSetting() {
   // const [firstPage, setFirstPage] = useState('Dashboard');
   const [dashboardLanguage, setDashboardLanguage] = useState('English');
   const [viewOption, setViewOption] = useState("general");
-  const [minTimeBeforeBookingSameDay, setMinTimeBeforeBookingSameDay] = useState(0);
+  const [minutesBeforeSameDayBook, setminutesBeforeSameDayBook] = useState(0);
+  // const [sBeforeSameDayBook, sethoursBeforeSameDayBook] = useState(0);
 
+  const {current} = useSelector(state => state.user);
   // Effect to simulate loading current settings
   useEffect(() => {
-    // Simulate fetching data from an API and updating state
-    console.log('Fetching settings...');
-  }, []);
+    console.log("::::::::::::::>>>", current.provider_id);
+    if (current?.provider_id?.advancedSetting?.minutesBeforeSameDayBook) {
+      console.log(current.provider_id.advancedSetting.minutesBeforeSameDayBook);
+      // const hMBSD = current.provider_id.advancedSetting.minutesBeforeSameDayBook/60;
+      // const mMBSD = current.provider_id.advancedSetting.minutesBeforeSameDayBook%60;
+      setminutesBeforeSameDayBook(current.provider_id.advancedSetting.minutesBeforeSameDayBook);
+    }
+    // console.log('Fetching settings...');
+  }, [current]);
 
   // Handler to simulate saving settings
-  const handleSaveSettings = () => {
-    const settings = {
+  const handleSaveSettings = async () => {
+    if (!current?.provider_id?._id) {
+      Swal.fire("Error Occured!", "Cannot find provider session information!", "error");
+      return;
+    }
+    const advancedSetting = {
       timeSlotStep,
       useServiceDuration,
       appointmentStatus,
@@ -39,16 +54,25 @@ function ManageSetting() {
       minTimeCanceling,
       minTimeRescheduling,
       daysInAdvance,
-      dateFormat,
-      timeFormat,
-      firstDayOfWeek,
-      phoneCountryCode,
-      dashboardLanguage,
+      // dateFormat,
+      // timeFormat,
+      // firstDayOfWeek,
+      // phoneCountryCode,
+      minutesBeforeSameDayBook
     };
     
-    console.log('Settings saved:', settings);
-    alert('Settings have been saved!');
+    console.log('Settings saved:', advancedSetting);
     // Here you could send the data to an API endpoint
+
+    let resp = await apiUpdateCurrentServiceProvider(current.provider_id._id, { advancedSetting });
+
+    if (resp.success && resp?.updatedServiceProvider?.advancedSetting) {
+      setminutesBeforeSameDayBook(resp.updatedServiceProvider.advancedSetting.minutesBeforeSameDayBook);
+      Swal.fire("Update Success!", "Update provider setting successfully!", "success");
+    }
+    else {
+      Swal.fire("Error Occured!", "Cannot update, yielded unexpected error!", "error");
+    }
   };
 
   return (
@@ -118,7 +142,7 @@ function ManageSetting() {
                   {viewOption === "general" &&
                       <div className="w-3/4 pl-8">
                         {/* Appointment Settings */}
-                        <h2 className="font-semibold text-xl text-gray-800 mb-6">Appointment Settings</h2>
+                        <h2 className="font-semibold text-xl text-gray-800 mb-6">Booking</h2>
                         <div className="space-y-6">
                           
                           {/* Default Time Slot Step */}
@@ -132,7 +156,7 @@ function ManageSetting() {
                           </div>
                           
                           {/* Use Service Duration as Booking Slot */}
-                          <div className="flex items-center justify-between">
+                          {/* <div className="flex items-center justify-between">
                             <label className="text-gray-800 font-medium">Use service duration as booking time slot</label>
                             <input
                               type="checkbox"
@@ -140,49 +164,64 @@ function ManageSetting() {
                               onChange={(e) => setUseServiceDuration(e.target.checked)}
                               className="form-checkbox h-5 w-5 text-blue-600"
                             />
-                          </div>
+                          </div> */}
                           
                           {/* Default Appointment Status */}
-                          <div className="flex items-center justify-between">
+                          {/* <div className="flex items-center justify-between">
                             <label className="text-gray-800 font-medium">Default Appointment Status</label>
                             <select value={appointmentStatus} onChange={(e) => setAppointmentStatus(e.target.value)} className="border rounded-lg p-2 w-1/2 text-gray-800">
                               <option>Approved</option>
                               <option>Pending</option>
                             </select>
-                          </div>
+                          </div> */}
 
                           {/* Minimum Time Settings */}
                           <div className="grid grid-cols-2 gap-6">
                             <div>
-                              <label className="text-gray-800 font-medium">Minimum time required before booking in same day</label>
-                                <span>
-                                  <Select
-                                    defaultValue={""}
-                                    name="minTimeBookSameDayM"
-                                    options={[
-                                      { value: 15, label: '15' },
-                                      { value: 30, label: '30' },
-                                      { value: 45, label: '45' }
-                                    ]}
-                                    className="basic-multi-select"
-                                    classNamePrefix="select"
-                                    onChange={(value) => {setMinTimeBeforeBookingSameDay(prev => prev + value)}}
-                                  />
-                                  <Select
-                                    defaultValue={""}
-                                    name="minTimeBookSameDayH"
-                                    options={[1,2,3,4,5,6,7,8,9,10,11,12].map(num => {
-                                      return {
-                                        value: num,
-                                        label: num.toString()
-                                      };
-                                    })}
-                                    className="basic-multi-select"
-                                    classNamePrefix="select"
-                                    onChange={(value) => {setMinTimeBeforeBookingSameDay(prev => prev + value*60)}}
-                                  />
-                              </span>
-                              </div>
+                              <label className="text-gray-800 font-medium flex flex-col gap-2">Minimum time required before booking in same day</label>
+                              {/* <span className="flex flex-col"> */}
+                                  <span className="flex gap-1">
+                                    <Select
+                                      defaultValue={0}
+                                      value={{value: Math.trunc(minutesBeforeSameDayBook/60), label: Math.trunc(minutesBeforeSameDayBook/60).toString() }}
+                                      name="minTimeBookSameDayH"
+                                      options={[0,1,2,3,4,5,6,7,8,9,10,11,12].map(num => {
+                                        return {
+                                          value: num,
+                                          label: num.toString()
+                                        };
+                                      })}
+                                      className="text-gray-700"
+                                      classNamePrefix="select"
+                                      onChange={(o) => {setminutesBeforeSameDayBook(prev => {
+                                        // console.log('=====>' + JSON.stringify(o), " prev:", prev);
+                                        return prev%60 + o.value*60;
+                                      })}}
+                                    />
+                                    <label className="text-gray-600 text-sm pl-1">hours</label>
+                                  </span>
+
+                                  <span className="flex gap-1">
+                                    <Select
+                                      defaultValue={0}
+                                      value={{value: minutesBeforeSameDayBook%60, label: (minutesBeforeSameDayBook%60).toString() }}
+                                      name="minTimeBookSameDayM"
+                                      options={[
+                                        { value: 0, label: '0' },
+                                        { value: 15, label: '15' },
+                                        { value: 30, label: '30' },
+                                        { value: 45, label: '45' }
+                                      ]}
+                                      className="text-gray-700"
+                                      classNamePrefix="select"
+                                      onChange={(o) => {setminutesBeforeSameDayBook(prev => {
+                                        // console.log('=====>' + JSON.stringify(o), " prev:", prev);
+                                        return Math.trunc(prev/60)*60 + o.value;
+                                      })}}
+                                    />
+                                    <label className="text-gray-600 text-sm pl-1">minutes</label>
+                                  </span>
+                            </div>
                             <div>
                               <label className="text-gray-800 font-medium">Minimum time required before canceling</label>
                               <select value={minTimeCanceling} onChange={(e) => setMinTimeCanceling(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
@@ -191,14 +230,14 @@ function ManageSetting() {
                                 <option>24 hours</option>
                               </select>
                             </div>
-                            <div>
+                            {/* <div>
                               <label className="text-gray-800 font-medium">Minimum time required before rescheduling</label>
                               <select value={minTimeRescheduling} onChange={(e) => setMinTimeRescheduling(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
                                 <option>Disabled</option>
                                 <option>1 hour</option>
                                 <option>24 hours</option>
                               </select>
-                            </div>
+                            </div> */}
                             <div>
                               <label className="text-gray-800 font-medium">The number of days available for booking in advance</label>
                               <input
@@ -261,18 +300,29 @@ function ManageSetting() {
                                   <option>Dashboard</option>
                                 </select>
                               </div> */}
-                              <div>
+                              {/* <div>
                                 <label className="text-gray-700 font-medium">Dashboard language</label>
                                 <select className="border rounded-lg p-2 w-full mt-1">
                                   <option>English</option>
                                 </select>
-                              </div>
+                              </div> */}
                             </div>
+
+                            <div className="mt-4 flex justify-end space-x-2 gap-4">
+              {/* <button onClick={onClose} className="text-gray-500 hover:text-gray-700">Cancel</button> */}
+              <button
+                onClick={() => { handleSaveSettings(); }}
+                disabled={false}
+                className={`p-2 hover:underline' hovers :'opacity-50 bg-blue-600 rounded-md text-md`}
+              >
+                Apply Settings
+              </button>
+            </div>
                           </div>
+
                       }
 
                 </div>
-
               {/* </div>
             </div> */}
 

@@ -48,20 +48,6 @@ export const tinh_thanhpho = {
         "name_with_type": "Tỉnh Thanh Hóa",
         "code": "38"
     },
-    "45": {
-        "name": "Quảng Trị",
-        "slug": "quang-tri",
-        "type": "tinh",
-        "name_with_type": "Tỉnh Quảng Trị",
-        "code": "45"
-    },
-    "08": {
-        "name": "Tuyên Quang",
-        "slug": "tuyen-quang",
-        "type": "tinh",
-        "name_with_type": "Tỉnh Tuyên Quang",
-        "code": "08"
-    },
     "51": {
         "name": "Quảng Ngãi",
         "slug": "quang-ngai",
@@ -83,13 +69,6 @@ export const tinh_thanhpho = {
         "name_with_type": "Tỉnh Lào Cai",
         "code": "10"
     },
-    "86": {
-        "name": "Vĩnh Long",
-        "slug": "vinh-long",
-        "type": "tinh",
-        "name_with_type": "Tỉnh Vĩnh Long",
-        "code": "86"
-    },
     "68": {
         "name": "Lâm Đồng",
         "slug": "lam-dong",
@@ -110,13 +89,6 @@ export const tinh_thanhpho = {
         "type": "tinh",
         "name_with_type": "Tỉnh Nghệ An",
         "code": "40"
-    },
-    "91": {
-        "name": "Kiên Giang",
-        "slug": "kien-giang",
-        "type": "tinh",
-        "name_with_type": "Tỉnh Kiên Giang",
-        "code": "91"
     },
     "02": {
         "name": "Hà Giang",
@@ -173,13 +145,6 @@ export const tinh_thanhpho = {
         "type": "tinh",
         "name_with_type": "Tỉnh Lai Châu",
         "code": "12"
-    },
-    "83": {
-        "name": "Bến Tre",
-        "slug": "ben-tre",
-        "type": "tinh",
-        "name_with_type": "Tỉnh Bến Tre",
-        "code": "83"
     },
     "56": {
         "name": "Khánh Hòa",
@@ -412,13 +377,6 @@ export const tinh_thanhpho = {
         "name_with_type": "Thành phố Hồ Chí Minh",
         "code": "79"
     },
-    "35": {
-        "name": "Hà Nam",
-        "slug": "ha-nam",
-        "type": "tinh",
-        "name_with_type": "Tỉnh Hà Nam",
-        "code": "35"
-    },
     "27": {
         "name": "Bắc Ninh",
         "slug": "bac-ninh",
@@ -432,12 +390,5 @@ export const tinh_thanhpho = {
         "type": "tinh",
         "name_with_type": "Tỉnh Bắc Giang",
         "code": "24"
-    },
-    "06": {
-        "name": "Bắc Kạn",
-        "slug": "bac-kan",
-        "type": "tinh",
-        "name_with_type": "Tỉnh Bắc Kạn",
-        "code": "06"
     }
 }

@@ -49,7 +49,7 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
     console.log("INCOMING REQUESTS:", req.body);
 
     let { searchTerm, limit, offset, categories, sortBy,
-        clientLat, clientLon, distanceText } = req.body;
+        clientLat, clientLon, distanceText, province } = req.body;
 
     if ( (typeof(offset) != "number") ||
         !limit || offset < 0 || limit > 20)
@@ -70,7 +70,7 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
         sortOption.push({price : {order : "asc"}});
     }
 
-    if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
+    if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "asc" }; }
 
     let categoriesIncluded = [];
     if (categories?.length) {
@@ -78,17 +78,21 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
     }
 
     let geoLocationQueryOption = null;
-    if ( clientLat <= 180 && clientLon <= 180 &&
-        clientLat >= -90 && clientLon >= -90 &&
-        /[1-9][0-9]*(km|m)/.test(distanceText) )
+    if ( clientLat <= 180.0 && clientLon <= 180.0 &&
+        clientLat >= -90.0 && clientLon >= -90.0 )
     {
-        geoLocationQueryOption = { distanceText,  clientLat, clientLon };
+        geoLocationQueryOption = { clientLat, clientLon };
     }
+    if (/[1-9][0-9]*(km|m)/.test(distanceText)) {
+        geoLocationQueryOption = { ...geoLocationQueryOption, distanceText };
+    }
+
+    // console.log('+++++++', geoLocationQueryOption);
 
     const columnNamesToMatch = ["name", "providername", "province"];
     const columnNamesToGet = ["id", "name","thumb","price","category","duration","provider_id", "province", "totalRatings"];
 
-    let services = [];
+    let services;
     services = await esDBModule.fullTextSearchAdvanced(
         ES_CONSTANT.SERVICES,
         searchTerm,
@@ -98,11 +102,13 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
         sortOption,
         geoLocationQueryOption,
         geoSortOption,
-        categoriesIncluded
+        categoriesIncluded,
+        province,
+        null
     );
     services = services?.hits;
 
-    console.log("Query Input Parameter: ", services);
+    // console.log("Query Input Parameter: ", services);
     console.log("REAL DATA RETURNED: ", services);
 
     return res.status(200).json({
