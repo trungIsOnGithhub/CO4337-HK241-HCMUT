@@ -357,6 +357,78 @@ const updateFooterSection = asyncHandler(async(req,res) => {
     }
 });
 
+
+
+
+const searchSPAdvanced = asyncHandler(async (req, res) => {
+    console.log("INCOMING REQUESTS:", req.body);
+
+    let { searchTerm, limit, offset, categories, sortBy,
+        clientLat, clientLon, distanceText } = req.body;
+
+    if ( (typeof(offset) != "number") ||
+        !limit || offset < 0 || limit > 20)
+    {
+        return res.status(400).json({
+            success: false,
+            searched: [],
+            msg: "Bad Request"
+        });
+    }
+
+    let sortOption = [];
+    let geoSortOption = null;
+    if (sortBy?.indexOf("-price") > -1) {
+        sortOption.push({price : {order : "desc"}});
+    }
+    else if (sortBy?.indexOf("price") > -1) {
+        sortOption.push({price : {order : "asc"}});
+    }
+
+    if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
+
+    let categoriesIncluded = [];
+    if (categories?.length) {
+        categoriesIncluded = categories;
+    }
+
+    let geoLocationQueryOption = null;
+    if ( clientLat <= 180 && clientLon <= 180 &&
+        clientLat >= -90 && clientLon >= -90 &&
+        /[1-9][0-9]*(km|m)/.test(distanceText) )
+    {
+        geoLocationQueryOption = { distanceText,  clientLat, clientLon };
+    }
+
+    const columnNamesToMatch = ["name", "providername", "province"];
+    const columnNamesToGet = ["id", "name","thumb","price","category","duration","provider_id", "province", "totalRatings"];
+
+    let services = [];
+    services = await esDBModule.fullTextSearchAdvanced(
+        ES_CONSTANT.SERVICES,
+        searchTerm,
+        columnNamesToMatch,
+        columnNamesToGet,
+        limit, offset,
+        sortOption,
+        geoLocationQueryOption,
+        geoSortOption,
+        categoriesIncluded
+    );
+    services = services?.hits;
+
+    console.log("Query Input Parameter: ", services);
+    console.log("REAL DATA RETURNED: ", services);
+
+    return res.status(200).json({
+        success: services ? true : false,
+        services: services
+    });
+});
+
+
+
+
 module.exports = {
     createServiceProvider,
     getAllServiceProvider,
@@ -368,5 +440,6 @@ module.exports = {
     updateServiceProviderTheme,
     finalRegisterProvider,
     getServiceProviderByAdmin,
-    updateFooterSection
+    updateFooterSection,
+    searchSPAdvanced
 }
