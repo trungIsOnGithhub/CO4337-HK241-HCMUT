@@ -38,7 +38,7 @@ async function setUpElasticConnection() {
             //   number_of_shards: 1, // default only 1 shard
             // },
             mappings: {
-              properties: {
+            properties: {
                 id: {
                     type: "text"
                 },
@@ -55,7 +55,7 @@ async function setUpElasticConnection() {
                     type: "text"
                 },
                 price: {
-                     type: "float"
+                    type: "float"
                 },
                 locations : {
                     type : "geo_point"
@@ -63,7 +63,7 @@ async function setUpElasticConnection() {
                 totalRatings: {
                     type: "integer"
                 }
-              },
+            },
             },
         });
         console.log('CREATE SERVICES IDX RESPONSE', response);
@@ -76,7 +76,7 @@ async function setUpElasticConnection() {
             //   number_of_shards: 1, // default only 1 shard
             // },
             mappings: {
-              properties: {
+            properties: {
                 title: {
                     type: "text"
                 },
@@ -93,6 +93,9 @@ async function setUpElasticConnection() {
                 tags:{
                     type: "text"
                 },
+                createdAt:{
+                    type: "date"
+                },
                 numberView: {
                     type: "integer"
                 },
@@ -105,7 +108,7 @@ async function setUpElasticConnection() {
                 authorname: {
                     type: "text"
                 },
-              },
+            },
             },
         });
         console.log('CREATE BLOGS IDX RESPONSE', response);
@@ -224,15 +227,15 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
     if (tagsIncluded?.length && queryObject?.query) {
         if (!queryObject.query.bool) queryObject.query.bool = {};
         // queryObject.query.bool.filter = categoriesIncluded.map(categoryLabel => { return { term: { catergory: categoryLabel } }; });
-        if (!queryObject.query.bool.should) queryObject.query.bool.should = [];
+        if (!queryObject.query.bool.must) queryObject.query.bool.must = [];
 
-        // for (const categoryLabel of categoriesIncluded) {
-            queryObject.query.bool.should.push({
-                terms: {
-                    category: tagsIncluded
+        for (const tagLabel of tagsIncluded) {
+            queryObject.query.bool.must.push({
+                term: {
+                    tags: tagLabel
                 }
             });
-        // }
+        }
 
         delete queryObject.query.match_all;
     }
@@ -369,7 +372,7 @@ const multiFunc = async function(indexName, init, reset) {
         }
         return;
     }
-   
+
 //     //  }
 //     // else {
 //         // const stats = await esClient?.indices?.stats({ index: indexName });
@@ -414,7 +417,7 @@ const multiFunc = async function(indexName, init, reset) {
     //     "vung tau",
     //     ["name", "category", "providername", "province"],
     //     ["id", "name", "providername", "category"], 10, 0,
-	// 	[ {price : {order : "asc"}} ],
+    // 	[ {price : {order : "asc"}} ],
     //     { distanceText: "2000km", clientLat: 45, clientLon: 45 },
     //     { unit: "km", order: "desc" }, []);
 
