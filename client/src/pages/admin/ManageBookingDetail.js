@@ -130,7 +130,7 @@ const ManageBookingDetail = ({ dispatch, navigate }) => {
                           }}
                         />
                         <div>
-                          <h2 className="text-xl font-semibold text-purple-900">Service Provider</h2>
+                          <h2 className="text-xl font-semibold text-purple-900">Employee</h2>
                           <p className="text-purple-700">{`${booking?.info[0]?.staff?.lastName} ${booking?.info[0]?.staff?.firstName}`}</p>
                         </div>
                       </div>
