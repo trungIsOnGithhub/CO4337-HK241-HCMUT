@@ -457,10 +457,10 @@ const multiFunc = async function(indexName, init, reset) {
 
 (async function () {
     // // COMMENT THIS WHEN RUN MIGRATE OR ANY OTHE FILE INCLUDED THIS
-    await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, false, true); // TO SWITCH
-    // await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, true, false); // TO SWIs    TCH
+    // await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, false, true); // TO SWITCH
+    await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, true, false); // TO SWIs    TCH
 
-    //  await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, false, true); // TO SWITCH
+    // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, false, true); // TO SWITCH
     // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, true, false); // TO SWITCH
 })();
 

@@ -48,9 +48,6 @@ const Services = () => {
   const [totalServiceCount, setTotalServiceCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  console.log(nearMeOption);
-  console.log(clientLat);
-  console.log(clientLon);
 
   // const prevSearchTermRef = useRef(searchFilter.term);
   const isClientLatLongValid = (clientLat, clientLon) => {
@@ -92,10 +89,7 @@ const Services = () => {
       //   lattitude: current.lastGeoLocation.coordinates[1]
       // }
 
-      // console.log('Elastic Pre Query', advancedQuery, 'Elastic Pre Query');
       response = await apiSearchServiceAdvanced(advancedQuery);
-
-      // console.log("-----------------RES ADVANCED:", response.services);
 
       if(response.success) setServices(response?.services?.hits || []);
 
@@ -105,10 +99,7 @@ const Services = () => {
       // if(category && category !== 'services'){
       //   queries.category = category;
       // }
-      // console.log('Elastic Pre Query', advancedQuery, 'Elastic Pre Query');
       response = await apiSearchServiceAdvanced(advancedQuery);
-
-      // console.log("-----------------RESPONSE SERVICES ADVANCED:", response.services?.hits);
 
       if(response.success) setServices(response?.services?.hits || []);
 
@@ -116,7 +107,6 @@ const Services = () => {
     }
 
     // response = await apiGetServicePublic(queries)
-    // console.log("898989898989898989", response)
     // if(response.success) setServices(response)
     dispatch(getCurrent())
   // }
@@ -128,12 +118,6 @@ const Services = () => {
       let resp = await apiGetCategorieService();
 
       if (resp.success && resp.serviceCategories?.length) {
-        // console.log('UEFF', resp.serviceCategories.map(cat => {
-        //   return {
-        //     value: cat.title,
-        //     label: cat.title
-        //   }
-        // }));
         setSvCategories(resp.serviceCategories.map(cat => {
           return {
             value: cat.title,
@@ -147,15 +131,10 @@ const Services = () => {
 
   useEffect(() => {
     window.scrollTo(0,0);
-    // console.log('=====>>>>>>', current);
     const queries = Object.fromEntries([...params])
 
     const q = {
-      // ...priceQuery,
       ...queries}
-  
-    console.log(`PRE FETCH === ${JSON.stringify(searchFilter)}`);
-    // console.log("YYAY", params.get('page'), "udias");
 
     let advancedQuery = {
       searchTerm: searchFilter.term,
@@ -167,7 +146,6 @@ const Services = () => {
     };
 
     if (nearMeOption && isClientLatLongValid(clientLat, clientLon)) {
-      console.log(clientLat, clientLon);
       advancedQuery = {
         ...advancedQuery,
         clientLat,
@@ -212,9 +190,6 @@ const Services = () => {
     // delete queries.to
     const q = {...queries}
 
-    // console.log(`PRE FETCH === ${JSON.stringify(q)}`);
-    // console.log("YYAY", params.get('page'), "udias");
-
     let advancedQuery = {
       searchTerm: searchFilter.term,
       limit: REACT_APP_PAGINATION_LIMIT_DEFAULT , offset: parseInt(params.get('page')) ? params.get('page')-1 : 0,
@@ -223,7 +198,6 @@ const Services = () => {
 
 
     if (nearMeOption && isClientLatLongValid(clientLat, clientLon)) {
-      console.log(clientLat, clientLon);
       advancedQuery = {
         ...advancedQuery,
         clientLat,
@@ -291,19 +265,16 @@ const Services = () => {
     // }).then((result) => {
     //   if (result.isConfirmed) {
         if ("geolocation" in navigator) {
-            console.log(clientLat + "1111111==========" + clientLon);
 
             setIsLoading(true);
-
             navigator.geolocation.getCurrentPosition(async (position) => {
-              console.log(clientLat + "222222222==========" + clientLon);
 
               const { latitude, longitude } = position.coords;
 
-              await apiModifyUser({ lastGeoLocation: {
-                type: "Point",
-                coordinates: [longitude, latitude]
-              } }, current._id);
+              // await apiModifyUser({ lastGeoLocation: {
+              //   type: "Point",
+              //   coordinates: [longitude, latitude]
+              // } }, current._id);
               // Call the function to show the route using latitude and longitude
               //  showRoute(latitude, longitude);
               setClientLat(latitude);
@@ -336,80 +307,34 @@ const Services = () => {
       </div>
 
       <div className='w-main p-2 flex justify-start m-auto mt-8'>
-        <div className='flex-auto flex flex-col gap-3'>
-          {/* <span className='font-semibold text-sm'>Filter by:</span> */}
-          <div className='flex items-end gap-4 mb-10 mt-2'>
-            {/* <FaMoneyCheckAlt />
-            <SearchItemService name='price' activeClick={active} changeActiveFilter={changeActive} type='input'/>
-            <FaCubes />
-            <SearchItemService name='category' activeClick={active} changeActiveFilter={changeActive}/>
-            <FaSortAmountDown />
-            <NewInputSelect value={sort} options={sorts} changeValue={changeValue} /> */}
-
-            <div className="flex justify-start items-start gap-2">
-                {/* <span className="grow flex flex-col justify-start"> */}
-                  <label className="text-gray-800 font-medium">Search&nbsp;By:&nbsp;</label>
-                  <InputFormm
-                    id='q'
-                    register={()=>{}}
-                    errors={()=>{}}
-                    fullWidth
-                    placeholder= 'Search blog by title name, tag ...'
-                    style={'bg-white min-h-10 rounded-md pl-2 flex items-center border border-gray-300'}
-                    styleInput={'outline-none text-gray-500 italic w-full'}
-                    onChange={(event) => {
-                      setSearchFilter(prev => { return { ...prev, term: event.target.value }; })
-                    }}
-                    value={searchFilter.term}
-                  >
-                  </InputFormm>
+        <div className='flex-auto flex flex-col gap-4'>
+          <div className='flex gap-4 mb-10 mt-2 items-end'>
+            <div className="flex flex-col flex-1">
+              <label className="text-gray-800 font-medium">Search&nbsp;By:&nbsp;</label>
+              <InputFormm
+                id='q'
+                register={()=>{}}
+                errors={()=>{}}
+                fullWidth
+                placeholder= 'Search service...'
+                style={'bg-white min-h-10 rounded-md pl-2 flex items-center border border-gray-300'}
+                styleInput={'outline-none text-gray-500 italic w-full'}
+                onChange={(event) => {
+                  setSearchFilter(prev => { return { ...prev, term: event.target.value }; })
+                }}
+                value={searchFilter.term}
+              >
+              </InputFormm>
             </div>
+            <span className='flex flex-col justify-center items-center gap-1'>
+              <span className=''>
+                <span className='font-semibold text-sm'>Location Search:</span>
+                {/* <input className='p-3' onInput={() => {handleGetDirections()}} type="checkbox"/> */}
+              </span>
+              <ToggleButton handleToggleAndReturn={() => {handleGetDirections()}} isToggled={nearMeOption}/>
+            </span>
             
-            <div className='flex flex-col'>
-
-                { nearMeOption &&
-                    <span className='flex justify-start items-center my-3 gap-3'>
-                      {/* <span className='font-semibold text-sm p-3'>Province:</span> */}
-                      {/* <InputSelect
-                        value={searchFilter?.province}
-                        options={Object.entries(tinh_thanhpho).map(ele => { return {id:ele[0], text:ele[1]?.name, value:ele[0]}})}
-                        changeValue={(value) => {setSearchFilter(prev => {return {...prev, province: value};}) }}
-                        className={'rounded-md p-2 bg-white min-h-10 border border-gray-300'}
-                      /> */}
-                      {/* <label className="text-gray-800 font-medium mr-1">Province:</label>
-                      <Select
-                        defaultValue={""}
-                        name="province"
-                        options={Object.entries(tinh_thanhpho).map(ele => { return {id:ele[0], label:ele[1]?.name, value:ele[0]}})}
-                        className="basic-multi-select"
-                        classNamePrefix="select"
-                        onChange={(value) => {setSearchFilter(prev => {return {...prev, province: value};}) }}
-                      /> */}
-
-                      <label className="text-gray-800 font-medium mr-1">Max Distance:</label>
-                      <InputField nameKey='maxDistance'
-                        value={searchFilter.maxDistance}
-                        setValue={setSearchFilter}
-                        placeholder={"Maximum Distance(optional)"}
-                        style={'bg-white min-h-10 rounded-md pl-2 flex items-center border border-gray-300'}
-                        type="number"
-                      />  
-                    </span>
-                  }
-
-                <span className='flex flex-col justify-center items-center gap-1'>
-                  <span className=''>
-                    <span className='font-semibold text-sm'>Location Search:</span>
-                    {/* <input className='p-3' onInput={() => {handleGetDirections()}} type="checkbox"/> */}
-                  </span>
-                  <ToggleButton handleToggleAndReturn={() => {handleGetDirections()}} isToggled={nearMeOption}/>
-
-                </span>
-            </div>
-
-            <div className='flex flex-col'>
-              {/* <FaSortAmountDown />
-              <NewInputSelect value={selectedSort} options={sortOptions} changeValue={(value) => {setSelectedSort(value);}} /> */}
+            <div className='flex flex-col flex-1'>
               <label className="text-gray-800 font-medium">Order&nbsp;By:&nbsp;</label>
               <Select
                 value={sort}
@@ -426,10 +351,7 @@ const Services = () => {
                 onChange={(e) => setSort(e)}
               />
             </div>
-
-            <div className='flex flex-col'>
-              {/* <FaSortAmountDown />
-              <NewInputSelect value={selectedSort} options={sortOptions} changeValue={(value) => {setSelectedSort(value);}} /> */}
+            <div className='flex flex-col flex-1'>
               <label className="text-gray-800 font-medium">Categories:</label>
               <Select
                 value={filterCateg}
@@ -452,54 +374,21 @@ const Services = () => {
                   else if (actionMeta?.action === 'clear') {
                     setFilterCateg([]);
                   }
-                  // console.log("||||||||", newVal, actionMeta);
                 }}
-                // onChange={(e) => {
-                //   console.log('------->', filterCateg);
-                //   if (!filterCateg.includes(e)) {
-                //     setFilterCateg([
-                //       ...filterCateg,
-                //       e
-                //     ]);
-                //   }
-                // }}
               />
-
-              {/* <select value={''}
-                onChange={(e) => {
-                  console.log('------->', filterCateg);
-                  if (!filterCateg.includes(e.target.value)) {
-                    setFilterCateg([
-                      ...filterCateg,
-                      e.target.value
-                    ]);
-                  }
-                }}
-                className="border rounded-lg p-2 w-full mt-1 text-gray-800">
-                  {
-                    [{title: `${filterCateg?.length || 0} chosen`}, ...categories_service].map(cat => {
-                      return (
-                        <option value={cat?.title}>
-                          {cat?.title}
-                        </option>
-                      );
-                    })
-                  }
-              </select> */}
             </div>
 
-              <Button
-                style="px-4 py-2 rounded-md text-white bg-[#0a66c2] font-semibold"
-                handleOnclick={() => { console.log(searchFilter); setSearchedClick(prev => !prev); }}
-              >
-              <span className="flex justify-center gap-1 items-center">
-                <FaSearch /><span>Search</span>
-              </span>
+            <Button
+              style="flex-1 h-fit px-4 py-2 rounded-md text-white bg-[#0a66c2] font-semibold"
+              handleOnclick={() => { setSearchedClick(prev => !prev); }}
+            >
+            <span className="flex justify-center gap-1 items-center">
+              <FaSearch /><span>Search</span>
+            </span>
             </Button>
 
             <Button
               handleOnclick={() => {
-                console.log('Presssed');
                 setSearchFilter(prev => {
                   return {
                     term: '',
@@ -513,21 +402,28 @@ const Services = () => {
                 // setSvCategories([]);
                 setResetClicked(prev => !prev);
               }}
-              style="px-4 py-2 rounded-md text-white bg-slate-400 font-semibold"
+              style="flex-1 h-fit px-4 py-2 rounded-md text-white bg-slate-400 font-semibold"
             >
               <span className="flex justify-center gap-1 items-center">
                 <FaBahai /><span>Reset</span>
               </span>
             </Button>
-
-            {/* </div> */}
           </div>
+          { nearMeOption &&
+            <div className='flex flex-col'>
+              <span className='flex justify-start items-center my-3 gap-3'>
+                <label className="text-gray-800 font-medium mr-1">Max Distance:</label>
+                <InputField nameKey='maxDistance'
+                  value={searchFilter.maxDistance}
+                  setValue={setSearchFilter}
+                  placeholder={"Maximum Distance(optional)"}
+                  style={'bg-white min-h-10 rounded-md pl-2 flex items-center border border-gray-300'}
+                  type="number"
+                />  
+              </span>
+            </div>
+          }
         </div>
-        {/* <div className='flex flex-col gap-3'>
-          <div className='w-full'>
-
-          </div>
-        </div> */}
       </div>
 
       <div className={clsx('mt-8 w-main m-auto flex gap-4 flex-wrap', isShowModal ? 'hidden' : '')}>

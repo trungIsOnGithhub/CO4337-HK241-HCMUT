@@ -453,7 +453,7 @@ const searchBlogAdvanced = asyncHandler(async (req, res) => {
     // }
 
     const columnNamesToMatch = ["title", "providername", "authorname"];
-    const columnNamesToGet = ["id", "title", "providername", "authorname", "numberView", "provider_id", "likes", "dislikes", "tags", "createdAt"];
+    const columnNamesToGet = ["id", "title", "providername", "authorname", "numberView", "provider_id", "likes", "dislikes", "tags", "createdAt", "thumb"];
 
     let blogs;
     blogs = await esDBModule.fullTextSearchAdvanced(

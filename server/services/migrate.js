@@ -19,14 +19,25 @@ async function migrateServiceDataFromMongoDBToElasticDB() {
         const allServices = await Service.find({}).populate('provider_id');
         console.log(">>>>>>>>>>", allServices?.length + " fetched from MongoDB");
 
+        const c1 = allServices.map(service => service.name);
+        const c2 = [];
+
         for (const idx in allServices) {
-            if (idx === 0) continue;
+            // if (idx === 0) continue;
             // elastic db does not allowed exiternal _id
 
             const newObjectToAdd = allServices[idx].toObject();
             const serviceProvider = await ServiceProvider.find({_id: allServices[idx].provider_id});
-            console.log("START NAME", serviceProvider?.bussinessName, "END NAME");
+            if (!serviceProvider?.length) {
+                console.log("FOUND: YYYYYYYYYYYYYYYYYYYYYYYYYYYY");
+            }
+            // console.log("START NAME", serviceProvider?.bussinessName, "END NAME");
             newObjectToAdd.provider_id = serviceProvider[0];
+
+            // c2.push({
+            //     ser: allServices[idx],
+            //     prov: serviceProvider[0]
+            // });
 
             newObjectToAdd.id = "" + newObjectToAdd._id;
 
@@ -76,9 +87,12 @@ async function migrateServiceDataFromMongoDBToElasticDB() {
             // newObjectToAdd.
             // elastic db does not allowed exiternal _id
 
+            console.log(newObjectToAdd.id);
             // await esDBModule.addToElasticDB(esDBConstant.SERVICES, newObjectToAdd);// TO SWITCH
-            // console.log("============", newObjectToAdd);
+            console.log("============", newObjectToAdd);
         }
+
+        console.log("C1: ", c1);console.log("C2: ", c2);
 
         // {query:{match:{ name: {query: 'Traditional Herbal Hair Wash'} }}}
         // const allServiceAdded = await esDBModule.queryElasticDB(esDBConstant.SERVICES, {"query":{match_all:{}}});
@@ -154,7 +168,7 @@ async function migrateBlogDataFromMongoDBToElasticDB() {
             delete newObjectToAdd.provider_id;
             delete newObjectToAdd.author;
 
-            // await esDBModule.addToElasticDB(esDBConstant.BLOGS, newObjectToAdd);// TO SWITCH
+            await esDBModule.addToElasticDB(esDBConstant.BLOGS, newObjectToAdd);// TO SWITCH
 
             console.log("============", newObjectToAdd);
         }
@@ -168,23 +182,23 @@ async function checkAfter() {
     // // {query:{match:{ name: {query: 'Traditional Herbal Hair Wash'} }}}
     // const allServiceAdded = await esDBModule.queryElasticDB(esDBConstant.SERVICES, {"query":{"bool":{ "must":[{"match":{"province":"Cà Mau"}}] ,"should":[{"term":{"catergory":"Gym"}},{"term":{"catergory":"Nail"}}]}}} );
     const allServiceAdded = await esDBModule.queryElasticDB(esDBConstant.SERVICES, {"query":{match_all:{}}});
-    console.log("SERVICE CHECK:  ", allServiceAdded?.hits?.hits, "DONE SERVICE");
+    console.log("SERVICE CHECK:  ", allServiceAdded?.hits?.hits.length, "DONE SERVICE");
     // console.log("***********");
-    // console.log("**********");
+    console.log("**********");
     // console.log("**********");
     // const allBlogAdded = await esDBModule.queryElasticDB(esDBConstant.BLOGS, {"query":{ "bool":{"must":[{"term":{"tags":"dia-diem-vui-choi"}},{"term":{"tags":"1vuichoi"}}]} }});
     const allBlogAdded = await esDBModule.queryElasticDB(esDBConstant.BLOGS, {"query":{match_all:{}}});
-    console.log("BLOG CHECK:  ", allBlogAdded?.hits?.hits?.map(h => h._source), "DONE BLGG");
+    console.log("BLOG CHECK:  ", allBlogAdded?.hits?.hits?.length, "DONE BLGG");
 }
 
 let prom1, prom2;
-// prom1 = migrateServiceDataFromMongoDBToElasticDB();
+prom1 = migrateServiceDataFromMongoDBToElasticDB();
 // prom2 = migrateBlogDataFromMongoDBToElasticDB();
 
 
 const proms = [];
-// if(prom1) {proms.push(prom1);}
-// ss     qf qif(prom2) {proms.push(prom2);}
+if(prom1) {proms.push(prom1);}
+if(prom2) {proms.push(prom2);}
 Promise.all(proms).then(() => {
     checkAfter();    
 })
