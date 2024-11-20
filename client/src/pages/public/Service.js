@@ -346,8 +346,8 @@ const Services = () => {
             <FaSortAmountDown />
             <NewInputSelect value={sort} options={sorts} changeValue={changeValue} /> */}
 
-            <div className="grow flex justify-start gap-2">
-                <span className="grow flex flex-col justify-start">
+            <div className="flex justify-start items-start gap-2">
+                {/* <span className="grow flex flex-col justify-start"> */}
                   <label className="text-gray-800 font-medium">Search&nbsp;By:&nbsp;</label>
                   <InputFormm
                     id='q'
@@ -363,8 +363,11 @@ const Services = () => {
                     value={searchFilter.term}
                   >
                   </InputFormm>
+            </div>
+            
+            <div className='flex flex-col'>
 
-                  { nearMeOption &&
+                { nearMeOption &&
                     <span className='flex justify-start items-center my-3 gap-3'>
                       {/* <span className='font-semibold text-sm p-3'>Province:</span> */}
                       {/* <InputSelect
@@ -373,7 +376,7 @@ const Services = () => {
                         changeValue={(value) => {setSearchFilter(prev => {return {...prev, province: value};}) }}
                         className={'rounded-md p-2 bg-white min-h-10 border border-gray-300'}
                       /> */}
-                      <label className="text-gray-800 font-medium mr-1">Province:</label>
+                      {/* <label className="text-gray-800 font-medium mr-1">Province:</label>
                       <Select
                         defaultValue={""}
                         name="province"
@@ -381,7 +384,7 @@ const Services = () => {
                         className="basic-multi-select"
                         classNamePrefix="select"
                         onChange={(value) => {setSearchFilter(prev => {return {...prev, province: value};}) }}
-                      />
+                      /> */}
 
                       <label className="text-gray-800 font-medium mr-1">Max Distance:</label>
                       <InputField nameKey='maxDistance'
@@ -393,7 +396,6 @@ const Services = () => {
                       />  
                     </span>
                   }
-                </span>
 
                 <span className='flex flex-col justify-center items-center gap-1'>
                   <span className=''>

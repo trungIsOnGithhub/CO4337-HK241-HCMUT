@@ -406,7 +406,7 @@ const DetailService = ({isQuickView, data}) => {
             </div>
             <div className="flex items-center gap-3 text-gray-700">
               <FaMapMarkerAlt className="text-blue-600" />
-              <span className='text-[#0a66c2]'>{serviceData?.provider_id?.address}</span>
+              <span className='text-[#0a66c2]'>{`${serviceData?.provider_id?.address}, ${serviceData?.provider_id?.province}`}</span>
             </div>
           </div>
 
@@ -434,7 +434,7 @@ const DetailService = ({isQuickView, data}) => {
         </div>
         <div className="flex items-start gap-3">
           <FaMapMarkerAlt className="text-blue-600 mt-1" />
-          <p className="text-gray-600">{serviceData?.provider_id?.address}</p>
+          <p className="text-gray-600">{`${serviceData?.provider_id?.businessName} - ${serviceData?.provider_id?.address}, ${serviceData?.provider_id?.province}`}</p>
         </div>
         {
           showMap && 
