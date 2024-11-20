@@ -415,7 +415,7 @@ const searchBlogAdvanced = asyncHandler(async (req, res) => {
     console.log("INCOMING REQUESTS:", req.body);
 
     let { searchTerm, limit, offset, categories, sortBy,
-        clientLat, clientLon, distanceText } = req.body;
+        selectedTags } = req.body;
 
     if ( (typeof(offset) != "number") ||
         !limit || offset < 0 || limit > 20)
@@ -428,7 +428,6 @@ const searchBlogAdvanced = asyncHandler(async (req, res) => {
     }
 
     let sortOption = [];
-    let geoSortOption = null;
     if (sortBy?.indexOf("-numberView") > -1) {
         sortOption.push({numberView: {order : "desc"}});
     }
@@ -438,16 +437,11 @@ const searchBlogAdvanced = asyncHandler(async (req, res) => {
     if (sortBy?.indexOf("-likes") > -1) {
         sortOption.push({likes: {order : "desc"}});
     }
-    else if (sortBy?.indexOf("price") > -1) {
-        sortOption.push({likes : {order : "asc"}});
+    else if (sortBy?.indexOf("-createdAt") > -1) {
+        sortOption.push({createdAt : {order : "asc"}});
     }
 
     // if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
-
-    let categoriesIncluded = [];
-    if (categories?.length) {
-        categoriesIncluded = categories.split(',');
-    }
 
     // let geoLocationQueryOption = null;
     // if ( clientLat <= 180 && clientLon <= 180 &&
@@ -466,15 +460,18 @@ const searchBlogAdvanced = asyncHandler(async (req, res) => {
         searchTerm,
         columnNamesToMatch,
         columnNamesToGet,
-        limit, offset,
+        limit,
+        offset,
         sortOption,
         null,
-        geoSortOption,
-        categoriesIncluded
+        null,
+        null,
+        null,
+        selectedTags
     );
     blogs = blogs?.hits;
 
-    console.log("REAL DATA RETURNED: ", blogs);
+    // console.log("REAL DATA RETURNED: ", blogs);
 
     return res.status(200).json({
         success: blogs ? true : false,

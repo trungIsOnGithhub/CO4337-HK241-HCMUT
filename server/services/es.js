@@ -121,7 +121,7 @@ async function resetElasticConnection(indexToDelete) {
 
 async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMatch,
                 fieldNameArrayToGet, limit, offset, elasticSortScheme,
-                geoFilter, geoSort, categoriesIncluded, province) {
+                geoFilter, geoSort, categoriesIncluded, province, tagsIncluded) {
     const esClient = initializeElasticClient();
 
     const queryObject = {
@@ -206,7 +206,7 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
     }
 
     if (categoriesIncluded?.length && queryObject?.query) {
-    if (!queryObject.query.bool) queryObject.query.bool = {};
+        if (!queryObject.query.bool) queryObject.query.bool = {};
         // queryObject.query.bool.filter = categoriesIncluded.map(categoryLabel => { return { term: { catergory: categoryLabel } }; });
         if (!queryObject.query.bool.should) queryObject.query.bool.should = [];
 
@@ -221,8 +221,23 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
         delete queryObject.query.match_all;
     }
 
+    if (tagsIncluded?.length && queryObject?.query) {
+        if (!queryObject.query.bool) queryObject.query.bool = {};
+        // queryObject.query.bool.filter = categoriesIncluded.map(categoryLabel => { return { term: { catergory: categoryLabel } }; });
+        if (!queryObject.query.bool.should) queryObject.query.bool.should = [];
+
+        // for (const categoryLabel of categoriesIncluded) {
+            queryObject.query.bool.should.push({
+                terms: {
+                    category: tagsIncluded
+                }
+            });
+        // }
+
+        delete queryObject.query.match_all;
+    }
+
     console.log("QUERY OBJECT: ",JSON.stringify(queryObject), "END QUERY OBJECT");
-    console.log("============================================");
 
     const elasticResponse = await esClient.search(queryObject);
     console.log(elasticResponse?.hits);

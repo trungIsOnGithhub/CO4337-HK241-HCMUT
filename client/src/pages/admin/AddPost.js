@@ -176,9 +176,12 @@ const AddPost = () => {
     if (!blogTag.includes(tag)) {
       setBlogTag(prev => [...prev, tag]);
     }
+    // else if (tags.includes(tag)) {
+    // setTags(prev => prev.fitler(tag => tag === tag?._id));
+    // }
     setCurrentTag("");
     setShowSuggestedTags(false);
-  }; 
+  };
 
   return (
     <div className='w-full h-full relative'>
@@ -264,16 +267,16 @@ const AddPost = () => {
               {/* Suggested Tags */}
               {showSuggestedTags && tags.length > 0 && (
                 <div className="mt-2 p-2 bg-white border border-gray-200 rounded-md shadow-sm">
-                  <p className="text-sm text-[#00143c] mb-2">Suggested tags:</p>
+                  <p className="text-sm text-[#00143c] mb-2">Use Existing Tags:</p>
                   <div className="flex flex-wrap gap-2">
                     {tags?.map((tag) => (
                       <button
                         key={tag?._id}
                         type="button"
-                        onClick={() => handlePredefinedTagSelect(tag?.label)}
+                        onClick={() => handlePredefinedTagSelect(tag?._id)}
                         className="inline-flex items-center px-2.5 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                       >
-                        {tag?.label}
+                        {tag?._id}
                       </button>
                     ))}
                   </div>
@@ -325,7 +328,7 @@ const AddPost = () => {
                     </span>
                 ) : (
                     <span className='flex items-center'>
-                     <FaPlus /> Create a new post
+                     <FaPlus />&nbsp;Create a new post
                     </span>
                 )}
               </Button>
@@ -338,4 +341,3 @@ const AddPost = () => {
 }
 
 export default AddPost
-

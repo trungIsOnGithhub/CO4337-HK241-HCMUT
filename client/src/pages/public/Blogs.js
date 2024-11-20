@@ -15,6 +15,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { FaSearch, FaSortAmountDown, FaBahai } from "react-icons/fa";
 import { toast } from 'react-toastify';
 import Select from 'react-select';
+import { FaHotjar } from "react-icons/fa";
 
 const Blogs = () => {
   const location = useLocation();
@@ -31,32 +32,32 @@ const Blogs = () => {
   const [tags, setTags] = useState([]);
   // const [sort, setSort] = useState([]);
   const [counts, setCounts] = useState(0);
-  const [selectedSort, setSelectedSort] = useState({});
+  const [selectedSort, setSelectedSort] = useState('no');
   const [selectedTags, setSelectedTags] = useState([]);
   const [provinceFilter, setProvinceFilter] = useState([]);
   const handleSortByChange = () => {};
-  const [topTags, setTopTags] = useState([]);
+  const [topBlogs, setTopBlogs] = useState([]);
 
   const [searchedClick, setSearchedClick] = useState(false);
   const [resetClicked, setResetClicked] = useState(false);
 
-  const sortOptions = [
-    {
-      id: 1,
-      value: 'createdAt',
-      text: 'Latest Created'
-    },
-    {
-      id: 2,
-      value: '-createdAt',
-      text: ' Created'
-    },
-    {
-      id: 3,
-      value: 'likes',
-      text: 'Popular'
-    },
-  ] 
+  // const sortOptions = [
+  //   {
+  //     id: 1,
+  //     value: 'createdAt',
+  //     text: 'Latest'
+  //   },
+  //   {
+  //     id: 2,
+  //     value: '-createdAt',
+  //     text: ' Created'
+  //   },
+  //   {
+  //     id: 3,
+  //     value: 'likes',
+  //     text: 'Popular'
+  //   },
+  // ] 
 
   const provinces = Object.entries(tinh_thanhpho).map(pair => {
     return {
@@ -79,6 +80,7 @@ const Blogs = () => {
   }
   useEffect(() => {
     fetchTags();
+    setTopBlogs([1,2,3,4]);
   }, []);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -89,14 +91,14 @@ const Blogs = () => {
 
     const sortBy = selectedSort.value;
 
-    console.log('<><>><><><><><><><><><><><><>', {
-      searchTerm,
-      limit: parseInt(process.env.REACT_APP_LIMIT),
-      sortBy,
-      selectedTags,
-      offset: 1
-      // categories
-    });
+    // console.log('<><>><><><><><><><><><><><><>', {
+    //   searchTerm,
+    //   limit: parseInt(process.env.REACT_APP_LIMIT),
+    //   sortBy,
+    //   selectedTags,
+    //   offset: 1
+    //   // categories
+    // });
 
     let response = await apiSearchBlogAdvanced({
       searchTerm,
@@ -137,15 +139,15 @@ const Blogs = () => {
   //   fetchTopTags();
   // }, []);
 
-  const handleSelectSortByChange = useCallback(selectedOptions => {
-    setSelectedSort(selectedOptions);
-  }, []);
-  const handleSelectProvinceFilterChange = useCallback(selectedOptions => {
-    setProvinceFilter(selectedOptions);
-  }, []);
-  const handleSelectTagChange = useCallback(selectedOptions => {
-    setSelectedTags(selectedOptions);
-  }, []);
+  // const handleSelectSortByChange = useCallback(selectedOptions => {
+  //   setSelectedSort(selectedOptions);
+  // }, []);
+  // const handleSelectProvinceFilterChange = useCallback(selectedOptions => {
+  //   setProvinceFilter(selectedOptions);
+  // }, []);
+  // const handleSelectTagChange = useCallback(selectedOptions => {
+  //   setSelectedTags(selectedOptions);
+  // }, []);
 
   const handleChooseBlogPost = (id) => { 
     navigate({
@@ -180,7 +182,7 @@ const Blogs = () => {
 
   
   const {register,formState:{errors}, handleSubmit, watch} = useForm()
-  const [selectedTag, setSelectedTag] = useState(null);
+  // const [selectedTag, setSelectedTag] = useState(null);
 
   // console.log(currBlogList)
   return (
@@ -217,10 +219,10 @@ const Blogs = () => {
               </select> */}
               <Select
                 value={selectedSort}
-                defaultValue={""}
+                defaultValue={"no"}
                 name="orderBy"
                 options={[
-                  { value: "", label: "No Order" },
+                  { value: "no", label: "No Order" },
                   { value: "-createdAt", label: "Newest" },
                   { value: "likes", label: "Liked Most" },
                   { value: "-numberView", label: "Most Viewed" }
@@ -232,7 +234,9 @@ const Blogs = () => {
             </div>
 
             <Button
-              handleOnclick={() => { fetchCurrentBlogList();}}
+              handleOnclick={() => {
+                setSearchedClick(prev => !prev);
+              }}
               style="px-4 py-2 rounded-md text-white bg-blue-600 font-semibold"
             >
               <span className="flex justify-center gap-2 items-center">
@@ -241,7 +245,12 @@ const Blogs = () => {
             </Button>
 
             <Button
-              handleOnclick={() => { }}
+              handleOnclick={() => {
+                setSelectedTags([]);
+                setSearchTerm('');
+                setSelectedSort('no');
+                setResetClicked(prev => !prev);
+              }}
               style="px-4 py-2 rounded-md text-white bg-slate-400 font-semibold"
             >
               <span className="flex justify-center gap-2 items-center">
@@ -324,30 +333,48 @@ const Blogs = () => {
           {/* Tags - Right Side */}
           <div className="col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Popular Tags:</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4"><FaHotjar />Popular Tags:</h2>
               <div className="flex flex-wrap gap-2">
                 {tags?.map((tag) => (
                   <button
-                    key={tag}
-                    onClick={() =>
-                      setSelectedTag(selectedTag === tag?._id ? null : tag?._id)
-                    }
+                    key={tag?._id}  
+                    value={tag?._id}
+                    onClick={(e) => {
+                      // console.log(e.target.getAttribute("value"));
+                      const selectedVal = e.target.getAttribute("value");
+                      setSelectedTags(prev => {
+                        console.log(prev);
+                        if (!prev.includes(selectedVal)) {
+                          return [...prev, selectedVal];
+                        }
+                        return prev.filter(t => t === selectedVal);
+                      });
+                    }}
                     className={`flex gap-2 items-center px-2 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                      selectedTag === tag?._id
+                      selectedTags.includes(tag?._id)
                         ? "bg-slate-400 text-white"
                         : "bg-gray-100 text-gray-800 hover:bg-gray-200"
                     }`}
                   >
-                    <span className='flex gap-2'>
-                      <FiTag className="h-3 w-3 mr-1 mt-1"/>{tag?._id}
+                    <span className='flex gap-2' value={tag?._id}>
+                      <FiTag className="h-3 w-3 mr-1 mt-1" value={tag?._id}/>{tag?._id}
                     </span>
-                    <span className='flex gap-1'>
-                      <FiEye className="h-3 w-3 mt-1 text-[#0a66c2]"/>{tag?.tagViewCount}
-                      <FiBook className="h-3 w-3 mt-1 text-amber-500"/>{tag?.tagCount}
+                    <span className='flex gap-1' value={tag?._id}>
+                      <FiEye className="h-3 w-3 mt-1 text-[#0a66c2]" value={tag?._id}/>{tag?.tagViewCount}
+                      <FiBook className="h-3 w-3 mt-1 text-amber-500" value={tag?._id}/>{tag?.tagCount}
                     </span>
                   </button>
                 ))}
               </div>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-md p-6 mt-4">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4"><FaHotjar />Popular Posts:</h2>
+                {topBlogs?.map(blog => (
+                  <div>
+                    {blog}
+                  </div>
+                ))}
             </div>
           </div>
         </div>
