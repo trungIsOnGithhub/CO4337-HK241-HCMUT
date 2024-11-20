@@ -7,7 +7,7 @@ const esDBConstant = require('./constant');
 const {default: mongoose} = require('mongoose');
 const Blog = require('../models/blog');
 
-const MONGO_DB_URL = 'mongodb://127.0.0.1:27017/dacn-tv1';
+const MONGO_DB_URL = 'mongodb://127.0.0.1:27017/ecommerce';
 
 async function migrateServiceDataFromMongoDBToElasticDB() {
     const conn = await mongoose.connect(MONGO_DB_URL);
@@ -154,7 +154,7 @@ async function migrateBlogDataFromMongoDBToElasticDB() {
             delete newObjectToAdd.provider_id;
             delete newObjectToAdd.author;
 
-            await esDBModule.addToElasticDB(esDBConstant.BLOGS, newObjectToAdd);// TO SWITCH
+            // await esDBModule.addToElasticDB(esDBConstant.BLOGS, newObjectToAdd);// TO SWITCH
 
             console.log("============", newObjectToAdd);
         }
@@ -167,7 +167,8 @@ async function migrateBlogDataFromMongoDBToElasticDB() {
 async function checkAfter() {
     // // {query:{match:{ name: {query: 'Traditional Herbal Hair Wash'} }}}
     // const allServiceAdded = await esDBModule.queryElasticDB(esDBConstant.SERVICES, {"query":{"bool":{ "must":[{"match":{"province":"Cà Mau"}}] ,"should":[{"term":{"catergory":"Gym"}},{"term":{"catergory":"Nail"}}]}}} );
-    // console.log("SERVICE CHECK:  ", allServiceAdded?.hits?.hits, "DONE SERVICE");
+    const allServiceAdded = await esDBModule.queryElasticDB(esDBConstant.SERVICES, {"query":{match_all:{}}});
+    console.log("SERVICE CHECK:  ", allServiceAdded?.hits?.hits, "DONE SERVICE");
     // console.log("***********");
     // console.log("**********");
     // console.log("**********");
@@ -176,9 +177,14 @@ async function checkAfter() {
     console.log("BLOG CHECK:  ", allBlogAdded?.hits?.hits?.map(h => h._source), "DONE BLGG");
 }
 
-// var prom1 = migrateServiceDataFromMongoDBToElasticDB();
-// var prom2 = migrateBlogDataFromMongoDBToElasticDB();
+let prom1, prom2;
+// prom1 = migrateServiceDataFromMongoDBToElasticDB();
+// prom2 = migrateBlogDataFromMongoDBToElasticDB();
 
-Promise.all([]).then(() => {
+
+const proms = [];
+// if(prom1) {proms.push(prom1);}
+// ss     qf qif(prom2) {proms.push(prom2);}
+Promise.all(proms).then(() => {
     checkAfter();    
 })
