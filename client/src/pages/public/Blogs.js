@@ -12,7 +12,7 @@ import { tinh_thanhpho } from 'tinh_thanhpho';
 import { useForm } from 'react-hook-form';
 import { FiBook, FiClock, FiEye, FiTag, FiUser } from 'react-icons/fi';
 import { formatDistanceToNow } from 'date-fns';
-import { FaSearch, FaSortAmountDown, FaBahai } from "react-icons/fa";
+import { FaSearch, FaUndo, FaBahai } from "react-icons/fa";
 import { toast } from 'react-toastify';
 import Select from 'react-select';
 import { FaHotjar } from "react-icons/fa";
@@ -34,8 +34,8 @@ const Blogs = () => {
   const [counts, setCounts] = useState(0);
   const [selectedSort, setSelectedSort] = useState('no');
   const [selectedTags, setSelectedTags] = useState([]);
-  const [provinceFilter, setProvinceFilter] = useState([]);
-  const handleSortByChange = () => {};
+  // const [provinceFilter, setProvinceFilter] = useState([]);
+  // const handleSortByChange = () => {};
   const [topBlogs, setTopBlogs] = useState([]);
 
   const [searchedClick, setSearchedClick] = useState(false);
@@ -85,43 +85,63 @@ const Blogs = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [currBlogList, setCurrBlogList] = useState([]);
+  const [offset, setOffset] = useState(0);
 
   const fetchCurrentBlogList = async () => {
     setIsLoading(true);
-
     const sortBy = selectedSort.value;
-
-    // console.log('<><>><><><><><><><><><><><><>', {
-    //   searchTerm,
-    //   limit: parseInt(process.env.REACT_APP_LIMIT),
-    //   sortBy,
-    //   selectedTags,
-    //   offset: 1
-    //   // categories
-    // });
 
     let response = await apiSearchBlogAdvanced({
       searchTerm,
       limit: parseInt(process.env.REACT_APP_LIMIT),
       sortBy,
-      selectedTags,
-      offset: 1
+      selectedTags: selectedTags.map(t => t),
+      offset: 0
       // categories
     });
     // let response = await await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
-    if(response?.success && response?.blogs){
-      // console.log('Blog Response: >>>>>>>>>>>>>>', response.blogs);
-      setCurrBlogList(response?.blogs?.hits || []);
-      setCounts(response.counts);
+    if(response?.success && response?.blogs?.hits){
+      setCurrBlogList(response.blogs.hits);
+      setCounts(response?.blogs?.total?.value);
     }
     else {
+      setCurrBlogList([]);
+      setCounts(0);
       Swal.fire("Error Occured!", "Cannot fetch Blog Data", "error");
     }
     setIsLoading(false);
   }
   useEffect(() => {
     fetchCurrentBlogList();
-},  [searchedClick, resetClicked]);
+},  [searchedClick, resetClicked, selectedTags]);
+
+// // loadmore handler
+useEffect(() => {
+  (async () => {
+    setIsLoading(true);
+    const sortBy = selectedSort.value;
+
+    let response = await apiSearchBlogAdvanced({
+      searchTerm,
+      limit: parseInt(process.env.REACT_APP_LIMIT),
+      sortBy,
+      selectedTags: selectedTags.map(t => t),
+      offset
+      // categories
+    });
+    // let response = await await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
+    if(response?.success && response?.blogs?.hits){
+      setCurrBlogList(prev => [...prev, ...response.blogs.hits]);
+      setCounts(response?.blogs?.total?.value);
+    }
+    else {
+      setCurrBlogList([]);
+      setCounts(0);
+      Swal.fire("Error Occured!", "Cannot fetch Blog Data", "error");
+    }
+    setIsLoading(false);
+  })();
+},  [offset]);
 
   // const fetchTopTags = async () => {
   //   setIsLoading(true);
@@ -194,13 +214,14 @@ const Blogs = () => {
               <label className="text-gray-800 font-medium">Search&nbsp;By:&nbsp;</label>
               <InputFormm
                 id='q'
-                register={register}
-                errors={errors}
+                register={()=>{}}
+                errors={()=>{}}
                 fullWidth
                 placeholder= 'Search blog by title name, tag ...'
                 style={'w-full bg-[#f4f6fa] min-h-10 rounded-md pl-2 flex items-center'}
                 styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
                 onChange={(event) => {setSearchTerm(event.target.value)}}
+                value={searchTerm}
               >
               </InputFormm>
             </div>
@@ -265,7 +286,7 @@ const Blogs = () => {
               <Pagination totalCount={counts}/>} */}
     
             <div className="space-y-6 mt-3">
-              {!currBlogList?.length ? (
+              {currBlogList?.length <= 0 ? (
                 <div className="bg-white rounded-lg shadow-md p-6 text-center">
                   <p className="text-gray-600">No blog posts found matching your search criteria.</p>
                 </div>
@@ -308,7 +329,7 @@ const Blogs = () => {
                           </h2>
                           <p className="text-gray-600 mb-4">{blog.excerpt}</p>
                           <div className="flex flex-wrap gap-2">
-                            {/* {blog.tags.map((tag) => (
+                            {blog.tags.map((tag) => (
                               <span
                                 key={tag}
                                 className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800"
@@ -316,7 +337,7 @@ const Blogs = () => {
                                 <FiTag className="h-3 w-3 mr-1" />
                                 {tag}
                               </span>
-                            ))} */}
+                            ))}
                           </div>
                         </div>
                       </div>
@@ -325,6 +346,22 @@ const Blogs = () => {
                 }
               )
               )}
+              {
+                currBlogList?.length < counts &&
+                <div className='flex justify-center gap-3'>
+                  <Button
+                    handleOnclick={() => {
+                      setOffset(prev => prev+1);
+                    }}
+                    style="p-2 rounded-md text-white bg-blue-600 font-semibold flex justify-center gap-2 items-center"
+                  >
+
+                    <FaUndo /><span>Load More</span>
+
+                  </Button>
+                  <p className='flex items-center'>Total Post: {counts}</p>
+                </div>
+              }
             </div>
             <div className='w-main m-auto my-4 flex justify-end'>
             </div>
@@ -347,7 +384,7 @@ const Blogs = () => {
                         if (!prev.includes(selectedVal)) {
                           return [...prev, selectedVal];
                         }
-                        return prev.filter(t => t === selectedVal);
+                        return prev.filter(t => t !== selectedVal);
                       });
                     }}
                     className={`flex gap-2 items-center px-2 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${

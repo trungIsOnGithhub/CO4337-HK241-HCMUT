@@ -163,8 +163,9 @@ const AddPost = () => {
   };
 
   const handleTagAdd = (e) => {
+    console.log("-----");
     e.preventDefault();
-    if (currentTag.trim() && !blogTag.includes(currentTag.trim())) {
+    if (currentTag && !blogTag.includes(currentTag)) {
       setBlogTag(prev => [...prev, currentTag.trim()]);
       setCurrentTag("");
       setShowSuggestedTags(false);
@@ -177,7 +178,7 @@ const AddPost = () => {
       setBlogTag(prev => [...prev, tag]);
     }
     // else if (tags.includes(tag)) {
-    // setTags(prev => prev.fitler(tag => tag === tag?._id));
+    setTags(prev => prev.filter(tag => tag === tag?._id));
     // }
     setCurrentTag("");
     setShowSuggestedTags(false);
