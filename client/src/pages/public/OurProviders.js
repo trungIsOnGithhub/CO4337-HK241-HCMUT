@@ -167,9 +167,6 @@ const OurProviders = () => {
           <Breadcrumb category={category.replace('_',' ')} />
         </div>
       </div>
-      <div className='w-main border p-4 flex justify-between m-auto mt-8'>
-        search
-      </div>
       <div className={clsx('mt-8 w-main m-auto')}>
 
 

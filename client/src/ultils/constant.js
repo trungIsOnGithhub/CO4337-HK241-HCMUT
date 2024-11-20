@@ -38,12 +38,6 @@ export const navigation = [
         value: 'OUR PROVIDERS',
         path: `/${path.OUR_PROVIDERS}`
     },
-    {
-        id: 6,
-        value: 'FAQS',
-        path: `/${path.FAQS}`
-    },
-    
 ]
 
 const {FaShieldHalved,FaTruck,FaGift,FaReply,FaTty} = icons
@@ -154,8 +148,8 @@ export const colors = [
 export const sorts = [
     {
         id:1,
-        value: '-sold',
-        text: 'Best sell'
+        value: '-soldQuantity',
+        text: 'Best seller'
     },
     {
         id:2,
@@ -170,22 +164,22 @@ export const sorts = [
     {
         id:4,
         value: 'price',
-        text: 'Price'
+        text: 'Price (low to high)'
     },
     {
         id:5,
         value: '-price',
-        text: 'Price'
+        text: 'Price (high to low)' 
     },
     {
         id:6,
         value: 'createdAt',
-        text: 'Date'
+        text: 'Date (oldest to newest)'
     },
     {
         id:7,
         value: '-createdAt',
-        text: 'Date'
+        text: 'Date (newest to oldest)'
     }, 
 ]
 
@@ -353,16 +347,8 @@ export const adminSidebar = [
                 path: `/${path.ADMIN}/${path.THEMEANDAPPEARANCE}`
             },
             {
-                text: 'Hero Section',
-                path: `/${path.ADMIN}/${path.HEROSECTION}`
-            },
-            {
                 text: 'Footer Section',
                 path: `/${path.ADMIN}/${path.FOOTERSECTION}`
-            },
-            {
-                text: 'Service Page',
-                path: `/${path.ADMIN}/${path.SERVICEPAGE}`
             },
         ],
         icon: <MdOutlineColorLens size={20}/>

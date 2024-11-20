@@ -1,25 +1,33 @@
 import React, { useEffect, useState } from 'react'
 import bgImage from '../../assets/clouds.svg'
-import { FaArrowLeft, FaPlus, FaSpinner } from 'react-icons/fa'
-import { Button, InputFormm } from 'components'
-import { useForm } from 'react-hook-form'
-import { IoColorPaletteOutline } from 'react-icons/io5'
-import { toast } from 'react-toastify'
-import { getBase64, validate } from 'ultils/helper'
-import { apiAddVariant, apiGetOneProduct } from 'apis'
 import { useParams } from 'react-router-dom'
-import { GrPrevious } from 'react-icons/gr'
+import { apiGetOneProduct, apiUpdateVariant } from 'apis'
+import { IoColorPaletteOutline } from 'react-icons/io5'
+import { FaArrowLeft, FaPlus, FaSpinner } from 'react-icons/fa'
+import { useForm } from 'react-hook-form'
+import { Button, InputFormm } from 'components'
+import { toast } from 'react-toastify'
+import { getBase64 } from 'ultils/helper'
 
-const AddVariantProduct = () => {
-    const {register, formState:{errors}, reset, handleSubmit, watch} = useForm()
-    const [preview, setPreview] = useState({
-        thumb: null,
-        images: []
-    })
-    const [colorCode, setColorCode] = useState("#000000")
+const UpdateVariantProduct = () => {
+    const {product_id, variant_id} = useParams()
     const [productData, setProductData] = useState(null)
-    const {product_id} = useParams()
+    const [variantData, setVariantData] = useState(null)
+    const {register, formState:{errors}, reset, handleSubmit, watch} = useForm()
+    const [colorCode, setColorCode] = useState(null)
+    const [preview, setPreview] = useState({
+      thumb: null,
+      images: []
+    })
+    const [originalPreview, setOriginalPreview] = useState({
+      thumb: null,
+      images: []
+    })
     const [isLoading, setIsLoading] = useState(false)
+
+    useEffect(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    }, []);
 
     useEffect(() => {
         const fetchProduct = async() => {
@@ -30,82 +38,116 @@ const AddVariantProduct = () => {
         }
         fetchProduct()
     }, [product_id])
+
+    useEffect(() => {
+        if(productData) {
+            const variant = productData.variants.find(v => v._id === variant_id)
+            setVariantData(variant)
+        }
+        
+    }, [productData]);
+
+    useEffect(() => {
+      reset({
+        title: variantData?.title || '',
+        quantity: variantData?.quantity || '',
+        color: variantData?.color || '',
+      })
+      setPreview({
+        thumb: variantData?.thumb || '',
+        images: variantData?.image || []
+      })
+      setOriginalPreview({
+        thumb: variantData?.thumb || '',
+        images: variantData?.image || []
+      })
+      setColorCode(variantData?.colorCode || '#000000')
+    }, [variantData])
+
     
-    console.log(productData)
+    const handleUpdateVariant = async(data) => {
+      const finalPayload = {...data, colorCode}
+      if(data.thumb?.length === 0){
+        console.log('aa')
+        finalPayload.thumb = originalPreview.thumb
+      }
+      else{
+        console.log('bb')
+        finalPayload.thumb = data.thumb[0]
+      }
+
+      if(data.images?.length === 0){
+        finalPayload.images = originalPreview.images
+      }
+      else{
+        finalPayload.images = data.images
+      }
+      const formData = new FormData()
+      for(let i of Object.entries(finalPayload)){
+        formData.append(i[0],i[1])
+      }
+
+      formData.delete('images');
+      for (let image of finalPayload.images) formData.append('images', image)
+
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+      setIsLoading(true)
+      const response = await apiUpdateVariant(formData, productData?._id, variantData?._id)
+      setIsLoading(false)
+      if(response.success){
+        toast.success('Update variant successfully')
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
+      }
+      else{
+        toast.error('Update variant failed')
+      }
+
+    }
+
+    const handleBackUpdateProduct = () => {
+      window.history.back()
+    }
+    const handleChangeColor = (e) => {
+      setColorCode(e.target.value);
+    }
 
     const handlePreviewThumb = async(file) => {
-        const base64Thumb = await getBase64(file)
-        setPreview(prev => ({...prev, thumb: base64Thumb}))
-      }
-    
+      console.log('Preview thumb')
+      const base64Thumb = await getBase64(file)
+      setPreview(prev => ({...prev, thumb: base64Thumb}))
+    }
+  
     const handlePreviewImages = async(files) => {
-    const imagesPreview = []
-    for(let i of files){
+      const imagesPreview = []
+      for(let i of files){
         if(i.type !== 'image/png' && i.type !== 'image/jpeg'){
-        toast.warning('The file sent is not a JPG or PNG')
-        return
+          toast.warning('The file sent is not a JPG or PNG')
+          return
         }
         const base64 = await getBase64(i)
-        imagesPreview.push({
-        name: i.name,
-        path: base64
-        })
-    }
-    if(imagesPreview.length > 0){
+        imagesPreview.push(base64)
+      }
+      if(imagesPreview.length > 0){
         setPreview(prev => ({...prev, images: imagesPreview}))
+      }
     }
-    }
-    
+  
     useEffect(() => {
-    handlePreviewThumb(watch('thumb')[0])
+      if(watch('thumb') instanceof FileList && watch('thumb').length > 0) handlePreviewThumb(watch('thumb')[0])
+      else {
+        setPreview(prev => ({...prev, thumb: originalPreview.thumb}))
+      }
     }, [watch('thumb')])
-
+  
     useEffect(() => {
-    handlePreviewImages(watch('images'))
+      if(watch('images') instanceof FileList && watch('images').length > 0) handlePreviewImages(watch('images'))
+      else{
+        setPreview(prev => ({...prev, images: originalPreview.images}))
+      }
     }, [watch('images')])
 
-    const handleCreateVariant = async(data) => {
-        const finalPayload = {...data, colorCode}
-
-        const formData = new FormData()
-        for(let i of Object.entries(finalPayload)){
-            formData.append(i[0],i[1])
-        }
-        formData.delete('thumb')
-        if(finalPayload.thumb) formData.append('thumb', finalPayload.thumb[0])
-
-        formData.delete('images')
-        if(finalPayload.images) {
-            for (let image of finalPayload.images) formData.append('images', image)
-        }
-
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}:`, value);
-        }
-        setIsLoading(true)
-        const response = await apiAddVariant(formData, product_id)
-        setIsLoading(false)
-        if(response.success){
-            toast.success(response.mes)
-            reset()
-            setColorCode("#000000")
-            setPreview({
-              thumb: null,
-              images: []
-            })
-          }
-          else{
-            toast.error(response.mes)
-          }
-    }
-    
-    const handleChangeColor = (e) => {
-        setColorCode(e.target.value);
-    }
-
-    const handleBackManageProduct = () => {
-        window.history.back()
-    }
   return (
     <div className='w-full h-full relative'>
       <div className='inset-0 absolute z-0'>
@@ -113,12 +155,12 @@ const AddVariantProduct = () => {
       </div>
       <div className='relative z-10 w-full'>
         <div className='w-full h-fit flex justify-start gap-1 p-4 items-end'>
-            <div onClick={handleBackManageProduct} className='text-[#00143c] cursor-pointer'><FaArrowLeft size={28}/></div>
-            <span className='text-[#00143c] text-3xl h-fit font-semibold'>Add New Variant</span>
+            <div onClick={handleBackUpdateProduct} className='text-[#00143c] cursor-pointer'><FaArrowLeft size={28}/></div>
+            <span className='text-[#00143c] text-3xl h-fit font-semibold'>Update Variant</span>
             <span className='text-[#00143c] text-xl ml-4 font-medium'>{`(Product: ${productData?.title})`}</span>
         </div>
         <div className='w-[95%] h-fit shadow-2xl rounded-md bg-white ml-4 mb-[50px] px-4 py-2 flex flex-col gap-4'>
-          <form onSubmit={handleSubmit(handleCreateVariant)}>
+          <form onSubmit={handleSubmit(handleUpdateVariant)}>
             <div className='w-full my-6 flex gap-4'>
               <InputFormm
                 label = 'Variant Name'
@@ -168,6 +210,7 @@ const AddVariantProduct = () => {
                     </div>
                 </div>
             </div>
+
             <div className='w-full my-6 flex gap-4'>
               <InputFormm
                 label = 'Quantity'
@@ -184,10 +227,11 @@ const AddVariantProduct = () => {
                 styleInput={'w-full px-4 py-2 border text-[#00143c] outline-none rounded-md border-[#dee1e6]'}
               />
             </div>
+            
             <div className='w-full my-6 flex flex-col'>
               <label className='text-[#00143c] font-medium mb-1' htmlFor='thumb'>Upload Thumb</label>
               <input 
-                {...register('thumb', {required: 'Need upload thumb'})}
+                {...register('thumb')}
                 type='file' 
                 accept="image/*"
                 id='thumb'
@@ -205,7 +249,7 @@ const AddVariantProduct = () => {
             <div className='w-full my-6 flex flex-col'>
               <label className='text-[#00143c] font-medium mb-1' htmlFor='thumb'>Upload Images Of Variant</label>
               <input 
-                {...register('images', {required: 'Need upload image of product'})}
+                {...register('images')}
                 type='file' 
                 id='images' 
                 accept="image/*"
@@ -219,26 +263,28 @@ const AddVariantProduct = () => {
               <div className='mt-2 flex w-[800px] gap-1 overflow-x-auto px-2 py-1 scrollbar-thin'>
                 {
                   preview.images?.map((el,index) => (
-                    <img key={index} src={el.path} alt='image of variant' className='w-[33%] max-h-[200px] object-contain border border-[#dee1e6] rounded-md shadow-inner'></img>
+                    <img key={index} src={el} alt='image of variant' className='w-[33%] max-h-[200px] object-contain border border-[#dee1e6] rounded-md shadow-inner'></img>
                   ))
                 }
               </div>
               }
             </div>
+
             <div className='w-full mt-6 mb-4 flex justify-center'>
               <Button type='submit' style={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center'}>
                 {isLoading ? (
                     <span className="flex items-center">
                     <FaSpinner className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
-                    Creating a new variant...
+                    Updating variant...
                     </span>
                 ) : (
                     <span className='flex items-center'>
-                     <FaPlus /> Create a new variant
+                     Update variant
                     </span>
                 )}
               </Button>
             </div>
+
           </form>
         </div>
       </div>
@@ -246,4 +292,4 @@ const AddVariantProduct = () => {
   )
 }
 
-export default AddVariantProduct
+export default UpdateVariantProduct

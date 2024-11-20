@@ -3,11 +3,10 @@ import React, { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom';
 import bgImage from '../../assets/clouds.svg'
 import avatarDefault from '../../assets/avatarDefault.png'
-import { IoReturnDownBack } from 'react-icons/io5';
 import { toast } from 'react-toastify';
 import { formatPrice } from 'ultils/helper';
 import { TbDiscount } from 'react-icons/tb';
-import { FaMoneyBillWave, FaShippingFast } from 'react-icons/fa';
+import { FaArrowLeft, FaMoneyBillWave, FaShippingFast } from 'react-icons/fa';
 import { FaBox, FaTruck, FaCheckCircle } from "react-icons/fa";
 import moment from 'moment';
 
@@ -114,7 +113,7 @@ const ManageOrderDetail = () => {
       </div>
       <div className="relative z-10"> {/* Thêm lớp này để đảm bảo dòng chữ không bị che mất */}
         <div className='w-full h-20 flex items-end gap-1 p-4'>
-          <div onClick={handleBackManageOrder} className='text-[#00143c] cursor-pointer'><IoReturnDownBack size={28}/></div>
+          <div onClick={handleBackManageOrder} className='text-[#00143c] cursor-pointer'><FaArrowLeft size={28}/></div>
           <span className='text-[#00143c] text-3xl font-semibold'>Order Detail</span>
         </div>
         <div className='w-[95%] min-h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] flex flex-col gap-4'>

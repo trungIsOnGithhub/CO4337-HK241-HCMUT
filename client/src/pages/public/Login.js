@@ -63,6 +63,25 @@ const Login = () => {
         inputRefs.current[0]?.focus();
       }, []);
 
+
+      useEffect(() => {
+        // Hàm xử lý khi nhấn phím
+        const handleKeyDown = (event) => {
+          if (event.key === "Enter") {
+            console.log('enter')
+            handleSubmit(event);
+          }
+        };
+    
+        // Gắn sự kiện lắng nghe
+        window.addEventListener("keydown", handleKeyDown);
+    
+        // Dọn dẹp sự kiện khi component bị unmount
+        return () => {
+          window.removeEventListener("keydown", handleKeyDown);
+        };
+      }, [payload, isRegister]); 
+
     const handleInputChangee = (index, value) => {
         if (value.length <= 1 && /^\d*$/.test(value)) {
             const newVerificationCode = [...verificationCode];
@@ -171,8 +190,11 @@ const Login = () => {
 
     //SUBMIT
     const handleSubmit = useCallback(async(e) =>{
+        console.log("Submit")
         //login
         if(!isRegister){
+            console.log("login")
+            console.log(payload)
             if (Object.keys(errors).length === 0 && payload.email !== "" && payload.password !== "") {
                 const {firstName, lastName, mobile, ...data} = payload
                 setIsLoading(true)
@@ -200,7 +222,6 @@ const Login = () => {
 
             if (Object.keys(newErrors).length === 0) {
                 setIsLoading(true);
-                console.log(payload)
                 const formData = new FormData()
                 for(let i of Object.entries(payload)){
                     formData.append(i[0],i[1])
@@ -211,7 +232,6 @@ const Login = () => {
                 }
                 const result = await apiRegister(formData)
                 setIsLoading(false)
-                console.log(result)
                 if(result.success){
                     setIsVerify(true)
                 }
@@ -275,6 +295,10 @@ const Login = () => {
           setPreviewImage(URL.createObjectURL(file));
         }
     };
+
+    const handleNavigateForgotPasswordPage = () => {
+        navigate(`/${path.FORGOT_PASSWORD}`)
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-cover bg-center relative">
@@ -374,7 +398,7 @@ const Login = () => {
                         )}
                     </div>
                     <div className="flex justify-end items-center">
-                        <button className="text-sm text-[#0a66c2] hover:underline transition-colors duration-200">
+                        <button onClick={()=>handleNavigateForgotPasswordPage()} className="text-sm text-[#0a66c2] hover:underline transition-colors duration-200">
                             Forgot Password?
                         </button>
                     </div>

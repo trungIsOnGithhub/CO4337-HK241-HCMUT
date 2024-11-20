@@ -11,7 +11,7 @@ import { apiGetAllStaffs } from 'apis'
 import { apiGetOneService, apiUpdateServiceByAdmin } from 'apis/service'
 import { useParams } from 'react-router-dom'
 import bgImage from '../../assets/clouds.svg'
-// import { IoReturnDownBack } from 'react-icons/io5'
+// import { FaArrowLeft } from 'react-icons/io5'
 import { FaArrowLeft, FaSpinner } from 'react-icons/fa';
 
 const UpdateService = () => {

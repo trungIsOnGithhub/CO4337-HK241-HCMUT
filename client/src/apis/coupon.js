@@ -21,9 +21,10 @@ export const apiGetAllCouponsByProviderId = (providerId) => axios({
     method: 'get',
 })
 
-export const apiGetAllCouponsByAdmin = () => axios({
+export const apiGetAllCouponsByAdmin = (params) => axios({
     url: '/coupon/getAllCouponsByAdmin',
     method: 'get',
+    params
 })
 
 // Thêm hai hàm mới này

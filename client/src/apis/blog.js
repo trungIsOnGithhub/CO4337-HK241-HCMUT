@@ -92,8 +92,8 @@ export const apiAddBlogComment = (data) => axios({
     data
 })
 
-export const apiGetBlogByProviderId = (params) => axios({
-    url: '/blog/blogofprovider',
+export const apiGetBlogByProviderId = (prid, params) => axios({
+    url: '/blog/blogofprovider/' + prid,
     method: 'get',
     params
 })

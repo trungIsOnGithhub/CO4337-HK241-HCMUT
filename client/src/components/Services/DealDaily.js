@@ -8,29 +8,29 @@ import { useSelector } from 'react-redux'
 import withBaseComponent from 'hocs/withBaseComponent'
 import { getDealDaily } from 'store/product/productSlice'
 import { apiGetServicePublic } from 'apis/service'
+import { useDispatch } from 'react-redux'
 const {FaStar, MdMenu} = icons
 let idInterval 
-const DealDaily = ({dispatch}) => {
+const DealDaily = () => {
     const [hour, setHour] = useState(0)
     const [minute, setMinute] = useState(0)
     const [second, setSecond] = useState(0)
     const [expire, setExpire] = useState(false)
-    const [service, setService] = useState({})
     const {dealDaily} = useSelector(s => s.product)
+    const dispatch = useDispatch()
 
     const fetchDealDaily = async () => {
         const response = await apiGetServicePublic()
         // {sort: '-totalRatings', limit:10}
         if(response.success){
-            const pr = response.services[Math.round(Math.random()*3)]
-            dispatch(getDealDaily({data:pr, time: Date.now() + 24*60*60*1000}))
+            const pr = response.services[Math.round(Math.random()*5)]
+            dispatch(getDealDaily({data:pr?.sv, time: Date.now() + 24*60*60*1000}))
             const h = 23 - new Date().getHours()
             const m = 60 - new Date().getMinutes()
             const s = 60 - new Date().getSeconds()
             setHour(h)
             setMinute(m)
             setSecond(s)
-            setService(pr);
         }
         else{
             const h = 23 - new Date().getHours()
@@ -41,13 +41,11 @@ const DealDaily = ({dispatch}) => {
             setSecond(s)
         }
     }
-    useEffect(()=>{
-        fetchDealDaily()
-    },[])
+
     useEffect(() => {
         idInterval && clearInterval(idInterval)
         if(moment(moment(dealDaily?.time).format('MM/DD/YYYY')).isBefore(moment())){
-            // fetchDealDaily()
+            fetchDealDaily()
         }
     }, [expire])
 
@@ -86,6 +84,7 @@ const DealDaily = ({dispatch}) => {
             clearInterval(idInterval)
         }
     },[second, minute, hour, expire])
+
   return (
     <div className='w-full border flex-auto'>
         <div className='flex items-center justify-between p-4 w-full'>
@@ -96,11 +95,11 @@ const DealDaily = ({dispatch}) => {
         <div className='w-full flex flex-col items-center pt-8 px-4 gap-2'>
         <img src={dealDaily?.data?.thumb||'https://nayemdevs.com/wp-content/uploads/2020/03/default-product-image.png'} 
           className='w-full object-contain' alt=''/>
-          <span className='line-clamp-1 text-center'>{service?.title}</span>
-          <span className='flex h-4'>{renderStarfromNumber(4, 20)?.map((el, index)=>(
+          <span className='line-clamp-1 text-center'>{dealDaily?.data?.name}</span>
+          <span className='flex h-4'>{renderStarfromNumber(Math.round(dealDaily?.data?.totalRatings), 20)?.map((el, index)=>(
             <span key={index}> {el} </span>
           ))}</span>
-          <span>{`${formatPrice(service?.price)} VND`}</span>
+          <span>{`${formatPrice(dealDaily?.data?.price)} VND`}</span>
         </div>
         <div className='px-4 mt-8'>
             <div className='flex justify-center gap-2 mb-4'>
@@ -120,4 +119,4 @@ const DealDaily = ({dispatch}) => {
 
 }
 
-export default withBaseComponent(memo(DealDaily))
+export default memo(DealDaily)

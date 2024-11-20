@@ -2,7 +2,7 @@ import { apiGetCouponsByServiceId, apiGetOneService, apiGetServiceProviderById, 
 import clsx from 'clsx';
 import Button from 'components/Buttons/Button';
 import React, { useEffect, useState } from 'react';
-import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { createSearchParams, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { convertH2M, formatPrice, formatPricee } from 'ultils/helper';
 import path from 'ultils/path';
 import { apiUpdateCartService } from 'apis';
@@ -39,6 +39,12 @@ const Booking = () => {
   const [showVoucher, setShowVoucher] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState(null)
   const [isLoading, setIsLoading] = useState(false);
+
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
+  }, [pathname]);
 
   useEffect(() => {
     const coupon = usableDiscountCodes?.find(el => el?.code === selectedVoucher?.code)

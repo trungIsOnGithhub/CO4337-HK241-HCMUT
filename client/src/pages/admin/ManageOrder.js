@@ -123,20 +123,6 @@ const ManageOrder = () => {
             <h1 className='text-[#00143c] font-medium text-[16px]'>{`Orders (${counts})`}</h1>
             <Button style={'px-4 py-2 rounded-md text-[#00143c] bg-[#fff] font-semibold w-fit h-fit flex gap-2 items-center border border-[#b3b9c5]'}><TfiExport className='text-lg font-bold' /> Export Data</Button>
           </div>
-          <div className='w-full h-[48px] mx-[-6px] mt-[-6px] mb-[10px] flex'>
-            <form className='flex-1' >
-              <InputFormm
-                id='q'
-                register={register}
-                errors={errors}
-                fullWidth
-                placeholder= 'Search order by product, customer ...'
-                style={'w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'}
-                styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
-              >
-              </InputFormm>
-            </form>
-          </div>
           <div className="flex space-x-4">
               <button
                 onClick={() => {

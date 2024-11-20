@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { createSearchParams, Link, Outlet, useNavigate, useParams } from 'react-router-dom';
+import { createSearchParams, Link, Outlet, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import goongjs from '@goongmaps/goong-js';
 import '@goongmaps/goong-js/dist/goong-js.css';
 import { FaChevronDown, FaChevronUp, FaRegClock, FaWindowClose } from 'react-icons/fa';
 import { FaLocationDot, FaUserGear } from 'react-icons/fa6';
-import { BookingFromProvider, Button, ProductItem, ServiceItem } from 'components';
+import { BookingFromProvider, Button, InputFormm, Pagination, ProductItem, ServiceItem } from 'components';
 import clsx from 'clsx';
 import { MdOutlineSort, MdSearchOff } from 'react-icons/md';
 import { FiClock, FiEye, FiTag, FiUser } from 'react-icons/fi';
@@ -24,14 +24,18 @@ import likedIn from '../../assets/likedin.png'
 import youTube from '../../assets/youtube.png'
 import twitter from '../../assets/twitter.jpg'
 import tiktok from '../../assets/tiktok.jpg'
-import { TbMessageCircleFilled } from 'react-icons/tb';
+// import { TbMessageCircleFilled } from 'react-icons/tb';
 import {showMessageBox} from '../../store/app/appSlice'
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import logoWeb from '../../assets/logoWeb.png'
 // import { IoChatbubbleEllipsesSharp } from 'react-icons/io5';
+import useDebounce from 'hook/useDebounce'
+import { useForm } from 'react-hook-form';
 
 const DetailProvider = () => {
+    const {register,formState:{errors}, handleSubmit, watch, reset} = useForm()
+    const location = useLocation()
     const navigate = useNavigate()
     const [variable, setVariable] = useState('service')
     const [providerData, setProviderData] = useState(null)
@@ -50,6 +54,10 @@ const DetailProvider = () => {
     const [adminData, setAdminData] = useState(null)
     const {current} = useSelector(state => state.user)
     const dispatch = useDispatch()
+    const [params] = useSearchParams()
+    const [countServices, setCountServices] = useState(0)
+    const [countProducts, setCountProducts] = useState(0)
+    const [countBlogs, setCountBlogs] = useState(0)
 
     const GOONG_API_KEY = 'HjmMHCMNz4xyFqc54FsgxrobHmt48vwp7U8xzQUC';
     const GOONG_MAPTILES_KEY = 'hzX8cXab72XCozZSYvZqkV26qMMQ8JdpkiUwK1Iy';
@@ -95,6 +103,7 @@ const DetailProvider = () => {
               .addTo(map.current)
       }
       }, [providerData, mapContainer.current, variable]);
+
     useEffect(() => {
         const fetchProviderData = async() => {
           const response = await apiGetServiceProviderById(prid)
@@ -104,6 +113,22 @@ const DetailProvider = () => {
         }
         fetchProviderData()
     }, [prid])
+
+    const queryDebounce = useDebounce(watch('q'),800)
+
+    useEffect(() => {
+      if(queryDebounce) {
+        navigate({
+          pathname: location.pathname,
+          search: createSearchParams({q:queryDebounce}).toString()
+        })
+      }
+      else{
+        navigate({
+          pathname: location.pathname,
+        })
+      }
+    }, [queryDebounce])
 
     useEffect(() => {
       const fetchAdminData = async () => {
@@ -118,28 +143,35 @@ const DetailProvider = () => {
     }, [providerData]);
 
     useEffect(() => {
-        const fetchData = async() => {
-          const response = await apiGetServiceByProviderId(prid)
-          setService(response?.services)
-        }
-        fetchData()
-    }, [prid]);
+      const searchParams = Object.fromEntries([...params]) 
+      const fetchData = async() => {
+        const response = await apiGetServiceByProviderId(prid,  {...searchParams, limit: process.env.REACT_APP_LIMIT})
+        setService(response?.services)
+        setCountServices(response?.counts)
+      }
+      fetchData()
+      window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    }, [prid, params]);
 
     useEffect(() => {
+        const searchParams = Object.fromEntries([...params]) 
         const fetchData = async() => {
-          const response = await apiGetProductByProviderId(prid)
+          const response = await apiGetProductByProviderId(prid, {...searchParams, limit: process.env.REACT_APP_LIMIT})
           setProduct(response?.products)
+          setCountProducts(response?.counts)
         }
         fetchData()
-    }, [prid]);
+    }, [prid,params]);
 
     useEffect(() => {
-        const fetchData = async() => {
-          const response = await apiGetBlogByProviderId({prid})
-          setBlogs(response?.blogs)
-        }
-        fetchData()
-      }, [prid]);
+      const searchParams = Object.fromEntries([...params]) 
+      const fetchData = async() => {
+        const response = await apiGetBlogByProviderId(prid, {...searchParams, limit: process.env.REACT_APP_LIMIT})
+        setBlogs(response?.blogs)
+        setCountBlogs(response?.counts)
+      }
+      fetchData()
+    }, [prid, params]);
 
     useEffect(() => {
         // Cuộn lên đầu trang khi component được render
@@ -184,9 +216,19 @@ const DetailProvider = () => {
       
     };
 
+    const handleShowChat = () => {
+      const to = {
+        id: adminData[0]?._id, firstName: adminData[0]?.firstName, lastName: adminData[0]?.lastName, avatar: adminData[0]?.avatar
+      }
+      dispatch(showMessageBox({from:current?._id, to: to}))
+    }
+  
+    const handleBackOurProvider = () => {
+      navigate(`/${path.OUR_PROVIDERS}`)
+    }
+
     const renderFooter = () => {
       if (!indexFooter) return null;
-      console.log('-||||||||||||||||||>', indexFooter);
     
       // Sắp xếp theo order (thứ tự thấp hơn sẽ ở trên cùng)
       const sortedFooter = [...indexFooter].sort((a, b) => a.order - b.order);
@@ -326,18 +368,30 @@ const DetailProvider = () => {
       );
     };
 
-  console.log(adminData)
-
-  const handleShowChat = () => {
-    const to = {
-      id: adminData[0]?._id, firstName: adminData[0]?.firstName, lastName: adminData[0]?.lastName, avatar: adminData[0]?.avatar
+  const handleSetSort = (sort) => {
+    if(sort !== ""){
+      navigate({
+        pathname: location.pathname,
+        search: createSearchParams({
+          sort
+        }).toString()
+      })
     }
-    dispatch(showMessageBox({from:current?._id, to: to}))
   }
 
-  const handleBackOurProvider = () => {
-    window.history.back()
-  }
+  useEffect(() => {
+    reset({
+      q: ''
+    })
+
+    navigate({
+      pathname: location.pathname,
+      search: '' // Clear tất cả search parameters
+    });
+
+    setShowSort(false)
+  }, [variable]);
+
   return (
     <div className='w-full'>
         <div className={clsx('w-full fixed top-0 left-0 h-[86px] flex justify-center z-[100]', providerData?.theme === 'dark' && 'bg-[#212529] text-white')}>
@@ -365,11 +419,11 @@ const DetailProvider = () => {
                   {
                     showSort && 
                     <div className='absolute w-[160px] h-[152px] px-[8px] py-[6px] bg-[#212529] rounded-md right-0 mt-2 z-50 flex flex-col'>
-                      <span className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Price (lowest)</span>
-                      <span className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Price (highest)</span>
-                      <span className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Popularity</span>
-                      <span className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Name (ascending)</span>
-                      <span className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Name (descending)</span>
+                      <span onClick={()=>handleSetSort("price")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Price (lowest)</span>
+                      <span onClick={()=>handleSetSort("-price")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Price (highest)</span>
+                      <span onClick={()=>handleSetSort("-bookingQuantity")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Popularity</span>
+                      <span onClick={()=>handleSetSort("name")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Name (ascending)</span>
+                      <span onClick={()=>handleSetSort("-name")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Name (descending)</span>
                     </div>
                   }
                 </div>
@@ -378,20 +432,37 @@ const DetailProvider = () => {
                 <div className='w-[18%] h-full  mt-[32px] border-r border-white'>
                   <div className='w-[187px] h-[40px] flex gap-1 items-center border rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px] bg-[#212529]'>
                     <span className='text-xl'><CiSearch size={20}/></span>
-                    <input className=' h-full w-[129px] bg-transparent outline-none text-[15px] text-[white] placeholder:text-white' placeholder='Search services'/>
+                    <form className='flex-1' >
+                      <InputFormm
+                        id='q'
+                        register={register}
+                        errors={errors}
+                        fullWidth
+                        placeholder= 'Search service'
+                        style={'w-full  h-10 rounded-md pl-2 flex items-center'}
+                        styleInput={'w-[100%] bg-[#212529] outline-none text-white'}
+                      >
+                      </InputFormm>
+                    </form>
                   </div>
                 </div>
                 <div className='w-[80%] h-full mt-[32px]'>
                   {
-                    service?.length > 0 ? <div className='flex flex-wrap gap-4'>
-                    {
-                      service?.map((el,index) => (
-                        <div key={index} className='w-[31%]'>
-                          <ServiceItem serviceData={el} providerData={providerData}/>
-                        </div>
-                      ))
-                    }
-                  </div>
+                    service?.length > 0 ? 
+                    <div className='flex flex-col gap-8'>
+                      <div className='flex flex-wrap gap-4 min-h-[300px]'>
+                        {
+                          service?.map((el,index) => (
+                            <div key={index} className='w-[31%]'>
+                              <ServiceItem serviceData={el} providerData={providerData}/>
+                            </div>
+                          ))
+                        }
+                      </div>
+                      <div className='text-white flex-1 flex items-end'>
+                        <Pagination totalCount={countServices} />
+                      </div>
+                    </div>
                   :
                   <div className='w-full h-full flex flex-col gap-1 items-center justify-center'>
                       <MdSearchOff size={128}/>
@@ -415,32 +486,48 @@ const DetailProvider = () => {
                   {
                     showSort && 
                     <div className='absolute w-[160px] h-[152px] px-[8px] py-[6px] bg-[#212529] rounded-md right-0 mt-2 z-50 flex flex-col'>
-                      <span className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Price (lowest)</span>
-                      <span className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Price (highest)</span>
-                      <span className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Popularity</span>
-                      <span className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Name (ascending)</span>
-                      <span className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Name (descending)</span>
+                      <span onClick={()=>handleSetSort("price")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Price (lowest)</span>
+                      <span onClick={()=>handleSetSort("-price")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Price (highest)</span>
+                      <span onClick={()=>handleSetSort("-soldQuantity")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Best Seller</span>
+                      <span onClick={()=>handleSetSort("title")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Name (ascending)</span>
+                      <span onClick={()=>handleSetSort("-title")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Name (descending)</span>
                     </div>
                   }
                 </div>
               </div>
               <div className='w-full h-full flex gap-6'>
                 <div className='w-[18%] h-full  mt-[32px] border-r border-white'>
-                  <div className='w-[187px] h-[40px] flex gap-1 items-center border rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px] bg-[#212529]'>
-                    <span className='text-xl'><CiSearch size={20}/></span>
-                    <input className=' h-full w-[129px] bg-transparent outline-none text-[15px] text-[white] placeholder:text-white' placeholder='Search products'/>
-                  </div>
+                <div className='w-[187px] h-[40px] flex gap-1 items-center border rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px] bg-[#212529]'>
+                  <span className='text-xl'><CiSearch size={20}/></span>
+                  <form className='flex-1' >
+                    <InputFormm
+                      id='q'
+                      register={register}
+                      errors={errors}
+                      fullWidth
+                      placeholder= 'Search product'
+                      style={'w-full  h-10 rounded-md pl-2 flex items-center'}
+                      styleInput={'w-[100%] bg-[#212529] outline-none text-white'}
+                    >
+                    </InputFormm>
+                  </form>
+                </div>
                 </div>
                 <div className='w-[80%] h-full mt-[32px]'>
                   {
                     product?.length > 0 ?
-                    <div className='flex flex-wrap gap-4'>    
-                      {product?.map((el,index) => (
-                        <div key={index} className='w-[31%]'>
-                          <ProductItem productData={el}/>
+                      <div className='flex flex-col gap-8'>
+                        <div className='flex flex-wrap gap-4 min-h-[300px]'>    
+                          {product?.map((el,index) => (
+                            <div key={index} className='w-[31%]'>
+                              <ProductItem productData={el}/>
+                            </div>
+                          ))} 
                         </div>
-                      ))} 
-                    </div>
+                        <div className='text-white flex-1 flex items-end'>
+                          <Pagination totalCount={countProducts} />
+                        </div>
+                      </div>
                     :
                     <div className='w-full h-full flex flex-col gap-1 items-center justify-center'>
                       <MdSearchOff size={128}/>
@@ -457,29 +544,44 @@ const DetailProvider = () => {
             variable === 'book' && 
             <div className={clsx('w-full min-h-[476px] flex justify-center', providerData?.theme === 'dark' &&  'bg-[#343a40] text-white')}>
           <div className='w-[90%] flex gap-8'>
-            <div className='w-[66%] h-fit bg-[#212529] mt-[32px] rounded-md p-[24px] flex flex-col gap-4'>
-              {
-                service?.length > 0 ? 
-                <>
+            <div className='w-[66%] h-fit bg-[#212529] mt-[32px] rounded-md p-[24px] flex flex-col gap-4 mb-16'>
                 <div className='w-full h-[40px] flex justify-between items-center'>
-                <span className='text-[18px] font-semibold'>Choose Service</span>
-                <div className='w-[187px] h-[40px] flex gap-1 items-center border rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px] bg-[#212529]'>
-                  <span className='text-xl'><CiSearch size={20}/></span>
-                  <input className=' h-full w-[129px] bg-transparent outline-none text-[15px] text-[white] placeholder:text-white' placeholder='Search services'/>
+                  <span className='text-[18px] font-semibold'>Choose Service</span>
+                  <div className='w-[187px] h-[40px] flex gap-1 items-center border rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px] bg-[#212529]'>
+                      <span className='text-xl'><CiSearch size={20}/></span>
+                      <form className='flex-1' >
+                        <InputFormm
+                          id='q'
+                          register={register}
+                          errors={errors}
+                          fullWidth
+                          placeholder= 'Search service'
+                          style={'w-full  h-10 rounded-md pl-2 flex items-center'}
+                          styleInput={'w-[100%] bg-[#212529] outline-none text-white'}
+                        >
+                        </InputFormm>
+                      </form>
+                  </div>
                 </div>
-              </div>
-              <div className='w-full flex flex-col gap-4'>
-                {service?.map((el, index) => 
-                  <BookingFromProvider providerData={providerData} serviceData={el}/>
-                )}
-              </div>
-                </>
-                :
-                <div className='w-full h-[272px] flex flex-col gap-1 items-center justify-center'>
-                      <MdSearchOff size={128}/>
-                      <span>No services available</span>
-                </div>
-              }
+                {
+                service?.length > 0 ?       
+                  <div className='w-full flex flex-col gap-8'>
+                    <div className='w-full flex flex-col gap-4 min-h-[300px]'>
+                      {service?.map((el, index) => 
+                        <BookingFromProvider providerData={providerData} serviceData={el}/>
+                      )}
+                    </div> 
+
+                    <div className='text-white flex-1 flex items-end'>
+                      <Pagination totalCount={countServices} />
+                    </div>
+                  </div> 
+                  :
+                  <div className='w-full h-[272px] flex flex-col gap-1 items-center justify-center'>
+                        <MdSearchOff size={128}/>
+                        <span>No services available</span>
+                  </div>
+                }
             </div>
             <div className='w-[30%] flex flex-col gap-4'>
                 <div className='h-fit pt-[20px] pb-[16px] bg-[#212529] mt-[32px] rounded-md'>
@@ -534,84 +636,87 @@ const DetailProvider = () => {
             variable === 'blog' &&
             <div className={clsx('w-full min-h-[476px] flex justify-center', providerData?.theme === 'dark' &&  'bg-[#343a40] text-white')}>
           <div className='w-[90%] pt-[24px] pb-[48px] flex flex-col'>
-            <div className='w-full flex justify-between'>
+            <div className='w-full flex justify-start'>
               <span className='text-[22px] font-semibold'>Blogs</span>
-              <div className='relative'>
-                <Button handleOnclick={()=>{setShowSort(prev => !prev)}} style={'px-[23px] rounded-l-full rounded-r-full text-white border border-[##e6ebef] w-fit h-[40px] flex items-center gap-2'}><MdOutlineSort />Sort by</Button>
-                {
-                  showSort && 
-                  <div className='absolute w-[160px] h-[152px] px-[8px] py-[6px] bg-[#212529] rounded-md right-0 mt-2 z-50 flex flex-col'>
-                    <span className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Price (lowest)</span>
-                    <span className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Price (highest)</span>
-                    <span className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Popularity</span>
-                    <span className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Name (ascending)</span>
-                    <span className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Name (descending)</span>
-                  </div>
-                }
-              </div>
             </div>
             <div className='w-full h-full flex gap-6'>
               <div className='w-[18%] h-full  mt-[32px] border-r border-white'>
                 <div className='w-[187px] h-[40px] flex gap-1 items-center border rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px] bg-[#212529]'>
                   <span className='text-xl'><CiSearch size={20}/></span>
-                  <input className=' h-full w-[129px] bg-transparent outline-none text-[15px] text-[white] placeholder:text-white' placeholder='Search blogs'/>
+                  <form className='flex-1' >
+                    <InputFormm
+                      id='q'
+                      register={register}
+                      errors={errors}
+                      fullWidth
+                      placeholder= 'Search blog'
+                      style={'w-full  h-10 rounded-md pl-2 flex items-center'}
+                      styleInput={'w-[100%] bg-[#212529] outline-none text-white'}
+                    >
+                    </InputFormm>
+                  </form>
                 </div>
               </div>
               <div className='w-[80%] h-full mt-[32px]'>
                 {
                   blogs?.length > 0 ?
-                  <div className='flex flex-col gap-4'>    
-                    {
-                      blogs?.map(blog => (
-                        <div
-                            onClick={() => handleChooseBlogPost(blog?._id)}
-                            key={blog.id}
-                            className="w-full cursor-pointer bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:transform hover:scale-[1.02]"
-                          >
-                          <div className="md:flex">
-                            <div className="md:flex-shrink-0">
-                              <img
-                                className="h-36 w-full md:w-36 object-cover"
-                                src={blog.thumb}
-                                alt={blog.title}
-                              />
-                            </div>
-                            <div className="p-6">
-                              <div className="flex items-center space-x-4 mb-2">
-                                <div className="flex items-center text-gray-500">
-                                  <FiUser className="h-4 w-4 mr-1" />
-                                  <span className="text-sm">{`${blog?.author?.lastName} ${blog?.author?.firstName}`}</span>
-                                </div>
-                                <div className="flex items-center text-gray-500">
-                                  <FiClock className="h-4 w-4 mr-1" />
-                                  <span className="text-sm">
-                                    {formatDistanceToNow(new Date(blog?.createdAt), { addSuffix: true })}
-                                  </span>
-                                </div>
-                                <div className="flex items-center text-gray-500">
-                                  <FiEye className="h-4 w-4 mr-1" />
-                                  <span className="text-sm">{blog?.numberView}</span>
-                                </div>
+                  <div className='w-full flex flex-col gap-8'>
+                    <div className='flex flex-col gap-4 min-h-[300px]'>    
+                      {
+                        blogs?.map(blog => (
+                          <div
+                              onClick={() => handleChooseBlogPost(blog?._id)}
+                              key={blog.id}
+                              className="w-full cursor-pointer bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:transform hover:scale-[1.02]"
+                            >
+                            <div className="md:flex">
+                              <div className="md:flex-shrink-0">
+                                <img
+                                  className="h-36 w-full md:w-36 object-cover"
+                                  src={blog.thumb}
+                                  alt={blog.title}
+                                />
                               </div>
-                              <h2 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-1">
-                                {blog.title}
-                              </h2>
-                              <div className="flex flex-wrap gap-2">
-                                {blog.tags.map((tag) => (
-                                  <span
-                                    key={tag}
-                                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800"
-                                  >
-                                    <FiTag className="h-3 w-3 mr-1" />
-                                    {tag}
-                                  </span>
-                                ))}
+                              <div className="p-6">
+                                <div className="flex items-center space-x-4 mb-2">
+                                  <div className="flex items-center text-gray-500">
+                                    <FiUser className="h-4 w-4 mr-1" />
+                                    <span className="text-sm">{`${blog?.author?.lastName} ${blog?.author?.firstName}`}</span>
+                                  </div>
+                                  <div className="flex items-center text-gray-500">
+                                    <FiClock className="h-4 w-4 mr-1" />
+                                    <span className="text-sm">
+                                      {formatDistanceToNow(new Date(blog?.createdAt), { addSuffix: true })}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center text-gray-500">
+                                    <FiEye className="h-4 w-4 mr-1" />
+                                    <span className="text-sm">{blog?.numberView}</span>
+                                  </div>
+                                </div>
+                                <h2 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-1">
+                                  {blog.title}
+                                </h2>
+                                <div className="flex flex-wrap gap-2">
+                                  {blog.tags.map((tag) => (
+                                    <span
+                                      key={tag}
+                                      className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800"
+                                    >
+                                      <FiTag className="h-3 w-3 mr-1" />
+                                      {tag}
+                                    </span>
+                                  ))}
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      ))
-                    }
+                        ))
+                      }
+                    </div>
+                    <div className='text-white flex-1 flex items-end'>
+                      <Pagination totalCount={countBlogs} />
+                    </div>
                   </div>
                   :
                   <div className='w-full h-full flex flex-col gap-1 items-center justify-center'>
