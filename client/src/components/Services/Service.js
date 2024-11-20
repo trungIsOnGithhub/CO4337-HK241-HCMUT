@@ -31,6 +31,7 @@ const Service = ({serviceData, keyToExtract='_source'}) => {
   }
 
   const handleNavigateBookService = () => {
+    // console.log("=====>", serviceData[keyToExtract]);
     if(!current){
       return Swal.fire({
         name: "You haven't logged in",
@@ -53,7 +54,7 @@ const Service = ({serviceData, keyToExtract='_source'}) => {
     else{
       navigate({
         pathname: `/${path.BOOKING}`,
-        search: createSearchParams({sid: serviceData?.[keyToExtract]?._id}).toString()
+        search: createSearchParams({sid: serviceData?.[keyToExtract]?.id}).toString()
     })
     }
   }
@@ -67,6 +68,7 @@ const Service = ({serviceData, keyToExtract='_source'}) => {
             <div className='w-full flex flex-col gap-1'>
                 <span className='text-[18px] font-medium line-clamp-1'>{serviceData?.[keyToExtract]?.name}</span>
                 <span className='text-[14px] text-[#868e96] flex gap-2 items-center'>Duration <span className='text-black font-medium'>{`${serviceData?.[keyToExtract]?.duration}min`}</span></span>
+                <span className='text-[14px] text-[#868e96] flex gap-2 items-center'>Duration <span className='text-black font-medium'>{serviceData?.[keyToExtract]?.providername}</span></span>
                 <span className='text-[14px] text-[#868e96] flex items-center gap-2'><span className='flex gap-1 items-center'><MdOutlineCategory /> Category</span> <span className='font-medium'>{`${serviceData?.[keyToExtract]?.category}`}</span></span>
             </div>
             <div className='flex justify-between'>

@@ -90,10 +90,9 @@ async function setUpElasticConnection() {
                 providername: {
                     type: "text"
                 },
-                // tags:{
-                //     type:Array,
-                //     required:true
-                // },
+                tags:{
+                    type: "text"
+                },
                 numberView: {
                     type: "integer"
                 },
@@ -347,9 +346,9 @@ const multiFunc = async function(indexName, init, reset) {
     }
     if (reset) {
         const esClient = initializeElasticClient();
-        if (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.SERVICES })) {
-            resetElasticConnection(ELASTIC_INDEX_NAME_MAP.SERVICES);
-        }
+        // if (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.SERVICES })) {
+        //     resetElasticConnection(ELASTIC_INDEX_NAME_MAP.SERVICES);
+        // }
         if (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.BLOGS })) {
             resetElasticConnection(ELASTIC_INDEX_NAME_MAP.BLOGS);
         }
@@ -436,8 +435,7 @@ const multiFunc = async function(indexName, init, reset) {
 (async function () {
     // // COMMENT THIS WHEN RUN MIGRATE OR ANY OTHE FILE INCLUDED THIS
     // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, false, true); // TO SWITCH
-    // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, true, false); // TO SWITCH
-    // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, false, false);
+    await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, true, false); // TO SWITCH
 })();
 
 // initializeElasticClient().indices.get({

@@ -3,7 +3,7 @@ let asyncHandler = require("express-async-handler")
 let Order = require('../models/order')
 let Service = require('../models/service');
 let ServiceProvider = require('../models/ServiceProvider');
-let moment = require('moment');
+// let moment = require('moment');
 //  let Interaction = require('../models/interaction')
 
 let getRevenueByDateRange = asyncHandler(async(req, res) => {
@@ -111,10 +111,12 @@ let get3RecentWeekRange = () => {
     let nowDate = new Date();
     let currentWeekMonday = getMondayOfWeek(nowDate);
 
-    let sundayOfLastWeek = moment(currentWeekMonday).subtract(1, 'days').toDate();
+    // let sundayOfLastWeek = moment(currentWeekMonday).subtract(1, 'days').toDate();
+    let sundayOfLastWeek = currentWeekMonday.setDate(currentWeekMonday.getDate()-1);
     let mondayOfLastWeek = getMondayOfWeek(sundayOfLastWeek);
 
-    let sundayOfPreviousWeek = moment(mondayOfLastWeek).subtract(1, 'days').toDate();
+    // let sundayOfPreviousWeek = moment(mondayOfLastWeek).subtract(1, 'days').toDate();
+    let sundayOfPreviousWeek = mondayOfLastWeek.setDate(mondayOfLastWeek.getDate()-1);
     let mondayOfPreviousWeek = getMondayOfWeek(sundayOfPreviousWeek);
 
     return [

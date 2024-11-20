@@ -4,7 +4,7 @@ const asyncHandler = require('express-async-handler');
 const User = require('../models/user');
 const { prependListener } = require('../models/ServiceProvider');
 const ES_CONSTANT = require('../services/constant');
-// const esDBModule = require('../services/es');
+const esDBModule = require('../services/es');
 
 const createNewBlogPost = asyncHandler(async(req, res)=>{
     const {_id} = req.user
@@ -458,24 +458,23 @@ const searchBlogAdvanced = asyncHandler(async (req, res) => {
     // }
 
     const columnNamesToMatch = ["title", "providername", "authorname"];
-    const columnNamesToGet = ["id", "title", "providername", "authorname", "numberView", "provider_id", "likes", "dislikes"];
+    const columnNamesToGet = ["id", "title", "providername", "authorname", "numberView", "provider_id", "likes", "dislikes", "tags"];
 
-    let blogs = [];
-    // blogs = await esDBModule.fullTextSearchAdvanced(
-    //     ES_CONSTANT.BLOGS,
-    //     searchTerm,
-    //     columnNamesToMatch,
-    //     columnNamesToGet,
-    //     limit, offset,
-    //     sortOption,
-    //     geoLocationQueryOption,
-    //     geoSortOption,
-    //     categoriesIncluded
-    // );
-    // blogs = blogs?.hits;
+    let blogs;
+    blogs = await esDBModule.fullTextSearchAdvanced(
+        ES_CONSTANT.BLOGS,
+        searchTerm,
+        columnNamesToMatch,
+        columnNamesToGet,
+        limit, offset,
+        sortOption,
+        null,
+        geoSortOption,
+        categoriesIncluded
+    );
+    blogs = blogs?.hits;
 
-    // console.log("Query Input Parameter: ", blogs);
-    // console.log("REAL DATA RETURNED: ", blogs);
+    console.log("REAL DATA RETURNED: ", blogs);
 
     return res.status(200).json({
         success: blogs ? true : false,

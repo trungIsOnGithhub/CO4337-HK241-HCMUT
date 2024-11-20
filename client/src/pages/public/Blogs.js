@@ -105,8 +105,8 @@ const Blogs = () => {
     });
     // let response = await await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
     if(response?.success && response?.blogs){
-      console.log('Blog Response: >>>>>>>>>>>>>>', response.blogs);
-      setCurrBlogList(response.blogs);
+      // console.log('Blog Response: >>>>>>>>>>>>>>', response.blogs);
+      setCurrBlogList(response?.blogs?.hits || []);
       setCounts(response.counts);
     }
     else {
@@ -253,61 +253,65 @@ const Blogs = () => {
               <Pagination totalCount={counts}/>} */}
     
             <div className="space-y-6 mt-3">
-              {currBlogList.length === 0 ? (
+              {!currBlogList?.length ? (
                 <div className="bg-white rounded-lg shadow-md p-6 text-center">
                   <p className="text-gray-600">No blog posts found matching your search criteria.</p>
                 </div>
               ) : (
-                currBlogList?.map((blog) => (
-                  <div
-                    onClick={() => handleChooseBlogPost(blog?._id || blog?.id)}
-                    key={blog.id}
-                    className="cursor-pointer bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:transform hover:scale-[1.02]"
-                  >
-                    <div className="md:flex">
-                      <div className="md:flex-shrink-0">
-                        <img
-                          className="h-48 w-full md:w-48 object-cover"
-                          src={blog.thumb}
-                          alt={blog.title}
-                        />
-                      </div>
-                      <div className="p-6">
-                        <div className="flex items-center space-x-4 mb-2">
-                          <div className="flex items-center text-gray-500">
-                            <FiUser className="h-4 w-4 mr-1" />
-                            <span className="text-sm">{`${blog?.author?.lastName} ${blog?.author?.firstName}`}</span>
-                          </div>
-                          <div className="flex items-center text-gray-500">
-                            <FiClock className="h-4 w-4 mr-1" />
-                            <span className="text-sm">
-                              {formatDistanceToNow(new Date(blog?.createdAt), { addSuffix: true })}
-                            </span>
-                          </div>
-                          <div className="flex items-center text-gray-500">
-                            <FiEye className="h-4 w-4 mr-1" />
-                            <span className="text-sm">{blog?.numberView}</span>
-                          </div>
+                currBlogList?.map((blog) => {
+                  // console.log('====', blog);
+                  blog = blog['_source'];
+                  return (<div
+                      onClick={() => handleChooseBlogPost(blog?._id || blog?.id)}
+                      key={blog.id}
+                      className="cursor-pointer bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:transform hover:scale-[1.02]"
+                    >
+                      <div className="md:flex">
+                        <div className="md:flex-shrink-0">
+                          <img
+                            className="h-48 w-full md:w-48 object-cover"
+                            src={blog.thumb}
+                            alt={blog.title}
+                          />
                         </div>
-                        <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                          {blog.title}
-                        </h2>
-                        <p className="text-gray-600 mb-4">{blog.excerpt}</p>
-                        <div className="flex flex-wrap gap-2">
-                          {blog.tags.map((tag) => (
-                            <span
-                              key={tag}
-                              className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800"
-                            >
-                              <FiTag className="h-3 w-3 mr-1" />
-                              {tag}
-                            </span>
-                          ))}
+                        <div className="p-6">
+                          <div className="flex items-center space-x-4 mb-2">
+                            <div className="flex items-center text-gray-500">
+                              <FiUser className="h-4 w-4 mr-1" />
+                              <span className="text-sm">{blog?.authorname}</span>
+                            </div>
+                            <div className="flex items-center text-gray-500">
+                              <FiClock className="h-4 w-4 mr-1" />
+                              {/* <span className="text-sm">
+                                {formatDistanceToNow(new Date(blog?.createdAt), { addSuffix: true })}
+                              </span> */}
+                            </div>
+                            <div className="flex items-center text-gray-500">
+                              <FiEye className="h-4 w-4 mr-1" />
+                              <span className="text-sm">{blog?.numberView}</span>
+                            </div>
+                          </div>
+                          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                            {blog.title}
+                          </h2>
+                          <p className="text-gray-600 mb-4">{blog.excerpt}</p>
+                          <div className="flex flex-wrap gap-2">
+                            {/* {blog.tags.map((tag) => (
+                              <span
+                                key={tag}
+                                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800"
+                              >
+                                <FiTag className="h-3 w-3 mr-1" />
+                                {tag}
+                              </span>
+                            ))} */}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  );
+                }
+              )
               )}
             </div>
             <div className='w-main m-auto my-4 flex justify-end'>

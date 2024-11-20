@@ -12,8 +12,8 @@ import clsx from 'clsx'
 import { useDispatch, useSelector } from 'react-redux'
 // import withBaseComponent from 'hocs/withBaseComponent'
 import { getCurrent } from 'store/user/asyncAction'
-import { tinh_thanhpho } from 'tinh_thanhpho'
-import { apiModifyUser } from '../../apis/user'
+import { tinh_thanhpho } from 'tinh_thanhpho';
+import { apiModifyUser } from '../../apis/user';
 import Swal from "sweetalert2";
 import Button from 'components/Buttons/Button';
 import { FaBahai, FaSearch  } from "react-icons/fa";
@@ -28,7 +28,7 @@ const Services = () => {
   // const [active, setActive] = useState(null)
   const [params, setParams] = useSearchParams()
   const [sort, setSort] = useState('')
-  const [nearMeOption, setNearMeOption] = useState(false)
+  const [nearMeOption, setNearMeOption] = useState(true)
   const {category} = useParams()
   const {isShowModal} = useSelector(state => state.app);
   const [filterCateg, setFilterCateg] = useState([]);
@@ -299,7 +299,7 @@ const Services = () => {
 
             setNearMeOption(true);
           }, () => {
-            Swal.fire('Cannot get your position!');
+            Swal.fire('Cannot get location!', 'Check your internet connection or browser setting!' ,'error');
             setNearMeOption(false);
           });
         }
@@ -493,7 +493,7 @@ const Services = () => {
                 // setSvCategories([]);
                 setResetClicked(prev => !prev);
               }}
-              style="px-4 py-2 rounded-md text-white bg-slate-400 font-semibold my-2"
+              style="px-4 py-2 rounded-md text-white bg-slate-400 font-semibold"
             >
               <span className="flex justify-center gap-1 items-center">
                 <FaBahai /><span>Reset</span>
@@ -560,7 +560,7 @@ const Services = () => {
           {/* <InputField nameKey='term' value={searchFilter.term} setValue={setSearchFilter} placeholder={"Search By Name, Province..."} /> */}
 
         </div>
-      <div className={clsx('mt-8 w-main m-auto flex gap-4 flex-wrap', isShowModal ? 'hidden' : '')}>
+      <div className={clsx('mt-8 w-main m-auto flex gap-4 flex-wrap justify-center', isShowModal ? 'hidden' : '')}>
         {services?.map((service, index) => (
           <div key={index} className='w-[32%]'>
             <Service serviceData={service}/>

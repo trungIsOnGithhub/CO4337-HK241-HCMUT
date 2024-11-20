@@ -7,7 +7,7 @@ const esDBConstant = require('./constant');
 const {default: mongoose} = require('mongoose');
 const Blog = require('../models/blog');
 
-const MONGO_DB_URL = 'mongodb://127.0.0.1:27017/ecommerce';
+const MONGO_DB_URL = 'mongodb://127.0.0.1:27017/dacn-tv1';
 
 async function migrateServiceDataFromMongoDBToElasticDB() {
     const conn = await mongoose.connect(MONGO_DB_URL);
@@ -77,7 +77,6 @@ async function migrateServiceDataFromMongoDBToElasticDB() {
             // elastic db does not allowed exiternal _id
 
             await esDBModule.addToElasticDB(esDBConstant.SERVICES, newObjectToAdd);// TO SWITCH
-
             console.log("============", newObjectToAdd);
         }
 
@@ -106,7 +105,7 @@ async function migrateBlogDataFromMongoDBToElasticDB() {
             const newObjectToAdd = allBlogs[idx].toObject();
 
             newObjectToAdd.provider_id = (await ServiceProvider.find({_id: allBlogs[idx].provider_id}))[0];
-            console.log("===++++====>", newObjectToAdd.provider_id);
+            // console.log("===++++====>", newObjectToAdd.provider_id);
 
             const author = await User.findById(allBlogs[idx].author);
             if (!author) continue;
@@ -148,14 +147,14 @@ async function migrateBlogDataFromMongoDBToElasticDB() {
             delete newObjectToAdd._id;
             delete newObjectToAdd.__v;
             // delete newObjectToAdd.createdAt;
-            // delete newObjectToAdd.thumb;
+            delete newObjectToAdd.comments;
             delete newObjectToAdd.content;
-            // delete newObjectToAdd.provider_id;
+            delete newObjectToAdd.provider_id;
             delete newObjectToAdd.author;
 
             await esDBModule.addToElasticDB(esDBConstant.BLOGS, newObjectToAdd);// TO SWITCH
 
-            console.log("============", newObjectToAdd);
+            // console.log("============", newObjectToAdd);
         }
     }
     else {
@@ -165,18 +164,18 @@ async function migrateBlogDataFromMongoDBToElasticDB() {
 
 async function checkAfter() {
     // // {query:{match:{ name: {query: 'Traditional Herbal Hair Wash'} }}}
-    const allServiceAdded = await esDBModule.queryElasticDB(esDBConstant.SERVICES, {"query":{match_all: {}}});
-    console.log("SERVICE CHECK:  ", allServiceAdded?.hits?.hits, "DONE SERVICE");
-    console.log("*******************************************");
-    console.log("*******************************************");
+    // const allServiceAdded = await esDBModule.queryElasticDB(esDBConstant.SERVICES, {"query":{"bool":{ "must":[{"match":{"province":"Cà Mau"}}] ,"should":[{"term":{"catergory":"Gym"}},{"term":{"catergory":"Nail"}}]}}} );
+    // console.log("SERVICE CHECK:  ", allServiceAdded?.hits?.hits, "DONE SERVICE");
+    // console.log("*******************************************");
+    // console.log("*******************************************");
     console.log("*******************************************");
     const allBlogAdded = await esDBModule.queryElasticDB(esDBConstant.BLOGS, {"query":{match_all: {}}});
     console.log("BLOG CHECK:  ", allBlogAdded?.hits?.hits, "DONE BLGG");
 }
 
-var prom1 = migrateServiceDataFromMongoDBToElasticDB();
-var prom2 = migrateBlogDataFromMongoDBToElasticDB();
+// var prom1 = migrateServiceDataFromMongoDBToElasticDB();
+// var prom2 = migrateBlogDataFromMongoDBToElasticDB();
 
-Promise.all([prom1, prom2]).then(() => {
+Promise.all([]).then(() => {
     checkAfter();
 })

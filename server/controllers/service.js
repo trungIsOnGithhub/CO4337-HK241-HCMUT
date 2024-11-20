@@ -88,7 +88,7 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
     const columnNamesToMatch = ["name", "providername", "province"];
     const columnNamesToGet = ["id", "name","thumb","price","category","duration","provider_id", "province", "totalRatings"];
 
-    let services = [];
+    let services;
     services = await esDBModule.fullTextSearchAdvanced(
         ES_CONSTANT.SERVICES,
         searchTerm,
