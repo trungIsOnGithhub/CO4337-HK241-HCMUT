@@ -26,6 +26,7 @@ const AddPost = () => {
 
   const [tags, setTags] = useState([]);
   const [selectedTags, setSelectedTags] = useState([]);
+
   const fetchTags = async() => {
     const response = await apiGetAllPostTags();
     if(response?.success){
@@ -156,6 +157,7 @@ const AddPost = () => {
     setBlogTag((prev) => {
       return prev.filter((tag) => tag !== tagToRemove)
     });
+    setTags(prev => [...prev, { _id: tagToRemove }]);
   };
 
   const handleTagInputFocus = () => {
@@ -174,12 +176,14 @@ const AddPost = () => {
 
 
   const handlePredefinedTagSelect = (tag) => {
+
     if (!blogTag.includes(tag)) {
       setBlogTag(prev => [...prev, tag]);
     }
-    // else if (tags.includes(tag)) {
-    setTags(prev => prev.filter(tag => tag === tag?._id));
-    // }
+    if (tags.some(t => t._id === tag)) {
+      setTags(prev => prev.filter(t => t._id !== tag));
+    }
+
     setCurrentTag("");
     setShowSuggestedTags(false);
   };
@@ -265,8 +269,10 @@ const AddPost = () => {
                 </button>
               </div>
 
+
+
               {/* Suggested Tags */}
-              {showSuggestedTags && tags.length > 0 && (
+              {showSuggestedTags && (
                 <div className="mt-2 p-2 bg-white border border-gray-200 rounded-md shadow-sm">
                   <p className="text-sm text-[#00143c] mb-2">Use Existing Tags:</p>
                   <div className="flex flex-wrap gap-2">

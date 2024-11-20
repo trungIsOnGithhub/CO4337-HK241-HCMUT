@@ -11,11 +11,11 @@ const GridPercentageCalendar = () => {
   const currentUser = useSelector(state => state.user.current);
 
   const [occupancyData, setOccupancyData] = useState([]);
-  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth()); // 0-11
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  // const [selectedMonth, setCurrentMonth] = useState(new Date().getMonth()); // 0-11
+  // const [selectedYear, setCurrentYear] = useState(new Date().getFullYear());
   const [hoverInfo, setHoverInfo] = useState({ date: null, occupancy: null, isHovered: false });
 
-  const [selectedMonth, setSelectedMonth] = useState(2);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(2024);
 
   const getDaysInMonth = (month, year) => {
@@ -27,7 +27,7 @@ const GridPercentageCalendar = () => {
   };
 
   const fetchOccupancyData = async () => {
-    // const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+    // const daysInMonth = getDaysInMonth(selectedMonth, selectedYear);
     // const newData = Array.from({ length: daysInMonth }, () => Math.floor(Math.random() * 101));
     console.log(selectedMonth, ';;;;');
     let resp = await apiGetOccupancyDataByMonth({ currMonth: selectedMonth+1, currYear: selectedYear, spid: currentUser?.provider_id?._id });
@@ -41,8 +41,8 @@ const GridPercentageCalendar = () => {
     fetchOccupancyData();
   }, [selectedMonth, selectedYear]);
 
-  const daysInMonth = getDaysInMonth(currentMonth, currentYear);
-  const startDay = getStartDayOfMonth(currentMonth, currentYear);
+  const daysInMonth = getDaysInMonth(selectedMonth, selectedYear);
+  const startDay = getStartDayOfMonth(selectedMonth, selectedYear);
 
   const getOccupancyColor = (percentage) => {
     if (percentage >= 81) return 'bg-blue-900';
@@ -54,24 +54,24 @@ const GridPercentageCalendar = () => {
 
   const changeMonth = (direction) => {
     if (direction === 'prev') {
-      if (currentMonth === 0) {
-        setCurrentMonth(11);
-        setCurrentYear(currentYear - 1);
+      if (selectedMonth === 0) {
+        setSelectedMonth(11);
+        setSelectedYear(selectedYear - 1);
       } else {
-        setCurrentMonth(currentMonth - 1);
+        setSelectedMonth(selectedMonth - 1);
       }
     } else {
-      if (currentMonth === 11) {
-        setCurrentMonth(0);
-        setCurrentYear(currentYear + 1);
+      if (selectedMonth === 11) {
+        setSelectedMonth(0);
+        setSelectedYear(selectedYear + 1);
       } else {
-        setCurrentMonth(currentMonth + 1);
+        setSelectedMonth(selectedMonth + 1);
       }
     }
   };
 
   const handleMouseEnter = (day, occupancy) => {
-    const date = new Date(currentYear, currentMonth, day + 1).toLocaleDateString();
+    const date = new Date(selectedYear, selectedMonth, day + 1).toLocaleDateString();
     setHoverInfo({ date, occupancy, isHovered: true });
   };
 
@@ -108,7 +108,7 @@ const GridPercentageCalendar = () => {
         <div className="flex items-center space-x-2">
           <button onClick={() => changeMonth('prev')} className="text-gray-500">&lt;</button>
           <span className="text-sm text-gray-500">
-            {new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })} {currentYear}
+            {new Date(selectedYear, selectedMonth).toLocaleString('default', { month: 'long' })} {selectedYear}
           </span>
           <button onClick={() => changeMonth('next')} className="text-gray-500">&gt;</button>
         </div> */}
@@ -129,14 +129,14 @@ const GridPercentageCalendar = () => {
           <div
             key={day}
             className={`relative w-8 h-8 rounded-lg ${getOccupancyColor(percentage)} flex items-center justify-center text-white`}
-            onMouseEnter={() => handleMouseEnter(day, percentage)}
-            onMouseLeave={handleMouseLeave}
+            onClick={() => handleMouseEnter(day, percentage)}
+            // onMouseLeave={handleMouseLeave}
           >
             {/* {day + 1} */}
             {hoverInfo.isHovered && new Date(hoverInfo.date).getDate() === day && (
               <div className="bottom-16 p-2 bg-white border border-gray-300 rounded-lg shadow-lg text-sm text-gray-700 z-10 w-fit">
-                <div><strong>Date:</strong> {hoverInfo.date}</div>
-                <div><strong>Occupancy:</strong> {hoverInfo.occupancy || 0}%</div>
+                <div><strong>Date:</strong>&nbsp;{hoverInfo.date}</div>
+                <div><strong>Occupancy:</strong>&nbsp;{hoverInfo.occupancy || 0}%</div>
               </div>
             )}
           </div>

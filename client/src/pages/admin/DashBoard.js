@@ -225,11 +225,11 @@ const DashBoard = () => {
 
         <div className="flex gap-4 justify-center">
           <section className='grid grid-cols-2 gap-2 bg-white p-3 text-gray-900 rounded-md grow border-2'>
-            <div className='flex flex-col justify-start'>
+            <div className='flex flex-col justify-start items-center gap-2'>
               <h5 className='pb-1 fond-semibold text-sm'>
                 New Customers
               </h5>
-              <span className='text-lg font-bold'>
+              <span className='text-lg font-bold text-center'>
                 {/* { currentMetricView.new_customer + '---' } */}
                 { currentMetricView.new_customer === 3 && newCustomerTriplet[2] }
                 { currentMetricView.new_customer === 2 && newCustomerTriplet[1] }
@@ -262,9 +262,9 @@ const DashBoard = () => {
                   }
               </span>
             </div>
-            <div className='flex flex-col justify-start'>
+            <div className='flex flex-col justify-center items-center gap-2'>
               <select
-                className="text-xs border-2 rounded-md"
+                className="border-2 rounded-md p-1"
                 onChange={(event) => { onChangeMetricViewOption(event, "new_customer"); }}
               >
                 {metricViewOptions.map(
@@ -277,7 +277,7 @@ const DashBoard = () => {
               </select>
 
 
-              <div className="w-28 h-18 mt-2 flex justify-center">     
+              <div className="w-24 h-16 mt-2">     
                   <Line data={{
                     labels: ['p', 'c', 't'],
                     datasets: [
@@ -303,7 +303,7 @@ const DashBoard = () => {
           </section>
 
           <section className='grid grid-cols-2 gap-2 bg-white p-2 text-gray-900 rounded-md grow border-2'>
-            <div className='flex flex-col justify-start'>
+            <div className='flex flex-col justify-start items-center'>
               <h5 className='pb-1 fond-semibold text-sm'>
                 Revenue
               </h5>
@@ -340,9 +340,10 @@ const DashBoard = () => {
                   }
               </span>
             </div>
-            <div className='flex flex-col justify-start'>
+
+            <div className='flex flex-col justify-center items-center gap-2'>
               <select
-                className="text-xs border-2 rounded-md"
+                className="p-1 border-2 rounded-md"
                 onChange={(event) => { onChangeMetricViewOption(event, "revenue"); }}
               >
                 {metricViewOptions.map(
@@ -378,11 +379,11 @@ const DashBoard = () => {
 
 
           <section className='grid grid-cols-2 gap-2 bg-white p-3 text-gray-900 rounded-md grow border-2'>
-            <div className='flex flex-col justify-start'>
-              <h5 className='pb-1 fond-semibold text-sm'>
+          <div className='flex flex-col justify-start items-center gap-2'>
+                <h5 className='pb-1 fond-semibold text-sm'>
                   Occupancy
               </h5>
-              <span className='text-lg flex flex-col font-bold'>
+              <span className='text-lg font-bold flex flex-col text-center'>
                 { currentMetricView.occupancy === 3 && occupancyTriplet[2]?.toFixed(1) }
                 { currentMetricView.occupancy === 2 && occupancyTriplet[1]?.toFixed(1) }
                 { currentMetricView.occupancy === 1 && occupancyTriplet[2]?.toFixed(1) }
@@ -415,9 +416,9 @@ const DashBoard = () => {
                   }
               </span>
             </div>
-            <div className='flex flex-col justify-start'>
+            <div className='flex flex-col justify-center items-center gap-2'>
               <select
-                className="text-xs border-2 rounded-md"
+                className="p-1 border-2 rounded-md"
                 onChange={(event) => { onChangeMetricViewOption(event, "occupancy"); }}
                 defaultValue={3}
               >

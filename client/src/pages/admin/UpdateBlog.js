@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import bgImage from '../../assets/clouds.svg'
-import { apiGetAllPostTags, apiGetOneBlog, apiUpdateBlogByAdmin } from 'apis/blog'
+import { apiGetAllPostTags, apiGetOneBlog, apiUpdateBlogByAdmin, apiCreateNewPostTag } from 'apis/blog'
 import { useForm } from 'react-hook-form'
 import { Button, InputFormm, MarkdownEditor, SelectCategory } from 'components'
 import { useSelector } from 'react-redux'
@@ -85,7 +85,8 @@ const UpdateBlog = () => {
         setBlogTag((prev) => {
           return prev.filter((tag) => tag !== tagToRemove)
         });
-    };
+        setTags(prev => [...prev, { _id: tagToRemove }]);
+      };
 
     const handleTagInputFocus = () => {
         setShowSuggestedTags(true);
@@ -100,13 +101,18 @@ const UpdateBlog = () => {
         }
       };
 
-    const handlePredefinedTagSelect = (tag) => {
+      const handlePredefinedTagSelect = (tag) => {
+
         if (!blogTag.includes(tag)) {
-            setBlogTag(prev => [...prev, tag]);
+          setBlogTag(prev => [...prev, tag]);
         }
+        if (tags.some(t => t._id === tag)) {
+          setTags(prev => prev.filter(t => t._id !== tag));
+        }
+    
         setCurrentTag("");
         setShowSuggestedTags(false);
-    }; 
+      };
 
     const handleUpdateBlog = async(data) => {
         let finalPayload = {...data, ...payload}
@@ -138,6 +144,14 @@ const UpdateBlog = () => {
         const response = await apiUpdateBlogByAdmin(formData, editBlog._id)
         setIsLoading(false)
         if(response.success){
+            const newTags = blogTag.filter(
+                (tagLabel) => !tags.some((tag) => tag.label === tagLabel)
+              );
+              
+              // Gọi API cho mỗi tag mới
+              for (const newTag of newTags) {
+                await apiCreateNewPostTag({label: newTag});
+              }
             toast.success(response.mes)
             window.scrollTo({ top: 0, behavior: 'smooth' }); 
         }
@@ -246,10 +260,10 @@ const UpdateBlog = () => {
                                 <button
                                     key={tag?._id}
                                     type="button"
-                                    onClick={() => handlePredefinedTagSelect(tag?.label)}
+                                    onClick={() => handlePredefinedTagSelect(tag?._id)}
                                     className="inline-flex items-center px-2.5 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                 >
-                                    {tag?.label}
+                                    {tag?._id}
                                 </button>
                                 ))}
                             </div>

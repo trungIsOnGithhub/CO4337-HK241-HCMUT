@@ -3,7 +3,7 @@ let asyncHandler = require("express-async-handler")
 let Order = require('../models/order')
 let Service = require('../models/service');
 let ServiceProvider = require('../models/ServiceProvider');
-// let moment = require('moment');
+let moment = require('moment');
 //  let Interaction = require('../models/interaction')
 
 let getRevenueByDateRange = asyncHandler(async(req, res) => {
@@ -111,12 +111,12 @@ let get3RecentWeekRange = () => {
     let nowDate = new Date();
     let currentWeekMonday = getMondayOfWeek(nowDate);
 
-    // let sundayOfLastWeek = moment(currentWeekMonday).subtract(1, 'days').toDate();
-    let sundayOfLastWeek = currentWeekMonday.setDate(currentWeekMonday.getDate()-1);
+    let sundayOfLastWeek = moment(currentWeekMonday).subtract(1, 'days').toDate();
+    // let sundayOfLastWeek = currentWeekMonday.setDate(currentWeekMonday.getDate()-1);
     let mondayOfLastWeek = getMondayOfWeek(sundayOfLastWeek);
 
-    // let sundayOfPreviousWeek = moment(mondayOfLastWeek).subtract(1, 'days').toDate();
-    let sundayOfPreviousWeek = mondayOfLastWeek.setDate(mondayOfLastWeek.getDate()-1);
+    let sundayOfPreviousWeek = moment(mondayOfLastWeek).subtract(1, 'days').toDate();
+    // let sundayOfPreviousWeek = mondayOfLastWeek.setDate(mondayOfLastWeek.getDate()-1);
     let mondayOfPreviousWeek = getMondayOfWeek(sundayOfPreviousWeek);
 
     return [
@@ -174,7 +174,7 @@ let getRevenue3RecentStatistic = asyncHandler(async (req, res) => {
         }).populate('info.service');
 
         let currentWeekOrders = providerOrders.filter(order => {
-            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
             let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
             return cDate < last3Weeks[0][1] && cDate > last3Weeks[0][0];
@@ -189,7 +189,7 @@ let getRevenue3RecentStatistic = asyncHandler(async (req, res) => {
 
 
         let lastWeekOrders = providerOrders.filter(order => {
-            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
             let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
             return cDate < last3Weeks[1][1] && cDate > last3Weeks[1][0];
@@ -201,7 +201,7 @@ let getRevenue3RecentStatistic = asyncHandler(async (req, res) => {
 
 
         let prevWeekOrders = providerOrders.filter(order => {
-            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
             let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
             return cDate < last3Weeks[2][1] && cDate > last3Weeks[2][0];
@@ -220,7 +220,7 @@ let getRevenue3RecentStatistic = asyncHandler(async (req, res) => {
         }).populate('info.service');
 
         let currentWeekOrders = providerOrders.filter(order => {
-            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
             let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
             return cDate < last3Months[2].end && cDate > last3Months[2].start;
@@ -233,7 +233,7 @@ let getRevenue3RecentStatistic = asyncHandler(async (req, res) => {
 
 
         let lastWeekOrders = providerOrders.filter(order => {
-            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
             let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
             return cDate < last3Months[1].end && cDate > last3Months[1].start;
@@ -245,7 +245,7 @@ let getRevenue3RecentStatistic = asyncHandler(async (req, res) => {
 
 
         let prevWeekOrders = providerOrders.filter(order => {
-            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
             let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
             return cDate < last3Months[0].end && cDate > last3Months[0].start;
@@ -296,7 +296,7 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
         // console.log('..........', currentWeekOrders);
 
         let currentWeekOrders = providerOrders.filter(order => {
-            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
             let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
             return cDate < last3Weeks[0][1] && cDate > last3Weeks[0][0];
@@ -326,7 +326,7 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
 
 
         let lastWeekOrders = providerOrders.filter(order => {
-            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
             let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
             return cDate < last3Months[1].end && cDate > last3Months[1].start;
@@ -355,7 +355,7 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
 
 
         let prevWeekOrders = providerOrders.filter(order => {
-            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
             let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
             return cDate < last3Weeks[2][1] && cDate > last3Weeks[2][0];
@@ -368,7 +368,7 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
         })
 
         newCusCnt = 0;
-        for (let customer of prevWeekCustomers) {
+        for (let customerId of prevWeekCustomers) {
             let pastOrder = await Order.exists({
                 'info.0.provider': spid,
                 orderBy: customerId
@@ -392,7 +392,7 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
         }).populate('info.service');
 
         let currentMonthOrders = providerOrders.filter(order => {
-            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
             let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
             return cDate < last3Months[2].end && cDate > last3Months[2].start;
@@ -421,7 +421,7 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
 
 
         let lastMonthOrders = providerOrders.filter(order => {
-            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
             let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
             return cDate < last3Months[1].end && cDate > last3Months[1].start;
@@ -436,10 +436,10 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
         });
 
         newCusCnt = 0;
-        for (let customer of lastMonthCustomers) {
+        for (let customerId of lastMonthCustomers) {
             let pastOrder = await Order.exists({
                 'info.0.provider': spid,
-                orderBy: customer._id
+                orderBy: customerId
             });
 
             if (!pastOrder) {
@@ -464,7 +464,7 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
 
 
         let prevMonthOrders = providerOrders.filter(order => {
-            let [day, month, year] = order.info.date.split('/').map(e => e.padStart(2,'0'));
+            let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
             let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
             return cDate < last3Months[0].end && cDate > last3Months[0].start;

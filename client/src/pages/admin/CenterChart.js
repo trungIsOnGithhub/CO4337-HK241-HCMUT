@@ -24,12 +24,12 @@ const CenterChart = ({ providerId }) => {
   const [appointmentsBookedChange, setAppointmentsBookedChange] = useState(0);
   const [canceledAppointments, setCanceledAppointments] = useState(0);
   const [canceledAppointmentsChange, setCanceledAppointmentsChange] = useState(0);
-  const [dailyTrends, setDailyTrends] = useState([]);
+  // const [dailyTrends, setDailyTrends] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [lineData, setLineData] = useState({});
 
-  const [selectedMonth, setSelectedMonth] = useState(2);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(2024);
 
   const getDaysArray = (month, year) => {
@@ -66,8 +66,7 @@ const CenterChart = ({ providerId }) => {
       //   canceledAppointments: 99,
       //   canceledAppointmentsChange: 39
       // }
-
-      console.log("Selected Month: ....", selectedMonth);
+      // console.log("Selected Month: ....", selectedMonth);
 
     const chartData = await apiGet3ChartInfoByMonth({ currMonth: selectedMonth+1, currYear: selectedYear, spid: providerId });
     const customerData = await apiGetCustomerDataByMonth({ currMonth: selectedMonth+1, currYear: selectedYear, spid: providerId });
@@ -99,16 +98,13 @@ const CenterChart = ({ providerId }) => {
     setAppointmentsBookedChange(ratioFinish);
     setCanceledAppointmentsChange(ratioCanceled);
 
-    setDailyTrends(chartData.revenueSeries);
-
-    // const dayLabelArray = getDaysArray(selectedMonth+1, selectedYear);
-    // console.log([...Array(new Date(selectedYear, selectedMonth+1, 0).getDate()).keys().map(e => e.toString())]);
+    const dayLabelArray = [...Array(new Date(selectedYear, selectedMonth+1, 0).getDate()).keys().map(e => e.toString())];
     setLineData({
-      labels: [...Array(new Date(selectedYear, selectedMonth+1, 0).getDate()).keys().map(e => e.toString())],
+      labels: dayLabelArray,
       datasets: [
         {
           label: 'Customer Trends',
-          data: dailyTrends,
+          data: chartData.revenueSeries,
           borderColor: '#2563EB',
           fill: {
             target: 'origin',
@@ -118,6 +114,7 @@ const CenterChart = ({ providerId }) => {
         },
       ],
     });
+    // setDailyTrends();
 
     setLoading(false);
   };
@@ -132,6 +129,15 @@ const CenterChart = ({ providerId }) => {
       legend: {
         display: false,
       },
+      tooltip: {
+        enabled: true,
+        callbacks: {
+          // Customize the tooltip content if needed
+          label: function(tooltipItem) {
+            return `Value: ${tooltipItem.raw}`;  // Display the value of the point
+          },
+        },
+      }
     },
     scales: {
       x: {
@@ -141,12 +147,13 @@ const CenterChart = ({ providerId }) => {
       },
       y: {
         grid: {
-          display: false,
+          display: true,
           beginAtZero: true,
         },
         ticks: {
           display: false,
         },
+        min: 0
       },
     },
   };

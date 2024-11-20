@@ -1,6 +1,8 @@
 import { apiUpdateOrderStatus, apiGetOrdersByAdmin } from 'apis';
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
+import path from 'ultils/path';
+import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom';
 
 const PAGE_LIMIT = 5;
 // Sample statuses with styling
@@ -15,11 +17,20 @@ const STATUS_OPTIONS = ["All", "Successful", "Pending", "Canceled"];
 const EDITABLE_STATUS_OPTIONS = ["Successful", "Pending", "Canceled"];
 
 const OrdersList = () => {
+  const navigate = useNavigate()
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState("Successful"); // Default to show all statuses
   const ordersPerPage = 7; // Display 7 orders per page
+
+
+  const handleNavigateBookingDetail = (bookingid) => {
+    navigate({
+      pathname: `/${path.ADMIN}/${path.MANAGE_BOOKING_DETAIL}`,
+      search: createSearchParams({ bookingid }).toString()
+    });
+  }
 
   // Fetch orders data from the API
   const fetchOrders = async (page, status) => {
@@ -54,15 +65,15 @@ const OrdersList = () => {
   };
 
   // Update order status
-  const updateOrderStatus = async (orderId, newStatus) => {
-    let resp = await apiUpdateOrderStatus(orderId, { status: newStatus });
-    // Optimistically update the UI
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.id === orderId ? { ...order, status: newStatus } : order
-      )
-    );
-  };
+  // const updateOrderStatus = async (orderId, newStatus) => {
+  //   let resp = await apiUpdateOrderStatus(orderId, { status: newStatus });
+  //   // Optimistically update the UI
+  //   setOrders((prevOrders) =>
+  //     prevOrders.map((order) =>
+  //       order.id === orderId ? { ...order, status: newStatus } : order
+  //     )
+  //   );
+  // };
 
   // Format timestamp to a more readable date
   const formatTimestamp = (timestamp) => {
@@ -112,22 +123,19 @@ const OrdersList = () => {
             <tr key={index} className="border-b border-gray-100">
               <td className="py-4 text-gray-500">{formatTimestamp(order?.createdAt)}</td>
               <td className="flex items-center space-x-2">
-                <span className="text-gray-600">{order.serviceDetails?.name}</span>
+                <span
+                  onClick={() => {handleNavigateBookingDetail(order?._id)}}
+                  className="text-gray-600 text-center cursor-pointer">{order.serviceDetails?.name}</span>
               </td>
               <td className="text-gray-600">{order.userDetails?.firstName + order.userDetails?.lastName}</td>
               <td>
                 {/* Editable Status Dropdown */}
-                <select
-                  value={order.status}
-                  onChange={(e) => updateOrderStatus(order._id, e.target.value)}
-                  className={`px-2 py-1 rounded-full text-sm font-medium ${STATUS_STYLES[order.status] || 'text-gray-500 bg-gray-100'}`}
+
+                <span
+                  className={`px-2 py-1 rounded-md text-sm font-medium ${STATUS_STYLES[order.status] || 'text-gray-500 bg-gray-100'}`}
                 >
-                  {EDITABLE_STATUS_OPTIONS.map((status) => (
-                    <option key={status} value={status}>
-                      {status}
-                    </option>
-                  ))}
-                </select>
+                  {order.status}
+                </span>
               </td>
               <td className="flex flex-col h-full items-center justify-center p-1">
                 <img src={order.staffDetails.avatar} alt={order.staffDetails?.name} className="w-8 h-8 rounded-full" />

@@ -15,7 +15,7 @@ function PerformanceSummary({ providerId }) {
   const [services, setServices] = useState([]);
   const [staffs, setStaffs] = useState([]);
 
-  const [selectedMonth, setSelectedMonth] = useState(2);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(2024);
 
   const [performanceViewOption, setPerformanceViewOption] = useState("staff");
