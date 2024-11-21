@@ -173,7 +173,7 @@ useEffect(() => {
 
   let advancedQuery = {
     searchTerm: searchFilter.term,
-    limit: REACT_APP_PAGINATION_LIMIT_DEFAULT,
+    limit: parseInt(REACT_APP_PAGINATION_LIMIT_DEFAULT),
     offset: 0,
     sortBy: sort?.value || '',
     // clientLat: 45, clientLon: 45,

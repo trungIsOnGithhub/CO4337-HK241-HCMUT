@@ -397,7 +397,7 @@ const getTopProviderAuthorBlogs = asyncHandler(async(req, res)=>{
         limit = 5;
     }
 
-    const sortObj = {};
+    const sortObj = { likesCount:-1, viewCount:-1 };
     // let response = await Blog.find({});
     // response.sort((a,b) => a.likes.length - b.likes.length);
     // response.slice(0, 5);
@@ -410,20 +410,20 @@ const getTopProviderAuthorBlogs = asyncHandler(async(req, res)=>{
         }},
         // { $project: { _id:1, tags:1, tagName:1 } },
         { $sort: sortObj },
-        { $limit: limit },
-        {
-            $lookup:
-              {
-                from: "users",
-                localField: "_id",
-                foreignField: "sku",
-                as: "authorprovider"
-              }
-         }
+        { $limit: limit }
+        // {
+        //     $lookup:
+        //       {
+        //         from: "users",
+        //         localField: "_id",
+        //         foreignField: "sku",
+        //         as: "authorprovider"
+        //       }
+        //  }
     ]);
 
     return res.status(200).json({
-        success: response ? true : false,
+        success: resp ? true : false,
         providers: resp,
         mes: resp ? "Get Top Blog Provider OK" : "Cannot Get Top Blogs Provider!"
     })

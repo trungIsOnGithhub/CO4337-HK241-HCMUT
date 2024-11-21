@@ -371,6 +371,8 @@ const searchSPAdvanced = asyncHandler(async (req, res) => {
     if ( (typeof(offset) != "number") ||
         !limit || offset < 0 || limit > 20)
     {
+        console.log(offset, typeof offset);
+        console.log(limit, typeof limit);
         return res.status(400).json({
             success: false,
             searched: [],
@@ -395,17 +397,24 @@ const searchSPAdvanced = asyncHandler(async (req, res) => {
     // }
 
     let geoLocationQueryOption = null;
-    if ( clientLat <= 180 && clientLon <= 180 &&
-        clientLat >= -90 && clientLon >= -90 &&
-        /[1-9][0-9]*(km|m)/.test(distanceText) )
+    if ( clientLat <= 180.0 && clientLon <= 180.0 &&
+        clientLat >= -90.0 && clientLon >= -90.0 )
     {
-        geoLocationQueryOption = { distanceText,  clientLat, clientLon };
+        geoLocationQueryOption = { clientLat, clientLon };
+    }
+    if (/[1-9][0-9]*(km|m)/.test(distanceText)) {
+        geoLocationQueryOption = { ...geoLocationQueryOption, distanceText };
     }
 
     const columnNamesToMatch = ["name", "province"];
     const columnNamesToGet = ["id", "address", "province", "images", "bussinessName", "mobile"];
 
     let services = [];
+
+    console.log("____________________________________>>>>>", sortOption,
+        geoLocationQueryOption,
+        geoSortOption);
+
     services = await esDBModule.fullTextSearchAdvanced(
         ES_CONSTANT.PROVIDERS,
         searchTerm,
