@@ -1,6 +1,6 @@
 import React, {useState, useCallback, useEffect } from 'react'
 import { InputFormm, NewInputSelect, Pagination } from 'components';
-import { apiGetAllBlogs, apiSearchBlogAdvanced, apiGetAllPostTags } from 'apis/blog';
+import { apiGetAllBlogs, apiSearchBlogAdvanced, apiGetAllPostTags, apiGetTopProviderAuthorBlogs } from 'apis/blog';
 import Button from 'components/Buttons/Button';
 import { HashLoader } from 'react-spinners';
 import path from 'ultils/path';
@@ -119,6 +119,14 @@ const Blogs = () => {
     console.log('HHEHEEHEHEEHEHHE');
     fetchCurrentBlogList();
 },  [searchedClick, resetClicked, selectedTags]);
+
+
+useEffect(() => {
+  (async () => {
+    let resp = await apiGetTopProviderAuthorBlogs({limit:5});
+    if (resp.success && resp.post);
+  })();
+}, []);
 
 // // loadmore handler
 useEffect(() => {
@@ -427,7 +435,7 @@ useEffect(() => {
             </div>
 
             <div className="bg-white rounded-lg shadow-md p-6 mt-4">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4"><FaHotjar />Popular Posts:</h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4"><FaHotjar />Popular Provider Author:</h2>
                 {topBlogs?.map(blog => (
                   <div>
                     {blog}
@@ -440,4 +448,4 @@ useEffect(() => {
   )
 }
 
-export default Blogs;
+export default Blogs; 

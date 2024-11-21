@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import Masonry from 'react-masonry-css';
 import Swal from 'sweetalert2';
 import { useParams, useSearchParams, createSearchParams, useNavigate } from 'react-router-dom'
-import { apiSearchServiceAdvanced, apiSearchServicePublic, apiGetServicePublic } from '../../apis'
+import { apiSearchProviderAdvanced, apiSearchServicePublic, apiGetServicePublic } from '../../apis'
 // import { Breadcrumb, Service, SearchItemService, InputSelect, Pagination, InputField} from '../../components'
 // import Masonry from 'react-masonry-css'
 // import { useParams, useSearchParams, createSearchParams, useNavigate} from 'react-router-dom'
@@ -23,11 +23,11 @@ import ToggleButton from './ToggleButton';
 const REACT_APP_PAGINATION_LIMIT_DEFAULT = process.env.REACT_APP_PAGINATION_LIMIT_DEFAULT;
 
 const OurProviders = () => {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [params, setParams] = useSearchParams()
   const [services, setServices] = useState(null)
   // const [active, setActive] = useState(null)
-  const [params] = useSearchParams();
   const [sort, setSort] = useState('')
   const [nearMeOption, setNearMeOption] = useState(false)
   const {category} = useParams();
@@ -35,6 +35,7 @@ const OurProviders = () => {
   const [filterCateg, setFilterCateg] = useState([]);
   const {current} = useSelector((state) => state.user);
 
+  const [resetClicked, setResetClicked] = useState(false);
   const [searchedClick, setSearchedClick] = useState(0);
   const [searchFilter, setSearchFilter] = useState({
     term: '',
@@ -51,15 +52,14 @@ const OurProviders = () => {
     const response = await apiGetServiceProviders(queries)
     if(response.success){
       setAllProviders(response)
-    }
+    } 
   }
 
-  useEffect(() => {
-    window.scrollTo(0,0)
-    const queries = Object.fromEntries([...params])
-    fetchProviders(queries)
-
-  }, [params])
+  // useEffect(() => {
+  //   window.scrollTo(0,0)
+  //   const queries = Object.fromEntries([...params])
+  //   fetchProviders(queries)
+  // }, [params])
 
   const breakpointColumnsObj = {
     default: 4,
@@ -84,79 +84,244 @@ const OurProviders = () => {
   const [longitude, setLongitude] = useState(null)
   const [totalProvider, setTotalProvider] = useState(0)
 
-  // useEffect(() => {
-  //   // Yêu cầu người dùng chia sẻ vị trí
-  //   Swal.fire({
-  //     title: 'Chia sẻ vị trí',
-  //     text: "Bạn có muốn chia sẻ vị trí hiện tại của mình?",
-  //     icon: 'question',
-  //     showCancelButton: true,
-  //     confirmButtonText: 'Chia sẻ',
-  //     cancelButtonText: 'Không'
-  //   }).then((result) => {
-  //     if (result.isConfirmed) {
-  //       if ("geolocation" in navigator) {
-  //         navigator.geolocation.getCurrentPosition(position => {
-  //           const { latitude, longitude } = position.coords;
-  //           setLatitude(latitude);
-  //           setLongitude(longitude);
-  //         }, () => {
-  //           Swal.fire('Không thể lấy vị trí của bạn.');
-  //         });
-  //       } else {
-  //         Swal.fire('Geolocation không khả dụng.');
-  //       }
-  //     }
-  //   });
-  // }, []);
-  const handleGetDirections = () => {
-    if (nearMeOption) {
-      setNearMeOption(false);
-      setSearchFilter({
-        ...searchFilter,
-        province: '',
-        maxDistance: ''
-      })
-      return;
-    }
-    if (clientLat !== 999999 && clientLon !== 999999) {
-      setNearMeOption(true);
-      return;
-    }
-    Swal.fire({
-      title: 'Chia sẻ vị trí',
-      text: "Bạn có muốn chia sẻ vị trí hiện tại của mình để xem đường đi?",
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Chia sẻ',
-      cancelButtonText: 'Không'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // if ("geolocation" in navigator) {
-        //     navigator.geolocation.getCurrentPosition(async (position) => {
-        //     const { latitude, longitude } = position.coords;
-        //     await apiModifyUser({ lastGeoLocation: {
-        //       type: "Point",
-        //       coordinates: [longitude, latitude]
-        //     } }, current._id);
-        //     // Call the function to show the route using latitude and longitude
-        //     // showRoute(latitude, longitude);
-            setClientLat(0);
-            setClientLon(0);
+  const [totalServiceCount, setTotalServiceCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
-            setNearMeOption(prev => !prev);
-          // }, () => {
-          //   Swal.fire('Không thể lấy vị trí của bạn.');
-          // });
-        } else {
-          Swal.fire('Geolocation không khả dụng.');
-        }
-      // }
-      // else {
 
+  // const prevSearchTermRef = useRef(searchFilter.term);
+  const isClientLatLongValid = (clientLat, clientLon) => {
+    return clientLat >= -90 && clientLon >= -90 && clientLat <= 180 && clientLon <= 180;
+  }
+  const isClientDistanceValid = (distanceText, unit) => {
+    return /^-?\d+$/.test(distanceText) && (unit === 'km' || unit === 'm');
+  }
+
+  const fetchServicesAdvanced = async (queries, advancedQuery) => {
+    setIsLoading(true);
+    let response = [];
+    const currerntParamPage = params.get('page');
+
+    const offset = currerntParamPage > 0 ? currerntParamPage - 1 : 0;
+
+    // if (useAdvanced) {
+      const categoriesChosen = filterCateg.map(cat => cat.value);
+      // if(categoriesChosen){
+      advancedQuery.categories = categoriesChosen;
       // }
-    });
+  // const fetchServicesAdvanced = async (queries) =>{
+  //   if (sort) {
+  //     queries.sort = sort;
+  //   }
+  //   if(category && category !== 'services'){
+  //     queries.categories = filterCateg;
+  //   }
+    // if (searchFilter.term) {
+    //   queries.name = searchFilter.term
+    // }
+    if (nearMeOption && searchFilter.province) {
+      advancedQuery.province = tinh_thanhpho[searchFilter.province].name;
+    }
+
+    if (nearMeOption && current?.lastGeoLocation?.coordinates?.length === 2) {
+      // queries.current_client_location = {
+      //   longtitude: current.lastGeoLocation.coordinates[0],
+      //   lattitude: current.lastGeoLocation.coordinates[1]
+      // }
+
+      response = await apiSearchProviderAdvanced(advancedQuery);
+
+      if(response.success) setServices(response?.services?.hits || []);
+
+      setTotalServiceCount(response?.services?.total?.value)
+    } 
+    else {
+      // if(category && category !== 'services'){
+      //   queries.category = category;
+      // }
+      response = await apiSearchProviderAdvanced(advancedQuery);
+
+      if(response.success) setServices(response?.services?.hits || []);
+
+      setTotalServiceCount(response?.services?.total?.value)
+    }
+
+    // response = await apiGetServicePublic(queries)
+    // if(response.success) setServices(response)
+    dispatch(getCurrent())
+  // }
+    setIsLoading(false);
+}
+
+// useEffect(() => {
+//   (async () => {
+//     let resp = await apiGetCategorieService();
+
+//     if (resp.success && resp.serviceCategories?.length) {
+//       setSvCategories(resp.serviceCategories.map(cat => {
+//         return {
+//           value: cat.title,
+//           label: cat.title
+//         }
+//       }));
+//     }
+//   })();
+// }, [searchFilter]);
+
+
+useEffect(() => {
+  window.scrollTo(0,0);
+  const queries = Object.fromEntries([...params])
+
+  const q = {
+    ...queries}
+
+  let advancedQuery = {
+    searchTerm: searchFilter.term,
+    limit: REACT_APP_PAGINATION_LIMIT_DEFAULT,
+    offset: 0,
+    sortBy: sort?.value || '',
+    // clientLat: 45, clientLon: 45,
+    // distanceText: "2000km",
   };
+
+  if (nearMeOption && isClientLatLongValid(clientLat, clientLon)) {
+    advancedQuery = {
+      ...advancedQuery,
+      clientLat,
+      clientLon
+    }
+    advancedQuery.sortBy += ' location';
+
+    if (isClientDistanceValid(searchFilter.maxDistance, searchFilter.unit)) {
+      advancedQuery = {
+        ...advancedQuery,
+        distanceText: searchFilter.maxDistance + searchFilter.unit
+      }
+    }
+  }
+
+
+  queries.page = 1;
+  setParams(queries);
+
+  fetchServicesAdvanced(q, advancedQuery);
+}, [searchedClick, resetClicked, nearMeOption]);
+
+
+//   // for page changing
+useEffect(() => {
+  window.scrollTo(0,0)
+  const queries = Object.fromEntries([...params]);
+
+  const q = {...queries}
+
+  let advancedQuery = {
+    searchTerm: searchFilter.term,
+    limit: parseInt(REACT_APP_PAGINATION_LIMIT_DEFAULT),
+    offset: parseInt(params.get('page')) ? params.get('page')-1 : 0,
+    sortBy: sort?.value || ''
+  };
+
+
+  if (nearMeOption && isClientLatLongValid(clientLat, clientLon)) {
+    advancedQuery = {
+      ...advancedQuery,
+      clientLat,
+      clientLon
+    }
+    advancedQuery.sortBy += ' location';
+
+    if (isClientDistanceValid(searchFilter.maxDistance, searchFilter.unit)) {
+      advancedQuery = {
+        ...advancedQuery,
+        distanceText: searchFilter.maxDistance + searchFilter.unit
+      }
+    }
+  }
+
+  fetchServicesAdvanced(q, advancedQuery);
+}, [params]);
+
+// const changeActive = useCallback((name)=>{
+//   if(name===active) setActive(null)
+//   else {
+//     setActive(name)
+//   }
+// },[active])
+
+// const changeValue = useCallback((value)=>{
+//   setSort(value)
+// },[sort])
+
+// useEffect(() => {
+//   if(sort){
+//     navigate({
+//       pathname: `/service/${category}`,
+//       search: createSearchParams({
+//         sort
+//       }).toString()
+//     })
+//   }   
+// }, [sort]);
+
+// useEffect(() => {
+// }, [searchFilter])
+
+const handleGetDirections = () => {
+  if (nearMeOption) {
+    setNearMeOption(false);
+    setSearchFilter({
+      ...searchFilter,
+      province: '',
+      maxDistance: ''
+    })
+    return;
+  }
+  if (clientLat !== 999999 && clientLon !== 999999) {
+    setNearMeOption(true);
+    return;
+  }
+  // Swal.fire({
+  //   title: 'Chia sẻ vị trí',
+  //   text: "Bạn có muốn chia sẻ vị trí hiện tại của mình để xem đường đi?",
+  //   icon: 'question',
+  //   showCancelButton: true,
+  //   confirmButtonText: 'Chia sẻ',
+  //   cancelButtonText: 'Không'
+  // }).then((result) => {
+  //   if (result.isConfirmed) {
+      if ("geolocation" in navigator) {
+
+          setIsLoading(true);
+          navigator.geolocation.getCurrentPosition(async (position) => {
+
+            const { latitude, longitude } = position.coords;
+
+            // await apiModifyUser({ lastGeoLocation: {
+            //   type: "Point",
+            //   coordinates: [longitude, latitude]
+            // } }, current._id);
+            // Call the function to show the route using latitude and longitude
+            //  showRoute(latitude, longitude);
+            setClientLat(latitude);
+            setClientLon(longitude);
+
+            setNearMeOption(true);
+
+            setIsLoading(false);
+        }, () => {
+          setIsLoading(false);
+          setNearMeOption(false);
+          Swal.fire('Cannot get location!', 'Check your internet connection or browser setting!' ,'error');
+        });
+      }
+      else {
+        setIsLoading(false);
+        setNearMeOption(false);
+        Swal.fire('Geolocation is not avaialable!');
+      }
+  // });
+};
 
 
   return (

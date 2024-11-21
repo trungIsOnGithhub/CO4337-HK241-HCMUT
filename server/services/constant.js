@@ -1,6 +1,7 @@
 module.exports = {
     SERVICES: "datnhk241services",
     BLOGS: "datnhk241blogs",
+    PROVIDERS: "datnhk241providers",
     HEALTH_STATUS_TIMEOUT: "2s"
 }
 /*

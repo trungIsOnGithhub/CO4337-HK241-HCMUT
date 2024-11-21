@@ -33,6 +33,7 @@ router.post('/advanced_search', ctrls.searchBlogAdvanced)
 // router.post('/update_view_blog/:bid', ctrls.updateViewBlog)
 // router.post('/top_tags', ctrls.getTopTags)
 router.post('/update_view_blog/:bid', ctrls.updateViewBlog)
+router.pouts5('/top_provider', ctrls.getTopProviderAuthorBlogs)
 
 // router.post('/add_comment', ctrls.addBlogComments)
 module.exports = router

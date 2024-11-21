@@ -69,6 +69,38 @@ async function setUpElasticConnection() {
         console.log('CREATE SERVICES IDX RESPONSE', response);
     }
 
+    if (! (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.PROVIDERS })) ) {
+        const response = await esClient.indices.create({
+            index: ELASTIC_INDEX_NAME_MAP.PROVIDERS,
+            // settings: {
+            //   number_of_shards: 1, // default only 1 shard
+            // },
+            mappings: {
+            properties: {
+                id: {
+                    type: "text"
+                },
+                bussinessName: {
+                    type: "text"
+                },
+                mobile: {
+                    type: "text"
+                },
+                address: {
+                    type: "text",
+                },
+                province: {
+                    type: "keyword"
+                },
+                locations : {
+                    type : "geo_point"
+                }
+            },
+            },
+        });
+        console.log('CREATE SERVICES IDX RESPONSE', response);
+    }
+
     if (! (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.BLOGS })) ) {
         const response = await esClient.indices.create({
             index: ELASTIC_INDEX_NAME_MAP.BLOGS,
@@ -458,10 +490,13 @@ const multiFunc = async function(indexName, init, reset) {
 (async function () {
     // // COMMENT THIS WHEN RUN MIGRATE OR ANY OTHE FILE INCLUDED THIS
     // await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, false, true); // TO SWITCH
-    // await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, true, false); // TO SWIs    TCH
+    // await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, true, false); // TO SWITCH
 
     // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, false, true); // TO SWITCH
     // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, true, false); // TO SWITCH
+
+    // await multiFunc(ELASTIC_INDEX_NAME_MAP.PROVIDERS, false, true); // TO SWITCH
+    // await multiFunc(ELASTIC_INDEX_NAME_MAP.PROVIDERS, true, false); // TO SWITCH
 })();
 
 // initializeElasticClient().indices.get({

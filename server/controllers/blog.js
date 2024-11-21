@@ -391,22 +391,39 @@ const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
     })
 });
 
-const getTopBlogs = asyncHandler(async(req, res)=>{
+const getTopProviderAuthorBlogs = asyncHandler(async(req, res)=>{
     let { limit } = req.body
     if(!limit){
         limit = 5;
     }
-    let response = await Blog.find({});
-    response.sort((a,b) => a.likes.length - b.likes.length);
-    response.slice(0, 5);
-    // .aggregate([
-    //     {$unwind: "$likes"}, 
-    //     {$group: {_id:"$_id", likes: {$push:"$answers"}, size: {$sum:1}}}, 
-    //     {$sort:{size:1}}]).limit(5);
+
+    // let response = await Blog.find({});
+    // response.sort((a,b) => a.likes.length - b.likes.length);
+    // response.slice(0, 5);
+    const resp = await Blog.aggregate([
+        { $group: {
+            _id: "$author",
+            blogCount: { $sum: 1 },
+            authorViewCount: { $sum: "$numberView" },
+            likesCount: { $sum: { $size: "$likes" } }
+        }},
+        // { $project: { _id:1, tags:1, tagName:1 } },
+        { $sort: sortObj },
+        { $limit: limit },
+        {
+            $lookup:
+              {
+                from: "users",
+                localField: "_id",
+                foreignField: "sku",
+                as: "authorprovider"
+              }
+         }
+    ]);
 
     return res.status(200).json({
         success: response ? true : false,
-        blogs: response ? response : "Cannot Get Blogs!"
+        mes: resp ? "Get Top Blog Provider OK" : "Cannot Get Top Blogs Provider!"
     })
 })
 
@@ -693,7 +710,7 @@ module.exports = {
     createNewPostTag,
     getBlogsBySearchTerm,
     getTopBlogWithSelectedTags,
-    getTopBlogs,
+    getTopProviderAuthorBlogs,
     getAllBlogByProviderId,
     getAllBlogsByAdmin,
     searchBlogAdvanced,

@@ -378,19 +378,19 @@ const searchSPAdvanced = asyncHandler(async (req, res) => {
 
     let sortOption = [];
     let geoSortOption = null;
-    if (sortBy?.indexOf("-price") > -1) {
-        sortOption.push({price : {order : "desc"}});
-    }
-    else if (sortBy?.indexOf("price") > -1) {
-        sortOption.push({price : {order : "asc"}});
-    }
+    // if (sortBy?.indexOf("-price") > -1) {
+    //     sortOption.push({price : {order : "desc"}});
+    // }
+    // else if (sortBy?.indexOf("price") > -1) {
+    //     sortOption.push({price : {order : "asc"}});
+    // }
 
     if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
 
-    let categoriesIncluded = [];
-    if (categories?.length) {
-        categoriesIncluded = categories;
-    }
+    // let categoriesIncluded = [];
+    // if (categories?.length) {
+    //     categoriesIncluded = categories;
+    // }
 
     let geoLocationQueryOption = null;
     if ( clientLat <= 180 && clientLon <= 180 &&
@@ -400,8 +400,8 @@ const searchSPAdvanced = asyncHandler(async (req, res) => {
         geoLocationQueryOption = { distanceText,  clientLat, clientLon };
     }
 
-    const columnNamesToMatch = ["name", "providername", "province"];
-    const columnNamesToGet = ["id", "name","thumb","price","category","duration","provider_id", "province", "totalRatings"];
+    const columnNamesToMatch = ["name", "province"];
+    const columnNamesToGet = ["id", "address", "province"];
 
     let services = [];
     services = await esDBModule.fullTextSearchAdvanced(
@@ -409,11 +409,14 @@ const searchSPAdvanced = asyncHandler(async (req, res) => {
         searchTerm,
         columnNamesToMatch,
         columnNamesToGet,
-        limit, offset,
+        limit,
+        offset,
         sortOption,
         geoLocationQueryOption,
         geoSortOption,
-        categoriesIncluded
+        null,
+        null,
+        null
     );
     services = services?.hits;
 
