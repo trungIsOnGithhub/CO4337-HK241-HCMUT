@@ -67,7 +67,7 @@ const Blogs = () => {
   //   }
   // });
 
-  console.log(selectedTags);
+  // console.log(selectedTags);
 
   const fetchTags = async() => {
     let resp = await apiGetAllPostTags({ limit: 10, orderBy: '-numberView -likes' });
@@ -83,7 +83,7 @@ const Blogs = () => {
   }
   useEffect(() => {
     fetchTags();
-    setTopBlogs([1,2,3,4]);
+    // setTopBlogs([1,2,3,4]);
   }, []);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -445,6 +445,7 @@ useEffect(() => {
                 <h2 className="text-lg font-semibold text-gray-900 mb-4"><FaHotjar />Popular Provider Author:</h2>
                 {topProviders?.map(provider => (
                   <div>
+                    {`${provider.blogCount} -- ${provider.likesCount} -- ${provider.viewCount}`}
                   </div>
                 ))}
             </div>
@@ -454,4 +455,4 @@ useEffect(() => {
   )
 }
 
-export default Blogs; 
+export default Blogs;

@@ -221,9 +221,9 @@ async function migrateProvidersDataFromMongoDBToElasticDB() {
                 && newObjectToAdd?.longitude
             ) {
                 newObjectToAdd.locations = {
-                    lat: parseFloat(newObjectToAdd.provider_id.latitude),
-                    lon: parseFloat(newObjectToAdd.provider_id.longitude)
-                }
+                    lat: parseFloat(newObjectToAdd.latitude),
+                    lon: parseFloat(newObjectToAdd.longitude)
+                };
             }
             // else if(newObjectToAdd?.provider_id?.geolocation?.coordinates?.length === 2)  {
             //     newObjectToAdd.locations = {
@@ -234,7 +234,7 @@ async function migrateProvidersDataFromMongoDBToElasticDB() {
 
             delete newObjectToAdd._id;
             delete newObjectToAdd.__v;
-            delete newObjectToAdd.images;
+            // delete newObjectToAdd.images;
             // delete newObjectToAdd.time;
             delete newObjectToAdd.chatGivenQuestions;
             delete newObjectToAdd.slogan;
@@ -257,7 +257,7 @@ async function migrateProvidersDataFromMongoDBToElasticDB() {
             // elastic db does not allowed exiternal _id
 
             console.log(newObjectToAdd.id);
-            // await esDBModule.addToElasticDB(esDBConstant.SERVICES, newObjectToAdd);// TO SWITCH
+            await esDBModule.addToElasticDB(esDBConstant.PROVIDERS, newObjectToAdd);// TO SWITCH
             console.log("============", newObjectToAdd);
         }
 
@@ -280,10 +280,15 @@ async function checkAfter() {
     console.log("SERVICE CHECK:  ", allServiceAdded?.hits?.hits.length, "DONE SERVICE");
     // console.log("***********");
     console.log("**********");
-    // console.log("**********");
+    console.log("**********");
     // const allBlogAdded = await esDBModule.queryElasticDB(esDBConstant.BLOGS, {"query":{ "bool":{"must":[{"term":{"tags":"dia-diem-vui-choi"}},{"term":{"tags":"1vuichoi"}}]} }});
     const allBlogAdded = await esDBModule.queryElasticDB(esDBConstant.BLOGS, {"query":{match_all:{}}});
     console.log("BLOG CHECK:  ", allBlogAdded?.hits?.hits?.length, "DONE BLGG");
+    console.log("**********");
+    console.log("**********");
+    // const allBlogAdded = await esDBModule.queryElasticDB(esDBConstant.BLOGS, {"query":{ "bool":{"must":[{"term":{"tags":"dia-diem-vui-choi"}},{"term":{"tags":"1vuichoi"}}]} }});
+    const pAdded = await esDBModule.queryElasticDB(esDBConstant.PROVIDERS, {"query":{match_all:{}}});
+    console.log("PROVIDERR CHECK:  ", pAdded?.hits?.hits?.length, "DONE PRRVD");
 }
 
 let prom1, prom2, prom3;
@@ -294,7 +299,7 @@ prom3 = migrateProvidersDataFromMongoDBToElasticDB();
 const proms = [];
 if(prom1) {proms.push(prom1);}
 if(prom2) {proms.push(prom2);}
-if(prom2) {proms.push(prom2);}
+if(prom3) {proms.push(prom3);}
 
 Promise.all(proms).then(() => {
     checkAfter();    

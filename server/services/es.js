@@ -76,26 +76,26 @@ async function setUpElasticConnection() {
             //   number_of_shards: 1, // default only 1 shard
             // },
             mappings: {
-            properties: {
-                id: {
-                    type: "text"
-                },
-                bussinessName: {
-                    type: "text"
-                },
-                mobile: {
-                    type: "text"
-                },
-                address: {
-                    type: "text",
-                },
-                province: {
-                    type: "keyword"
-                },
-                locations : {
-                    type : "geo_point"
+                properties: {
+                    id: {
+                        type: "text"
+                    },
+                    bussinessName: {
+                        type: "text"
+                    },
+                    mobile: {
+                        type: "text"
+                    },
+                    address: {
+                        type: "text",
+                    },
+                    province: {
+                        type: "keyword"
+                    },
+                    locations : {
+                        type : "geo_point"
+                    }
                 }
-            },
             },
         });
         console.log('CREATE SERVICES IDX RESPONSE', response);
@@ -325,87 +325,19 @@ const queryElasticDB = async function(indexName, queryOptionsObject) {
 const multiFunc = async function(indexName, init, reset) {
     // const esClient = initializeElasticClient();
     if (init) {
-        // console.log("INDEX NAME: " + indexName);
-        // // const oldIndexName = "sampleindex";
-        // // if (!esClient?.indices?.exists({ index: indexName })) {
-        // //     console.log('Index Not Found, Inserted Data To Make It Available.');
-    
-        // //     const stats = await esClient?.indices?.stats({ index: indexName });
-        // //     const indexPStat = stats?.indices[indexName]?.primaries;
-    
-        // //     if (indexPStat?.docs?.count > 3) {
-        // //         await esClient.indices.delete({ index: indexName });
-        // //         console.log('Overcount on Index Document, Deleted Index');
-        // //         return;
-        // //     }
-        // // const responseDel = await esClient.indices.delete({ index: indexName });
-        // // console.log("delete index response: ", responseDel);
-        // // const response = await esClient.indices.create({
-        // //     index: indexName,
-        // //     settings: {
-        // //       analysis: {
-        // //         analyzer: {
-        // //           default: {
-        // //             type: "custom",
-        // //             tokenizer: "standard",
-        // //             filter: ["lowercase", "asciifolding"],
-        // //           },
-        // //         },
-        // //       },
-        // //     },
-        // // });
-        // // console.log("create index response: ", response);
         await setUpElasticConnection();
-    
-        // await addToElasticDB(indexName, {id: "dhu91udoawi9d180i2019iss", name: "Cat Toc 1", province:"Ho Chi Minh", providername:"Abcd' Hair Salon", category:"Baber Shop",
-        // locations: {
-        //     lat: getRandomInRange(-90, 90, 1),
-        //     lon: getRandomInRange(-90, 90, 1)
-        // }, price: 6666.888});
-        // await addToElasticDB(indexName, {id: "djaoisd919e09wdasihd7119", name: "Massage Thao Moc", province:"tp vung tau", providername:"Abcd' Hair Salon", category:"Healthcare", 
-        //     locations: {
-        //         lat: getRandomInRange(-90, 90, 1),
-        //         lon: getRandomInRange(-90, 90, 1)
-        //     }, price: 9999.888});
-        // await addToElasticDB(indexName, {id: "37uissiQiic90w1i90ei1839", name: "Kham Tong Quat ", province:"Binh Duong", providername:"Abcd' Hair Salon", category:"Baber Shop",
-        //     locations: {
-        //         lat: getRandomInRange(-90, 90, 1),
-        //         lon: getRandomInRange(-90, 90, 1)
-        //     }, price: 8888.888});
-        // await addToElasticDB(indexName, {id: "37uissioiic9dai90ei18839", name: "Tu Van Suc Khoe ", province:"Binh Duong", providername:"Abcd' Hair Salon", category:"Healthcare",
-        //     locations: {
-        //         lat: getRandomInRange(-90, 90, 1),
-        //         lon: getRandomInRange(-90, 90, 1)
-        //     }, price: 6666.888});
-        // await addToElasticDB(indexName, {id: "37uiss655iic90w1i90ei1839", name: "Vat ly tri Lieu", province:"Vung Tau", providername:"Y Hoc Co Truyen 86", category:"Healthcare", 
-        //     locations: {
-        //         lat: getRandomInRange(-90, 90, 1),
-        //         lon: getRandomInRange(-90, 90, 1)
-        //     }, price: 6699.888});
-        // await addToElasticDB(indexName, {id: "37uikk655iic90w1i90ei1839", name: "Tu van tao kieu toc", province:"Ba Ria - Vung Tau", providername:"HEHE Baber", category:"Baber Shop",
-        //     locations: {
-        //         lat: getRandomInRange(-90, 90, 1),
-        //         lon: getRandomInRange(-90, 90, 1)
-        //     }, price: 6688.888});
-        // await addToElasticDB(indexName, {id: "37uikk655iic90w1i90e88839", name: "Tu van tao kieu toc", province:"Ba Ria - Vung Tau", providername:"HEHE Baber", category:"Baber Shop",
-        // locations: {
-        //     lat: 46,
-        //     lon: 45
-        // }, price: 8899.888});
-        // await addToElasticDB(indexName, {id: "37uikk655iic90w1i90ei9939", name: "Tu van tao kieu toc", province:"Ba Ria - Vung Tau", providername:"HEHE Baber", category:"Baber Shop",
-        // locations: {
-        //     lat: 45,
-        //     lon: 46
-        // }, price: 889.888});
         return;
     }
     if (reset) {
         const esClient = initializeElasticClient();
-        // if (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.SERVICES })) {
-        //     resetElasticConnection(ELASTIC_INDEX_NAME_MAP.SERVICES);
-        // }
+        if (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.SERVICES })) {
+            resetElasticConnection(ELASTIC_INDEX_NAME_MAP.SERVICES);
+        }
         if (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.BLOGS })) {
             resetElasticConnection(ELASTIC_INDEX_NAME_MAP.BLOGS);
+        }
+        if (await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.PROVIDERS })) {
+            resetElasticConnection(ELASTIC_INDEX_NAME_MAP.PROVIDERS);
         }
         return;
     }
@@ -487,17 +419,17 @@ const multiFunc = async function(indexName, init, reset) {
     console.log("~~~~~~~~", hitsRecord2, "**********");
 };
 
-(async function () {
-    // // COMMENT THIS WHEN RUN MIGRATE OR ANY OTHE FILE INCLUDED THIS
-    // await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, false, true); // TO SWITCH
-    // await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, true, false); // TO SWITCH
+// (async function () {
+//     // // COMMENT THIS WHEN RUN MIGRATE OR ANY OTHE FILE INCLUDED THIS
+//     // await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, false, true); // TO SWITCH
+//     // await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, true, false); // TO SWITCH
 
-    // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, false, true); // TO SWITCH
-    // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, true, false); // TO SWITCH
+//     // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, false, true); // TO SWITCH
+//     // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, true, false); // TO SWITCH
 
-    // await multiFunc(ELASTIC_INDEX_NAME_MAP.PROVIDERS, false, true); // TO SWITCH
-    // await multiFunc(ELASTIC_INDEX_NAME_MAP.PROVIDERS, true, false); // TO SWITCH
-})();
+//     // await multiFunc(ELASTIC_INDEX_NAME_MAP.PROVIDERS, false, true); // TO SWITCH
+//     // await multiFunc(ELASTIC_INDEX_NAME_MAP.PROVIDERS, true, false); // TO SWITCH
+// })();
 
 // initializeElasticClient().indices.get({
 //     index: ELASTIC_INDEX_NAME_MAP.SERVICES,

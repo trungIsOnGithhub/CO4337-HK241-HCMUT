@@ -3,8 +3,10 @@ const asyncHandler = require('express-async-handler')
 const User = require('../models/user')
 const makeToken = require('uniqid')
 const mongoose = require('mongoose');
-const sendMail = require('../ultils/sendMail')
-const crypto = require('crypto')
+const sendMail = require('../ultils/sendMail');
+const crypto = require('crypto');
+const ES_CONSTANT = require('../services/constant');
+const esDBModule = require('../services/es');
 
 const makeTokenNumber = () => {
     return Math.floor(100000 + Math.random() * 900000).toString(); // Tạo mã 6 chữ số
@@ -401,11 +403,11 @@ const searchSPAdvanced = asyncHandler(async (req, res) => {
     }
 
     const columnNamesToMatch = ["name", "province"];
-    const columnNamesToGet = ["id", "address", "province"];
+    const columnNamesToGet = ["id", "address", "province", "images", "bussinessName", "mobile"];
 
     let services = [];
     services = await esDBModule.fullTextSearchAdvanced(
-        ES_CONSTANT.SERVICES,
+        ES_CONSTANT.PROVIDERS,
         searchTerm,
         columnNamesToMatch,
         columnNamesToGet,
@@ -425,7 +427,7 @@ const searchSPAdvanced = asyncHandler(async (req, res) => {
 
     return res.status(200).json({
         success: services ? true : false,
-        services: services
+        providers: services
     });
 });
 

@@ -49,9 +49,11 @@ const OurProviders = () => {
   const [totalCount, setTotalCount] = useState(0);
 
   const fetchProviders = async (queries) =>{
-    const response = await apiGetServiceProviders(queries)
-    if(response.success){
-      setAllProviders(response)
+    const response = await apiSearchProviderAdvanced(queries);
+    console.log('RESPONSE________L>>>>' + response);
+
+    if(response.success && response.providers?.hits){
+      setAllProviders(response.providers?.hits.map(p => p['_source']))
     } 
   }
 
@@ -71,10 +73,12 @@ const OurProviders = () => {
   
   useEffect(() => {
     const fetchAllServiceProvider = async () => {
-      const response = await apiGetServiceProviders()
-      if(response?.success){
-        setAllProviders(response)
-        setTotalProvider(response?.counts)
+      const response = await apiSearchProviderAdvanced();
+      console.log('RESPONSE________L>>>>' + response);
+
+      if(response?.success && response.providers?.hits){
+        setAllProviders(response.providers?.hits.map(p => p['_source']))
+        setTotalProvider(response.providers?.total?.value)
       }
     }
     fetchAllServiceProvider()
@@ -123,11 +127,6 @@ const OurProviders = () => {
     }
 
     if (nearMeOption && current?.lastGeoLocation?.coordinates?.length === 2) {
-      // queries.current_client_location = {
-      //   longtitude: current.lastGeoLocation.coordinates[0],
-      //   lattitude: current.lastGeoLocation.coordinates[1]
-      // }
-
       response = await apiSearchProviderAdvanced(advancedQuery);
 
       if(response.success) setServices(response?.services?.hits || []);
@@ -135,9 +134,6 @@ const OurProviders = () => {
       setTotalServiceCount(response?.services?.total?.value)
     } 
     else {
-      // if(category && category !== 'services'){
-      //   queries.category = category;
-      // }
       response = await apiSearchProviderAdvanced(advancedQuery);
 
       if(response.success) setServices(response?.services?.hits || []);

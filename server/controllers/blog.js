@@ -405,7 +405,7 @@ const getTopProviderAuthorBlogs = asyncHandler(async(req, res)=>{
         { $group: {
             _id: "$author",
             blogCount: { $sum: 1 },
-            authorViewCount: { $sum: "$numberView" },
+            viewCount: { $sum: "$numberView" },
             likesCount: { $sum: { $size: "$likes" } }
         }},
         // { $project: { _id:1, tags:1, tagName:1 } },

@@ -23,5 +23,6 @@ router.get('/:spid', ctrls.getServiceProvider)
 router.post('/qna', ctrls.addServiceProviderQuestion)
 router.post('/owner', ctrls.getServiceProviderByOwnerId)
 router.post('/edit_footer', [verifyAccessToken, isAdmin], ctrls.updateFooterSection)
+router.post('/advanced_search', ctrls.searchSPAdvanced)
 
 module.exports = router
