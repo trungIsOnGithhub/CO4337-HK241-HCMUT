@@ -109,3 +109,9 @@ export const apiSearchBlogAdvanced = (data) => axios({
     method: 'post',
     data
 })
+
+export const apiGetTopProviderAuthorBlogs = (data) => axios({
+    url: '/blog/top_providers',
+    method: 'post',
+    data
+})

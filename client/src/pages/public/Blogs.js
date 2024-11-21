@@ -8,7 +8,7 @@ import path from 'ultils/path';
 import { useNavigate, createSearchParams, useLocation } from "react-router-dom";
 // import { FaCheck, FaRegThumbsUp, FaRegThumbsDown, FaLocationArrow } from 'react-icons/fa';
 import Swal from 'sweetalert2';
-import { tinh_thanhpho } from 'tinh_thanhpho';
+// import { tinh_thanhpho } from 'tinh_thanhpho';
 import { useForm } from 'react-hook-form';
 import { FiBook, FiClock, FiEye, FiTag, FiThumbsDown, FiThumbsUp, FiUser } from 'react-icons/fi';
 import { formatDistanceToNow } from 'date-fns';
@@ -37,6 +37,7 @@ const Blogs = () => {
   // const [provinceFilter, setProvinceFilter] = useState([]);
   // const handleSortByChange = () => {};
   const [topBlogs, setTopBlogs] = useState([]);
+  const [topProviders, setTopProviders] = useState([]);
 
   const [searchedClick, setSearchedClick] = useState(false);
   const [resetClicked, setResetClicked] = useState(false);
@@ -116,7 +117,7 @@ const Blogs = () => {
     setIsLoading(false);
   }
   useEffect(() => {
-    console.log('HHEHEEHEHEEHEHHE');
+    // console.log('HHEHEEHEHEEHEHHE');
     fetchCurrentBlogList();
 },  [searchedClick, resetClicked, selectedTags]);
 
@@ -124,7 +125,13 @@ const Blogs = () => {
 useEffect(() => {
   (async () => {
     let resp = await apiGetTopProviderAuthorBlogs({limit:5});
-    if (resp.success && resp.post);
+    console.log('=====>>>'+resp.providers);
+    if (resp.success && resp.providers?.length) {
+      setTopProviders(resp.providers);
+    }
+    else {
+      console.log('Cannor fetch top provider data!');
+    }
   })();
 }, []);
 
@@ -436,9 +443,8 @@ useEffect(() => {
 
             <div className="bg-white rounded-lg shadow-md p-6 mt-4">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4"><FaHotjar />Popular Provider Author:</h2>
-                {topBlogs?.map(blog => (
+                {topProviders?.map(provider => (
                   <div>
-                    {blog}
                   </div>
                 ))}
             </div>

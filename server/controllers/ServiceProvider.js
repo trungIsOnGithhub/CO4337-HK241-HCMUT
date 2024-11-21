@@ -282,7 +282,7 @@ const updateServiceProviderTheme = asyncHandler(async(req, res)=>{
     const {theme} = req.body
     if(!theme){
         throw new Error('Missing inputttt')
-    }
+    }``
 
     const response = await ServiceProvider.findByIdAndUpdate(spid,  { $set: { theme } }, {new: true})
 

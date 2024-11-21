@@ -397,6 +397,7 @@ const getTopProviderAuthorBlogs = asyncHandler(async(req, res)=>{
         limit = 5;
     }
 
+    const sortObj = {};
     // let response = await Blog.find({});
     // response.sort((a,b) => a.likes.length - b.likes.length);
     // response.slice(0, 5);
@@ -423,6 +424,7 @@ const getTopProviderAuthorBlogs = asyncHandler(async(req, res)=>{
 
     return res.status(200).json({
         success: response ? true : false,
+        providers: resp,
         mes: resp ? "Get Top Blog Provider OK" : "Cannot Get Top Blogs Provider!"
     })
 })

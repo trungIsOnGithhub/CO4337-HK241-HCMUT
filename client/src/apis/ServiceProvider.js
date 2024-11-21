@@ -55,3 +55,9 @@ export const apiUpdateFooterSection = (data) => axios({
     method: 'post',
     data
 })
+
+export const apiSearchProviderAdvanced = (data) => axios({
+    url: `/service_provider/advanced_search`,
+    method: 'post',
+    data
+})
