@@ -212,7 +212,13 @@ const updateServiceProvider = asyncHandler(async(req, res)=>{
     }
 
     if (req.body.mobile) {
-        const uresp = await User.updateOne({ provider_id: spid }, { $set: { mobile: req.body.mobile } });
+        const uresp = await User.updateOne({ provider_id: spid },
+            { $set: {
+                mobile: req.body.mobile,
+                firstName: ownerFirstName,
+                lastName: ownerLastName,
+                email: ownerEmail,
+        }});
         console.log(uresp);
 
         if (!uresp) {
