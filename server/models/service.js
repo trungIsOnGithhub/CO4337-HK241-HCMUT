@@ -62,6 +62,10 @@ var serviceSchema = new mongoose.Schema({
     bookingQuantity:{
         type:Number,
         default:0
+    },
+    isHidden: {
+        type: Boolean,
+        default: false
     }
 },{
     timestamps: true

@@ -35,22 +35,12 @@ const getAllBlogTags = asyncHandler(async (req,res) => {
     }
 
     const resp = await Blog.aggregate([
-        // { $match: { isHidden: false } },
-        // { $addFields: {
-        //     numLikes: { "$size": "$likes" }
-        //     // numDislikes: { "$size": "$dislikes" }
-        // }},
-        // { $project: { _id:1, tags:1 } },
         { $unwind: "$tags" },
-        // { $addFields: {
-        //     tagName: "$tags"
-        // }},
         { $group: {
             _id: "$tags",
             tagCount: { $sum: 1 },
             tagViewCount: { $sum: "$numberView" }
         }},
-        // { $project: { _id:1, tags:1, tagName:1 } },
         { $sort: sortObj }
     ]);
 
@@ -59,13 +49,6 @@ const getAllBlogTags = asyncHandler(async (req,res) => {
         tags: resp
     }) 
 });
-
-// const searchBlogsAdvanced = asyncHandler(async (req, res)=>{
-//     return res.status(200).json({
-//         success: response ? true : false,
-//         blogs: []
-//     });
-// });
 
 const getAllBlogs = asyncHandler(async (req, res)=>{
     const { title, sortBy, provinces } = req.body;
@@ -707,6 +690,44 @@ const updateBlog = asyncHandler(async(req, res) => {
         mes: blog ? 'Updated successfully' : "Cannot update blog"
     })
 })
+
+const updateHiddenStatus = asyncHandler(async (req, res) => {
+    const {blogId} = req.params
+    const {status} = req.query 
+
+    console.log(blogId)
+   
+    //status la false -> falsy -> !status return true 
+    if (!blogId || status === undefined) {
+        throw new Error("Missing input");
+    }
+
+    // Kiểm tra giá trị status phải là true hoặc false
+    const isValidStatus = status === "true" || status === "false";
+    if (!isValidStatus) {
+        throw new Error("Invalid status value. Use 'true' or 'false'.");
+    }
+
+    // Chuyển đổi giá trị status thành boolean
+    const isHidden = status === "true";
+
+    // Cập nhật thuộc tính isHidden
+    const updatedBlog = await Blog.findByIdAndUpdate(
+        blogId,
+        { isHidden }, // Cập nhật isHidden
+        { new: true, upsert: false } // Trả về document sau khi update + upsert:false de khong tao moi
+    );
+
+    if (!updatedBlog) {
+        throw new Error("Blog not found");
+    }
+
+    res.status(200).json({
+        success: true,
+        mes: "Blog updated successfully",
+    });
+})
+
 module.exports = {
     updateBlog,
     getAllBlogs,
@@ -724,5 +745,6 @@ module.exports = {
     getAllBlogByProviderId,
     getAllBlogsByAdmin,
     searchBlogAdvanced,
-    updateViewBlog
+    updateViewBlog,
+    updateHiddenStatus
 }

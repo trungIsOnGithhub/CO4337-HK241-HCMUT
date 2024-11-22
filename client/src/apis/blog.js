@@ -33,6 +33,12 @@ export const apiUpdateBlogByAdmin = (data, id) => axios({
     data
 })
 
+export const apiUpdateHiddenStatusBlog = (blogId, params) => axios({
+    url: '/blog/update_hidden_status/' + blogId,
+    method: 'put',
+    params
+})
+
 export const apiUpdateViewBlog = (id) => axios({
     url: '/blog/update_view_blog/'+id,
     method: 'post',

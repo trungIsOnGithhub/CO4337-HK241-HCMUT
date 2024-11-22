@@ -19,6 +19,7 @@ import { FaAngleDown } from 'react-icons/fa';
 import { FaCircleHalfStroke } from 'react-icons/fa6';
 import clsx from 'clsx';
 import { toast } from 'react-toastify';
+import { utils, writeFile } from 'xlsx';
 
 const ManageBooking = () => {
   const [params] = useSearchParams();
@@ -34,6 +35,10 @@ const ManageBooking = () => {
   const [showOptionStatus, setShowOptionStatus] = useState(null)
   const optionRef = useRef(null);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
+  }, []);
+  
   const handleInputClick = () => {
     setShowCalendar(!showCalendar);
   };
@@ -286,7 +291,6 @@ const ManageBooking = () => {
         <div className='w-[95%] h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
           <div className='w-full h-fit flex justify-between items-center'>
             <h1 className='text-[#00143c] font-medium text-[16px]'>{`Bookings (${counts})`}</h1>
-            <Button style={'px-4 py-2 rounded-md text-[#00143c] bg-[#fff] font-semibold w-fit h-fit flex gap-2 items-center border border-[#b3b9c5]'}><TfiExport className='text-lg font-bold' /> Export Data</Button>
           </div>
           <div className='w-full h-[48px] mx-[-6px] mt-[-6px] mb-[10px] flex'>
             <div className='w-[62%] h-[36px] m-[6px] flex'>
@@ -401,5 +405,6 @@ const ManageBooking = () => {
     </div>
   );
 };
+
 
 export default ManageBooking;

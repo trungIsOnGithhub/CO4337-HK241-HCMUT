@@ -156,7 +156,7 @@ const ViewStatistics = () => {
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-gray-500">Highest Service Value</p>
+                      <p className="text-gray-500">Highest Booking Value</p>
                       <h3 className="text-2xl font-bold">
                         {`${formatPrice(Math.max(...bookings.map(booking => booking.total)))} VNĐ`}
                       </h3>
@@ -167,7 +167,7 @@ const ViewStatistics = () => {
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-gray-500">Highest Product Value</p>
+                      <p className="text-gray-500">Highest Order Value</p>
                       <h3 className="text-2xl font-bold">
                         {`${formatPrice(Math.max(...orders.map(order => order.totalPrice)))} VNĐ`}
                       </h3>

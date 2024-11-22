@@ -828,6 +828,7 @@ const AddVoucher = () => {
                       {...register('thumb')}
                       type='file' 
                       id='thumb'
+                      accept="image/*"
                       className='cursor-pointer'
                     />
                   

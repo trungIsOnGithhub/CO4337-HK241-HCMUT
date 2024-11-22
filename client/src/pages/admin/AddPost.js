@@ -38,8 +38,6 @@ const AddPost = () => {
     fetchTags();
   }, [])
 
-  console.log(tags)
-
   const {current} = useSelector(state => state.user)
   useEffect(() => {
     dispatch(getCurrent());
@@ -111,12 +109,13 @@ const AddPost = () => {
     }
     
     for (let [key, value] of formData.entries()) {
-      // console.log(`${key}:`, value);
     }
     setIsLoading(true)
     const response = await apiCreateBlog(formData);
     setIsLoading(false)
     if(response?.success){
+      console.log('create blog successfully')
+      toast.success('Create New Post Blog Successfully');
        // Lọc các tag mới chưa có trong `tags`
       const newTags = blogTag.filter(
         (tagLabel) => !tags.some((tag) => tag.label === tagLabel)
@@ -127,7 +126,6 @@ const AddPost = () => {
         await apiCreateNewPostTag({label: newTag});
       }
 
-      toast.success('Create New Post Blog Successfully');
       reset();
       setBlogTag([]);
       setPayload({
@@ -165,7 +163,6 @@ const AddPost = () => {
   };
 
   const handleTagAdd = (e) => {
-    console.log("-----");
     e.preventDefault();
     if (currentTag && !blogTag.includes(currentTag)) {
       setBlogTag(prev => [...prev, currentTag.trim()]);

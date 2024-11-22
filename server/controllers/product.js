@@ -479,6 +479,42 @@ const getAllProductByProviderId = asyncHandler(async(req, res)=>{
     }
 })
 
+const updateHiddenStatus = asyncHandler(async (req, res) => {
+    const {productId} = req.params
+    const {status} = req.query
+   
+    //status la false -> falsy -> !status return true 
+    if (!productId || status === undefined) {
+        throw new Error("Missing input");
+    }
+
+    // Kiểm tra giá trị status phải là true hoặc false
+    const isValidStatus = status === "true" || status === "false";
+    if (!isValidStatus) {
+        throw new Error("Invalid status value. Use 'true' or 'false'.");
+    }
+
+    // Chuyển đổi giá trị status thành boolean
+    const isHidden = status === "true";
+
+    // Cập nhật thuộc tính isHidden
+    const updatedProduct = await Product.findByIdAndUpdate(
+        productId,
+        { isHidden }, // Cập nhật isHidden
+        { new: true, upsert: false } // Trả về document sau khi update + upsert:false de khong tao moi
+    );
+
+    if (!updatedProduct) {
+        throw new Error("Product not found");
+    }
+
+    res.status(200).json({
+        success: true,
+        mes: "Product updated successfully",
+    });
+})
+
+
 module.exports = {
     createProduct,
     getProduct,
@@ -490,5 +526,6 @@ module.exports = {
     addVariant,
     getAllProductByAdmin,
     getAllProductByProviderId,
-    updateVariant
+    updateVariant,
+    updateHiddenStatus
 }

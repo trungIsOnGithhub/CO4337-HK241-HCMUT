@@ -46,35 +46,6 @@ const MessageBox = ({currentChat}) => {
     fetchCurrentChatProvider()
   }, [isQuickMenuOpen]);
 
-  // Predefined questions with optional answers
-  // const predefinedQuestions = [
-  //   { question: 'What is your return policy?', answer: 'Our return policy is 30 days.' },
-  //   { question: 'Do you offer international shipping?', answer: 'Yes, we ship worldwide!' },
-  //   { question: 'What payment methods do you accept?', answer: 'We accept credit cards, PayPal, and bank transfers.' },
-  //   { question: 'How do I track my order?', answer: null },
-  //   { question: 'Can I cancel my order?', answer: 'Yes, you can cancel within 24 hours.' },
-  // ];
-
-  // // Handle predefined question click
-  // const handleQuestionClick = (question, answer) => {
-  //   if (!question) return;
-  //   setMessages((prev) => [...prev, { type: 'user', text: question }]);
-
-  //   if (answer) {
-  //     setMessages((prev) => [...prev, { type: 'admin', text: answer }]);
-  //   }
-
-  //   // Close Quick Questions after selection
-  //   setIsQuickMenuOpen(false);
-  // };
-
-  // // Handle custom message send
-  // const handleSendMessage = () => {
-  //   if (customMessage.trim()) {
-  //     setMessages((prev) => [...prev, { type: 'user', text: customMessage }]);
-  //     setCustomMessage(''); // Clear the input field
-  //   }
-  // };
 
   const handleEmojiPickerHideShow = () => { 
     setShowEmojiPicker(!showEmojiPicker)
@@ -139,13 +110,13 @@ const MessageBox = ({currentChat}) => {
   //   setMessages(msgs)
   // }
 
-  // useEffect(() => {
-  //   if(socket.current){
-  //       socket.current.on('msg-recieve', (msg) => {
-  //           setArrivalMessage({fromSelf: false, message: msg})
-  //       })
-  //   }
-  // }, []);
+  useEffect(() => {
+    if(socket.current){
+        socket.current.on('msg-recieve', (msg) => {
+            setArrivalMessage({fromSelf: false, message: msg})
+        })
+    }
+  }, []);
 
 
   useEffect(() => {

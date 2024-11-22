@@ -7,7 +7,7 @@ import { validate, getBase64 } from 'ultils/helper'
 import {apiModifyStaff} from 'apis/staff'
 import bgImage from '../../assets/clouds.svg';
 import { showModal } from 'store/app/appSlice';
-import { FaArrowLeft } from 'react-icons/fa'
+import { FaArrowLeft, FaSpinner } from 'react-icons/fa'
 
 const UpdateStaff = ({editStaff, render, setEditStaff}) => {
   const dispatch = useDispatch()
@@ -17,6 +17,11 @@ const UpdateStaff = ({editStaff, render, setEditStaff}) => {
   const [preview, setPreview] = useState({
     avatar: null,
   })
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
+  }, []);
 
   useEffect(() => {
     reset({
@@ -63,7 +68,9 @@ const UpdateStaff = ({editStaff, render, setEditStaff}) => {
       // }
     
       // dispatch(showModal({isShowModal: true, modalChildren: <Loading />}))
+      setIsLoading(true)
       const response = await apiModifyStaff(formData, editStaff._id)
+      setIsLoading(false)
       // dispatch(showModal({isShowModal: false, modalChildren: null}))
       if(response.success){
         toast.success(response.mes)
@@ -161,6 +168,7 @@ const UpdateStaff = ({editStaff, render, setEditStaff}) => {
               {...register('avatar')}
               type='file' 
               id='avatar'
+              accept="image/*"
             />
             {errors['avatar'] && <small className='text-xs text-red-500'>{errors['avatar']?.message}</small>}
           </div>
@@ -173,9 +181,18 @@ const UpdateStaff = ({editStaff, render, setEditStaff}) => {
           }
 
           <div className='mt-8'>
-            <Button type='submit'>
-              Update Staff
-            </Button>
+          <Button type='submit' style={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center'}>
+                {isLoading ? (
+                    <span className="flex items-center">
+                    <FaSpinner className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                    Updating staff...
+                    </span>
+                ) : (
+                    <span className='flex items-center'>
+                     Update staff
+                    </span>
+                )}
+              </Button>
           </div>
         </form>
       </div>

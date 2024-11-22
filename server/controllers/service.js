@@ -799,6 +799,41 @@ const getAllServicesByProviderId = asyncHandler(async (req, res) => {
     }
 })
 
+const updateHiddenStatus = asyncHandler(async (req, res) => {
+    const {serviceId} = req.params
+    const {status} = req.query
+   
+    //status la false -> falsy -> !status return true 
+    if (!serviceId || status === undefined) {
+        throw new Error("Missing input");
+    }
+
+    // Kiểm tra giá trị status phải là true hoặc false
+    const isValidStatus = status === "true" || status === "false";
+    if (!isValidStatus) {
+        throw new Error("Invalid status value. Use 'true' or 'false'.");
+    }
+
+    // Chuyển đổi giá trị status thành boolean
+    const isHidden = status === "true";
+
+    // Cập nhật thuộc tính isHidden
+    const updatedService = await Service.findByIdAndUpdate(
+        serviceId,
+        { isHidden }, // Cập nhật isHidden
+        { new: true, upsert: false } // Trả về document sau khi update + upsert:false de khong tao moi
+    );
+
+    if (!updatedService) {
+        throw new Error("Service not found");
+    }
+
+    res.status(200).json({
+        success: true,
+        mes: "Service updated successfully",
+    });
+})
+
 module.exports = {
     createService,
     getAllServicesByAdmin,
@@ -811,5 +846,6 @@ module.exports = {
     getMostPurchasedService,
     getAllServicesByProviderId,
     searchAllServicesPublic,
-    searchServiceAdvanced
+    searchServiceAdvanced,
+    updateHiddenStatus
 }

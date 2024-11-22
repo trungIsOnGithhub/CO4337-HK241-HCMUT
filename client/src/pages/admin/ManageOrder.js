@@ -27,6 +27,10 @@ const ManageOrder = () => {
   const paymentRef = useRef(null)
   const navigate = useNavigate()
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
+  }, []);
+
   const fetchOrder = async (params) => {
     const response = await apiGetOrdersProductByAdmin({ ...params, limit: process.env.REACT_APP_LIMIT,shippingStatus:selectedFilter});
     if (response?.success) {
@@ -121,7 +125,6 @@ const ManageOrder = () => {
         <div className='w-[95%] h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
           <div className='w-full h-fit flex justify-between items-center'>
             <h1 className='text-[#00143c] font-medium text-[16px]'>{`Orders (${counts})`}</h1>
-            <Button style={'px-4 py-2 rounded-md text-[#00143c] bg-[#fff] font-semibold w-fit h-fit flex gap-2 items-center border border-[#b3b9c5]'}><TfiExport className='text-lg font-bold' /> Export Data</Button>
           </div>
           <div className="flex space-x-4">
               <button

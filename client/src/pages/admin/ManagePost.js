@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { createSearchParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { apiGetAllBlogByAdmin, apiGetAllBlogs } from 'apis/blog';
+import { apiGetAllBlogByAdmin, apiGetAllBlogs, apiUpdateHiddenStatusBlog } from 'apis/blog';
 import moment from 'moment';
 import { Button, Pagination } from 'components';
 import { FiCalendar, FiDollarSign, FiEdit, FiEye, FiEyeOff, FiThumbsDown, FiThumbsUp, FiTrash2 } from 'react-icons/fi';
-import { FaPlus, FaTags } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaPlus, FaTags } from "react-icons/fa";
 import { AiOutlineUser, AiOutlineTeam } from 'react-icons/ai';
 import path from 'ultils/path';
 import withBaseComponent from 'hocs/withBaseComponent';
@@ -13,6 +13,8 @@ import {useSelector, useDispatch} from 'react-redux';
 import { toast } from 'react-toastify';
 import bgImage from '../../assets/clouds.svg'
 import clsx from 'clsx';
+import { IoMdInformationCircleOutline } from 'react-icons/io';
+import Swal from 'sweetalert2';
 
 const ManagePost = () => {
   const navigate = useNavigate()
@@ -21,7 +23,10 @@ const ManagePost = () => {
   const [post, setPosts] = useState(null);
   const [counts, setCounts] = useState(0);
   const {current} = useSelector(state => state.user)
+  const [update, setUpdate] = useState(false)
 
+
+  console.log(current?.provider_id?._id)
   const fetchPost = async (params) => {
       if (!current?.provider_id) {
         toast.success('Please Log In To Continue!');
@@ -29,14 +34,14 @@ const ManagePost = () => {
       }
       const sortedPosts = await apiGetAllBlogByAdmin({ ...params, provider_id: current?.provider_id?._id,  limit: process.env.REACT_APP_LIMIT });
       setPosts(sortedPosts?.blogs);
-      // setCounts(sortedPosts?.blogs.length);
+      setCounts(sortedPosts?.counts);
     // }
   };
 
   useEffect(() => {
     const searchParams = Object.fromEntries([...params]);
     fetchPost(searchParams);
-  }, [params]);
+  }, [params, update]);
 
   const handleNavigateEditBlog = (blogId) => {
     navigate(`/admin/update_blog/${blogId}`)
@@ -56,6 +61,52 @@ const ManagePost = () => {
   const handleNavigateCreateBlog = () => {
     navigate(`/admin/add_post`)
   }
+
+  const handleHiddenBlog = async(blogId, status) => {
+    if(status === "true"){
+      Swal.fire({
+        title: 'Are you sure',
+        text: 'Are you sure you want to hide this post?',
+        icon: 'warning',
+        showCancelButton: true
+      }).then(async(rs)=>{
+        if(rs.isConfirmed){
+          const response = await apiUpdateHiddenStatusBlog(blogId, {status: "true"})
+          if(response.success){
+           toast.success(response.mes)
+          }
+          else{
+           toast.error(response.mes)
+          }
+          render()
+        }
+      })
+    }
+    else if(status === "false"){
+      Swal.fire({
+        title: 'Are you sure',
+        text: 'Are you sure you want to unhide this post?',
+        icon: 'warning',
+        showCancelButton: true
+      }).then(async(rs)=>{
+        if(rs.isConfirmed){
+          const response = await apiUpdateHiddenStatusBlog(blogId, {status: "false"})
+          if(response.success){
+           toast.success(response.mes)
+          }
+          else{
+           toast.error(response.mes)
+          }
+          render()
+        }
+      })
+    }
+  }
+
+  const render = useCallback(() => { 
+    setUpdate(!update)
+   })
+
   return (
     <div className='w-full h-full relative'>
       <div className='inset-0 absolute z-0'>
@@ -99,12 +150,22 @@ const ManagePost = () => {
                 <div className='w-[10%] px-2 py-2 text-[#00143c] flex justify-center items-center'>{el?.isHidden ? 'Hidden' : 'Visible'}</div>
                 <div className='w-[20%] px-2 py-2 text-[#00143c] flex justify-center items-center gap-2'>
                   <span onClick={()=>{handleNavigateEditBlog(el?._id)}} className='text-blue-600 hover:text-blue-900 cursor-pointer'><FiEdit className="h-5 w-5" /></span>
-                  <span onClick={()=>handleViewDetailBlog(el?._id)} className= "text-green-600 hover:text-green-900 cursor-pointer"><FiEye className="h-5 w-5" /></span>
-                  <span className='text-red-600 hover:text-red-900 cursor-pointer'><FiTrash2 className='h-5 w-5'/></span>
+                  <span onClick={()=>handleViewDetailBlog(el?._id)} className= "text-green-600 hover:text-green-900 cursor-pointer"><IoMdInformationCircleOutline className="h-5 w-5" /></span>
+                  {
+                  !el?.isHidden ?
+                  <span onClick={() => handleHiddenBlog(el._id, "true")} 
+                  className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><FaEye size={24}/></span>
+                  :
+                  <span onClick={() => handleHiddenBlog(el._id, "false")}
+                  className='inline-block hover:underline cursor-pointer text-blue-200 hover:text-orange-500 px-0.5'><FaEyeSlash size={24}/></span>
+                  }
                 </div>
                </div>
               ))}
             </div>
+          </div>
+          <div className='text-[#00143c] flex-1 flex items-end'>
+            <Pagination totalCount={counts} />
           </div>
         </div>
       </div>

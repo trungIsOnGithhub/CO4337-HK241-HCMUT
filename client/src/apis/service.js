@@ -67,3 +67,9 @@ export const apiSearchServiceAdvanced = (data) => axios({
     method: 'post',
     data
 })
+
+export const apiUpdateHiddenStatusService = (serviceId, params) => axios({
+    url: '/service/update_hidden_status/' + serviceId,
+    method: 'put',
+    params
+})

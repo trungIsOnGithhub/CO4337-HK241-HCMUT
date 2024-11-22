@@ -15,6 +15,7 @@ import { FcExport } from "react-icons/fc";
 import { MdBlock } from "react-icons/md";
 import { TfiExport } from 'react-icons/tfi'
 import { FaChartArea } from 'react-icons/fa'
+import { utils, writeFile } from 'xlsx';
 
 const ManageUser = () => {
   const navigate = useNavigate()
@@ -37,6 +38,13 @@ const ManageUser = () => {
   const [editEl, setEditEl] = useState(null)
   const [params] = useSearchParams()
   const [counts, setCounts] = useState(0)
+  const [showExportExcelModal, setShowExportExcelModal] = useState(false);
+  const [showExportUser, setShowExportUser] = useState(false)
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
+  }, []);
+
   const fetchUsers = async(params) => {
     const response = await apiUsers({...params, limit:process.env.REACT_APP_LIMIT})
     if(response.success){
@@ -119,7 +127,15 @@ const ManageUser = () => {
           <div className='w-full h-fit flex justify-between items-center'>
             <h1 className='text-[#00143c] font-medium text-[16px]'>{`All Customers (${counts})`}</h1>
             <div className='flex w-[50%] gap-2 items-center justify-end'>
-              <Button style={'px-4 py-2 rounded-md text-[#00143c] bg-[#fff] font-semibold w-fit h-fit flex gap-2 items-center border border-[#b3b9c5]'}><TfiExport className='text-lg font-bold' /> Export Data</Button>
+              <Button style={'px-4 py-2 rounded-md text-[#00143c] bg-[#fff] font-semibold w-fit h-fit flex gap-2 items-center border border-[#b3b9c5]'}
+                handleOnclick={() => { setShowExportExcelModal(true); }}
+              ><TfiExport className='text-lg font-bold' />Export Data</Button>
+
+              { showExportExcelModal &&
+                <DataExportSheetModal rawData={user}
+                  onClose={() => { setShowExportExcelModal(false); }}
+                  propsToExport={["firstName", "lastName", "mobile", "email", "address", ]} /> }
+
               <form className='flex-1' >
                 <InputFormm
                   id='q'
@@ -157,7 +173,7 @@ const ManageUser = () => {
                     <span style={{fontSize:'15px', lineHeight:'1.5rem'}} className='w-[10%] text-[#00143c] flex justify-center items-center font-medium'>Active</span>
                     <span style={{fontSize:'15px', lineHeight:'1.5rem'}} className='w-[10%] text-[#00143c] flex justify-center items-center font-medium'>{moment(el.createdAt).format('DD/MM/YYYY')}</span>
                     <span style={{fontSize:'15px', lineHeight:'1.5rem'}} className='w-[20%] text-[#00143c] flex justify-center items-center font-medium'>
-                      <div className="relative group inline-block">
+                      <div className="relative group inline-block" onClick={()=>{setShowExportUser(true)}}>
                         <span className='inline-block hover:underline cursor-pointer text-[#005aee] hover:text-orange-500 px-0.5'>
                           <FcExport size={24}/>
                         </span>
@@ -165,6 +181,10 @@ const ManageUser = () => {
                           Export data
                         </div>
                       </div>
+                      { showExportUser &&
+                      <DataExportSheetModal rawData={Array.isArray(el) ? el : [el]}
+                        onClose={() => { setShowExportUser(false); }}
+                        propsToExport={["firstName", "lastName", "mobile", "email", "address", ]} /> }
                       
                       <div className="relative group inline-block">
                         <span onClick={()=>handleNavigateUserStatistics(el?._id)} className='inline-block hover:underline cursor-pointer text-[#0a66c2] hover:text-orange-500 px-0.5'>
@@ -190,5 +210,95 @@ const ManageUser = () => {
     </div>
   )
 }
+
+const DataExportSheetModal = ({ rawData, onClose, propsToExport }) => {
+  const [fileType, setFileType] = useState('xlsx');
+  const [sheetName, setSheetName] = useState('My Data Sheet');
+  const [workbookName, setWorkbookName] = useState('My Workbook');
+
+  const exportExcelFile = () => {
+    // console.log("========>>>", rawData);
+    if (!rawData) return;
+
+    const jsonData = [];
+
+    rawData.forEach(item => {
+      // console.log(">>>>>>>>", item);
+      const newObj = {};
+
+      for (const prop of propsToExport) {
+        console.log(":???????" + prop)
+        if (item[prop]) {
+          newObj[prop] = item[prop];
+        }
+      }
+
+      jsonData.push(newObj);
+
+      // console.log('=========||||', jsonData);
+    })
+
+    const ws = utils.json_to_sheet(jsonData);
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, sheetName);
+    writeFile(wb, `${workbookName}.${fileType}`);
+  };
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
+      <div className="bg-white p-6 rounded shadow-lg w-80 transition duration-200">
+        <h3 className="text-lg font-semibold mb-4 text-gray-500 text-center">
+          Configure your Export File
+        </h3>
+        <div className="space-y-2 border-2 p-2 rounded-md flex justify-center flex-wrap gap-1">
+          <label htmlFor='sh' className='text-gray-500 text-sm'>Sheet Name</label>
+          <InputFormm
+            id='sh'
+            register={() => {}}
+            errors={() => {}}
+            fullWidth
+            placeholder= 'Sheet Name...'
+            defaultValue={sheetName}
+            style={'w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'}
+            styleInput={'w-[100%] bg-[#f4f6fa]   text-[#99a1b1]'}
+            onChange={event => setSheetName(event.target.value)}
+          >
+          </InputFormm>
+
+          <label htmlFor='wb' className='text-gray-500 text-sm'>Workbook Name</label>
+          <InputFormm
+            id='wb'
+            register={() => {}}
+            errors={() => {}}
+            fullWidth
+            placeholder= 'Workbook Name...'
+            defaultValue={workbookName}
+            style={'w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'}
+            styleInput={'w-[100%] bg-[#f4f6fa] text-[#99a1b1]'}
+            onChange={event => setWorkbookName(event.target.value)}
+          >
+          </InputFormm>
+
+          <label htmlFor='wb' className='text-gray-500 text-sm'>File Type</label>
+          <select className='w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center text-gray-500'
+            onChange={event => setFileType(event.target.value)}
+          >
+            <option value="xlsx">xlsx</option>
+            <option value="csv">csv</option>
+          </select>
+        </div>
+        <div className="mt-4 flex justify-end space-x-2 gap-4">
+          <button onClick={onClose} className="text-gray-500 hover:opacity-50 bg-red-500 p-2 rounded-md text-white">Cancel</button>
+          <button
+            onClick={() => { exportExcelFile(); onClose(); }}
+            className='text-blue-600 hover:opacity-50 bg-blue-600 p-2 rounded-md text-white'
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default ManageUser

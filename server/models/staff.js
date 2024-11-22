@@ -37,6 +37,10 @@ var staffSchema = new mongoose.Schema({
     }],
     shifts: {
         type: Object
+    },
+    isHidden: {
+        type: Boolean,
+        default: false
     }
 },{
     timestamps: true

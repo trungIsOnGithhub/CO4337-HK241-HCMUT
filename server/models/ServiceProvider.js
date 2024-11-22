@@ -26,23 +26,21 @@ var ProviderServiceSchema = new mongoose.Schema({
     },
     latitude: {
         type: Number,
-        required: true,
+        // required: true,
     },
     longitude: {
         type: Number,
-        required: true,
+        // required: true,
     },
     geolocation: {
         type:
         {
             type: String, // Don't do `{ location: { type: String } }`
             enum: ['Point'], // 'location.type' must be 'Point'
-            required: true
         },
         coordinates:
         {
             type: [Number],
-            required: true
         }
     },
     chatGivenQuestions: [{

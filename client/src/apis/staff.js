@@ -32,3 +32,9 @@ export const apiUpdateStaffShift = (data) => axios({
     method: 'post',
     data
 })
+
+export const apiUpdateHiddenStatusStaff = (staffId, params) => axios({
+    url: '/staff/update_hidden_status/' + staffId,
+    method: 'put',
+    params
+})
