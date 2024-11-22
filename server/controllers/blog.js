@@ -398,28 +398,36 @@ const getTopProviderAuthorBlogs = asyncHandler(async(req, res)=>{
     }
 
     const sortObj = { likesCount:-1, viewCount:-1 };
-    // let response = await Blog.find({});
-    // response.sort((a,b) => a.likes.length - b.likes.length);
-    // response.slice(0, 5);
+
     const resp = await Blog.aggregate([
+        {
+            $lookup: {
+                from: "users",
+                localField: "author",
+                foreignField: "_id",
+                as: "author_mapped"
+            }
+        },
+        {
+            $lookup: {
+                from: "service_providers",
+                localField: "author_mapped.provider_id",
+                foreignField: "_id",
+                as: "provider_mapped"
+            }
+        },
         { $group: {
             _id: "$author",
             blogCount: { $sum: 1 },
             viewCount: { $sum: "$numberView" },
-            likesCount: { $sum: { $size: "$likes" } }
+            likesCount: { $sum: { $size: "$likes" } },
+            firstName: { $first: "$author_mapped.firstName" },
+            lastName: { $first: "$author_mapped.lastName" },
+            bussinessName: { $first: "$author_mapped.provider_id.bussinessName" }
         }},
         // { $project: { _id:1, tags:1, tagName:1 } },
         { $sort: sortObj },
         { $limit: limit }
-        // {
-        //     $lookup:
-        //       {
-        //         from: "users",
-        //         localField: "_id",
-        //         foreignField: "sku",
-        //         as: "authorprovider"
-        //       }
-        //  }
     ]);
 
     return res.status(200).json({

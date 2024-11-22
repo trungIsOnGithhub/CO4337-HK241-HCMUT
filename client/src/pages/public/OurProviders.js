@@ -43,7 +43,7 @@ const OurProviders = () => {
     maxDistance: '',
     unit: 'km'
   });
-  const [allProviders, setAllProviders] = useState(null)
+  const [allProviders, setAllProviders] = useState([])
   const [clientLat, setClientLat] = useState(999999);
   const [clientLon, setClientLon] = useState(999999);
   const [totalCount, setTotalCount] = useState(0);
@@ -70,19 +70,21 @@ const OurProviders = () => {
     500: 1
   };
 
-  
-  useEffect(() => {
-    const fetchAllServiceProvider = async () => {
-      const response = await apiSearchProviderAdvanced();
-      console.log('RESPONSE________L>>>>' + response);
 
-      if(response?.success && response.providers?.hits){
-        setAllProviders(response.providers?.hits.map(p => p['_source']))
-        setTotalProvider(response.providers?.total?.value)
-      }
-    }
-    fetchAllServiceProvider()
-  }, []);
+  // useEffect(() => {
+  //   const fetchAllServiceProvider = async () => {
+  //     const response = await apiSearchProviderAdvanced({
+
+  //     });
+  //     console.log('RESPONSE________L>>>>' + response);
+
+  //     if(response?.success && response.providers?.hits){
+  //       setAllProviders(response.providers?.hits.map(p => p['_source']))
+  //       setTotalProvider(response.providers?.total?.value)
+  //     }
+  //   }
+  //   fetchAllServiceProvider()
+  // }, []);
 
   const [latitude, setLatitude] = useState(null)
   const [longitude, setLongitude] = useState(null)
@@ -129,16 +131,18 @@ const OurProviders = () => {
     if (nearMeOption && current?.lastGeoLocation?.coordinates?.length === 2) {
       response = await apiSearchProviderAdvanced(advancedQuery);
 
-      if(response.success) setServices(response?.services?.hits || []);
-
-      setTotalServiceCount(response?.services?.total?.value)
+      if(response.success && response.providers?.hits) {
+        setAllProviders(response.providers.hits.map(p => p['_source']))
+      }
+      setTotalProvider(response.providers?.total?.value || 0);
     } 
     else {
       response = await apiSearchProviderAdvanced(advancedQuery);
 
-      if(response.success) setServices(response?.services?.hits || []);
-
-      setTotalServiceCount(response?.services?.total?.value)
+      if(response.success && response.providers?.hits) {
+        setAllProviders(response.providers.hits.map(p => p['_source']))
+      }
+      setTotalProvider(response.providers?.total?.value || 0);
     }
 
     // response = await apiGetServicePublic(queries)
@@ -409,9 +413,9 @@ const handleGetDirections = () => {
                 name="orderBy"
                 options={[
                   { value: "", label: "No Order" },
-                  { value: "-price", label: "Price Descending" },
-                  { value: "price", label: "Price Ascending" },
-                  { value: "-discount", label: "Hot Discount" }
+                  // { value: "-price", label: "Price Descending" },
+                  // { value: "price", label: "Price Ascending" },
+                  { value: "-createdAt", label: "Newest" }
                 ]}
                 className="basic-multi-select"
                 classNamePrefix="select"
@@ -446,17 +450,17 @@ const handleGetDirections = () => {
               </select> */}
             </div>
 
-              <Button
-                handleOnclick={() => { console.log(searchFilter); setSearchedClick(prev => prev+1); }}
-              >
-              <span className="flex justify-center gap-1 items-center">
-                <FaSearch /><span>Search</span>
-              </span>
+            <Button
+              style="flex-1 h-fit px-4 py-2 rounded-md text-white bg-[#0a66c2] font-semibold"
+              handleOnclick={() => { setSearchedClick(prev => !prev); }}
+            >
+            <span className="flex justify-center gap-1 items-center">
+              <FaSearch /><span>Search</span>
+            </span>
             </Button>
 
             <Button
               handleOnclick={() => {
-                console.log('Presssed');
                 setSearchFilter(prev => {
                   return {
                     term: '',
@@ -468,8 +472,9 @@ const handleGetDirections = () => {
                 setSort('');
                 setFilterCateg([]);
                 // setSvCategories([]);
+                setResetClicked(prev => !prev);
               }}
-              style="px-4 py-2 rounded-md text-white bg-slate-400 font-semibold my-2"
+              style="flex-1 h-fit px-4 py-2 rounded-md text-white bg-slate-400 font-semibold"
             >
               <span className="flex justify-center gap-1 items-center">
                 <FaBahai /><span>Reset</span>
@@ -486,7 +491,10 @@ const handleGetDirections = () => {
           breakpointCols={breakpointColumnsObj}
           className="my-masonry-grid flex mx-[-10px]"
           columnClassName="my-masonry-grid_column">
-          {allProviders?.AllServiceProviders?.map(el => (
+          {(!allProviders.length) && <span classNam='text-md font-semibold'>
+              No data match your search criteria.
+            </span>}
+          {allProviders.map(el => (
             <Provider
               key={el._id} 
               providerData={el}

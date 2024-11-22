@@ -428,7 +428,8 @@ const multiFunc = async function(indexName, init, reset) {
 //     // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, true, false); // TO SWITCH
 
 //     // await multiFunc(ELASTIC_INDEX_NAME_MAP.PROVIDERS, false, true); // TO SWITCH
-//     // await multiFunc(ELASTIC_INDEX_NAME_MAP.PROVIDERS, true, false); // TO SWITCH
+    
+//     await multiFunc(ELASTIC_INDEX_NAME_MAP.PROVIDERS, true, false); // TO SWITCH
 // })();
 
 // initializeElasticClient().indices.get({

@@ -443,10 +443,44 @@ useEffect(() => {
 
             <div className="bg-white rounded-lg shadow-md p-6 mt-4">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4"><FaHotjar />Popular Provider Author:</h2>
-                {topProviders?.map(provider => (
-                  <div>
-                    {`${provider.blogCount} -- ${provider.likesCount} -- ${provider.viewCount}`}
-                  </div>
+                {topProviders?.map((provider, index) => (
+        // {performanceViewOption === "service" && services.map((service, index) => (
+          <div key={index} className="p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-200">
+            <div className="flex items-center mb-3">
+              {/* Service Image */}
+              <img
+                src={provider?.authorprovider?.avatar}
+                alt="avatar icon"
+                className="w-10 h-10 rounded-full mr-4"
+              />
+              <div>
+                <h3 className="text-gray-800 font-semibold">{`${provider?.authorprovider?.lastName} ${provider?.authorprovider?.firstName}`}</h3>
+                <span className="text-sm pt-1"></span>
+              </div>
+            </div>
+            <div className="text-sm text-gray-600">
+              <div className="flex justify-between mb-1">
+                <span className="font-semibold">Total VIews</span>
+                <span>{provider.viewCount}</span>
+              </div>
+              <div className="flex justify-between mb-1">
+                <span className="font-semibold">Total Likes</span>
+                <span>${Number(provider.likesCount)?.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between items-center mt-2">
+                <span className="font-semibold">Total Post</span>
+                <span>{provider.blogCount}</span>
+              </div>
+            </div>
+            {/* Occupancy Rate Bar */}
+            {/* <div className="w-full bg-gray-200 h-1 rounded-full mt-2">
+              <div
+                style={{ width: `${service.occupancy}%` }}
+                className="bg-blue-600 h-1 rounded-full"
+              ></div>
+            </div> */}
+          </div>
+        // ))}
                 ))}
             </div>
           </div>

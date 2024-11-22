@@ -56,7 +56,6 @@ const createServiceProvider = asyncHandler(async(req, res)=>{
         })
     }
 
-    console.log('test111')
     const images = req.files?.images[0]?.path
     console.log(images)
     req.body.images = images
@@ -389,6 +388,9 @@ const searchSPAdvanced = asyncHandler(async (req, res) => {
     //     sortOption.push({price : {order : "asc"}});
     // }
 
+    if (sortBy?.indexOf("createdAt") > -1) {
+        sortOption.push({createdAt : {order : "desc"}});
+    }
     if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
 
     // let categoriesIncluded = [];
@@ -406,14 +408,14 @@ const searchSPAdvanced = asyncHandler(async (req, res) => {
         geoLocationQueryOption = { ...geoLocationQueryOption, distanceText };
     }
 
-    const columnNamesToMatch = ["name", "province"];
+    const columnNamesToMatch = ["bussinessName", "province","address"];
     const columnNamesToGet = ["id", "address", "province", "images", "bussinessName", "mobile"];
 
     let services = [];
 
-    console.log("____________________________________>>>>>", sortOption,
-        geoLocationQueryOption,
-        geoSortOption);
+    // console.log("____________________________________>>>>>", sortOption,
+    //     geoLocationQueryOption,
+    //     geoSortOption);
 
     services = await esDBModule.fullTextSearchAdvanced(
         ES_CONSTANT.PROVIDERS,
