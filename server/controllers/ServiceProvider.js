@@ -193,9 +193,13 @@ const getAllServiceProvider = asyncHandler(async(req, res) => {
 
 const updateServiceProvider = asyncHandler(async(req, res)=>{
     const spid = req.params.spid
-    console.log('vuivuiuviuv', req.body, spid);
-
+    // console.log('vuivuiuviuv', req.body, spid);
     if(Object.keys(req.body).length === 0){
+        throw new Error('Missing input');
+    }
+
+    const { ownerFirstName, ownerLastName, ownerEmail } = req.body;
+    if(!ownerFirstName || !ownerLastName || !ownerEmail){
         throw new Error('Missing input');
     }
 

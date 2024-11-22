@@ -88,16 +88,12 @@ const BusinessDetailsForm = () => {
   // }, []);
   useEffect(() => {
     currentProviderEffectHanlder();
-  }, [current])
+  }, [current]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-
-  // const handleSubmitFormData = () => {
-  //   // console.log('=====>', formData);
-  // }
 
   useEffect(() => {
     goongjs.accessToken = GOONG_MAPTILES_KEY;
@@ -111,12 +107,12 @@ const BusinessDetailsForm = () => {
       });
     }
   }, []);
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+  // useEffect(() => {
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //       document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, []);
 
   // if (loading) return <p>Loading...</p>;
   // if (error) return <p>Error: {error}</p>;
@@ -165,13 +161,12 @@ const BusinessDetailsForm = () => {
       // console.log(i);
       fData.append(i[0], i[1]);
     }
-
     fData.delete('avatar');
-    if (newFormDataObj.avatar) fData.append('avatar', newFormDataObj.avatar);
+    // if (newFormDataObj.avatar) fData.append('avatar', newFormDataObj.avatar);
 
-    for (let p of fData.entries()) {
-      console.log("kkkkkkkkkkkkkkkk", p);
-    }
+    // for (let p of fData.entries()) {
+    //   console.log("kkkkkkkkkkkkkkkk", p);
+    // }
     // console.log('=========;;;;;;;;;' + );
 
     const response = await apiUpdateCurrentServiceProvider(current.provider_id._id, fData)
