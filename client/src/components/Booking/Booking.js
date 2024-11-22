@@ -25,7 +25,7 @@ const Booking = () => {
   const [staffs, setStaffs] = useState([]);
   const [service, setService] = useState(null);
   const [provider, setProvider] = useState(null);
-  const [duration, setDuration] = useState(null);
+  // const [duration, setDuration] = useState(null);
   const [currentTime, setCurrentTime] = useState(null);
   const [selectedStaff, setSelectedStaff] = useState({
     time: null,
@@ -102,7 +102,6 @@ const Booking = () => {
     const response = await apiGetOneService(params?.get('sid'));
     if (response?.success) {
       setService(response?.service);
-      setDuration(response?.service?.duration);
       const coupons = await apiGetCouponsByServiceId(response?.service?._id);
       if(coupons?.success){
         setDiscountCodes(coupons?.coupons);
@@ -430,10 +429,10 @@ const Booking = () => {
             <div className='flex justify-between'>
               <div className='flex items-center gap-1'>
                 <img src={el?.avatar} className='w-16 h-16 rounded-full' alt={el?.firstName} />
-                <span>Working Hour: 88 : 99</span>
+                {/* <span>Working Hour: 88 : 99</span> */}
                 <span className='flex flex-col gap-1'>
                   <span className='text-lg'>{`${el.lastName} ${el.firstName}`}</span>
-                  <span className='text-md flex gap-2 items-center'><FaPhone size='12px'/> {el.mobile}</span>
+                  {provider?.advancedSetting && <span className='text-md flex gap-2 items-center'><FaPhone size='12px'/> {el.mobile}</span>}
                 </span>
               </div>
               <Button style='px-6 rounded-md text-white bg-[#0a66c2] font-semibold h-fit py-2 w-fit' handleOnclick={()=>handleBookDateTime(el)}>Choose other date</Button>

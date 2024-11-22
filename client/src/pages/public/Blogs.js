@@ -445,13 +445,15 @@ useEffect(() => {
                 <h2 className="text-lg font-semibold text-gray-900 mb-4"><FaHotjar />Popular Provider Author:</h2>
                 {topProviders?.map((provider, index) => (
         // {performanceViewOption === "service" && services.map((service, index) => (
-          <div key={index} className="p-4 bg-gray-50 rounded-lg border flex items-center justify-center flex-col gap-1">
+          <div key={index}
+            onClick={() => { if (provider?.pid) {navigate(`detail_provider/${provider?.pid}`);} }}
+            className="p-4 bg-white hover:bg-gray-50 rounded-lg border flex items-center justify-center flex-col gap-1">
             <div className="flex items-center mb-3">
               {/* Service Image */}
               <div className='flex flex-col justify-center items-center'>
                 <img
                   src={provider?.avatar[0]}
-                  alt="avatar icon"
+                  alt="avatar"
                   className="w-10 h-10 rounded-full mr-4"
                 />
 
