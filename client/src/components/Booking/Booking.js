@@ -430,6 +430,7 @@ const Booking = () => {
             <div className='flex justify-between'>
               <div className='flex items-center gap-1'>
                 <img src={el?.avatar} className='w-16 h-16 rounded-full' alt={el?.firstName} />
+                <span>Working Hour: 88 : 99</span>
                 <span className='flex flex-col gap-1'>
                   <span className='text-lg'>{`${el.lastName} ${el.firstName}`}</span>
                   <span className='text-md flex gap-2 items-center'><FaPhone size='12px'/> {el.mobile}</span>

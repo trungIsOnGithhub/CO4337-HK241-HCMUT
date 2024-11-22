@@ -445,30 +445,31 @@ useEffect(() => {
                 <h2 className="text-lg font-semibold text-gray-900 mb-4"><FaHotjar />Popular Provider Author:</h2>
                 {topProviders?.map((provider, index) => (
         // {performanceViewOption === "service" && services.map((service, index) => (
-          <div key={index} className="p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-200">
+          <div key={index} className="p-4 bg-gray-50 rounded-lg border flex items-center justify-center flex-col gap-1">
             <div className="flex items-center mb-3">
               {/* Service Image */}
-              <img
-                src={provider?.authorprovider?.avatar}
-                alt="avatar icon"
-                className="w-10 h-10 rounded-full mr-4"
-              />
-              <div>
-                <h3 className="text-gray-800 font-semibold">{`${provider?.authorprovider?.lastName} ${provider?.authorprovider?.firstName}`}</h3>
-                <span className="text-sm pt-1"></span>
+              <div className='flex flex-col justify-center items-center'>
+                <img
+                  src={provider?.avatar[0]}
+                  alt="avatar icon"
+                  className="w-10 h-10 rounded-full mr-4"
+                />
+
+                <h3 className="text-gray-800 font-semibold text-center">{`${provider?.lastName[0]} ${provider?.firstName[0]}`}</h3>
+                <span className="text-sm pt-1 text-center">{provider?.bussinessName[0]}</span>
               </div>
             </div>
             <div className="text-sm text-gray-600">
               <div className="flex justify-between mb-1">
-                <span className="font-semibold">Total VIews</span>
+                <span className="font-semibold pr-4">Total Views</span>
                 <span>{provider.viewCount}</span>
               </div>
               <div className="flex justify-between mb-1">
-                <span className="font-semibold">Total Likes</span>
-                <span>${Number(provider.likesCount)?.toFixed(2)}</span>
+                <span className="font-semibold pr-4">Total Likes</span>
+                <span>{provider.likesCount}</span>
               </div>
               <div className="flex justify-between items-center mt-2">
-                <span className="font-semibold">Total Post</span>
+                <span className="font-semibold pr-4">Total Post</span>
                 <span>{provider.blogCount}</span>
               </div>
             </div>

@@ -485,16 +485,15 @@ const handleGetDirections = () => {
           </div>
         </div>
 
-
-
         <Masonry
           breakpointCols={breakpointColumnsObj}
           className="my-masonry-grid flex mx-[-10px]"
           columnClassName="my-masonry-grid_column">
-          {(!allProviders.length) && <span classNam='text-md font-semibold'>
-              No data match your search criteria.
-            </span>}
-          {allProviders.map(el => (
+          {(!allProviders?.length) &&
+          <div className="bg-white rounded-lg shadow-md p-6 text-center">
+            <p className="text-gray-600">No provider found matching your search criteria.</p>
+          </div>}
+          {allProviders?.map(el => (
             <Provider
               key={el._id} 
               providerData={el}

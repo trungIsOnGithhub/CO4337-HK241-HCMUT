@@ -60,9 +60,8 @@ const Services = () => {
   const fetchServicesAdvanced = async (queries, advancedQuery) => {
     setIsLoading(true);
     let response = [];
-    const currerntParamPage = params.get('page');
-
-    const offset = currerntParamPage > 0 ? currerntParamPage - 1 : 0;
+    // const currerntParamPage = params.get('page');
+    // const offset = currerntParamPage > 0 ? currerntParamPage - 1 : 0;
 
     // if (useAdvanced) {
       const categoriesChosen = filterCateg.map(cat => cat.value);
@@ -83,28 +82,11 @@ const Services = () => {
       advancedQuery.province = tinh_thanhpho[searchFilter.province].name;
     }
 
-    if (nearMeOption && current?.lastGeoLocation?.coordinates?.length === 2) {
-      // queries.current_client_location = {
-      //   longtitude: current.lastGeoLocation.coordinates[0],
-      //   lattitude: current.lastGeoLocation.coordinates[1]
-      // }
-
-      response = await apiSearchServiceAdvanced(advancedQuery);
-
-      if(response.success) setServices(response?.services?.hits || []);
-
-      setTotalServiceCount(response?.services?.total?.value)
-    } 
-    else {
-      // if(category && category !== 'services'){
-      //   queries.category = category;
-      // }
-      response = await apiSearchServiceAdvanced(advancedQuery);
-
-      if(response.success) setServices(response?.services?.hits || []);
-
-      setTotalServiceCount(response?.services?.total?.value)
-    }
+    response = await apiSearchServiceAdvanced(advancedQuery);
+    
+    if(response.success) setServices(response?.services?.hits || []);
+    
+    setTotalServiceCount(response?.services?.total?.value)
 
     // response = await apiGetServicePublic(queries)
     // if(response.success) setServices(response)
@@ -160,7 +142,6 @@ const Services = () => {
         }
       }
     }
-
 
     queries.page = 1;
     setParams(queries);
@@ -427,6 +408,10 @@ const Services = () => {
       </div>
 
       <div className={clsx('mt-8 w-main m-auto flex gap-4 flex-wrap', isShowModal ? 'hidden' : '')}>
+        {(!services?.length) &&
+        <div className="bg-white rounded-lg shadow-md p-6 text-center">
+          <p className="text-gray-600">No service found matching your search criteria.</p>
+        </div>}
         {services?.map((service, index) => (
           <div key={index} className='w-[32%]'>
             <Service serviceData={service} nearMeOption={nearMeOption}/>

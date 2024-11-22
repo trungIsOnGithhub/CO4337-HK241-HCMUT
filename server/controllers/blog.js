@@ -423,9 +423,9 @@ const getTopProviderAuthorBlogs = asyncHandler(async(req, res)=>{
             likesCount: { $sum: { $size: "$likes" } },
             firstName: { $first: "$author_mapped.firstName" },
             lastName: { $first: "$author_mapped.lastName" },
-            bussinessName: { $first: "$author_mapped.provider_id.bussinessName" }
+            bussinessName: { $first: "$provider_mapped.bussinessName" },
+            avatar: { $first: "$author_mapped.avatar" }
         }},
-        // { $project: { _id:1, tags:1, tagName:1 } },
         { $sort: sortObj },
         { $limit: limit }
     ]);
