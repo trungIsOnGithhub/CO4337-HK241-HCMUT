@@ -444,7 +444,7 @@ useEffect(() => {
                 {topProviders?.map((provider, index) => (
         // {performanceViewOption === "service" && services.map((service, index) => (
           <div key={index}
-            onClick={() => { if (provider?._id) {navigate(`detail_provider/${provider?._id}`);} }}
+            onClick={() => { if (provider?._id) {navigate(`/detail_provider/${provider?._id}`);} }}
             className="p-4 bg-white hover:bg-gray-50 rounded-lg border flex items-center justify-center flex-col gap-4">
             <div className="flex items-center mb-3">
               {/* Service Image */}
