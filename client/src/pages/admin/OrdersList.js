@@ -9,7 +9,7 @@ const PAGE_LIMIT = 5;
 const STATUS_STYLES = {
   Successful: 'text-green-500 bg-green-100',
   Pending: 'text-gray-500 bg-gray-100',
-  Canceled: 'text-yellow-500 bg-yellow-100'
+  Canceled: 'text-red-500 bg-red-100'
 };
 
 // Available statuses for filtering and editing
@@ -101,7 +101,9 @@ const OrdersList = () => {
           }}
         >
           {STATUS_OPTIONS.map((status) => (
-            <option key={status} value={status}>
+            <option
+              onChange={(eve) => {setSelectedStatus(eve.target.value);}}
+              key={status} value={status}>
               {status}
             </option>
           ))}
@@ -111,23 +113,23 @@ const OrdersList = () => {
       <table className="w-full text-left">
         <thead>
           <tr className="border-b border-gray-200 text-gray-500">
-            <th className="py-2">Date</th>
-            <th>Service</th>
-            <th>Customer</th>
-            <th>Status</th>
-            <th>Staff</th>
+            <th className="py-2 text-center">Date</th>
+            <th className="py-2 text-center">Service</th>
+            <th className="py-2 text-center">Customer</th>
+            <th className="py-2 text-center">Status</th>
+            <th className="py-2 text-center">Staff</th>
           </tr>
         </thead>
         <tbody>
           {orders.map((order, index) => (
             <tr key={index} className="border-b border-gray-100">
               <td className="py-4 text-gray-500">{formatTimestamp(order?.createdAt)}</td>
-              <td className="flex items-center space-x-2">
+              <td className="flex items-center justify-center space-x-2">
                 <span
                   onClick={() => {handleNavigateBookingDetail(order?._id)}}
                   className="text-gray-600 text-center cursor-pointer">{order.serviceDetails?.name}</span>
               </td>
-              <td className="text-gray-600">{order.userDetails?.firstName + order.userDetails?.lastName}</td>
+              <td className="text-gray-600 text-center">{`${order.userDetails?.firstName} ${order.userDetails?.lastName}`}</td>
               <td>
                 {/* Editable Status Dropdown */}
 

@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const sendMail = require('../ultils/sendMail');
 const crypto = require('crypto');
 const ES_CONSTANT = require('../services/constant');
-const esDBModule = require('../services/es');
+// const esDBModule = require('../services/es');
 
 const makeTokenNumber = () => {
     return Math.floor(100000 + Math.random() * 900000).toString(); // Tạo mã 6 chữ số
@@ -193,17 +193,25 @@ const getAllServiceProvider = asyncHandler(async(req, res) => {
 
 const updateServiceProvider = asyncHandler(async(req, res)=>{
     const spid = req.params.spid
-    // console.log('vuivuiuviuv', req.body, spid);
+    console.log('vuivuiuviuv', req.body, spid);
     if(Object.keys(req.body).length === 0){
         throw new Error('Missing input');
     }
 
-    const { ownerFirstName, ownerLastName, ownerEmail } = req.body;
-    if(!ownerFirstName || !ownerLastName || !ownerEmail){
-        throw new Error('Missing input');
+    const { ownerFirstName, ownerLastName, ownerEmail, advancedSetting } = req.body;
+    // if(!ownerFirstName || !ownerLastName || !ownerEmail){
+    //     throw new Error('Missing input');
+    // }
+    if (advancedSetting?.showStaffDetailBooking) {
+        if (advancedSetting.showStaffDetailBooking === 'true') {
+            advancedSetting.showStaffDetailBooking = true;
+        }
+        else {
+            advancedSetting.showStaffDetailBooking = false;
+        }
     }
 
-    console.log('files: ', req.files);
+    // console.log('files: ', req.files);
     if(req.file){
         console.log('file: ', req.file);
         req.body.images = [req.file.path];
@@ -427,20 +435,20 @@ const searchSPAdvanced = asyncHandler(async (req, res) => {
     //     geoLocationQueryOption,
     //     geoSortOption);
 
-    services = await esDBModule.fullTextSearchAdvanced(
-        ES_CONSTANT.PROVIDERS,
-        searchTerm,
-        columnNamesToMatch,
-        columnNamesToGet,
-        limit,
-        offset,
-        sortOption,
-        geoLocationQueryOption,
-        geoSortOption,
-        null,
-        null,
-        null
-    );
+    // services = await esDBModule.fullTextSearchAdvanced(
+    //     ES_CONSTANT.PROVIDERS,
+    //     searchTerm,
+    //     columnNamesToMatch,
+    //     columnNamesToGet,
+    //     limit,
+    //     offset,
+    //     sortOption,
+    //     geoLocationQueryOption,
+    //     geoSortOption,
+    //     null,
+    //     null,
+    //     null
+    // );
     services = services?.hits;
 
     console.log("Query Input Parameter: ", services);

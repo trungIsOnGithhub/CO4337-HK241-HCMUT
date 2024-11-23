@@ -409,9 +409,7 @@ const Services = () => {
 
       <div className={clsx('mt-8 w-main m-auto flex gap-4 flex-wrap', isShowModal ? 'hidden' : '')}>
         {(!services?.length) &&
-        <div className="bg-white rounded-lg shadow-md p-6 text-center">
-          <p className="text-gray-600">No service found matching your search criteria.</p>
-        </div>}
+         <p className="text-gray-600 text-center font-semibold">No service found matching your search criteria.</p>}
         {services?.map((service, index) => (
           <div key={index} className='w-[32%]'>
             <Service serviceData={service} nearMeOption={nearMeOption}/>

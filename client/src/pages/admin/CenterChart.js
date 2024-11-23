@@ -57,17 +57,6 @@ const CenterChart = ({ providerId }) => {
       }
       setLoading(true);
 
-      // const data = {
-      //   dailyTrends: [18,59,8,99,68,86,100,66,30,36,39],
-      //   returningCustomers: 68,
-      //   newCustomers: 32,
-      //   appointmentsBooked: 88,
-      //   appointmentsBookedChange: 20,
-      //   canceledAppointments: 99,
-      //   canceledAppointmentsChange: 39
-      // }
-      // console.log("Selected Month: ....", selectedMonth);
-
     const chartData = await apiGet3ChartInfoByMonth({ currMonth: selectedMonth+1, currYear: selectedYear, spid: providerId });
     const customerData = await apiGetCustomerDataByMonth({ currMonth: selectedMonth+1, currYear: selectedYear, spid: providerId });
 

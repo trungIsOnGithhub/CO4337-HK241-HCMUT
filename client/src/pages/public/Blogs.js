@@ -314,9 +314,7 @@ useEffect(() => {
     
             <div className="space-y-6 mt-3">
               {currBlogList?.length <= 0 ? (
-                <div className="bg-white rounded-lg shadow-md p-6 text-center">
-                  <p className="text-gray-600">No blog posts found matching your search criteria.</p>
-                </div>
+                  <p className="text-gray-600 text-center font-semibold">No blog posts found matching your search criteria.</p>
               ) : (
                 currBlogList?.map((blog, idx) => {
                   // console.log('====', blog);
@@ -446,15 +444,15 @@ useEffect(() => {
                 {topProviders?.map((provider, index) => (
         // {performanceViewOption === "service" && services.map((service, index) => (
           <div key={index}
-            onClick={() => { if (provider?.pid) {navigate(`detail_provider/${provider?.pid}`);} }}
-            className="p-4 bg-white hover:bg-gray-50 rounded-lg border flex items-center justify-center flex-col gap-1">
+            onClick={() => { if (provider?._id) {navigate(`detail_provider/${provider?._id}`);} }}
+            className="p-4 bg-white hover:bg-gray-50 rounded-lg border flex items-center justify-center flex-col gap-4">
             <div className="flex items-center mb-3">
               {/* Service Image */}
               <div className='flex flex-col justify-center items-center'>
                 <img
                   src={provider?.avatar[0]}
                   alt="avatar"
-                  className="w-10 h-10 rounded-full mr-4"
+                  className="w-10 h-10 rounded-full mr-4 border p-2"
                 />
 
                 <h3 className="text-gray-800 font-semibold text-center">{`${provider?.lastName[0]} ${provider?.firstName[0]}`}</h3>
@@ -462,7 +460,7 @@ useEffect(() => {
               </div>
             </div>
             <div className="text-sm text-gray-600">
-              <div className="flex justify-between mb-1">
+              <div className="flex justify-between mb-1 ">
                 <span className="font-semibold pr-4">Total Views</span>
                 <span>{provider.viewCount}</span>
               </div>

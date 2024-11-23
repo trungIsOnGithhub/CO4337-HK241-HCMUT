@@ -432,7 +432,7 @@ const Booking = () => {
                 {/* <span>Working Hour: 88 : 99</span> */}
                 <span className='flex flex-col gap-1'>
                   <span className='text-lg'>{`${el.lastName} ${el.firstName}`}</span>
-                  {provider?.advancedSetting && <span className='text-md flex gap-2 items-center'><FaPhone size='12px'/> {el.mobile}</span>}
+                  {provider?.advancedSetting?.showStaffDetailBooking && <span className='text-md flex gap-2 items-center'><FaPhone size='12px'/> {el.mobile}</span>}
                 </span>
               </div>
               <Button style='px-6 rounded-md text-white bg-[#0a66c2] font-semibold h-fit py-2 w-fit' handleOnclick={()=>handleBookDateTime(el)}>Choose other date</Button>

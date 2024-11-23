@@ -7,7 +7,7 @@ const asyncHandler = require("express-async-handler")
 const makeSku = require('uniqid')
 const Order = require('../models/order')
 const esIndexNameList = require('../services/constant');
-const esDBModule = require('../services/es');
+// const esDBModule = require('../services/es');
 const ES_CONSTANT = require('../services/constant');
 
 const createService = asyncHandler(async(req, res)=>{
@@ -93,19 +93,19 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
     const columnNamesToGet = ["id", "name","thumb","price","category","duration","provider_id", "province", "totalRatings"];
 
     let services;
-    services = await esDBModule.fullTextSearchAdvanced(
-        ES_CONSTANT.SERVICES,
-        searchTerm,
-        columnNamesToMatch,
-        columnNamesToGet,
-        limit, offset,
-        sortOption,
-        geoLocationQueryOption,
-        geoSortOption,
-        categoriesIncluded,
-        province,
-        null
-    );
+    // services = await esDBModule.fullTextSearchAdvanced(
+    //     ES_CONSTANT.SERVICES,
+    //     searchTerm,
+    //     columnNamesToMatch,
+    //     columnNamesToGet,
+    //     limit, offset,
+    //     sortOption,
+    //     geoLocationQueryOption,
+    //     geoSortOption,
+    //     categoriesIncluded,
+    //     province,
+    //     null
+    // );
     services = services?.hits;
 
     // console.log("Query Input Parameter: ", services);
@@ -466,7 +466,7 @@ const searchAllServicesPublic = asyncHandler(async (req, res) => {
             }
         }
 
-        console.log('====', sort);
+        // console.log('====', sort);
         if (sort) {
             console.log('====', queryObject?.sort);
             if (sort?.indexOf('-') >= 0) {
@@ -481,7 +481,6 @@ const searchAllServicesPublic = asyncHandler(async (req, res) => {
         }
         
         console.log('Elastic Query: ', queryObject?.sort, '-------------')
-
         let queryResult = [];
         // queryResult = await esDBModule.queryElasticDB(esClient, esIndexNameList.SERVICES, queryObject);
 

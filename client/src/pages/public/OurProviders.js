@@ -490,9 +490,9 @@ const handleGetDirections = () => {
           className="my-masonry-grid flex mx-[-10px]"
           columnClassName="my-masonry-grid_column">
           {(!allProviders?.length) &&
-          <div className="bg-white rounded-lg shadow-md p-6 text-center">
-            <p className="text-gray-600">No provider found matching your search criteria.</p>
-          </div>}
+            <div className="flex justify-center">
+           <p className="text-gray-600 text-center font-semibold">No providers found matching your search criteria.</p>
+           </div>}
           {allProviders?.map(el => (
             <Provider
               key={el._id} 

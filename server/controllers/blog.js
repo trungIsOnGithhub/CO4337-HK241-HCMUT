@@ -483,21 +483,21 @@ const searchBlogAdvanced = asyncHandler(async (req, res) => {
     const columnNamesToGet = ["id", "title", "providername", "authorname", "numberView", "provider_id", "likes", "dislikes", "tags", "createdAt", "thumb"];
 
     let blogs;
-    blogs = await esDBModule.fullTextSearchAdvanced(
-        ES_CONSTANT.BLOGS,
-        searchTerm,
-        columnNamesToMatch,
-        columnNamesToGet,
-        limit,
-        offset,
-        sortOption,
-        null,
-        null,
-        null,
-        null,
-        selectedTags
-    );
-    blogs = blogs?.hits;
+    // blogs = await esDBModule.fullTextSearchAdvanced(
+    //     ES_CONSTANT.BLOGS,
+    //     searchTerm,
+    //     columnNamesToMatch,
+    //     columnNamesToGet,
+    //     limit,
+    //     offset,
+    //     sortOption,
+    //     null,
+    //     null,
+    //     null,
+    //     null,
+    //     selectedTags
+    // );
+    // blogs = blogs?.hits;
 
     // console.log("REAL DATA RETURNED: ", blogs);
 
