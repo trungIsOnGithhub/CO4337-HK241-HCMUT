@@ -10,14 +10,15 @@ import UpdateProduct from './UpdateProduct'
 import icons from 'ultils/icon'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
-import { apiDeleteServiceByAdmin, apiGetServiceByAdmin } from 'apis/service'
+import { apiDeleteServiceByAdmin, apiGetServiceByAdmin, apiUpdateHiddenStatusService } from 'apis/service'
 import clsx from 'clsx'
 import { formatPrice, formatPricee } from 'ultils/helper'
 import UpdateService from './UpdateService'
 import VariantService from './VariantService'
 import bgImage from '../../assets/clouds.svg'
 import { CiSearch } from 'react-icons/ci'
-import { FaChevronLeft, FaChevronRight, FaEye, FaTimes } from 'react-icons/fa'
+import { FaChevronLeft, FaChevronRight, FaEye, FaEyeSlash, FaTimes } from 'react-icons/fa'
+import { IoMdInformationCircleOutline } from 'react-icons/io'
 
 const ManageService = () => {
   const {MdModeEdit, MdDelete, FaCopy} = icons
@@ -35,6 +36,10 @@ const ManageService = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
+  }, []);
+
+  useEffect(() => {
     const searchParams = Object.fromEntries([...params]) 
     fetchService(searchParams)
   }, [params, update])
@@ -42,32 +47,52 @@ const ManageService = () => {
   const handleExpand = async (serviceId) => {
     setCurrentImageIndex(0);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       setExpandedService(expandedService === serviceId ? null : serviceId);
     } catch (error) {
       console.error("Error loading service details:", error);
     } 
   };
 
-  const handleDeleteService = async(sid) => {
-    Swal.fire({
-      title: 'Are you sure',
-      text: 'Are you sure you want to delete this service?',
-      icon: 'warning',
-      showCancelButton: true
-    }).then(async(rs)=>{
-      if(rs.isConfirmed){
-        const response = await apiDeleteServiceByAdmin(sid)
-        if(response.success){
-         toast.success(response.mes)
+  const handleHiddenService = async(serviceId, status) => {
+    if(status === "true"){
+      Swal.fire({
+        title: 'Are you sure',
+        text: 'Are you sure you want to hide this service?',
+        icon: 'warning',
+        showCancelButton: true
+      }).then(async(rs)=>{
+        if(rs.isConfirmed){
+          const response = await apiUpdateHiddenStatusService(serviceId, {status: "true"})
+          if(response.success){
+           toast.success(response.mes)
+          }
+          else{
+           toast.error(response.mes)
+          }
+          render()
         }
-        else{
-         toast.error(response.mes)
+      })
+    }
+    else if(status === "false"){
+      Swal.fire({
+        title: 'Are you sure',
+        text: 'Are you sure you want to unhide this service?',
+        icon: 'warning',
+        showCancelButton: true
+      }).then(async(rs)=>{
+        if(rs.isConfirmed){
+          const response = await apiUpdateHiddenStatusService(serviceId, {status: "false"})
+          if(response.success){
+           toast.success(response.mes)
+          }
+          else{
+           toast.error(response.mes)
+          }
+          render()
         }
-        render()
-      }
-    })
-    
+      })
+    }
   }
 
   const render = useCallback(() => { 
@@ -224,10 +249,16 @@ const ManageService = () => {
                       <span onClick={() => handleNavigateUpdateService(el?._id)} 
                       className='inline-block hover:underline cursor-pointer text-[#005aee] hover:text-orange-500 px-0.5'><MdModeEdit
                       size={24}/></span>
-                      <span onClick={() => handleDeleteService(el?._id)} 
-                      className='inline-block hover:underline cursor-pointer text-[#005aee] hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>
+                      {
+                      !el?.isHidden ?
+                      <span onClick={() => handleHiddenService(el._id, "true")} 
+                      className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><FaEye size={24}/></span>
+                      :
+                      <span onClick={() => handleHiddenService(el._id, "false")}
+                      className='inline-block hover:underline cursor-pointer text-blue-200 hover:text-orange-500 px-0.5'><FaEyeSlash size={24}/></span>
+                      }
                       <span onClick={() => handleExpand(el?._id)}
-                      className='inline-block hover:underline cursor-pointer text-[#005aee] hover:text-orange-500 px-0.5'><FaEye 
+                      className='inline-block hover:underline cursor-pointer text-[#005aee] hover:text-orange-500 px-0.5'><IoMdInformationCircleOutline 
                       size={22}/></span>
                     </span>
 
@@ -259,11 +290,11 @@ const ManageService = () => {
                               </div>
 
                               <h3 className="text-lg font-semibold mt-6 mb-4 text-[#00143c]">Employee:</h3>
-                              <div className="flex flex-wrap gap-4 text-[#00143c]">
+                              <div className="flex flex-col gap-2 text-[#00143c]">
                                 {el?.assigned_staff.map((provider, index) => (
                                   <div
                                     key={index}
-                                    className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg shadow-sm"
+                                    className="flex w-[80%] overflow-x-auto items-center space-x-3 bg-gray-50 border border-gray-200 p-3 rounded-lg shadow-sm"
                                   >
                                     <img
                                       src={provider?.avatar}

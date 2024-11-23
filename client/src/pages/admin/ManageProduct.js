@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react'
 import { InputForm, InputFormm, Pagination} from 'components'
 import { useForm } from 'react-hook-form'
-import { apiGetProductByAdmin, apiDeleteProduct} from 'apis/product'
+import { apiGetProductByAdmin, apiDeleteProduct, apiUpdateHiddenStatus} from 'apis/product'
 import moment from 'moment'
 import { useSearchParams, createSearchParams, useNavigate, useLocation} from 'react-router-dom'
 import useDebounce from 'hook/useDebounce'
@@ -12,7 +12,11 @@ import { toast } from 'react-toastify'
 import { VariantProduct } from '.'
 import bgImage from '../../assets/clouds.svg'
 import { FaCirclePlus } from 'react-icons/fa6'
-import { FaPlus } from 'react-icons/fa'
+import { FaEye, FaEyeSlash, FaInfoCircle, FaPlus, FaTimes } from 'react-icons/fa'
+import { formatPrice } from 'ultils/helper'
+import path from 'ultils/path'
+import { CiCircleInfo } from 'react-icons/ci'
+import { IoMdInformationCircleOutline } from 'react-icons/io'
 
 
 const ManageProduct = () => {
@@ -25,27 +29,53 @@ const ManageProduct = () => {
   const [counts, setCounts] = useState(0)
   const [editProduct, setEditProduct] = useState(null)
   const [update, setUpdate] = useState(false)
-  const handleDeleteProduct = async(pid) => {
-    Swal.fire({
-      title: 'Are you sure',
-      text: 'Are you sure you want to delete this product?',
-      icon: 'warning',
-      showCancelButton: true
-    }).then(async(rs)=>{
-      if(rs.isConfirmed){
-        const response = await apiDeleteProduct(pid)
-        if(response.success){
-         toast.success(response.mes)
-        }
-        else{
-         toast.error(response.mes)
-        }
-        render()
-      }
-    })
-    
-  }
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [expandedProduct, setExpandedProduct] = useState(null)
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' }); 
+  }, []);
+
+  const handleHiddenProduct = async(productId, status) => {
+    if(status === "true"){
+      Swal.fire({
+        title: 'Are you sure',
+        text: 'Are you sure you want to hide this product?',
+        icon: 'warning',
+        showCancelButton: true
+      }).then(async(rs)=>{
+        if(rs.isConfirmed){
+          const response = await apiUpdateHiddenStatus(productId, {status: "true"})
+          if(response.success){
+           toast.success(response.mes)
+          }
+          else{
+           toast.error(response.mes)
+          }
+          render()
+        }
+      })
+    }
+    else if(status === "false"){
+      Swal.fire({
+        title: 'Are you sure',
+        text: 'Are you sure you want to unhide this product?',
+        icon: 'warning',
+        showCancelButton: true
+      }).then(async(rs)=>{
+        if(rs.isConfirmed){
+          const response = await apiUpdateHiddenStatus(productId, {status: "false"})
+          if(response.success){
+           toast.success(response.mes)
+          }
+          else{
+           toast.error(response.mes)
+          }
+          render()
+        }
+      })
+    }
+  }
   const render = useCallback(() => { 
     setUpdate(!update)
    })
@@ -131,6 +161,16 @@ const ManageProduct = () => {
   const handleNavigateUpdateProduct = (productId) => {
     navigate(`/admin/update_product/${productId}`)
   }
+
+  const handleExpand = async (productId) => {
+    setCurrentImageIndex(0);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      setExpandedProduct(expandedProduct === productId ? null : productId);
+    } catch (error) {
+      console.error("Error loading service details:", error);
+    } 
+  }
   return (
     <div className="w-full h-full relative">
       <div className='inset-0 absolute z-0'>
@@ -182,11 +222,120 @@ const ManageProduct = () => {
                     <span className='w-[20%] px-2 py-2 flex justify-center items-center'>
                       <span onClick={() => handleNavigateUpdateProduct(el?._id)} 
                       className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdModeEdit size={24}/></span>
-                      <span onClick={() => handleDeleteProduct(el._id)} 
-                      className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>
+                     {
+                      !el?.isHidden ?
+                      <span onClick={() => handleHiddenProduct(el._id, "true")} 
+                      className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><FaEye size={24}/></span>
+                      :
+                      <span onClick={() => handleHiddenProduct(el._id, "false")}
+                      className='inline-block hover:underline cursor-pointer text-blue-200 hover:text-orange-500 px-0.5'><FaEyeSlash size={24}/></span>
+                     }
                       <span onClick={() => handleNavigateAddVariant(el?._id)} 
                       className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><FaPlus size={24}/></span>
+                      <span onClick={() => handleExpand(el?._id)} 
+                      className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><IoMdInformationCircleOutline size={24}/></span>
                     </span>
+
+                    {expandedProduct === el?._id && (
+                      <div className="fixed inset-0 z-[500] flex items-center justify-end bg-black bg-opacity-50">
+                        <div className="bg-white rounded-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto relative animate-fade-in-up mr-24">
+                          <button
+                            onClick={() => setExpandedProduct(null)}
+                            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+                          >
+                            <FaTimes className="text-xl" />
+                          </button>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-[#00143c]">
+                            <div>
+                              <h3 className="text-lg font-semibold mb-4">Product Details</h3>
+                              <div className="space-y-2">
+                                <p>
+                                  <span className="font-medium">Price: </span>{`${formatPrice(el?.price)} VNĐ`}
+                                </p>
+                                <p>
+                                  <span className="font-medium">Category:</span> {el?.category}
+                                </p>
+                                <p>
+                                  <span className="font-medium">Created Date:</span> {new Date(el?.createdAt).toLocaleDateString()}
+                                </p>
+                                <p>
+                                  <span className='font-medium'>{`Color: ${el?.color}`}</span>
+                                </p>
+                                <div
+                                  className="w-8 h-8 rounded-full border-2 border-white"
+                                  style={{ backgroundColor: el?.colorCode || '#111111' }}
+                                ></div>
+                              </div>
+
+                              {el?.variants?.length > 0 && (
+                                <>
+                                  <h3 className="text-lg font-semibold mt-6 mb-4 text-[#00143c]">Variant:</h3>
+                                  <div className="flex flex-col gap-2 text-[#00143c]">
+                                  {el?.variants?.map((variant, index) => (
+                                    <div
+                                      key={index}
+                                      onClick={()=>navigate(`/${path.ADMIN}/update_variant_product/${el?._id}/${variant?._id}`)}
+                                      className="cursor-pointer flex w-[80%] overflow-x-auto items-center space-x-3 bg-gray-50 border border-gray-200 p-3 rounded-lg shadow-sm"
+                                    >
+                                      <img
+                                        src={variant?.thumb}
+                                        alt={`image variant`}
+                                        className="w-12 h-12 rounded-full object-cover"
+                                        onError={(e) => {
+                                          e.target.src = "https://images.unsplash.com/photo-1633613286991-611fe299c4be";
+                                        }}
+                                      />
+                                      <div>
+                                        <p className="font-medium">{variant?.title}</p>
+                                      </div>
+
+                                    </div>
+                                  ))}
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold mb-4">Gallery</h3>
+                              <div className="relative">
+                                <img
+                                  src={[el?.thumb, ...el?.image][currentImageIndex]}
+                                  alt={currentImageIndex + 1}
+                                  className="rounded-lg object-cover w-full h-80"
+                                  onError={(e) => {
+                                    e.target.src = "https://images.unsplash.com/photo-1633613286991-611fe299c4be";
+                                  }}
+                                />
+                               
+                                <div className="flex justify-center mt-4 space-x-2">
+                                  {[el?.thumb, ...el?.image]?.map((_, index) => (
+                                    <button
+                                      key={index}
+                                      onClick={() => setCurrentImageIndex(index)}
+                                      className={`w-2 h-2 rounded-full ${index === currentImageIndex ? "bg-blue-500" : "bg-gray-300"}`}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                              <div className="grid grid-cols-6 gap-2 mt-4">
+                                {[el?.thumb, ...el?.image]?.map((image, index) => (
+                                  <img
+                                    key={index}
+                                    src={image}
+                                    alt={index + 1}
+                                    className={`rounded-lg object-cover w-full h-12 cursor-pointer ${index === currentImageIndex ? "ring-2 ring-blue-500" : ""}`}
+                                    onClick={() => setCurrentImageIndex(index)}
+                                    onError={(e) => {
+                                      e.target.src = "https://images.unsplash.com/photo-1633613286991-611fe299c4be";
+                                    }}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))
               }

@@ -21,10 +21,13 @@ const DealDaily = () => {
 
     const fetchDealDaily = async () => {
         const response = await apiGetServicePublic()
-        // {sort: '-totalRatings', limit:10}
         if(response.success){
-            const pr = response.services[Math.round(Math.random()*5)]
+            const maxIndex = Math.min(response.services.length, 4) - 1;
+            const pr = response.services[Math.round(Math.random() * maxIndex)];
             dispatch(getDealDaily({data:pr?.sv, time: Date.now() + 24*60*60*1000}))
+            console.log(new Date().getHours())
+            console.log(new Date().getMinutes())
+            console.log(new Date().getSeconds())
             const h = 23 - new Date().getHours()
             const m = 60 - new Date().getMinutes()
             const s = 60 - new Date().getSeconds()

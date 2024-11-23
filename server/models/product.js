@@ -82,6 +82,10 @@ var productSchema = new mongoose.Schema({
             value: { type: String, required: true } // Giá trị của thông số
         }
     ],
+    isHidden: {
+        type: Boolean,
+        default: false
+    }
 },{
     timestamps: true
 });

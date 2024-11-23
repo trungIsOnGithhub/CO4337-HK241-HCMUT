@@ -236,9 +236,6 @@ const DetailProvider = () => {
       // Tạo cấu trúc footer
       const leftColumn = sortedFooter.filter(item => item.column === 'left');
       const rightColumn = sortedFooter.filter(item => item.column === 'right');
-
-      // console.log('LLLLLLLLLLLL', leftColumn);
-      // console.log('ERRRRRRRRRRR', rightColumn);
     
       return (
         <div className="footer flex justify-center pt-[32px] pb-[28px] px-[18px] w-full h-full">
@@ -392,6 +389,9 @@ const DetailProvider = () => {
     setShowSort(false)
   }, [variable]);
 
+
+  console.log(current)
+  console.log(adminData)
   return (
     <div className='w-full'>
         <div className={clsx('w-full fixed top-0 left-0 h-[86px] flex justify-center z-[100]', providerData?.theme === 'dark' && 'bg-[#212529] text-white')}>
@@ -813,13 +813,16 @@ const DetailProvider = () => {
           {renderFooter()}
         </div>
 
-        <div className='fixed right-12 bottom-12'>
-          <span onClick={()=>handleShowChat()}
-            className="cursor-pointer bg-[#0a66c2] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#084a93] transition-all"
-          >
-          💬 Chat with Us
-          </span>
-        </div>
+        {
+          (adminData && current?._id !== adminData[0]?._id) &&
+          <div className='fixed right-12 bottom-12'>
+            <span onClick={()=>handleShowChat()}
+              className="cursor-pointer bg-[#0a66c2] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#084a93] transition-all"
+            >
+            💬 Chat with Us
+            </span>
+          </div>
+        }
       </div>
   )
 }

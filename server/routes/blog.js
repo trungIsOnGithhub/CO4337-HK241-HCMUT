@@ -18,6 +18,7 @@ router.post('/create', [verifyAccessToken, isAdmin], uploader.fields([
 router.post('/create_tag', ctrls.createNewPostTag)
 router.get('/:bid', ctrls.getBlog)
 router.delete('/:bid',[verifyAccessToken, isAdmin], ctrls.deleteBlog)
+router.put('/update_hidden_status/:blogId', [verifyAccessToken, isAdmin], ctrls.updateHiddenStatus)
 router.put('/:bid', [verifyAccessToken, isAdmin],uploader.fields([
     {
         name: 'thumb',

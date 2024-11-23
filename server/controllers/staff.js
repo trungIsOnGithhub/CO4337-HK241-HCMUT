@@ -53,9 +53,13 @@ const getAllStaffsByAdmin = asyncHandler(async (req, res) => {
         delete formatedQueries.q
         queryFinish = {
             $or: [
-                {firstName : { $regex: req.query.q, $options: 'i' }},
-                {lastName : { $regex: req.query.q, $options: 'i' }},
-                {email : { $regex: req.query.q, $options: 'i' }},
+                { firstName: { $regex: req.query.q, $options: 'i' } },
+                { lastName: { $regex: req.query.q, $options: 'i' } },
+                { email: { $regex: req.query.q, $options: 'i' } },
+                { $expr: { $regexMatch: { input: { $concat: ["$firstName", " ", "$lastName"] }, regex: req.query.q, options: 'i' } } },
+                { $expr: { $regexMatch: { input: { $concat: ["$lastName", " ", "$firstName"] }, regex: req.query.q, options: 'i' } } },
+                { $expr: { $regexMatch: { input: { $concat: ["$firstName", "", "$lastName"] }, regex: req.query.q, options: 'i' } } },
+                { $expr: { $regexMatch: { input: { $concat: ["$lastName", "", "$firstName"] }, regex: req.query.q, options: 'i' } } },
             ]
         }
     }
@@ -241,6 +245,41 @@ const updateStaffShift = asyncHandler(async(req, res)=>{
     });
 })
 
+const updateHiddenStatus = asyncHandler(async (req, res) => {
+    const {staffId} = req.params
+    const {status} = req.query
+   
+    //status la false -> falsy -> !status return true 
+    if (!staffId || status === undefined) {
+        throw new Error("Missing input");
+    }
+
+    // Kiểm tra giá trị status phải là true hoặc false
+    const isValidStatus = status === "true" || status === "false";
+    if (!isValidStatus) {
+        throw new Error("Invalid status value. Use 'true' or 'false'.");
+    }
+
+    // Chuyển đổi giá trị status thành boolean
+    const isHidden = status === "true";
+
+    // Cập nhật thuộc tính isHidden
+    const updatedStaff = await Staff.findByIdAndUpdate(
+        staffId,
+        { isHidden }, // Cập nhật isHidden
+        { new: true, upsert: false } // Trả về document sau khi update + upsert:false de khong tao moi
+    );
+
+    if (!updatedStaff) {
+        throw new Error("Staff not found");
+    }
+
+    res.status(200).json({
+        success: true,
+        mes: "Staff updated successfully",
+    });
+})
+
 module.exports = {
     addStaff,
     getAllStaffsByAdmin,
@@ -248,5 +287,6 @@ module.exports = {
     deleteStaffByAdmin,
     getOneStaff,
     updateStaffWork,
-    updateStaffShift
+    updateStaffShift,
+    updateHiddenStatus
 }

@@ -302,7 +302,15 @@ const ManageFooterSection = () => {
           {elements.left.map((element) => (
             visibleElements[element.id] && (
               <div key={element.id} className="text-gray-300">
-                {element.content}
+                {element.id === "social" ? (
+                  <div className="flex space-x-4">
+                    {socialLinks.map((link) => (
+                      <link.icon key={link.platform} className="text-2xl hover:text-blue-400 cursor-pointer" />
+                    ))}
+                  </div>
+                ) : (
+                  element.content
+                )}
               </div>
             )
           ))}

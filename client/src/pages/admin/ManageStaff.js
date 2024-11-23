@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from 'react'
 import { InputForm, Pagination, Variant, Button, InputFormm } from 'components'
 import { useForm } from 'react-hook-form'
-import {apiGetAllStaffs, apiDeleteStaff} from 'apis/staff'
+import {apiGetAllStaffs, apiDeleteStaff, apiUpdateHiddenStatusStaff} from 'apis/staff'
 // import moment from 'moment'
 import { useSearchParams, createSearchParams, useNavigate, useLocation, json} from 'react-router-dom'
 // import useDebounce from 'hook/useDebounce'
@@ -10,7 +10,7 @@ import ManageStaffShift from './ManageStaffShift'
 import icons from 'ultils/icon'
 import Swal from 'sweetalert2'
 import { toast } from 'react-toastify'
-import { FaCalendarCheck, FaSearch } from "react-icons/fa";
+import { FaCalendarCheck, FaEye, FaEyeSlash, FaSearch } from "react-icons/fa";
 import bgImage from '../../assets/clouds.svg'
 // import { createSearchParams, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 // import { apiGetOrdersByAdmin } from 'apis/order';
@@ -40,24 +40,45 @@ const ManageProduct = () => {
 
   const [showExportExcelModal, setShowExportExcelModal] = useState(false);
 
-  const handleDeleteStaff = async(pid) => {
-    Swal.fire({
-      title: 'Are you sure',
-      text: 'Are you sure you want to delete this staff?',
-      icon: 'warning',
-      showCancelButton: true
-    }).then(async(rs)=>{
-      if(rs.isConfirmed){
-        const response = await apiDeleteStaff(pid)
-        if(response.success){
-          toast.success(response.mes)
+  const handleHiddenStaff = async(staffId, status) => {
+    if(status === "true"){
+      Swal.fire({
+        title: 'Are you sure',
+        text: 'Are you sure you want to hide this staff?',
+        icon: 'warning',
+        showCancelButton: true
+      }).then(async(rs)=>{
+        if(rs.isConfirmed){
+          const response = await apiUpdateHiddenStatusStaff(staffId, {status: "true"})
+          if(response.success){
+           toast.success(response.mes)
+          }
+          else{
+           toast.error(response.mes)
+          }
+          render()
         }
-        else{
-         toast.error(response.mes)
+      })
+    }
+    else if(status === "false"){
+      Swal.fire({
+        title: 'Are you sure',
+        text: 'Are you sure you want to unhide this staff?',
+        icon: 'warning',
+        showCancelButton: true
+      }).then(async(rs)=>{
+        if(rs.isConfirmed){
+          const response = await apiUpdateHiddenStatusStaff(staffId, {status: "false"})
+          if(response.success){
+           toast.success(response.mes)
+          }
+          else{
+           toast.error(response.mes)
+          }
+          render()
         }
-        render()
-      }
-    }) 
+      })
+    }
   }
 
   const render = useCallback(() => { 
@@ -102,19 +123,6 @@ const ManageProduct = () => {
   
   useEffect(staffDataEffectHandler, [params, update])
 
-  // useEffect(() => {
-  //   if(queryDebounce) {
-  //     navigate({
-  //       pathname: location.pathname,
-  //       search: createSearchParams({q:queryDebounce}).toString()
-  //     })
-  //   }
-  //   else{
-  //     navigate({
-  //       pathname: location.pathname,
-  //     })
-  //   }
-  // }, [queryDebounce])
   
   
   return (
@@ -145,7 +153,7 @@ const ManageProduct = () => {
             { showExportExcelModal &&
               <DataExportSheetModal rawData={staffs}
                 onClose={() => { setShowExportExcelModal(false); }}
-                propsToExport={["firstName", "lastName", "phone", "email"]} /> }
+                propsToExport={["firstName", "lastName", "mobile", "email"]} /> }
 
           </div>
           <div className='w-full h-[48px] mx-[-6px] mt-[-6px] mb-[10px] flex'>
@@ -195,8 +203,14 @@ const ManageProduct = () => {
                         className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'>
                           <MdModeEdit size={24}/>
                       </span>
-                      <span onClick={() => handleDeleteStaff(el._id)} 
-                      className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><MdDelete size={24}/></span>
+                      {
+                      !el?.isHidden ?
+                      <span onClick={() => handleHiddenStaff(el._id, "true")} 
+                      className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5'><FaEye size={24}/></span>
+                      :
+                      <span onClick={() => handleHiddenStaff(el._id, "false")}
+                      className='inline-block hover:underline cursor-pointer text-blue-200 hover:text-orange-500 px-0.5'><FaEyeSlash size={24}/></span>
+                      }
                       <span onClick={() => { setManageStaffShift(true); setCurrentStaffId(el?._id) } } 
                       className='inline-block hover:underline cursor-pointer text-blue-500 hover:text-orange-500 px-0.5 pb-0.5'>
                       <FaCalendarCheck size={"20"}/>

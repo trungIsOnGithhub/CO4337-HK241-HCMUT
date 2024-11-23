@@ -343,6 +343,10 @@ const getOrdersByAdmin = asyncHandler(async (req, res) => {
                 }, {})
             });
         }
+        else {
+            // Default sorting by createdAt (newest first)
+            aggregationPipeline.push({ $sort: { createdAt: -1 } });
+        }
 
         // Project specific fields (field selection)
         if (req.query.fields) {

@@ -20,6 +20,7 @@ router.post('/', [verifyAccessToken, isAdmin],uploader.fields([
 router.get('/public', ctrls.getAllProduct)
 router.get('/public/:provider_id', ctrls.getAllProductByProviderId)
 router.put('/ratings', [verifyAccessToken], ctrls.ratings)
+router.put('/update_hidden_status/:productId', [verifyAccessToken, isAdmin], ctrls.updateHiddenStatus)
 
 
 router.put('/upload_image/:pid', [verifyAccessToken, isAdmin],uploader.fields('images', 10), ctrls.uploadImage)

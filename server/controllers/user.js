@@ -1,5 +1,6 @@
 const User = require('../models/user')
 const Order = require('../models/order')
+const OrderProduct = require('../models/orderProduct')
 const asyncHandler = require("express-async-handler")
 const {generateAccessToken, generateRefreshToken} = require('../middlewares/jwt')
 const jwt = require('jsonwebtoken')
@@ -478,14 +479,44 @@ const getAllCustomers = asyncHandler(async (req, res) => {
     }
 
     try {
-        // Find all orders where the first element in the info array matches the provider_id
-        const orders = await Order.find({ 'info.0.provider': providerId }).populate('orderBy').exec();
+        const ordersFromOrderModel = await Order.find({ 'info.0.provider': providerId })
+            .populate('orderBy')
+            .exec();
+    
+        const ordersFromOrderProductModel = await OrderProduct.find({ provider: providerId })
+            .populate('orderBy')
+            .exec();
 
-        // Extract unique user IDs from the orders
-        const userIds = [...new Set(orders.map(order => order.orderBy._id.toString()))];
+        ordersFromOrderModel.forEach(order => {
+            console.log(order.orderBy);  // Kiểm tra toàn bộ thông tin của orderBy
+            });
+        
+        //console.log(ordersFromOrderModel)
+        // console.log(ordersFromOrderProductModel)
 
-        // Apply additional queries, filtering, sorting, and pagination to the user list
-        formatedQueries._id = { $in: userIds };
+        // Kết hợp danh sách user IDs từ cả hai model
+        const userIdsFromOrders = ordersFromOrderModel.map(order => {
+            if (order.orderBy && order.orderBy._id) {
+                return order.orderBy._id.toString();
+            }
+            return null;  // Hoặc có thể trả về giá trị khác nếu không tìm thấy _id
+        }).filter(id => id !== null);
+
+        const userIdsFromOrderProducts = ordersFromOrderProductModel.map(order => {
+            if (order.orderBy && order.orderBy._id) {
+                return order.orderBy._id.toString();
+            } else {
+                console.log("Missing orderBy or _id in order:", order);
+                return null; // Hoặc bạn có thể bỏ qua đối tượng này tùy theo nhu cầu
+            }
+        }).filter(id => id !== null);
+        
+        // Loại bỏ các user ID trùng lặp
+        const uniqueUserIds = [...new Set([...userIdsFromOrders, ...userIdsFromOrderProducts])];
+        
+        // Thêm vào query đã format
+        formatedQueries._id = { $in: uniqueUserIds };
+    
 
         let queryCommand = User.find(formatedQueries);
 

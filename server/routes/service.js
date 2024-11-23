@@ -26,6 +26,7 @@ router.post('/', [verifyAccessToken, isAdmin],uploader.fields([
 router.get('/', [verifyAccessToken, isAdmin], ctrls.getAllServicesByAdmin)
 router.delete('/:sid', [verifyAccessToken, isAdmin], ctrls.deleteServiceByAdmin)
 router.put('/rating_service', [verifyAccessToken], ctrls.ratingService)
+router.put('/update_hidden_status/:serviceId', [verifyAccessToken, isAdmin], ctrls.updateHiddenStatus)
 router.put('/:sid', [verifyAccessToken, isAdmin],uploader.fields([
     {
         name: 'images',

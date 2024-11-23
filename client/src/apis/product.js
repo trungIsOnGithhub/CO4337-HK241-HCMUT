@@ -29,6 +29,13 @@ export const apiRatings = (data) => axios({
     data
 })
 
+export const apiUpdateHiddenStatus = (productId, params) => axios({
+    url: '/product/update_hidden_status/' + productId,
+    method: 'put',
+    params
+})
+
+
 export const apiCreateProduct = (data) => axios({
     url: '/product/',
     method: 'post',

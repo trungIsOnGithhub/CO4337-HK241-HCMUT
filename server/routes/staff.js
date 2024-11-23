@@ -10,6 +10,8 @@ router.put('/:staffId', [verifyAccessToken, isAdmin], uploader.single('avatar'),
 router.delete('/:staffId', [verifyAccessToken, isAdmin], ctrls.deleteStaffByAdmin)
 router.get('/:stid', ctrls.getOneStaff)
 router.post('/update_shift', ctrls.updateStaffShift)
+router.put('/update_hidden_status/:staffId', ctrls.updateHiddenStatus)
+
 module.exports = router
 
 //CREATE : POST       (body) -- khong bi lo

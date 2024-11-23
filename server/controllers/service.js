@@ -263,7 +263,6 @@ const updateServiceByAdmin = asyncHandler(async(req, res)=>{
 // })
 
 
-// get all staffs
 const getAllServicesPublic = asyncHandler(async (req, res) => {
     let queries = { ...req.query };
 
@@ -294,7 +293,11 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
     }
 
     let queryFinish = {}
-    const qr = {...formatedQueries, ...queryFinish, ...categoryFinish}
+    const qr = {...formatedQueries, ...queryFinish, ...categoryFinish, 
+        $or: [
+            { isHidden: false },
+            { isHidden: { $exists: false } }
+        ]}
 
     let services = await Service.find(qr);
 
@@ -752,7 +755,12 @@ const getAllServicesByProviderId = asyncHandler(async (req, res) => {
             ]
         }
     }
-    const qr = {...formatedQueries, ...queryFinish, ...categoryFinish, provider_id}
+    const qr = {...formatedQueries, ...queryFinish, ...categoryFinish, provider_id,
+        $or: [
+            { isHidden: false },
+            { isHidden: { $exists: false } }
+        ]
+    }
     let queryCommand =  Service.find(qr).populate({
         path: 'assigned_staff',
         select: 'firstName lastName avatar',
@@ -798,6 +806,41 @@ const getAllServicesByProviderId = asyncHandler(async (req, res) => {
     }
 })
 
+const updateHiddenStatus = asyncHandler(async (req, res) => {
+    const {serviceId} = req.params
+    const {status} = req.query
+   
+    //status la false -> falsy -> !status return true 
+    if (!serviceId || status === undefined) {
+        throw new Error("Missing input");
+    }
+
+    // Kiểm tra giá trị status phải là true hoặc false
+    const isValidStatus = status === "true" || status === "false";
+    if (!isValidStatus) {
+        throw new Error("Invalid status value. Use 'true' or 'false'.");
+    }
+
+    // Chuyển đổi giá trị status thành boolean
+    const isHidden = status === "true";
+
+    // Cập nhật thuộc tính isHidden
+    const updatedService = await Service.findByIdAndUpdate(
+        serviceId,
+        { isHidden }, // Cập nhật isHidden
+        { new: true, upsert: false } // Trả về document sau khi update + upsert:false de khong tao moi
+    );
+
+    if (!updatedService) {
+        throw new Error("Service not found");
+    }
+
+    res.status(200).json({
+        success: true,
+        mes: "Service updated successfully",
+    });
+})
+
 module.exports = {
     createService,
     getAllServicesByAdmin,
@@ -810,5 +853,6 @@ module.exports = {
     getMostPurchasedService,
     getAllServicesByProviderId,
     searchAllServicesPublic,
-    searchServiceAdvanced
+    searchServiceAdvanced,
+    updateHiddenStatus
 }

@@ -20,7 +20,7 @@ import { FaBahai, FaSearch  } from "react-icons/fa";
 import { HashLoader } from 'react-spinners';
 import ToggleButton from './ToggleButton';
 
-const REACT_APP_PAGINATION_LIMIT_DEFAULT = process.env.REACT_APP_PAGINATION_LIMIT_DEFAULT;
+const REACT_APP_PAGINATION_LIMIT_DEFAULT = process.env.REACT_APP_LIMIT;
 const Services = () => {
   // const navigate = useNavigate()
   const dispatch = useDispatch()
