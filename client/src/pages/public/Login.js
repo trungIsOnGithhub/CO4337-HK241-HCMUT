@@ -411,7 +411,7 @@ const Login = () => {
                         </Button>
                     </div>
                     <div className="mt-6">
-                        <div className="relative">
+                        {/* <div className="relative">
                             <div className="absolute inset-0 flex items-center">
                             <div className="w-full border-t border-gray-300"></div>
                             </div>
@@ -427,7 +427,7 @@ const Login = () => {
                             >
                             <FcGoogle className="mr-2" /> Google
                             </button>
-                        </div>
+                        </div> */}
 
                         <div className="mt-6 items-center flex flex-col gap-2">
                             <p className="text-sm text-gray-600">
