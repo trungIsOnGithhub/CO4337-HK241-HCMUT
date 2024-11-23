@@ -321,7 +321,7 @@ const BookingDateTIme = () => {
       originalPrice: originalPrice,
       discountPrice: +discountValue > 0 ? +discountValue : 0,
       coupon: selectedVoucher?._id,
-      nowDate: new Date()
+      tzOffset: (new Date()).getTimezoneOffset()
     });
 
 
@@ -387,7 +387,7 @@ const BookingDateTIme = () => {
       originalPrice: originalPrice,
       discountPrice: +discountValue > 0 ? +discountValue : 0,
       coupon: selectedVoucher?._id,
-      nowDate: new Date()
+      tzOffset: (new Date()).getTimezoneOffset()
     })
 
     if (resp.success) {

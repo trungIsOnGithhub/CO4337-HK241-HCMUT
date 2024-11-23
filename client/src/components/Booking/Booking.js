@@ -250,7 +250,7 @@ const Booking = () => {
       discountPrice: +discountValue > 0 ? +discountValue : 0,
       dateTime,
       coupon: selectedVoucher?._id,
-      nowDate: new Date()
+      tzOffset: (new Date()).getTimezoneOffset()
     });
 
     if (resp.success) {
@@ -349,11 +349,18 @@ const Booking = () => {
       discountPrice: +discountValue > 0 ? +discountValue : 0,
       dateTime: dateTime,
       coupon: selectedVoucher?._id,
-      nowDate: new Date()
+      tzOffset: (new Date()).getTimezoneOffset()
     })
 
     if (resp.success) {
       toast.success("Service cart updated successfully!");
+
+      if(selectedVoucher){
+        navigate(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}&couponCode=${selectedVoucher?.code}`);
+      }
+      else {
+        navigate(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}`);
+      }
     }
     else if (resp.mes) {
       // console.log('==============', resp);
@@ -368,14 +375,6 @@ const Booking = () => {
     else  {
       toast.error("Error add service to cart!");
     }
-
-    if(selectedVoucher){
-      navigate(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}&couponCode=${selectedVoucher?.code}`);
-    }
-    else {
-      navigate(`/${path.CHECKOUT_SERVICE}?price=${finalPrice}`);
-    }
-
   }
 
   const isWorkingTime = (time, workSchedule) => {

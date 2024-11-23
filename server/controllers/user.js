@@ -627,9 +627,12 @@ function convertH2MInexact(timeInHour){
 }
 
 // update cart_service
-const getMinuteDiff = (date1, date2) => {
+const getMinuteDiff = (date1, date2, tzOffset2) => {
+    if (!tzOffset2) {
+        tzOffset2 = 0;
+    }
     try {
-        const diff = Math.abs(Math.round(date1.getTime() - date2.getTime()) / 60000);
+        const diff = Math.abs(Math.round(date1.getTime() - date2.getTime()) / 60000) + tzOffset2;
         return diff;
     }
     catch(error) {
@@ -639,7 +642,7 @@ const getMinuteDiff = (date1, date2) => {
 }
 const updateCartService = asyncHandler(async (req, res) => {
     const {_id} = req.user;
-    const {service, provider, staff, time, date, duration, originalPrice, discountPrice, dateTime, nowDate, coupon=null} = req.body;
+    const {service, provider, staff, time, date, duration, originalPrice, discountPrice, dateTime, tzOffset, coupon=null} = req.body;
 
     if (!service || !provider || !staff || !time || !date || !duration || !originalPrice || !dateTime) {
         throw new Error("Request missing input data!");
@@ -650,10 +653,16 @@ const updateCartService = asyncHandler(async (req, res) => {
         // min time before book same day
         const providerObj = await ServiceProvider.findById(provider);
         const minuteDiffBookingAndReal = getMinuteDiff(
-            new Date(dateTime), new Date(nowDate)
+            new Date(dateTime), new Date(), tzOffset
         );
+        // const serverTzOffset = (new Date()).getTimezoneOffset();
 
-        if (providerObj && nowDate
+        // console.log(dateTime + '----------' + nowDate);
+        // console.log('******************************' + minuteDiffBookingAndReal);
+        // console.log('+++++++++++++++' + tzOffset);
+        // console.log('-------------->' + new Date());
+
+        if (providerObj && tzOffset
             && +providerObj.advancedSetting?.minutesBeforeSameDayBook > 0
             && typeof(minuteDiffBookingAndReal) === 'number'
             && minuteDiffBookingAndReal < +providerObj.advancedSetting.minutesBeforeSameDayBook
@@ -703,7 +712,7 @@ const updateCartService = asyncHandler(async (req, res) => {
             return true;
         });
 
-        console.log('.>>>>>>>>', overlapped);
+        // console.log('.>>>>>>>>', overlapped);
 
         if (overlapped) {
             return res.status(409).json({
