@@ -31,7 +31,7 @@ const Provider = ({providerData, isNotBorder, fullWidth = false, userLatitude, u
   return (
     <div className={'text-base px-[10px]' + (fullWidth ? 'w-full' : '')}>
       <div 
-        onClick={()=> navigate(`/detail_provider/${providerData?._id}`)}
+        onClick={()=> navigate(`/detail_provider/${providerData?.id}`)}
         className='w-full border p-[15px] flex flex-col items-center cursor-pointer'
       >
         <div className='w-full relative'>
