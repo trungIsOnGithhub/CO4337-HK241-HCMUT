@@ -199,29 +199,29 @@ const Booking = () => {
     const nowDate = new Date();
     const date = moment(nowDate).format("DD/MM/YYYY");
 
-    if (provider?.advancedSetting?.minutesBeforeSameDayBook > 0) {
-      const nowMM = nowDate.getHours() * 60 + nowDate.getMinutes() + 1; // add 1 one more minute to fix delay
+    // if (provider?.advancedSetting?.minutesBeforeSameDayBook > 0) {
+    //   const nowMM = nowDate.getHours() * 60 + nowDate.getMinutes() + 1; // add 1 one more minute to fix delay
 
-      if (startMM - nowMM <= provider.advancedSetting.minutesBeforeSameDayBook) {
-        const hNeed = Math.trunc(provider.advancedSetting.minutesBeforeSameDayBook / 60);
-        const mNeed = provider.advancedSetting.minutesBeforeSameDayBook % 60;
-        let msg = `Provider required ${hNeed} hours ${mNeed} before booking this timeslot!`;
-        if (hNeed < 1) {
-          msg = `Provider required ${mNeed} minutes before booking this timeslot!`;
-        }
-        if (mNeed < 1) {
-          msg = `Provider required ${hNeed} hours before booking this timeslot!`;
-        }
-        toast.error(msg);
-        fetchData();
-        setSelectedStaff({
-          time: null,
-          date: null,
-          staff: null
-        });
-        return;
-      }
-    }
+    //   if (startMM - nowMM <= provider.advancedSetting.minutesBeforeSameDayBook) {
+    //     const hNeed = Math.trunc(provider.advancedSetting.minutesBeforeSameDayBook / 60);
+    //     const mNeed = provider.advancedSetting.minutesBeforeSameDayBook % 60;
+    //     let msg = `Provider required ${hNeed} hours ${mNeed} before booking this timeslot!`;
+    //     if (hNeed < 1) {
+    //       msg = `Provider required ${mNeed} minutes before booking this timeslot!`;
+    //     }
+    //     if (mNeed < 1) {
+    //       msg = `Provider required ${hNeed} hours before booking this timeslot!`;
+    //     }
+    //     toast.error(msg);
+    //     fetchData();
+    //     setSelectedStaff({
+    //       time: null,
+    //       date: null,
+    //       staff: null
+    //     });
+    //     return;
+    //   }
+    // }
 
     const [day, month, year] = date.split('/');
     const formattedDate = `${year}-${month}-${day}`;
@@ -259,8 +259,12 @@ const Booking = () => {
     else if (resp.mes) {
       // console.log('==============', resp);
       toast.error(resp.mes);
-  
       fetchData();
+      setSelectedStaff({
+        time: null,
+        date: null,
+        staff: null
+      });
     }
     else  {
       toast.error("Error add service to cart!");
@@ -298,31 +302,31 @@ const Booking = () => {
       // // Kết hợp formattedDate và time để tạo datetime
     const dateTime = new Date(`${formattedDate}T${selectedStaff?.time}:00Z`);
 
-    if (provider?.advancedSetting?.minutesBeforeSameDayBook > 0) {
-      const nowMM = nowDate.getHours() * 60 + nowDate.getMinutes() + 1; // add 1 one more minute to fix delay
+    // if (provider?.advancedSetting?.minutesBeforeSameDayBook > 0) {
+    //   const nowMM = nowDate.getHours() * 60 + nowDate.getMinutes() + 1; // add 1 one more minute to fix delay
 
-      if (startMM - nowMM <= provider.advancedSetting.minutesBeforeSameDayBook) {
-        const hNeed = Math.trunc(provider.advancedSetting.minutesBeforeSameDayBook / 60);
-        const mNeed = provider.advancedSetting.minutesBeforeSameDayBook % 60;
+    //   if (startMM - nowMM <= provider.advancedSetting.minutesBeforeSameDayBook) {
+    //     const hNeed = Math.trunc(provider.advancedSetting.minutesBeforeSameDayBook / 60);
+    //     const mNeed = provider.advancedSetting.minutesBeforeSameDayBook % 60;
 
-        let msg = `Provider required ${hNeed} hours ${mNeed} before booking this timeslot!`;
-        if (hNeed < 1) {
-          msg = `Provider required ${mNeed} minutes before booking this timeslot!`;
-        }
-        if (mNeed < 1) {
-          msg = `Provider required ${hNeed} hours before booking this timeslot!`;
-        }
+    //     let msg = `Provider required ${hNeed} hours ${mNeed} before booking this timeslot!`;
+    //     if (hNeed < 1) {
+    //       msg = `Provider required ${mNeed} minutes before booking this timeslot!`;
+    //     }
+    //     if (mNeed < 1) {
+    //       msg = `Provider required ${hNeed} hours before booking this timeslot!`;
+    //     }
 
-        toast.error(msg);
-        fetchData();
-        setSelectedStaff({
-          time: null,
-          date: null,
-          staff: null
-        });
-        return;
-      }
-    }
+    //     toast.error(msg);
+    //     fetchData();
+    //     setSelectedStaff({
+    //       time: null,
+    //       date: null,
+    //       staff: null
+    //     });
+    //     return;
+    //   }
+    // }
     // console.log('......', {
     //   service: service?._id, 
     //   provider: provider?._id, 
@@ -352,10 +356,14 @@ const Booking = () => {
       toast.success("Service cart updated successfully!");
     }
     else if (resp.mes) {
-      console.log('==============', resp);
+      // console.log('==============', resp);
       toast.error(resp.mes);
-  
-      fetchData(); 
+      fetchData();
+      setSelectedStaff({
+        time: null,
+        date: null,
+        staff: null
+      }); 
     }
     else  {
       toast.error("Error add service to cart!");

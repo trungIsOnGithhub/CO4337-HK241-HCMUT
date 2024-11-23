@@ -636,13 +636,34 @@ const updateCartService = asyncHandler(async (req, res) => {
         const user = await User.findById(_id).select('cart_service');
         let response;
 
-
+        const timeMM = convertH2MInexact(time);
         // min time before book same day
         const providerObj = await ServiceProvider.findById(provider);
-        if (provider?.advancedSetting?.minutesBeforeSameDayBook > 0 
-            && nowMM > 0 && provider?.advancedSetting?.minutesBeforeSameDayBook
+
+        
+        if (providerObj && nowMM > 0
+            && +providerObj.advancedSetting?.minutesBeforeSameDayBook > 0 
+            && +providerObj.advancedSetting.minutesBeforeSameDayBook + nowMM > timeMM
         ) {
-            
+            // console.log(timeMM);
+            // console.log(nowMM);
+            // console.log(providerObj.advancedSetting.minutesBeforeSameDayBook);
+
+            const hNeed = Math.trunc(+providerObj.advancedSetting.minutesBeforeSameDayBook / 60);
+            const mNeed = +providerObj.advancedSetting.minutesBeforeSameDayBook % 60;
+    
+            let msg = `Provider required ${hNeed} hours ${mNeed} before booking this timeslot!`;
+            if (hNeed < 1) {
+              msg = `Provider required ${mNeed} minutes before booking this timeslot!`;
+            }
+            if (mNeed < 1) {
+              msg = `Provider required ${hNeed} hours before booking this timeslot!`;
+            }
+
+            return res.status(409).json({
+                success: false,
+                mes: msg
+            });
         }
         // min time before book same day handle
 

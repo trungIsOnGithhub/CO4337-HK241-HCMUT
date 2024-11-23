@@ -5,9 +5,11 @@ import bgImage from '../../assets/clouds.svg';
 import Select from 'react-select';
 import { apiUpdateCurrentServiceProvider } from 'apis';
 import Swal from 'sweetalert2';
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux';
+import { getCurrent } from 'store/user/asyncAction';
 
 function ManageSetting() {
+  const dispatch = useDispatch();
   // State variables for all inputs
   const [timeSlotStep, setTimeSlotStep] = useState('30min');
   const [useServiceDuration, setUseServiceDuration] = useState(false);
@@ -30,6 +32,10 @@ function ManageSetting() {
   const {current} = useSelector(state => state.user);
   // Effect to simulate loading current settings
   useEffect(() => {
+    dispatch(getCurrent());
+  }, []);
+  useEffect(() => {
+    // dispatch(getCurrent());
     // console.log("::::::::::::::>>>", current.provider_id);
     if (current?.provider_id?.advancedSetting?.minutesBeforeSameDayBook) {
       // console.log(current.provider_id.advancedSetting.minutesBeforeSameDayBook);
@@ -72,6 +78,7 @@ function ManageSetting() {
 
     if (resp.success && resp?.updatedServiceProvider?.advancedSetting) {
       setminutesBeforeSameDayBook(resp.updatedServiceProvider.advancedSetting.minutesBeforeSameDayBook);
+      dispatch(getCurrent());
       Swal.fire("Update Success!", "Update provider setting successfully!", "success");
     }
     else {

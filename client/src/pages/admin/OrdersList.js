@@ -8,7 +8,7 @@ const PAGE_LIMIT = 5;
 // Sample statuses with styling
 const STATUS_STYLES = {
   Successful: 'text-green-500 bg-green-100',
-  Pending: 'text-gray-500 bg-gray-100',
+  Pending: 'text-yellow-500 bg-yellow-100',
   Cancelled: 'text-red-500 bg-red-100'
 };
 
