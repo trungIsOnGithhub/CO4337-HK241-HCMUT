@@ -628,7 +628,14 @@ function convertH2MInexact(timeInHour){
 
 // update cart_service
 const getMinuteDiff = (date1, date2) => {
-    return Math.abs(Math.round(date1.getTime() - date2.getTime()) / 60000);
+    try {
+        const diff = Math.abs(Math.round(date1.getTime() - date2.getTime()) / 60000);
+        return diff;
+    }
+    catch(error) {
+        console.log(error);
+        return error;
+    }
 }
 const updateCartService = asyncHandler(async (req, res) => {
     const {_id} = req.user;
@@ -642,10 +649,13 @@ const updateCartService = asyncHandler(async (req, res) => {
 
         // min time before book same day
         const providerObj = await ServiceProvider.findById(provider);
-        const minuteDiffBookingAndReal = getMinuteDiff(dateTime, nowDate);
+        const minuteDiffBookingAndReal = getMinuteDiff(
+            new Date(dateTime), new Date(nowDate)
+        );
 
         if (providerObj && nowDate
-            && +providerObj.advancedSetting?.minutesBeforeSameDayBook > 0 
+            && +providerObj.advancedSetting?.minutesBeforeSameDayBook > 0
+            && typeof(minuteDiffBookingAndReal) === 'number'
             && minuteDiffBookingAndReal < +providerObj.advancedSetting.minutesBeforeSameDayBook
         ) {
             // console.log(timeMM);

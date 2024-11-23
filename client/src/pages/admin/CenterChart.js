@@ -185,15 +185,15 @@ const CenterChart = ({ providerId }) => {
           <div>
             <div className="text-gray-500 text-sm">Orders Booked</div>
             <div className="text-2xl font-bold text-blue-500">{appointmentsBooked}</div>
-            <div className={`text-sm ${appointmentsBookedChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-              in total
+            <div className='text-sm text-green-500'>
+              {Math.abs(appointmentsBookedChange)}% in total
             </div>
           </div>
           <div>
             <div className="text-gray-500 text-sm">Canceled Orders</div>
             <div className="text-2xl font-bold text-red-500">{canceledAppointments}</div>
-            <div className={`text-sm ${canceledAppointmentsChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-              {Math.abs(canceledAppointmentsChange)}% {canceledAppointmentsChange < 0 ? 'Decrease' : 'Increase'}
+            <div className='text-sm text-red-500'>
+              {Math.abs(canceledAppointmentsChange)}% in total
             </div>
           </div>
         </div>
