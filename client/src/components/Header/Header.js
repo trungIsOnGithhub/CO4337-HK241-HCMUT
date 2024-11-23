@@ -54,10 +54,11 @@ const Header = () => {
                 </div>
                 {current &&
                 <Fragment>
+                { +current.role === 202 &&
                 <div onClick={()=> dispatch(showCart())} className="cursor-pointer flex items-center justify-center gap-2 px-6 border-r">
                     <FaShoppingBag color='white' />
                     <span>{`${current?.cart_product?.length || 0} item(s)`}</span>
-                </div>
+                </div> }
                 
                 <div onClick={()=> dispatch(showMessage())} className="cursor-pointer flex items-center justify-center gap-2 px-6 border-r relative">
                     <IoChatbubblesSharp color='white' />
@@ -68,9 +69,11 @@ const Header = () => {
                     }
                 </div>
 
+                { +current.role === 202 &&
                 <div onClick={()=> navigate(`/${path.USER}/${path.MY_CALENDAR}`)} className="cursor-pointer flex items-center justify-center gap-2 px-6 border-r relative">
                     <FaCalendarAlt color='white' />
                 </div>
+                }
 
                 <div
                     onClick={()=> {
@@ -84,11 +87,11 @@ const Header = () => {
                     {isShowOptions &&
                         <span className="z-68">
                         <div onClick={(e)=>{e.stopPropagation()}} className="flex flex-col absolute top-full left-0 bg-gray-100 text-[#0a66c2] font-medium border min-w-[150px] py-2">
-                            {/* {+current.role === 202 && */}
+                            {+current.role === 202 &&
                                 <Link className="p-2 w-full hover:bg-sky-100" to={`/${path.USER}/${path.PERSONAL}`}>
                                     Personal
                                 </Link>
-                            
+                            }
 
                             {+current.role === 1411 &&
                                 <Link className="p-2 w-full hover:bg-sky-100 " to={`/${path.ADMIN}/${path.DASHBOARD}`}>
@@ -96,7 +99,7 @@ const Header = () => {
                                 </Link>
                             }
 
-                            <span onClick={() => dispatch(logout())} className="p-2 w-full hover:bg-sky-100 text-gray-600">
+                            <span onClick={() => dispatch(logout())} className="p-2 w-full hover:bg-sky-100">
                                 Logout
                             </span>
                         </div>
