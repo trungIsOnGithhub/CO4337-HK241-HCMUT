@@ -38,7 +38,7 @@ const MessageBox = ({currentChat}) => {
     const fetchCurrentChatProvider = async() => {
       let response = await apiGetProviderByOwnerId({owner:currentChat?.id});
       console.log("111111111111111>>>>", response.provider);
-      if (response?.success && response?.provider) {
+      if (response?.success && response?.provider?.bussinessName) {
         // console.log('[[[[[[[[[[');
         setCurrentChatProvider(response.provider)
       }
@@ -140,7 +140,7 @@ const MessageBox = ({currentChat}) => {
 }
 
   return (
-    <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-[999] max-w-[400px]">
+    <div className="fixed bottom-0 right-8 z-[9999] max-w-[380px]">
       {/* Minimized MessageBox */}
       {/* {!isOpen && (
         <button
@@ -161,18 +161,20 @@ const MessageBox = ({currentChat}) => {
               alt="support avatar"
               className="w-8 h-8 rounded-full"
             />
-            <div>
-              <span className="font-semibold block">{`${currentChat?.firstName} ${currentChat?.lastName}`}</span>
-              <span className="text-xs text-gray-200 block">{currentChatProvider?.bussinessName}</span> {/* Organization */}
+            <div className='flex flex-col  w-full max-h-8'>
+              <span className={clsx(currentChatProvider?.bussinessName && 'text-xs font-medium' ,'font-semibold')}>{`${currentChat?.firstName} ${currentChat?.lastName}`}</span>
+              <span className="text-xs text-gray-200 flex">{currentChatProvider?.bussinessName}</span> {/* Organization */}
             </div>
 
-            <span className='flex items-start'>
+            <span className='flex w-full items-start justify-end'>
+              { currentChatProvider &&
               <button
                 onClick={() => setIsQuickMenuOpen(!isQuickMenuOpen)}
                 className="text-xs text-white hover:opacity-80 ml-auto border p-1 rounded-md hover:bg-white hover:text-[#0a66c2]"
               >
                 {isQuickMenuOpen ? 'Hide Quick Questions' : 'Show Quick Questions'}
               </button>
+              }
               <button
                 onClick={() => {handleCloseMessageBox();}}
                 className="ml-2 text-white hover:opacity-80 text-2xl" // Bigger size
@@ -237,8 +239,8 @@ const MessageBox = ({currentChat}) => {
 
 
           {/* Custom Message Input */}
-          <div className="p-4 bg-gray-100 border-t border-[#0a66c2] flex items-center gap-1 h-[100px]">
-            <div className='text-yellow-400 cursor-pointer text-xl font-semibold flex items-center relative'>
+          <div className="p-2 bg-gray-100 border-t border-[#0a66c2] flex items-center w-full gap-1 h-[100px]">
+            <div className='text-yellow-400 cursor-pointer text-xl font-semibold flex items-center relative w-[7%]'>
               <BsEmojiSmileFill onClick={handleEmojiPickerHideShow}/>
               {
                   showEmojiPicker && 
@@ -257,11 +259,11 @@ const MessageBox = ({currentChat}) => {
                 }
               }}
               placeholder="Write a message..."
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0a66c2]"
+              className="max-w-[68%] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0a66c2]"
             />
             <button
               onClick={(e)=>sendChat(e)}
-              className="bg-[#0a66c2] text-white px-4 py-2 rounded-md hover:bg-[#084a93] transition"
+              className="bg-[#0a66c2] text-white px-4 py-2 rounded-md hover:bg-[#084a93] transition w-[20%]"
             >
               Send
             </button>

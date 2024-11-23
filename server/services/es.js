@@ -62,6 +62,9 @@ async function setUpElasticConnection() {
                 },
                 totalRatings: {
                     type: "integer"
+                },
+                isHidden:{
+                    type: "boolean"
                 }
             },
             },
@@ -94,6 +97,9 @@ async function setUpElasticConnection() {
                     },
                     locations : {
                         type : "geo_point"
+                    },
+                    isHidden:{
+                        type: "boolean"
                     }
                 }
             },
@@ -140,6 +146,9 @@ async function setUpElasticConnection() {
                 authorname: {
                     type: "text"
                 },
+                isHidden:{
+                    type: "boolean"
+                }
             },
             },
         });
@@ -156,18 +165,26 @@ async function resetElasticConnection(indexToDelete) {
 
 async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMatch,
                 fieldNameArrayToGet, limit, offset, elasticSortScheme,
-                geoFilter, geoSort, categoriesIncluded, province, tagsIncluded) {
+                geoFilter, geoSort, categoriesIncluded, province, tagsIncluded, includeHidden) {
     const esClient = initializeElasticClient();
 
     const numLimit = +limit;
     const numOffset = +offset;
     const elementOffset = numOffset * numLimit;
 
+    const hiddenTerm = includeHidden ? {} : {
+        terms: {
+            isHidden: false
+        }
+    };
+
     const queryObject = {
         index: indexName,
         track_scores: true,
         query: {
-            bool: {},
+            bool: {
+                must: [hiddenTerm]
+            },
             match_all: {}
         },
         size: numLimit,
@@ -177,7 +194,7 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
     };
 
     if (searchTerm?.length) {
-        if (!queryObject.query.bool.must) queryObject.query.bool.must = [];
+        // if (!queryObject.query.bool.must) queryObject.query.bool.must = [];
 
         queryObject.query.bool.must.push({
             multi_match: {
@@ -192,7 +209,7 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
     }
 
     if (province?.length) {
-        if (!queryObject.query.bool.must) queryObject.query.bool.must = [];
+        // if (!queryObject.query.bool.must) queryObject.query.bool.must = [];
 
         queryObject.query.bool.must.push({
             match: {
@@ -208,7 +225,7 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
     // }
 
     if (geoFilter?.distanceText && geoFilter?.clientLat && geoFilter?.clientLon) {
-        if (!queryObject.query.bool.must) queryObject.query.bool.must = [];
+        // if (!queryObject.query.bool.must) queryObject.query.bool.must = [];
 
         queryObject.query.bool.must.push({
             geo_distance: {
@@ -262,9 +279,9 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
     }
 
     if (tagsIncluded?.length && queryObject?.query) {
-        if (!queryObject.query.bool) queryObject.query.bool = {};
+        // if (!queryObject.query.bool) queryObject.query.bool = {};
         // queryObject.query.bool.filter = categoriesIncluded.map(categoryLabel => { return { term: { catergory: categoryLabel } }; });
-        if (!queryObject.query.bool.must) queryObject.query.bool.must = [];
+        // if (!queryObject.query.bool.must) queryObject.query.bool.must = [];
 
         for (const tagLabel of tagsIncluded) {
             queryObject.query.bool.must.push({

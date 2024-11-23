@@ -60,9 +60,8 @@ const Services = () => {
   const fetchServicesAdvanced = async (queries, advancedQuery) => {
     setIsLoading(true);
     let response = [];
-    const currerntParamPage = params.get('page');
-
-    const offset = currerntParamPage > 0 ? currerntParamPage - 1 : 0;
+    // const currerntParamPage = params.get('page');
+    // const offset = currerntParamPage > 0 ? currerntParamPage - 1 : 0;
 
     // if (useAdvanced) {
       const categoriesChosen = filterCateg.map(cat => cat.value);
@@ -83,28 +82,11 @@ const Services = () => {
       advancedQuery.province = tinh_thanhpho[searchFilter.province].name;
     }
 
-    if (nearMeOption && current?.lastGeoLocation?.coordinates?.length === 2) {
-      // queries.current_client_location = {
-      //   longtitude: current.lastGeoLocation.coordinates[0],
-      //   lattitude: current.lastGeoLocation.coordinates[1]
-      // }
-
-      response = await apiSearchServiceAdvanced(advancedQuery);
-
-      if(response.success) setServices(response?.services?.hits || []);
-
-      setTotalServiceCount(response?.services?.total?.value)
-    } 
-    else {
-      // if(category && category !== 'services'){
-      //   queries.category = category;
-      // }
-      response = await apiSearchServiceAdvanced(advancedQuery);
-
-      if(response.success) setServices(response?.services?.hits || []);
-
-      setTotalServiceCount(response?.services?.total?.value)
-    }
+    response = await apiSearchServiceAdvanced(advancedQuery);
+    
+    if(response.success) setServices(response?.services?.hits || []);
+    
+    setTotalServiceCount(response?.services?.total?.value)
 
     // response = await apiGetServicePublic(queries)
     // if(response.success) setServices(response)
@@ -160,7 +142,6 @@ const Services = () => {
         }
       }
     }
-
 
     queries.page = 1;
     setParams(queries);
@@ -307,8 +288,8 @@ const Services = () => {
       </div>
 
       <div className='w-main p-2 flex justify-start m-auto mt-8'>
-        <div className='flex-auto flex flex-col gap-4'>
-          <div className='flex gap-4 mb-10 mt-2 items-end'>
+        <div className='flex-auto flex flex-col gap-2'>
+          <div className='flex gap-4 mb-4 mt-2 items-end'>
             <div className="flex flex-col flex-1">
               <label className="text-gray-800 font-medium">Search&nbsp;By:&nbsp;</label>
               <InputFormm
@@ -409,9 +390,10 @@ const Services = () => {
               </span>
             </Button>
           </div>
+{/* 
           { nearMeOption &&
             <div className='flex flex-col'>
-              <span className='flex justify-start items-center my-3 gap-3'>
+              <span className='flex justify-start items-center my-2 gap-3'>
                 <label className="text-gray-800 font-medium mr-1">Max Distance:</label>
                 <InputField nameKey='maxDistance'
                   value={searchFilter.maxDistance}
@@ -422,11 +404,13 @@ const Services = () => {
                 />  
               </span>
             </div>
-          }
+          } */}
         </div>
       </div>
 
       <div className={clsx('mt-8 w-main m-auto flex gap-4 flex-wrap', isShowModal ? 'hidden' : '')}>
+        {(!services?.length) &&
+         <p className="text-gray-600 text-center font-semibold">No service found matching your search criteria.</p>}
         {services?.map((service, index) => (
           <div key={index} className='w-[32%]'>
             <Service serviceData={service} nearMeOption={nearMeOption}/>

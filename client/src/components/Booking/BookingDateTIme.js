@@ -320,7 +320,8 @@ const BookingDateTIme = () => {
       dateTime: dateTime,
       originalPrice: originalPrice,
       discountPrice: +discountValue > 0 ? +discountValue : 0,
-      coupon: selectedVoucher?._id
+      coupon: selectedVoucher?._id,
+      nowDate: new Date()
     });
 
 
@@ -328,7 +329,7 @@ const BookingDateTIme = () => {
       toast.success("Service cart updated successfully!");
     }
     else if (resp.mes) {
-      console.log('==============', resp);
+      // console.log('==============', resp);
       toast.error(resp.mes);
 
       if (type === 'Week') {
@@ -364,16 +365,16 @@ const BookingDateTIme = () => {
 
     const dateTime = new Date(`${formattedDate}T${selectedTime}:00Z`);
 
-    console.log('........', {
-      service: service?._id, 
-      provider: provider?._id, 
-      staff: staff?._id, 
-      time: selectedTime, 
-      duration: service?.duration,
-      date: date,
-      dateTime: dateTime,
-      price: finalPrice
-    });
+    // console.log('........', {
+    //   service: service?._id, 
+    //   provider: provider?._id, 
+    //   staff: staff?._id, 
+    //   time: selectedTime, 
+    //   duration: service?.duration,
+    //   date: date,
+    //   dateTime: dateTime,
+    //   price: finalPrice
+    // });
 
     let resp = await apiUpdateCartService({
       service: service?._id, 
@@ -385,7 +386,8 @@ const BookingDateTIme = () => {
       dateTime: dateTime,
       originalPrice: originalPrice,
       discountPrice: +discountValue > 0 ? +discountValue : 0,
-      coupon: selectedVoucher?._id
+      coupon: selectedVoucher?._id,
+      nowDate: new Date()
     })
 
     if (resp.success) {

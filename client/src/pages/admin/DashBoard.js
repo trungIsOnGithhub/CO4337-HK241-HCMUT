@@ -27,19 +27,19 @@ const MetricIndicator = ({ prev, current }) => {
       current > prev &&
         (<span className="flex">
             <span className="text-teal-500 text-xs"><FaAngleDoubleUp style={{color: 'green' }} className='text-teal-500 rotate-45'/></span>
-            <span className='text-teal-500 pr-1 text-base'>&nbsp;{(current > 0 ? (current - prev)/current*100.0 : 0)?.toFixed(1)} %</span>
+            <span className='text-teal-500 pr-1 text-base'>&nbsp;{(current >= 1 ? (current - prev)/current*100.0 : 0)?.toFixed(1)} %</span>
         </span>)
       }
       {
       current < prev && 
         (<span className="flex">
             <span className="text-rose-700 text-xs"><FaAngleDoubleDown className='text-rose-700 -rotate-45'/></span>
-            <span className='text-rose-700 pr-1 text-base'>&nbsp;{(current > 0 ? (current - prev)/current*100.0 : 0)?.toFixed(1)} %</span>
+            <span className='text-rose-700 pr-1 text-base'>&nbsp;{(current >= 1 ? (current - prev)/current*100.0 : 0)?.toFixed(1)} %</span>
         </span>)
       }
       {current === prev && (<span className="flex items-center flex-col flex-wrap">
             <span className="text-gray-500 text-xs text-center">No Change</span>
-            <FaBars />
+            {/* <FaBars /> */}
         </span>)}
     </span>
   )  
@@ -183,19 +183,13 @@ const DashBoard = () => {
         let data = await fetchRevenueTriplet(periodData);
         setRevenueTriplet(data);
 
-        // console.log("11111111", data, "++++++");
-
         data = await fetchOccupancyTriplet(periodData);
         setOccupancyTriplet(data);
 
-        // console.log("22222222", data, "++++++");
-
         data = await fetchNewCustomerTriplet(periodData);
         setNewCustomerTriplet(data);
-
-        // console.log("333333333", data, "++++++");
       })();
-  }, [currentMetricView]);
+  }, []);
 
   // const revenueLast3Months = [88.8, 68.8, 39.6];// sort by time line [2w ago, 1w ago, now]
   // const revenueLast3Weeks = [8.8, 6.8, 9.6];// sort by time line [2m ago, 1m ago, now]

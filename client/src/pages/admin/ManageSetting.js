@@ -5,24 +5,26 @@ import bgImage from '../../assets/clouds.svg';
 import Select from 'react-select';
 import { apiUpdateCurrentServiceProvider } from 'apis';
 import Swal from 'sweetalert2';
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux';
+import { getCurrent } from 'store/user/asyncAction';
 
 function ManageSetting() {
+  const dispatch = useDispatch();
   // State variables for all inputs
   const [timeSlotStep, setTimeSlotStep] = useState('30min');
   const [useServiceDuration, setUseServiceDuration] = useState(false);
-  const [appointmentStatus, setAppointmentStatus] = useState('Approved');
+  // const [appointmentStatus, setAppointmentStatus] = useState('Approved');
   const [minTimeBooking, setMinTimeBooking] = useState('Disabled');
   const [minTimeCanceling, setMinTimeCanceling] = useState('Disabled');
-  const [minTimeRescheduling, setMinTimeRescheduling] = useState('Disabled');
+  const [showStaffDetailBooking, setShowStaffDetailBooking] = useState(false);
   const [daysInAdvance, setDaysInAdvance] = useState(100);
   const [dateFormat, setDateFormat] = useState('MMMM D, YYYY');
   const [timeFormat, setTimeFormat] = useState('h:mm a');
-  // const [timeZone, setTimeZone] = useState('Bangkok');
-  const [firstDayOfWeek, setFirstDayOfWeek] = useState('Monday');
-  const [phoneCountryCode, setPhoneCountryCode] = useState('United States');
+  // // const [timeZone, setTimeZone] = useState('Bangkok');
+  // const [firstDayOfWeek, setFirstDayOfWeek] = useState('Monday');
+  // const [phoneCountryCode, setPhoneCountryCode] = useState('United States');
   // const [firstPage, setFirstPage] = useState('Dashboard');
-  const [dashboardLanguage, setDashboardLanguage] = useState('English');
+  // const [dashboardLanguage, setDashboardLanguage] = useState('English');
   const [viewOption, setViewOption] = useState("general");
   const [minutesBeforeSameDayBook, setminutesBeforeSameDayBook] = useState(0);
   // const [sBeforeSameDayBook, sethoursBeforeSameDayBook] = useState(0);
@@ -30,12 +32,20 @@ function ManageSetting() {
   const {current} = useSelector(state => state.user);
   // Effect to simulate loading current settings
   useEffect(() => {
-    console.log("::::::::::::::>>>", current.provider_id);
+    dispatch(getCurrent());
+  }, []);
+  useEffect(() => {
+    // dispatch(getCurrent());
+    // console.log("::::::::::::::>>>", current.provider_id);
     if (current?.provider_id?.advancedSetting?.minutesBeforeSameDayBook) {
-      console.log(current.provider_id.advancedSetting.minutesBeforeSameDayBook);
+      // console.log(current.provider_id.advancedSetting.minutesBeforeSameDayBook);
       // const hMBSD = current.provider_id.advancedSetting.minutesBeforeSameDayBook/60;
       // const mMBSD = current.provider_id.advancedSetting.minutesBeforeSameDayBook%60;
       setminutesBeforeSameDayBook(current.provider_id.advancedSetting.minutesBeforeSameDayBook);
+    }
+
+    if (current?.provider_id?.advancedSetting?.showStaffDetailBooking) {
+      setShowStaffDetailBooking(current?.provider_id.advancedSetting.showStaffDetailBooking);
     }
     // console.log('Fetching settings...');
   }, [current]);
@@ -49,11 +59,11 @@ function ManageSetting() {
     const advancedSetting = {
       timeSlotStep,
       useServiceDuration,
-      appointmentStatus,
+      // appointmentStatus,
       minTimeBooking,
       minTimeCanceling,
-      minTimeRescheduling,
-      daysInAdvance,
+      // minTimeRescheduling,
+      showStaffDetailBooking,
       // dateFormat,
       // timeFormat,
       // firstDayOfWeek,
@@ -68,6 +78,7 @@ function ManageSetting() {
 
     if (resp.success && resp?.updatedServiceProvider?.advancedSetting) {
       setminutesBeforeSameDayBook(resp.updatedServiceProvider.advancedSetting.minutesBeforeSameDayBook);
+      dispatch(getCurrent());
       Swal.fire("Update Success!", "Update provider setting successfully!", "success");
     }
     else {
@@ -223,11 +234,10 @@ function ManageSetting() {
                                   </span>
                             </div>
                             <div>
-                              <label className="text-gray-800 font-medium">Minimum time required before canceling</label>
-                              <select value={minTimeCanceling} onChange={(e) => setMinTimeCanceling(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
-                                <option>Disabled</option>
-                                <option>1 hour</option>
-                                <option>24 hours</option>
+                              <label className="text-gray-800 font-medium">Show staff detail on booking page</label>
+                              <select value={showStaffDetailBooking} onChange={(e) => setShowStaffDetailBooking(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
+                                <option value={false}>Disabled</option>
+                                <option value={true}>Enabled</option>
                               </select>
                             </div>
                             {/* <div>
@@ -256,7 +266,7 @@ function ManageSetting() {
                             {/* Global Settings */}
                             <h2 className="font-semibold text-xl text-gray-800 mt-8 mb-6">Global Settings</h2>
                             <div className="grid grid-cols-2 gap-6">
-                              <div>
+                              {/* <div>
                                 <label className="text-gray-800 font-medium">Date Format</label>
                                 <select value={dateFormat} onChange={(e) => setDateFormat(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
                                   <option>MMMM D, YYYY</option>
@@ -270,7 +280,7 @@ function ManageSetting() {
                                   <option>h:mm a</option>
                                   <option>HH:mm</option>
                                 </select>
-                              </div>
+                              </div> */}
                               {/* <div>
                                 <label className="text-gray-800 font-medium">Time Zone</label>
                                 <select value={timeZone} onChange={(e) => setTimeZone(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">

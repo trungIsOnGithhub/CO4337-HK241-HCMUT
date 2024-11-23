@@ -178,6 +178,9 @@ const ManageUser = () => {
                         <span className='inline-block hover:underline cursor-pointer text-[#005aee] hover:text-orange-500 px-0.5'>
                           <FcExport size={24}/>
                         </span>
+                        {/* <div className="absolute left-1/2 top-[-18px] transform -translate-x-1/2 translate-y-full mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-[#00143c] border border-[##dee1e6] text-xs p-1 rounded z-[99]">
+                          Export data
+                        </div> */}
                       </div>
                       { showExportUser &&
                       <DataExportSheetModal rawData={Array.isArray(el) ? el : [el]}
@@ -190,6 +193,9 @@ const ManageUser = () => {
                         </span>
 
                         {/* Tooltip */}
+                        {/* <div className="absolute z-[99] left-1/2 top-[-2px] transform -translate-x-1/2 translate-y-full mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-[#00143c] border border-[##dee1e6] text-xs p-1 rounded">
+                          View statistics
+                        </div> */}
                       </div>
                     </span>
                   </div>

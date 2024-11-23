@@ -242,7 +242,7 @@ useEffect(() => {
                 register={()=>{}}
                 errors={()=>{}}
                 fullWidth
-                placeholder= 'Search blog by title name, tag ...'
+                placeholder= 'Search blog by title name, provider, author ...'
                 style={'w-full bg-[#f4f6fa] min-h-10 rounded-md pl-2 flex items-center'}
                 styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
                 onChange={(event) => {setSearchTerm(event.target.value)}}
@@ -307,16 +307,14 @@ useEffect(() => {
             </Button>
           </div>
 
-          <div className="col-span-3 max-h-[500px] overflow-y-auto scrollbar-thin">
+          <div className="col-span-3 max-h-[1000px] overflow-y-auto scrollbar-thin">
 
           {/* {currBlogList?.length &&
               <Pagination totalCount={counts}/>} */}
     
             <div className="space-y-6 mt-3">
               {currBlogList?.length <= 0 ? (
-                <div className="bg-white rounded-lg shadow-md p-6 text-center">
-                  <p className="text-gray-600">No blog posts found matching your search criteria.</p>
-                </div>
+                  <p className="text-gray-600 text-center font-semibold">No blog posts found matching your search criteria.</p>
               ) : (
                 currBlogList?.map((blog, idx) => {
                   // console.log('====', blog);
@@ -407,7 +405,7 @@ useEffect(() => {
           <div className="col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4"><FaHotjar />Popular Tags:</h2>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 max-h-[300px] overflow-y-auto scrollbar-thin">
                 {tags?.map((tag) => (
                   <button
                     key={tag?._id}  
@@ -443,45 +441,43 @@ useEffect(() => {
 
             <div className="bg-white rounded-lg shadow-md p-6 mt-4">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4"><FaHotjar />Popular Provider Author:</h2>
+                <div className='flex flex-col gap-2 max-h-[600px] overflow-y-auto scrollbar-thin'>
                 {topProviders?.map((provider, index) => (
         // {performanceViewOption === "service" && services.map((service, index) => (
-          <div key={index} className="p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-200">
+          <div key={index}
+            onClick={() => { if (provider?._id) {navigate(`/detail_provider/${provider?.spid}`);} }}
+            className="p-4 bg-white hover:bg-gray-50 rounded-lg border flex items-center justify-center flex-col gap-4">
             <div className="flex items-center mb-3">
               {/* Service Image */}
-              <img
-                src={provider?.authorprovider?.avatar}
-                alt="avatar icon"
-                className="w-10 h-10 rounded-full mr-4"
-              />
-              <div>
-                <h3 className="text-gray-800 font-semibold">{`${provider?.authorprovider?.lastName} ${provider?.authorprovider?.firstName}`}</h3>
-                <span className="text-sm pt-1"></span>
+              <div className='flex flex-col justify-center items-center'>
+                <img
+                  src={provider?.avatar[0]}
+                  alt="avatar"
+                  className="w-10 h-10 rounded-full mr-4 border p-2"
+                />
+
+                <h3 className="text-gray-800 font-semibold text-center">{`${provider?.lastName[0]} ${provider?.firstName[0]}`}</h3>
+                <span className="text-sm pt-1 text-center">{provider?.bussinessName[0]}</span>
               </div>
             </div>
             <div className="text-sm text-gray-600">
-              <div className="flex justify-between mb-1">
-                <span className="font-semibold">Total VIews</span>
+              <div className="flex justify-between mb-1 ">
+                <span className="font-semibold pr-4">Total Views</span>
                 <span>{provider.viewCount}</span>
               </div>
               <div className="flex justify-between mb-1">
-                <span className="font-semibold">Total Likes</span>
-                <span>${Number(provider.likesCount)?.toFixed(2)}</span>
+                <span className="font-semibold pr-4">Total Likes</span>
+                <span>{provider.likesCount}</span>
               </div>
               <div className="flex justify-between items-center mt-2">
-                <span className="font-semibold">Total Post</span>
+                <span className="font-semibold pr-4">Total Post</span>
                 <span>{provider.blogCount}</span>
               </div>
             </div>
-            {/* Occupancy Rate Bar */}
-            {/* <div className="w-full bg-gray-200 h-1 rounded-full mt-2">
-              <div
-                style={{ width: `${service.occupancy}%` }}
-                className="bg-blue-600 h-1 rounded-full"
-              ></div>
-            </div> */}
           </div>
-        // ))}
                 ))}
+
+            </div>
             </div>
           </div>
         </div>

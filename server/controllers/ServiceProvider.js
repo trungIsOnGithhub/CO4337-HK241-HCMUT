@@ -194,12 +194,24 @@ const getAllServiceProvider = asyncHandler(async(req, res) => {
 const updateServiceProvider = asyncHandler(async(req, res)=>{
     const spid = req.params.spid
     console.log('vuivuiuviuv', req.body, spid);
-
     if(Object.keys(req.body).length === 0){
         throw new Error('Missing input');
     }
 
-    console.log('files: ', req.files);
+    const { ownerFirstName, ownerLastName, ownerEmail, advancedSetting } = req.body;
+    // if(!ownerFirstName || !ownerLastName || !ownerEmail){
+    //     throw new Error('Missing input');
+    // }
+    if (advancedSetting?.showStaffDetailBooking) {
+        if (advancedSetting.showStaffDetailBooking === 'true') {
+            advancedSetting.showStaffDetailBooking = true;
+        }
+        else {
+            advancedSetting.showStaffDetailBooking = false;
+        }
+    }
+
+    // console.log('files: ', req.files);
     if(req.file){
         console.log('file: ', req.file);
         req.body.images = [req.file.path];
@@ -208,7 +220,13 @@ const updateServiceProvider = asyncHandler(async(req, res)=>{
     }
 
     if (req.body.mobile) {
-        const uresp = await User.updateOne({ provider_id: spid }, { $set: { mobile: req.body.mobile } });
+        const uresp = await User.updateOne({ provider_id: spid },
+            { $set: {
+                mobile: req.body.mobile,
+                firstName: ownerFirstName,
+                lastName: ownerLastName,
+                email: ownerEmail,
+        }});
         console.log(uresp);
 
         if (!uresp) {
@@ -391,7 +409,7 @@ const searchSPAdvanced = asyncHandler(async (req, res) => {
     if (sortBy?.indexOf("createdAt") > -1) {
         sortOption.push({createdAt : {order : "desc"}});
     }
-    if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
+    if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "asc" }; }
 
     // let categoriesIncluded = [];
     // if (categories?.length) {
@@ -409,7 +427,7 @@ const searchSPAdvanced = asyncHandler(async (req, res) => {
     }
 
     const columnNamesToMatch = ["bussinessName", "province","address"];
-    const columnNamesToGet = ["id", "address", "province", "images", "bussinessName", "mobile"];
+    const columnNamesToGet = ["id", "address", "province", "images", "bussinessName", "mobile", "createdAt  "];
 
     let services = [];
 
@@ -429,7 +447,8 @@ const searchSPAdvanced = asyncHandler(async (req, res) => {
         geoSortOption,
         null,
         null,
-        null
+        null,
+        false
     );
     services = services?.hits;
 

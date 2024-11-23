@@ -10,6 +10,7 @@ const makeToken = require('uniqid')
 const {users} = require('../ultils//constant')
 // const mongoose = require('mongoose');
 const Staff = require('../models/staff')
+const ServiceProvider = require('../models/ServiceProvider')
 
 const makeTokenNumber = () => {
     return Math.floor(100000 + Math.random() * 900000).toString(); // Tạo mã 6 chữ số
@@ -624,16 +625,50 @@ function convertH2MInexact(timeInHour){
     let timeParts = timeInHour.split(":");
     return Number(timeParts[0]) * 60 + Number(timeParts[1]);
 }
+
 // update cart_service
+const getMinuteDiff = (date1, date2) => {
+    return Math.abs(Math.round(date1.getTime() - date2.getTime()) / 60000);
+}
 const updateCartService = asyncHandler(async (req, res) => {
     const {_id} = req.user;
-    const {service, provider, staff, time, date, duration, originalPrice, discountPrice, dateTime, coupon=null} = req.body;
-    
+    const {service, provider, staff, time, date, duration, originalPrice, discountPrice, dateTime, nowDate, coupon=null} = req.body;
+
     if (!service || !provider || !staff || !time || !date || !duration || !originalPrice || !dateTime) {
         throw new Error("Request missing input data!");
     } else {
         const user = await User.findById(_id).select('cart_service');
         let response;
+
+        // min time before book same day
+        const providerObj = await ServiceProvider.findById(provider);
+        const minuteDiffBookingAndReal = getMinuteDiff(dateTime, nowDate);
+
+        if (providerObj && nowDate
+            && +providerObj.advancedSetting?.minutesBeforeSameDayBook > 0 
+            && minuteDiffBookingAndReal < +providerObj.advancedSetting.minutesBeforeSameDayBook
+        ) {
+            // console.log(timeMM);
+            // console.log(nowMM);
+            // console.log(providerObj.advancedSetting.minutesBeforeSameDayBook);
+
+            const hNeed = Math.trunc(+providerObj.advancedSetting.minutesBeforeSameDayBook / 60);
+            const mNeed = +providerObj.advancedSetting.minutesBeforeSameDayBook % 60;
+    
+            let msg = `Provider required ${hNeed} hours ${mNeed} before booking this timeslot!`;
+            if (hNeed < 1) {
+              msg = `Provider required ${mNeed} minutes before booking this timeslot!`;
+            }
+            if (mNeed < 1) {
+              msg = `Provider required ${hNeed} hours before booking this timeslot!`;
+            }
+
+            return res.status(409).json({
+                success: false,
+                mes: msg
+            });
+        }
+        // min time before book same day handle
 
         const thisStaff = await Staff.findById(staff);
         // console.log('???????????????????'+thisStaff.work);

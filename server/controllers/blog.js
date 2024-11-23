@@ -406,9 +406,10 @@ const getTopProviderAuthorBlogs = asyncHandler(async(req, res)=>{
             likesCount: { $sum: { $size: "$likes" } },
             firstName: { $first: "$author_mapped.firstName" },
             lastName: { $first: "$author_mapped.lastName" },
-            bussinessName: { $first: "$author_mapped.provider_id.bussinessName" }
+            bussinessName: { $first: "$provider_mapped.bussinessName" },
+            spid: { $first: "$provider_mapped._id" },
+            avatar: { $first: "$author_mapped.avatar" }
         }},
-        // { $project: { _id:1, tags:1, tagName:1 } },
         { $sort: sortObj },
         { $limit: limit }
     ]);
@@ -422,7 +423,7 @@ const getTopProviderAuthorBlogs = asyncHandler(async(req, res)=>{
 
 
 const searchBlogAdvanced = asyncHandler(async (req, res) => {
-    console.log("INCOMING REQUESTS:", req.body);
+    // console.log("INCOMING REQUESTS:", req.body);
 
     let { searchTerm, limit, offset, categories, sortBy,
         selectedTags } = req.body;
@@ -452,16 +453,6 @@ const searchBlogAdvanced = asyncHandler(async (req, res) => {
         sortOption.push({createdAt : {order : "desc"}});
     }
 
-    // if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
-
-    // let geoLocationQueryOption = null;
-    // if ( clientLat <= 180 && clientLon <= 180 &&
-    //     clientLat >= -90 && clientLon >= -90 &&
-    //     /[1-9][0-9]*(km|m)/.test(distanceText) )
-    // {
-    //     geoLocationQueryOption = { distanceText,  clientLat, clientLon };
-    // }
-
     const columnNamesToMatch = ["title", "providername", "authorname"];
     const columnNamesToGet = ["id", "title", "providername", "authorname", "numberView", "provider_id", "likes", "dislikes", "tags", "createdAt", "thumb"];
 
@@ -478,7 +469,8 @@ const searchBlogAdvanced = asyncHandler(async (req, res) => {
         null,
         null,
         null,
-        selectedTags
+        selectedTags,
+        false
     );
     blogs = blogs?.hits;
 

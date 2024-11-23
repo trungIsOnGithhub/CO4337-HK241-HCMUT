@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom'
 import clsx from 'clsx'
 import defaultProvider from '../../assets/defaultProvider.jpg'
 
-const Provider = ({providerData, isNotBorder, fullWidth = false, userLatitude, userLongitude}) => {
+const Provider = ({providerData, isNotBorder, fullWidth = false, userLatitude, userLongitude, nearMeOption}) => {
   const navigate = useNavigate()
   const [distance, setDistance] = useState(-1)
   const GOONG_API_KEY = '2jcRRCquuKp2hdK4BcQsMZLsrJuXSNuXYlfcWXyA';
@@ -31,8 +31,8 @@ const Provider = ({providerData, isNotBorder, fullWidth = false, userLatitude, u
   return (
     <div className={'text-base px-[10px]' + (fullWidth ? 'w-full' : '')}>
       <div 
-        onClick={()=> navigate(`/detail_provider/${providerData?._id}`)}
-        className={isNotBorder ? 'w-full p-[15px] flex flex-col items-center cursor-pointer' : 'w-full border p-[15px] flex flex-col items-center cursor-pointer'} 
+        onClick={()=> navigate(`/detail_provider/${providerData?.id}`)}
+        className='w-full border p-[15px] flex flex-col items-center cursor-pointer'
       >
         <div className='w-full relative'>
           <img src={providerData?.images[0]||defaultProvider} 
@@ -43,7 +43,8 @@ const Provider = ({providerData, isNotBorder, fullWidth = false, userLatitude, u
             <span key={index}>{el}</span>
           ))}</span>
           <span className='line-clamp-1 text-lg capitalize font-semibold text-center w-full'>{providerData?.bussinessName}</span>
-          {distance >= 0 ? <span className='text-xs text-blue-500 font-semibold text-center w-full'>Khoảng cách: {distance.toFixed(2)} km</span> : <span className='text-xs text-blue-500 font-semibold text-center w-full'>Khoảng cách: Chưa xác định</span>}
+          <span className='line-clamp-1 text-lg capitalize font-semibold text-center w-full'>{providerData?.address}</span>
+          {nearMeOption && distance >= 0 ?<span className='text-xs text-blue-500 font-semibold text-center w-full'>Distance: {distance.toFixed(2)} km</span> : <span className='text-xs text-blue-500 font-semibold text-center w-full'></span>}
         </div>
       </div>
     </div>

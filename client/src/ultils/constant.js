@@ -440,8 +440,8 @@ export const userSidebar = [
 
 export const statusOrder = [
     {
-        label: 'Canceled',
-        value: 'Canceled',
+        label: 'Cancelled',
+        value: 'Cancelled',
     },
     {
         label: 'Successful',

@@ -1,7 +1,33 @@
+W# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
 /node_modules
-.env
-sb-gjeks30568206@personal.example.com
-mongoimport --db dbName --collection collectionName --file fileName.json --jsonArray
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+/bin
+
+/specs
+
+package-lock.json
+
 {"index":"datnhk241services","track_scores":true,"query":{"bool":{"filter":[{"term":{"catergory":"Gym"}}]}},"size":"10","from":0,"_source":["id","name","thumb","price","category","duration","provider_id","province","totalRatings"],"sort":[]}
 
 https://www.elastic.co/guide/en/cloud/current/ec-getting-started-search-use-cases-db-logstash.html

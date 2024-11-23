@@ -1,7 +1,9 @@
-import { apiGetServiceProviders } from 'apis';
+// import { apiGetServiceProviders } from 'apis';
+import { HashLoader } from 'react-spinners';
 import clsx from 'clsx';
 import React, { useEffect, useState } from 'react'
-import Masonry from 'react-masonry-css';
+import moment from 'moment';
+// import Masonry from 'react-masonry-css';
 import Swal from 'sweetalert2';
 import { useParams, useSearchParams, createSearchParams, useNavigate } from 'react-router-dom'
 import { apiSearchProviderAdvanced, apiSearchServicePublic, apiGetServicePublic } from '../../apis'
@@ -16,10 +18,12 @@ import { useDispatch, useSelector } from 'react-redux'
 // import withBaseComponent from 'hocs/withBaseComponent'
 import { getCurrent } from 'store/user/asyncAction'
 import { tinh_thanhpho } from 'tinh_thanhpho';
-import { apiModifyUser } from '../../apis/user';
+// import { apiModifyUser } from '../../apis/user';
 import Button from 'components/Buttons/Button';
-import { FaSortAmountDown, FaMoneyCheckAlt, FaCubes, FaBahai, FaSearch  } from "react-icons/fa";
+import { FaRoad, FaBuilding, FaMapMarkerAlt, FaBahai, FaSearch, FaCalendarDay  } from "react-icons/fa";
 import ToggleButton from './ToggleButton';
+import defaultProvider from "../../assets/defaultProvider.jpg";
+
 const REACT_APP_PAGINATION_LIMIT_DEFAULT = process.env.REACT_APP_LIMIT;
 
 const OurProviders = () => {
@@ -28,7 +32,7 @@ const OurProviders = () => {
   const [params, setParams] = useSearchParams()
   const [services, setServices] = useState(null)
   // const [active, setActive] = useState(null)
-  const [sort, setSort] = useState('')
+  const [sort, setSort] = useState('');
   const [nearMeOption, setNearMeOption] = useState(false)
   const {category} = useParams();
   const {isShowModal} = useSelector(state => state.app);
@@ -46,14 +50,19 @@ const OurProviders = () => {
   const [allProviders, setAllProviders] = useState([])
   const [clientLat, setClientLat] = useState(999999);
   const [clientLon, setClientLon] = useState(999999);
-  const [totalCount, setTotalCount] = useState(0);
+  // const [totalCount, setTotalCount] = useState(0);
 
   const fetchProviders = async (queries) =>{
     const response = await apiSearchProviderAdvanced(queries);
     console.log('RESPONSE________L>>>>' + response);
 
     if(response.success && response.providers?.hits){
-      setAllProviders(response.providers?.hits.map(p => p['_source']))
+      setAllProviders(response.providers?.hits.map(p => {
+        return {
+          ...p['_source'],
+          sort: p['sort']
+        };
+      }))
     } 
   }
 
@@ -69,22 +78,6 @@ const OurProviders = () => {
     700: 2,
     500: 1
   };
-
-
-  // useEffect(() => {
-  //   const fetchAllServiceProvider = async () => {
-  //     const response = await apiSearchProviderAdvanced({
-
-  //     });
-  //     console.log('RESPONSE________L>>>>' + response);
-
-  //     if(response?.success && response.providers?.hits){
-  //       setAllProviders(response.providers?.hits.map(p => p['_source']))
-  //       setTotalProvider(response.providers?.total?.value)
-  //     }
-  //   }
-  //   fetchAllServiceProvider()
-  // }, []);
 
   const [latitude, setLatitude] = useState(null)
   const [longitude, setLongitude] = useState(null)
@@ -102,19 +95,18 @@ const OurProviders = () => {
     return /^-?\d+$/.test(distanceText) && (unit === 'km' || unit === 'm');
   }
 
-  const fetchServicesAdvanced = async (queries, advancedQuery) => {
+  const fetchServiceProviderAdvanced = async (queries, advancedQuery) => {
     setIsLoading(true);
     let response = [];
-    const currerntParamPage = params.get('page');
-
-    const offset = currerntParamPage > 0 ? currerntParamPage - 1 : 0;
+    // const currerntParamPage = params.get('page');
+    // const offset = currerntParamPage > 0 ? currerntParamPage - 1 : 0;
 
     // if (useAdvanced) {
       const categoriesChosen = filterCateg.map(cat => cat.value);
       // if(categoriesChosen){
       advancedQuery.categories = categoriesChosen;
       // }
-  // const fetchServicesAdvanced = async (queries) =>{
+  // const fetchServiceProviderAdvanced = async (queries) =>{
   //   if (sort) {
   //     queries.sort = sort;
   //   }
@@ -132,7 +124,12 @@ const OurProviders = () => {
       response = await apiSearchProviderAdvanced(advancedQuery);
 
       if(response.success && response.providers?.hits) {
-        setAllProviders(response.providers.hits.map(p => p['_source']))
+        setAllProviders(response.providers?.hits.map(p => {
+          return {
+            ...p['_source'],
+            sort: p['sort']
+          };
+        }))
       }
       setTotalProvider(response.providers?.total?.value || 0);
     } 
@@ -140,7 +137,12 @@ const OurProviders = () => {
       response = await apiSearchProviderAdvanced(advancedQuery);
 
       if(response.success && response.providers?.hits) {
-        setAllProviders(response.providers.hits.map(p => p['_source']))
+        setAllProviders(response.providers?.hits.map(p => {
+          return {
+            ...p['_source'],
+            sort: p['sort']
+          };
+        }));
       }
       setTotalProvider(response.providers?.total?.value || 0);
     }
@@ -204,7 +206,7 @@ useEffect(() => {
   queries.page = 1;
   setParams(queries);
 
-  fetchServicesAdvanced(q, advancedQuery);
+  fetchServiceProviderAdvanced(q, advancedQuery);
 }, [searchedClick, resetClicked, nearMeOption]);
 
 
@@ -239,7 +241,7 @@ useEffect(() => {
     }
   }
 
-  fetchServicesAdvanced(q, advancedQuery);
+  fetchServiceProviderAdvanced(q, advancedQuery);
 }, [params]);
 
 // const changeActive = useCallback((name)=>{
@@ -291,7 +293,6 @@ const handleGetDirections = () => {
   // }).then((result) => {
   //   if (result.isConfirmed) {
       if ("geolocation" in navigator) {
-
           setIsLoading(true);
           navigator.geolocation.getCurrentPosition(async (position) => {
 
@@ -335,77 +336,35 @@ const handleGetDirections = () => {
       <div className={clsx('mt-8 w-main m-auto')}>
 
 
-      <div className='flex-auto flex flex-col gap-3'>
-          {/* <span className='font-semibold text-sm'>Filter by:</span> */}
-          <div className='flex items-center gap-4 mb-10 mt-2'>
-            {/* <FaMoneyCheckAlt />
-            <SearchItemService name='price' activeClick={active} changeActiveFilter={changeActive} type='input'/>
-            <FaCubes />
-            <SearchItemService name='category' activeClick={active} changeActiveFilter={changeActive}/>
-            <FaSortAmountDown />
-            <NewInputSelect value={sort} options={sorts} changeValue={changeValue} /> */}
-
-            <div className="grow flex justify-start gap-2">
-                <span className="grow flex flex-col justify-start">
-                  <label className="text-gray-800 font-medium">Search&nbsp;By:&nbsp;</label>
-                  <InputFormm
-                    id='q'
-                    register={()=>{}}
-                    errors={()=>{}}
-                    fullWidth
-                    placeholder= 'Search blog by title name, tag ...'
-                    style={'bg-white min-h-10 rounded-md pl-2 flex items-center border border-gray-300'}
-                    styleInput={'outline-none text-gray-500 italic w-full'}
-                    onChange={(event) => {
-                      setSearchFilter(prev => { return { ...prev, term: event.target.value }; })
-                    }}
-                    value={searchFilter.term}
-                  >
-                  </InputFormm>
-
-                  { nearMeOption &&
-                    <span className='flex justify-start items-center my-3 gap-3'>
-                      {/* <span className='font-semibold text-sm p-3'>Province:</span> */}
-                      {/* <InputSelect
-                        value={searchFilter?.province}
-                        options={Object.entries(tinh_thanhpho).map(ele => { return {id:ele[0], text:ele[1]?.name, value:ele[0]}})}
-                        changeValue={(value) => {setSearchFilter(prev => {return {...prev, province: value};}) }}
-                        className={'rounded-md p-2 bg-white min-h-10 border border-gray-300'}
-                      /> */}
-                      <label className="text-gray-800 font-medium mr-1">Province:</label>
-                      <Select
-                        defaultValue={""}
-                        name="province"
-                        options={Object.entries(tinh_thanhpho).map(ele => { return {id:ele[0], label:ele[1]?.name, value:ele[0]}})}
-                        className="basic-multi-select"
-                        classNamePrefix="select"
-                        onChange={(value) => {setSearchFilter(prev => {return {...prev, province: value};}) }}
-                      />
-
-                      <label className="text-gray-800 font-medium mr-1">Max Distance:</label>
-                      <InputField nameKey='maxDistance'
-                        value={searchFilter.maxDistance}
-                        setValue={setSearchFilter}
-                        placeholder={"Maximum distance..."}
-                        style={'bg-white min-h-10 rounded-md pl-2 flex items-center border border-gray-300'}
-                      />  
-                    </span>
-                  }
-                </span>
-
-                <span className='flex flex-col justify-center items-center gap-1'>
-                  <span className=''>
-                    <span className='font-semibold text-sm'>Location Search:</span>
-                    {/* <input className='p-3' onInput={() => {handleGetDirections()}} type="checkbox"/> */}
-                  </span>
-                  <ToggleButton handleToggleAndReturn={() => {handleGetDirections()}} isToggled={nearMeOption}/>
-
-                </span>
+      <div className='w-main p-2 flex justify-start m-auto mt-8'>
+        <div className='flex-auto flex flex-col gap-2'>
+          <div className='flex gap-4 mb-4 mt-2 items-end'>
+            <div className="flex flex-col flex-1">
+              <label className="text-gray-800 font-medium">Search&nbsp;By:&nbsp;</label>
+              <InputFormm
+                id='q'
+                register={()=>{}}
+                errors={()=>{}}
+                fullWidth
+                placeholder= 'Search providers...'
+                style={'bg-white min-h-10 rounded-md pl-2 flex items-center border border-gray-300'}
+                styleInput={'outline-none text-gray-500 italic w-full'}
+                onChange={(event) => {
+                  setSearchFilter(prev => { return { ...prev, term: event.target.value }; })
+                }}
+                value={searchFilter.term}
+              >
+              </InputFormm>
             </div>
-
-            <div className='flex flex-col'>
-              {/* <FaSortAmountDown />
-              <NewInputSelect value={selectedSort} options={sortOptions} changeValue={(value) => {setSelectedSort(value);}} /> */}
+            <span className='flex flex-col justify-center items-center gap-1'>
+              <span className=''>
+                <span className='font-semibold text-sm'>Location Search:</span>
+                {/* <input className='p-3' onInput={() => {handleGetDirections()}} type="checkbox"/> */}
+              </span>
+              <ToggleButton handleToggleAndReturn={() => {handleGetDirections()}} isToggled={nearMeOption}/>
+            </span>
+            
+            <div className='flex flex-col flex-1'>
               <label className="text-gray-800 font-medium">Order&nbsp;By:&nbsp;</label>
               <Select
                 value={sort}
@@ -413,8 +372,6 @@ const handleGetDirections = () => {
                 name="orderBy"
                 options={[
                   { value: "", label: "No Order" },
-                  // { value: "-price", label: "Price Descending" },
-                  // { value: "price", label: "Price Ascending" },
                   { value: "-createdAt", label: "Newest" }
                 ]}
                 className="basic-multi-select"
@@ -422,34 +379,6 @@ const handleGetDirections = () => {
                 onChange={(e) => setSort(e)}
               />
             </div>
-
-            <div className='flex flex-col'>
-              {/* <FaSortAmountDown />
-              <NewInputSelect value={selectedSort} options={sortOptions} changeValue={(value) => {setSelectedSort(value);}} /> */}
-
-              {/* <select value={''}
-                onChange={(e) => {
-                  console.log('------->', filterCateg);
-                  if (!filterCateg.includes(e.target.value)) {
-                    setFilterCateg([
-                      ...filterCateg,
-                      e.target.value
-                    ]);
-                  }
-                }}
-                className="border rounded-lg p-2 w-full mt-1 text-gray-800">
-                  {
-                    [{title: `${filterCateg?.length || 0} chosen`}, ...categories_service].map(cat => {
-                      return (
-                        <option value={cat?.title}>
-                          {cat?.title}
-                        </option>
-                      );
-                    })
-                  }
-              </select> */}
-            </div>
-
             <Button
               style="flex-1 h-fit px-4 py-2 rounded-md text-white bg-[#0a66c2] font-semibold"
               handleOnclick={() => { setSearchedClick(prev => !prev); }}
@@ -480,37 +409,100 @@ const handleGetDirections = () => {
                 <FaBahai /><span>Reset</span>
               </span>
             </Button>
-
-            {/* </div> */}
           </div>
+          { nearMeOption &&
+            <div className='flex flex-col'>
+              <span className='flex justify-start items-center my-2 gap-3'>
+                <label className="text-gray-800 font-medium mr-1">Max Distance:</label>
+                <InputField nameKey='maxDistance'
+                  value={searchFilter.maxDistance}
+                  setValue={setSearchFilter}
+                  placeholder={"Maximum Distance(optional)"}
+                  style={'bg-white min-h-10 rounded-md pl-2 flex items-center border border-gray-300'}
+                  type="number"
+                />  
+              </span>
+            </div>
+          }
         </div>
+      </div>
 
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16'>
+          {(!allProviders?.length) &&
+            <div className="flex justify-center">
+           <p className="text-gray-600 text-center font-semibold">No providers found matching your search criteria.</p>
+           </div>}
+         
+            {allProviders?.map(provider => (
+              // <Provider
+              //   key={el._id} 
+              //   providerData={el}
+              //   provider_id= {el._id}
+              //   normal={true}
+              //   userLatitude = {latitude}
+              //   userLongitude = {longitude}
+              //  />
 
+            <div
+              key={provider._id}
+              className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 cursor-pointer"
+              role="article"
+              aria-label={`Service provider ${provider?.bussinessName}`}
+            >
+              <div className="relative h-36">
+                <img
+                  src={provider?.images[0] || defaultProvider}
+                  alt={provider?.bussinessName}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.src = "https://images.unsplash.com/photo-1606857521015-7f9fcf423740";
+                  }}
+                />
+              </div>
+              <div className="p-4">
+                <h2 className="text-xl font-semibold text-gray-800 mb-3">{provider?.bussinessName}</h2>
+                <div className="space-y-2">
+                  <div className="flex items-center text-gray-600">
+                    <FaBuilding className="mr-2" />
+                    <span className='line-clamp-1'>{provider?.province}</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <FaMapMarkerAlt className="mr-2" />
+                    <span className='line-clamp-1'>{provider.address}</span>
+                  </div>
+                  {(nearMeOption && provider?.sort?.length) && <div className="flex items-center text-gray-600">
+                    <FaRoad className="mr-2" />
+                    <span className='line-clamp-1 text-[#0a66c2]'>{provider?.sort?.[0] === "Infinity" ? 'No data' : `${provider?.sort?.[0]?.toFixed(1)} km`}</span>
+                  </div>}
+                  <div className="flex items-center text-gray-600">
+                    <FaCalendarDay className="mr-2" />
+                    <span className='line-clamp-1'>{`Since: ${moment(provider.createdAt).format('DD/MM/YYYY')}`}</span>
+                  </div>
+                <button
+                  onClick={()=> navigate(`/detail_provider/${provider?.id}`)}
+                  className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  aria-label={`View details for ${provider.name}`}
+                >
+                  View Details
+                </button>
+              </div>
+            </div>
+            </div>
+            ))}
+      </div>
 
-        <Masonry
-          breakpointCols={breakpointColumnsObj}
-          className="my-masonry-grid flex mx-[-10px]"
-          columnClassName="my-masonry-grid_column">
-          {(!allProviders.length) && <span classNam='text-md font-semibold'>
-              No data match your search criteria.
-            </span>}
-          {allProviders.map(el => (
-            <Provider
-              key={el._id} 
-              providerData={el}
-              provider_id= {el._id}
-              normal={true}
-              userLatitude = {latitude}
-              userLongitude = {longitude}
-             />
-          ))}
-        </Masonry>
       </div>
       <div className='w-main m-auto my-4 flex justify-end'>
        {allProviders &&
        <Pagination
         totalCount={totalProvider}/>}
       </div>
+
+      { isLoading &&
+        <div className='flex justify-center z-50 w-full h-full fixed top-0 left-0 items-center bg-overlay'>
+          <HashLoader className='z-50' color='#3B82F6' loading={isLoading} size={80} />
+        </div>
+      }
     </div>
   )
 }

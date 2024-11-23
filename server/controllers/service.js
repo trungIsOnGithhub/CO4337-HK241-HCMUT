@@ -98,18 +98,23 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
         searchTerm,
         columnNamesToMatch,
         columnNamesToGet,
-        limit, offset,
+        limit,
+        offset,
         sortOption,
         geoLocationQueryOption,
         geoSortOption,
         categoriesIncluded,
         province,
-        null
+        null,
+        false
     );
     services = services?.hits;
 
-    // console.log("Query Input Parameter: ", services);
-    console.log("REAL DATA RETURNED: ", services);
+    console.log("Query Input Parameter: ", sortOption);
+    console.log("Query Input Parameter: ", categoriesIncluded
+
+    );
+    // onsole.log("REAL DATA RETURNED: ", services);
 
     return res.status(200).json({
         success: services ? true : false,
@@ -469,7 +474,7 @@ const searchAllServicesPublic = asyncHandler(async (req, res) => {
             }
         }
 
-        console.log('====', sort);
+        // console.log('====', sort);
         if (sort) {
             console.log('====', queryObject?.sort);
             if (sort?.indexOf('-') >= 0) {
@@ -484,7 +489,6 @@ const searchAllServicesPublic = asyncHandler(async (req, res) => {
         }
         
         console.log('Elastic Query: ', queryObject?.sort, '-------------')
-
         let queryResult = [];
         // queryResult = await esDBModule.queryElasticDB(esClient, esIndexNameList.SERVICES, queryObject);
 
