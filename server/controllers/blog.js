@@ -453,16 +453,6 @@ const searchBlogAdvanced = asyncHandler(async (req, res) => {
         sortOption.push({createdAt : {order : "desc"}});
     }
 
-    // if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
-
-    // let geoLocationQueryOption = null;
-    // if ( clientLat <= 180 && clientLon <= 180 &&
-    //     clientLat >= -90 && clientLon >= -90 &&
-    //     /[1-9][0-9]*(km|m)/.test(distanceText) )
-    // {
-    //     geoLocationQueryOption = { distanceText,  clientLat, clientLon };
-    // }
-
     const columnNamesToMatch = ["title", "providername", "authorname"];
     const columnNamesToGet = ["id", "title", "providername", "authorname", "numberView", "provider_id", "likes", "dislikes", "tags", "createdAt", "thumb"];
 

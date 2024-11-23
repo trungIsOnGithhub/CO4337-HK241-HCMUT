@@ -9,12 +9,12 @@ const PAGE_LIMIT = 5;
 const STATUS_STYLES = {
   Successful: 'text-green-500 bg-green-100',
   Pending: 'text-gray-500 bg-gray-100',
-  Canceled: 'text-red-500 bg-red-100'
+  Cancelled: 'text-red-500 bg-red-100'
 };
 
 // Available statuses for filtering and editing
-const STATUS_OPTIONS = ["All", "Successful", "Pending", "Canceled"];
-const EDITABLE_STATUS_OPTIONS = ["Successful", "Pending", "Canceled"];
+const STATUS_OPTIONS = ["All", "Successful", "Pending", "Cancelled"];
+const EDITABLE_STATUS_OPTIONS = ["Successful", "Pending", "Cancelled"];
 
 const OrdersList = () => {
   const navigate = useNavigate()

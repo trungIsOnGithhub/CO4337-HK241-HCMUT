@@ -691,8 +691,6 @@ let getThisMonthRevenueAndOrderStatistic = asyncHandler(async (req, res) => {
             ++canceledOrderCurrMonth;
         }
     });
-    // canceledOrderCurrMonth = allOrder.filter(ele => ele.status === "canceled");
-    // finishedOrderCurrMonth = allOrder.filter(ele => ele.status === "finished");
 
     return res.json({
         success: true,

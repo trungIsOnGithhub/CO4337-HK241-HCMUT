@@ -27,7 +27,7 @@ const FeaturedProduct = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
         {providers?.map((provider) => (
           <div
-            key={provider.id}
+            key={provider._id}
             className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 cursor-pointer"
             role="article"
             aria-label={`Service provider ${provider?.bussinessName}`}

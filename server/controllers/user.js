@@ -10,6 +10,7 @@ const makeToken = require('uniqid')
 const {users} = require('../ultils//constant')
 // const mongoose = require('mongoose');
 const Staff = require('../models/staff')
+const ServiceProvider = require('../models/ServiceProvider')
 
 const makeTokenNumber = () => {
     return Math.floor(100000 + Math.random() * 900000).toString(); // Tạo mã 6 chữ số
@@ -627,13 +628,24 @@ function convertH2MInexact(timeInHour){
 // update cart_service
 const updateCartService = asyncHandler(async (req, res) => {
     const {_id} = req.user;
-    const {service, provider, staff, time, date, duration, originalPrice, discountPrice, dateTime, coupon=null} = req.body;
-    
+    const {service, provider, staff, time, date, duration, originalPrice, discountPrice, dateTime, nowMM, coupon=null} = req.body;
+
     if (!service || !provider || !staff || !time || !date || !duration || !originalPrice || !dateTime) {
         throw new Error("Request missing input data!");
     } else {
         const user = await User.findById(_id).select('cart_service');
         let response;
+
+
+        // min time before book same day
+        const providerObj = await ServiceProvider.findById(provider);
+        if (provider?.advancedSetting?.minutesBeforeSameDayBook > 0 
+            && nowMM > 0 && provider?.advancedSetting?.minutesBeforeSameDayBook
+        ) {
+            
+        }
+        // min time before book same day handle
+
 
         const thisStaff = await Staff.findById(staff);
         // console.log('???????????????????'+thisStaff.work);

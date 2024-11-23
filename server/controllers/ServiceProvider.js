@@ -409,7 +409,7 @@ const searchSPAdvanced = asyncHandler(async (req, res) => {
     if (sortBy?.indexOf("createdAt") > -1) {
         sortOption.push({createdAt : {order : "desc"}});
     }
-    if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "desc" }; }
+    if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "asc" }; }
 
     // let categoriesIncluded = [];
     // if (categories?.length) {
@@ -427,7 +427,7 @@ const searchSPAdvanced = asyncHandler(async (req, res) => {
     }
 
     const columnNamesToMatch = ["bussinessName", "province","address"];
-    const columnNamesToGet = ["id", "address", "province", "images", "bussinessName", "mobile"];
+    const columnNamesToGet = ["id", "address", "province", "images", "bussinessName", "mobile", "createdAt  "];
 
     let services = [];
 

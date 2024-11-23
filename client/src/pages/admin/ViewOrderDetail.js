@@ -310,7 +310,7 @@ const ViewOrderDetail = ({ bookingId, onClose }) => {
                         >
                             <option value="Successful">Successful</option>
                             <option value="Pending">Pending</option>
-                            <option value="Canceled">Canceled</option>
+                            <option value="Cancelled">Cancelled</option>
                         </select>
             
                         {isChanged && (

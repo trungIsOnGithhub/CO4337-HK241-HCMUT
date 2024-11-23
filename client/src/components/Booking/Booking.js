@@ -209,6 +209,9 @@ const Booking = () => {
         if (hNeed < 1) {
           msg = `Provider required ${mNeed} minutes before booking this timeslot!`;
         }
+        if (mNeed < 1) {
+          msg = `Provider required ${hNeed} hours before booking this timeslot!`;
+        }
         toast.error(msg);
         fetchData();
         setSelectedStaff({
@@ -246,7 +249,8 @@ const Booking = () => {
       originalPrice: originalPrice,
       discountPrice: +discountValue > 0 ? +discountValue : 0,
       dateTime,
-      coupon: selectedVoucher?._id
+      coupon: selectedVoucher?._id,
+      nowMM: (new Date()).getHours() * 60 + (new Date()).getMinutes() + 1
     });
 
     if (resp.success) {
@@ -300,10 +304,15 @@ const Booking = () => {
       if (startMM - nowMM <= provider.advancedSetting.minutesBeforeSameDayBook) {
         const hNeed = Math.trunc(provider.advancedSetting.minutesBeforeSameDayBook / 60);
         const mNeed = provider.advancedSetting.minutesBeforeSameDayBook % 60;
+
         let msg = `Provider required ${hNeed} hours ${mNeed} before booking this timeslot!`;
         if (hNeed < 1) {
           msg = `Provider required ${mNeed} minutes before booking this timeslot!`;
         }
+        if (mNeed < 1) {
+          msg = `Provider required ${hNeed} hours before booking this timeslot!`;
+        }
+
         toast.error(msg);
         fetchData();
         setSelectedStaff({
@@ -335,7 +344,8 @@ const Booking = () => {
       originalPrice: originalPrice,
       discountPrice: +discountValue > 0 ? +discountValue : 0,
       dateTime: dateTime,
-      coupon: selectedVoucher?._id
+      coupon: selectedVoucher?._id,
+      nowMM: (new Date()).getHours() * 60 + (new Date()).getMinutes() + 1
     })
 
     if (resp.success) {

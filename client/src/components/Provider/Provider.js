@@ -43,7 +43,8 @@ const Provider = ({providerData, isNotBorder, fullWidth = false, userLatitude, u
             <span key={index}>{el}</span>
           ))}</span>
           <span className='line-clamp-1 text-lg capitalize font-semibold text-center w-full'>{providerData?.bussinessName}</span>
-          {nearMeOption && distance >= 0 ? <span className='text-xs text-blue-500 font-semibold text-center w-full'>Distance: {distance.toFixed(2)} km</span> : <span className='text-xs text-blue-500 font-semibold text-center w-full'>Khoảng cách: Chưa xác định</span>}
+          <span className='line-clamp-1 text-lg capitalize font-semibold text-center w-full'>{providerData?.address}</span>
+          {nearMeOption && distance >= 0 ?<span className='text-xs text-blue-500 font-semibold text-center w-full'>Distance: {distance.toFixed(2)} km</span> : <span className='text-xs text-blue-500 font-semibold text-center w-full'></span>}
         </div>
       </div>
     </div>

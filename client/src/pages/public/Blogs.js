@@ -242,7 +242,7 @@ useEffect(() => {
                 register={()=>{}}
                 errors={()=>{}}
                 fullWidth
-                placeholder= 'Search blog by title name, tag ...'
+                placeholder= 'Search blog by title name, provider, author ...'
                 style={'w-full bg-[#f4f6fa] min-h-10 rounded-md pl-2 flex items-center'}
                 styleInput={'w-[100%] bg-[#f4f6fa] outline-none text-[#99a1b1]'}
                 onChange={(event) => {setSearchTerm(event.target.value)}}
@@ -307,7 +307,7 @@ useEffect(() => {
             </Button>
           </div>
 
-          <div className="col-span-3 max-h-[500px] overflow-y-auto scrollbar-thin">
+          <div className="col-span-3 max-h-[1000px] overflow-y-auto scrollbar-thin">
 
           {/* {currBlogList?.length &&
               <Pagination totalCount={counts}/>} */}
@@ -405,7 +405,7 @@ useEffect(() => {
           <div className="col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4"><FaHotjar />Popular Tags:</h2>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 max-h-[300px] overflow-y-auto scrollbar-thin">
                 {tags?.map((tag) => (
                   <button
                     key={tag?._id}  
@@ -441,6 +441,7 @@ useEffect(() => {
 
             <div className="bg-white rounded-lg shadow-md p-6 mt-4">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4"><FaHotjar />Popular Provider Author:</h2>
+                <div className='flex flex-col gap-2 max-h-[600px] overflow-y-auto scrollbar-thin'>
                 {topProviders?.map((provider, index) => (
         // {performanceViewOption === "service" && services.map((service, index) => (
           <div key={index}
@@ -473,16 +474,10 @@ useEffect(() => {
                 <span>{provider.blogCount}</span>
               </div>
             </div>
-            {/* Occupancy Rate Bar */}
-            {/* <div className="w-full bg-gray-200 h-1 rounded-full mt-2">
-              <div
-                style={{ width: `${service.occupancy}%` }}
-                className="bg-blue-600 h-1 rounded-full"
-              ></div>
-            </div> */}
           </div>
-        // ))}
                 ))}
+
+            </div>
             </div>
           </div>
         </div>

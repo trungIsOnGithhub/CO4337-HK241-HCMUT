@@ -108,8 +108,11 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
     );
     services = services?.hits;
 
-    // console.log("Query Input Parameter: ", services);
-    console.log("REAL DATA RETURNED: ", services);
+    console.log("Query Input Parameter: ", sortOption);
+    console.log("Query Input Parameter: ", categoriesIncluded
+
+    );
+    // onsole.log("REAL DATA RETURNED: ", services);
 
     return res.status(200).json({
         success: services ? true : false,

@@ -288,8 +288,8 @@ const Services = () => {
       </div>
 
       <div className='w-main p-2 flex justify-start m-auto mt-8'>
-        <div className='flex-auto flex flex-col gap-4'>
-          <div className='flex gap-4 mb-10 mt-2 items-end'>
+        <div className='flex-auto flex flex-col gap-2'>
+          <div className='flex gap-4 mb-4 mt-2 items-end'>
             <div className="flex flex-col flex-1">
               <label className="text-gray-800 font-medium">Search&nbsp;By:&nbsp;</label>
               <InputFormm
@@ -390,9 +390,10 @@ const Services = () => {
               </span>
             </Button>
           </div>
+{/* 
           { nearMeOption &&
             <div className='flex flex-col'>
-              <span className='flex justify-start items-center my-3 gap-3'>
+              <span className='flex justify-start items-center my-2 gap-3'>
                 <label className="text-gray-800 font-medium mr-1">Max Distance:</label>
                 <InputField nameKey='maxDistance'
                   value={searchFilter.maxDistance}
@@ -403,7 +404,7 @@ const Services = () => {
                 />  
               </span>
             </div>
-          }
+          } */}
         </div>
       </div>
 
