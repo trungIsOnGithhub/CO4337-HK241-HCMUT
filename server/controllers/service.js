@@ -98,13 +98,15 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
         searchTerm,
         columnNamesToMatch,
         columnNamesToGet,
-        limit, offset,
+        limit,
+        offset,
         sortOption,
         geoLocationQueryOption,
         geoSortOption,
         categoriesIncluded,
         province,
-        null
+        null,
+        false
     );
     services = services?.hits;
 

@@ -80,10 +80,11 @@ const CenterChart = ({ providerId }) => {
     setAppointmentsBooked(chartData.finished);
     setCanceledAppointments(chartData.canceled);
 
-    const sumOrdersChartData = (chartData.finished + chartData.canceled) || 1;
+    const sumOrdersChartData = chartData.total || (chartData.finished + chartData.canceled);
     // console.log(sumOrdersChartData, "------");
-    const ratioFinish = (chartData.finished / sumOrdersChartData)?.toFixed(1);
-    const ratioCanceled = (chartData.canceled / sumOrdersChartData)?.toFixed(1);
+    const ratioFinish = (chartData.finished * 100 / sumOrdersChartData)?.toFixed(1);
+    const ratioCanceled = (chartData.canceled * 100 / sumOrdersChartData)?.toFixed(1);
+
     setAppointmentsBookedChange(ratioFinish);
     setCanceledAppointmentsChange(ratioCanceled);
 
@@ -185,7 +186,7 @@ const CenterChart = ({ providerId }) => {
             <div className="text-gray-500 text-sm">Orders Booked</div>
             <div className="text-2xl font-bold text-blue-500">{appointmentsBooked}</div>
             <div className={`text-sm ${appointmentsBookedChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-              {Math.abs(appointmentsBookedChange)}% {appointmentsBookedChange >= 0 ? 'Increase' : 'Decrease'}
+              in total
             </div>
           </div>
           <div>

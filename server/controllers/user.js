@@ -625,10 +625,14 @@ function convertH2MInexact(timeInHour){
     let timeParts = timeInHour.split(":");
     return Number(timeParts[0]) * 60 + Number(timeParts[1]);
 }
+
 // update cart_service
+const getMinuteDiff = (date1, date2) => {
+    return Math.abs(Math.round(date1.getTime() - date2.getTime()) / 60000);
+}
 const updateCartService = asyncHandler(async (req, res) => {
     const {_id} = req.user;
-    const {service, provider, staff, time, date, duration, originalPrice, discountPrice, dateTime, nowMM, coupon=null} = req.body;
+    const {service, provider, staff, time, date, duration, originalPrice, discountPrice, dateTime, nowDate, coupon=null} = req.body;
 
     if (!service || !provider || !staff || !time || !date || !duration || !originalPrice || !dateTime) {
         throw new Error("Request missing input data!");
@@ -636,14 +640,13 @@ const updateCartService = asyncHandler(async (req, res) => {
         const user = await User.findById(_id).select('cart_service');
         let response;
 
-        const timeMM = convertH2MInexact(time);
         // min time before book same day
         const providerObj = await ServiceProvider.findById(provider);
+        const minuteDiffBookingAndReal = getMinuteDiff(dateTime, nowDate);
 
-        
-        if (providerObj && nowMM > 0
+        if (providerObj && nowDate
             && +providerObj.advancedSetting?.minutesBeforeSameDayBook > 0 
-            && +providerObj.advancedSetting.minutesBeforeSameDayBook + nowMM > timeMM
+            && minuteDiffBookingAndReal < +providerObj.advancedSetting.minutesBeforeSameDayBook
         ) {
             // console.log(timeMM);
             // console.log(nowMM);
@@ -666,7 +669,6 @@ const updateCartService = asyncHandler(async (req, res) => {
             });
         }
         // min time before book same day handle
-
 
         const thisStaff = await Staff.findById(staff);
         // console.log('???????????????????'+thisStaff.work);
