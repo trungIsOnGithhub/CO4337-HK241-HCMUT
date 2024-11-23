@@ -250,7 +250,7 @@ const Booking = () => {
       discountPrice: +discountValue > 0 ? +discountValue : 0,
       dateTime,
       coupon: selectedVoucher?._id,
-      nowMM: (new Date()).getHours() * 60 + (new Date()).getMinutes() + 1
+      nowDate: new Date()
     });
 
     if (resp.success) {
@@ -349,7 +349,7 @@ const Booking = () => {
       discountPrice: +discountValue > 0 ? +discountValue : 0,
       dateTime: dateTime,
       coupon: selectedVoucher?._id,
-      nowMM: (new Date()).getHours() * 60 + (new Date()).getMinutes() + 1
+      nowDate: new Date()
     })
 
     if (resp.success) {

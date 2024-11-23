@@ -602,12 +602,9 @@ let getAllOrderSpecificMonth = async (month, year, spid) => {
 
     let res = ordersByProv.filter(order => {
         let dates = order?.info[0]?.date?.split('/').map(Number);
-        // console.log(dates, "-----))))")
-
+        console.log(month, "-------------))))", dates);
         return dates[1] === month && dates[2] === year;
     });
-
-    // console.log(res, ':::::::');
 
     return res;
 }
@@ -675,13 +672,16 @@ let getThisMonthRevenueAndOrderStatistic = asyncHandler(async (req, res) => {
 
     let numDaysInMonth = new Date(currYear, currMonth, 0).getDate();
     let revenueMonthList = Array(numDaysInMonth).fill(0);
+
     allOrdersThisMonth.forEach(order => {
         if (order.status === 'Successful' && order.info[0]?.date) {
             let dates = order.info[0].date.split('/');
-            // // Kết hợp formattedDate và time để tạo datetime
-            // let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
-            // let indexByDate = cDate.getDate()-1;
+            console.log('==============ORDER===================');
+            console.log('||||||');
+            console.log(order.status);
+            console.log(order.total);
+            console.log('||||||');
             console.log(`============&&&&&&&&&&&&&&&&${dates}`)
 
             revenueMonthList[dates[0]-1] += order.total;
@@ -694,6 +694,7 @@ let getThisMonthRevenueAndOrderStatistic = asyncHandler(async (req, res) => {
 
     return res.json({
         success: true,
+        total: allOrdersThisMonth.length,
         canceled: canceledOrderCurrMonth,
         finished: finishedOrderCurrMonth,
         revenueSeries: revenueMonthList

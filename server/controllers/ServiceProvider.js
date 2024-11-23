@@ -447,7 +447,8 @@ const searchSPAdvanced = asyncHandler(async (req, res) => {
         geoSortOption,
         null,
         null,
-        null
+        null,
+        false
     );
     services = services?.hits;
 

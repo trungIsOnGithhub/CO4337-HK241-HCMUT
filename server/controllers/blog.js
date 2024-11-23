@@ -469,7 +469,8 @@ const searchBlogAdvanced = asyncHandler(async (req, res) => {
         null,
         null,
         null,
-        selectedTags
+        selectedTags,
+        false
     );
     blogs = blogs?.hits;
 
