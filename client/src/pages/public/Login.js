@@ -210,7 +210,7 @@ const Login = () => {
     
                 }
                 else{
-                    Swal.fire('Opps!', result?.mes,'error')
+                    Swal.fire('Check your email or password!', result?.mes,'error')
                 }
             }
         }
@@ -236,7 +236,7 @@ const Login = () => {
                     setIsVerify(true)
                 }
                 else {
-                    Swal.fire('Opps!', result.mes,'error')
+                    Swal.fire('Check your email or password!', result.mes,'error')
                 }
             }
         }

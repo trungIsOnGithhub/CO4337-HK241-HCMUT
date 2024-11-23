@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { FaCog } from "react-icons/fa";
+// import { FaCog } from "react-icons/fa";
+import { formatPrice } from 'ultils/helper';
 import { apiGetPerformanceDataByService, apiGetPerformanceDataByStaff } from 'apis';
 import Swal from 'sweetalert2';
 
@@ -129,7 +130,7 @@ function PerformanceSummary({ providerId }) {
               </div>
               <div className="flex justify-between mb-1">
                 <span className="font-semibold">Revenue</span>
-                <span>${Number(service.revenue)?.toFixed(2)}</span>
+                <span>{formatPrice(Number(service.revenue))} VND</span>
               </div>
               <div className="flex justify-between items-center mt-2">
                 <span className="font-semibold">Occupancy rate</span>
@@ -166,7 +167,7 @@ function PerformanceSummary({ providerId }) {
               </div>
               <div className="flex justify-between">
                 <span>Revenue</span>
-                <span>${Number(service.revenue)?.toFixed(2)}</span>
+                <span>{formatPrice(Number(service.revenue))} VND</span>
               </div>
               <div className="flex justify-between items-center mt-2">
                 <span>Occupancy rate</span>
