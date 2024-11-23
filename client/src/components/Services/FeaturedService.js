@@ -21,13 +21,15 @@ const FeaturedProduct = () => {
     const handleViewDetails = (providerId) => {
         navigate(`/detail_provider/${providerId}`)
     }
+
+    console.log(providers)
   return (
     <div className='w-main mb-8'>
         <h3 className='text-[20px] font-semibold py-[12px] border-b-2 border-[#0a66c2] mb-8'>OUR SERVICE PROVIDERS</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
         {providers?.map((provider) => (
           <div
-            key={provider.id}
+            key={provider._id}
             className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 cursor-pointer"
             role="article"
             aria-label={`Service provider ${provider?.bussinessName}`}

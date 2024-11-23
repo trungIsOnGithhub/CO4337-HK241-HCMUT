@@ -83,10 +83,16 @@ const getAllProduct = asyncHandler(async(req, res)=>{
         }
     }
     const qr = {...colorFinish, ...formatedQueries, ...queryFinish,
-        $or: [
-            { isHidden: false },
-            { isHidden: { $exists: false } }
-        ]}
+        $and: [
+            queryFinish || {}, // Điều kiện tìm kiếm từ queries.q (nếu có)
+            {
+                $or: [
+                    { isHidden: false },
+                    { isHidden: { $exists: false } },
+                ],
+            },
+        ],
+    }
     let queryCommand =  Product.find(qr)
     try {
         // sorting
@@ -440,11 +446,22 @@ const getAllProductByProviderId = asyncHandler(async(req, res)=>{
             ]
         }
     }
-    const qr = {...colorFinish, ...formatedQueries, ...queryFinish, provider_id,
-        $or: [
-            { isHidden: false },
-            { isHidden: { $exists: false } }
-        ]}
+    
+    const qr = {
+        ...colorFinish,
+        ...formatedQueries,
+        provider_id,
+        $and: [
+            queryFinish || {}, // Điều kiện tìm kiếm từ queries.q (nếu có)
+            {
+                $or: [
+                    { isHidden: false },
+                    { isHidden: { $exists: false } },
+                ],
+            },
+        ],
+    };
+    
     let queryCommand =  Product.find(qr)
     try {
         // sorting

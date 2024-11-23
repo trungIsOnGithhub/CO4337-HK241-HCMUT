@@ -154,6 +154,7 @@ const DetailProvider = () => {
     }, [prid, params]);
 
     useEffect(() => {
+      console.log('aaa')
         const searchParams = Object.fromEntries([...params]) 
         const fetchData = async() => {
           const response = await apiGetProductByProviderId(prid, {...searchParams, limit: process.env.REACT_APP_LIMIT})
@@ -390,8 +391,6 @@ const DetailProvider = () => {
   }, [variable]);
 
 
-  console.log(current)
-  console.log(adminData)
   return (
     <div className='w-full'>
         <div className={clsx('w-full fixed top-0 left-0 h-[86px] flex justify-center z-[100]', providerData?.theme === 'dark' && 'bg-[#212529] text-white')}>

@@ -156,7 +156,7 @@ const ViewStatistics = () => {
                     <div>
                       <p className="text-gray-500">Highest Booking Value</p>
                       <h3 className="text-2xl font-bold">
-                        {`${formatPrice(Math.max(...bookings.map(booking => booking.total)))} VNĐ`}
+                      {`${formatPrice(Math.max([...bookings?.map(booking => booking.total)], 0))} VNĐ`}
                       </h3>
                     </div>
                     <FaTools className="text-3xl text-purple-500" />
@@ -167,7 +167,7 @@ const ViewStatistics = () => {
                     <div>
                       <p className="text-gray-500">Highest Order Value</p>
                       <h3 className="text-2xl font-bold">
-                        {`${formatPrice(Math.max(...orders.map(order => order.totalPrice)))} VNĐ`}
+                        {`${formatPrice(Math.max([...orders?.map(order => order.totalPrice)], 0))} VNĐ`}
                       </h3>
                     </div>
                     <FaShoppingCart className="text-3xl text-red-500" />
