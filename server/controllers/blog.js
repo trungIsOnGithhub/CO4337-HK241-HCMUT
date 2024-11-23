@@ -407,6 +407,7 @@ const getTopProviderAuthorBlogs = asyncHandler(async(req, res)=>{
             firstName: { $first: "$author_mapped.firstName" },
             lastName: { $first: "$author_mapped.lastName" },
             bussinessName: { $first: "$provider_mapped.bussinessName" },
+            spid: { $first: "$provider_mapped._id" },
             avatar: { $first: "$author_mapped.avatar" }
         }},
         { $sort: sortObj },
