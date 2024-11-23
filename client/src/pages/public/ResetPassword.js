@@ -50,7 +50,6 @@ const ResetPassword = () => {
       if (!validation.uppercase) newErrors.push("Include at least one uppercase letter");
       if (!validation.lowercase) newErrors.push("Include at least one lowercase letter");
       if (!validation.number) newErrors.push("Include at least one number");
-      if (!validation.special) newErrors.push("Include at least one special character");
 
       setErrors(prev => ({
         ...prev,

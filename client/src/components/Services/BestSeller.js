@@ -67,7 +67,6 @@ const BestSeller = () => {
         }
         fetchServiceData()
     }, [])
-    
 
     const nextSlide = () => {
         setCurrentIndex((prevIndex) =>

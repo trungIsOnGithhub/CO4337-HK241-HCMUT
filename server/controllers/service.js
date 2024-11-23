@@ -263,7 +263,6 @@ const updateServiceByAdmin = asyncHandler(async(req, res)=>{
 // })
 
 
-// get all staffs
 const getAllServicesPublic = asyncHandler(async (req, res) => {
     let queries = { ...req.query };
 
@@ -294,7 +293,11 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
     }
 
     let queryFinish = {}
-    const qr = {...formatedQueries, ...queryFinish, ...categoryFinish}
+    const qr = {...formatedQueries, ...queryFinish, ...categoryFinish, 
+        $or: [
+            { isHidden: false },
+            { isHidden: { $exists: false } }
+        ]}
 
     let services = await Service.find(qr);
 
@@ -753,7 +756,12 @@ const getAllServicesByProviderId = asyncHandler(async (req, res) => {
             ]
         }
     }
-    const qr = {...formatedQueries, ...queryFinish, ...categoryFinish, provider_id}
+    const qr = {...formatedQueries, ...queryFinish, ...categoryFinish, provider_id,
+        $or: [
+            { isHidden: false },
+            { isHidden: { $exists: false } }
+        ]
+    }
     let queryCommand =  Service.find(qr).populate({
         path: 'assigned_staff',
         select: 'firstName lastName avatar',

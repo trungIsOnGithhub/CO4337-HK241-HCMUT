@@ -102,8 +102,7 @@ const ViewStatistics = () => {
         </div>
         <div className='w-[95%] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
           <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8">
-            <div className="max-w-7xl mx-auto space-y-6">
-              {/* Header Section */}
+            <div className="max-w-4xl mx-auto space-y-6">
               <div className="bg-white rounded-lg shadow-lg p-6">
                 <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
                   <img
@@ -133,7 +132,6 @@ const ViewStatistics = () => {
                 </div>
               </div>
 
-              {/* Statistics Cards */}
               <div className="grid grid-cols-2 gap-6 text-[#00143c]">
                 <div className="bg-white rounded-lg shadow-lg p-6">
                   <div className="flex items-center justify-between">
@@ -177,7 +175,6 @@ const ViewStatistics = () => {
                 </div>
               </div>
 
-              {/* Service Bookings Table */}
               <div className="mb-4 mx-auto">
                 <div className="bg-white shadow-lg rounded-lg overflow-hidden">
                   <div className="border-b border-gray-200 p-6">
@@ -243,15 +240,12 @@ const ViewStatistics = () => {
                 </div>
               </div>
 
-              {/* Product Orders Table */}
               <div className="mx-auto mb-4">
                 <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-                  {/* Header Section */}
                   <div className="border-b border-gray-200 p-6">
                     <h1 className="text-2xl font-bold text-gray-900">All Orders</h1>
                   </div>
 
-                  {/* Orders List */}
                   <div className="divide-y divide-gray-200 min-h-[400px] max-h-[600px] overflow-y-auto scrollbar-thin">
                     {orders.map((order) => (
                       <div key={order._id} className="p-6 hover:bg-gray-50 transition-colors cursor-pointer" onClick={()=>handleViewDetailOrder(order._id)}>

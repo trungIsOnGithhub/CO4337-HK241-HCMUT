@@ -16,6 +16,7 @@ import { MdBlock } from "react-icons/md";
 import { TfiExport } from 'react-icons/tfi'
 import { FaChartArea } from 'react-icons/fa'
 import { utils, writeFile } from 'xlsx';
+import { FaChartSimple } from 'react-icons/fa6'
 
 const ManageUser = () => {
   const navigate = useNavigate()
@@ -188,11 +189,11 @@ const ManageUser = () => {
                       
                       <div className="relative group inline-block">
                         <span onClick={()=>handleNavigateUserStatistics(el?._id)} className='inline-block hover:underline cursor-pointer text-[#0a66c2] hover:text-orange-500 px-0.5'>
-                          <FaChartArea size={24}/>
+                          <FaChartSimple size={24}/>
                         </span>
 
                         {/* Tooltip */}
-                        <div className="absolute left-1/2 top-[-2px] transform -translate-x-1/2 translate-y-full mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-[#00143c] border border-[##dee1e6] text-xs p-1 rounded">
+                        <div className="absolute z-[99] left-1/2 top-[-2px] transform -translate-x-1/2 translate-y-full mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white text-[#00143c] border border-[##dee1e6] text-xs p-1 rounded">
                           View statistics
                         </div>
                       </div>

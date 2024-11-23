@@ -358,17 +358,20 @@ const ManageBooking = () => {
           </div>
           <div className='text-[#99a1b1]'>
             <div className='w-full flex gap-1 border-b border-[##dee1e6] p-[8px]'>
-              <span className='w-[10%]'>Time</span>
+              <span className='w-[10%] flex items-center justify-center'>Time</span>
               <span className='w-[25%] flex items-center justify-center'>Service</span>
               <span className='w-[15%] flex items-center justify-center'>Customer</span>
               <span className='w-[10%] flex items-center justify-center'>Duration</span>
-              <span className='w-[15%] flex items-center justify-center'>Status</span>
-              <span className='w-[25%] flex items-center justify-center'>Employee</span>
+              <span className='w-[20%] flex items-center justify-center'>Status</span>
+              <span className='w-[20%] flex items-center justify-center'>Employee</span>
             </div>
             <div>
               {booking?.map((el,index) => (
                 <div key={index} className='w-full flex border-b border-[#f4f6fa] gap-1 h-[56px] px-[8px] py-[12px] cursor-pointer hover:bg-blue-200'>
-                  <span className='w-[10%] py-2 text-[#00143c]'>{el?.info[0]?.time}</span>
+                  <span className='w-[10%] py-2 text-[#00143c] flex flex-col gap-1 items-center justify-center'>
+                    <span className='text-[#0a66c2] font-medium'>{el?.info[0]?.time}</span>
+                    <span className='text-xs text-gray-400'>{el?.info[0]?.date}</span>
+                  </span>
                   <span onClick={()=>handleNavigateBookingDetail(el?._id)} className='w-[25%] py-2 text-[#00143c] text-sm flex justify-start font-medium'>
                     <div className='pl-[4px] flex items-center' style={{borderLeft: `4px solid ${getColorByCategory(el?.serviceDetails?.category)}` }}>
                       {el?.serviceDetails?.name}
@@ -376,7 +379,7 @@ const ManageBooking = () => {
                   </span>
                   <span className='w-[15%] py-2 text-[#00143c] text-sm line-clamp-1 flex items-center justify-center'>{`${el?.userDetails?.lastName} ${el?.userDetails?.firstName}`}</span>
                   <span className='w-[10%] py-2 text-[#00143c] text-sm line-clamp-1 flex items-center justify-center'>{`${el?.serviceDetails?.duration}min`}</span>
-                  <span className='w-[15%] py-2 text-[#00143c] flex items-center justify-center relative cursor-pointer' onClick={()=>{handleShowOptionStatus(el?._id)}}>
+                  <span className='w-[20%] py-2 text-[#00143c] flex items-center justify-center relative cursor-pointer' onClick={()=>{handleShowOptionStatus(el?._id)}}>
                     <div className='w-full flex justify-between items-center border rounded-md px-2 shadow-sm'>
                       <span className='flex gap-[6px] items-center'><FaCircleHalfStroke style={{ transform: 'rotate(90deg)'}} color={el?.status === 'Successful' ? 'green' : el?.status === 'Pending' ? 'orange' : 'red'}/>{el?.status}</span>
                       <FaAngleDown size={10}/>
@@ -390,7 +393,7 @@ const ManageBooking = () => {
                     </div>
                    }
                   </span>
-                  <span className='w-[25%] py-2 text-[#00143c] flex items-center justify-center'>
+                  <span className='w-[20%] py-2 text-[#00143c] flex items-center justify-center'>
                     <img className='w-[32px] h-[32px] rounded-full ml-[-10px] mr-[0px]' src={el?.staffDetails?.avatar}/>
                   </span>
                 </div>

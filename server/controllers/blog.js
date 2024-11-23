@@ -549,7 +549,10 @@ const getAllBlogByProviderId = asyncHandler(async(req, res)=>{
         }
     }
     
-    const qr = {...formatedQueries, ...queryFinish, provider_id}
+    const qr = {...formatedQueries, ...queryFinish, provider_id,$or: [
+            { isHidden: false },
+            { isHidden: { $exists: false } }
+        ]}
     let queryCommand =  Blog.find(qr).populate({
         path: 'author'
     })

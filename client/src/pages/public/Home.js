@@ -11,7 +11,6 @@ const Home = ({navigate}) => {
     const {categories} = useSelector(state => state.app)
     const {isLogin, current} = useSelector(state => state.user)
 
-    console.log(newProducts)
 
     return (
         <>

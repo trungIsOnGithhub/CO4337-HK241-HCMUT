@@ -2,7 +2,7 @@ import React ,{useState, useEffect, useCallback, memo, useRef}from 'react'
 import {createSearchParams, useLocation, useNavigate, useParams} from 'react-router-dom'
 import { apiGetOneProduct, apiGetProduct } from '../../apis/product'
 import { apiModifyUser, apiUpdateWishlist } from '../../apis/user'
-import { apiGetOneService, apiGetServicePublic, apiRatingService } from '../../apis/service'
+import { apiGetOneService, apiRatingService } from '../../apis/service'
 import {Breadcrumb, Button, SelectQuantity, ServiceExtra, ServiceInformation, CustomSliderService, ServiceCard} from '../../components'
 import Slider from "react-slick";
 import { formatPrice, formatPricee, renderStarfromNumber } from '../../ultils/helper';
@@ -42,7 +42,6 @@ const DetailService = ({isQuickView, data}) => {
   const params =useParams()
   const [serviceData, setServiceData] = useState(null)
   const [quantity, setQuantity] = useState(1)
-  const [productCate, setProductCate] = useState(null)
   const [newReview, setNewReview] = useState({
     comment: "",
     rating: 0,
@@ -66,7 +65,6 @@ const DetailService = ({isQuickView, data}) => {
   useEffect(() => {
     if(sid){
       fetchServiceData()
-      fetchServiceCate()
     }
     window.scrollTo(0,0)
     nameRef.current?.scrollIntoView({block: 'center'})
@@ -103,12 +101,6 @@ const DetailService = ({isQuickView, data}) => {
     }
   }
 
-  const fetchServiceCate = async ()=>{
-    const response = await apiGetServicePublic({category})
-    if(response?.success){
-      setProductCate(response?.services)
-    }
-  }
 
   useEffect(() => {
     if(sid){
