@@ -7,6 +7,6 @@ describe('template spec', () => {
 describe('HomePage Test', () => {
   it('Successfully load after admin login - Header', () => {
     cy.visit("/");
-    cy.get("[cytest='component']").contains("Admin Workspace");
+    cy.get("[cytest='header_options']").contains("Admin Workspace");
   });
 });
