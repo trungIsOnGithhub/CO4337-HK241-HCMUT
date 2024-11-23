@@ -1,6 +1,12 @@
 describe('template spec', () => {
-  it('passes', () => {
-    cy.visit("http://localhost:3000");
-    cy.get("[cytest='component']").contains("Text....");
+  it('auto-passes', () => {
+    cy.visit("/");
   })
 })
+
+describe('HomePage Test', () => {
+  it('Successfully load after admin login - Header', () => {
+    cy.visit("/");
+    cy.get("[cytest='component']").contains("Admin Workspace");
+  });
+});
