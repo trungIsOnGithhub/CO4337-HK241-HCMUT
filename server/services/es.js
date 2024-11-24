@@ -172,8 +172,15 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
     const numOffset = +offset;
     const elementOffset = numOffset * numLimit;
 
-    const hiddenTerm = includeHidden ? {} : {
+    const hiddenTerm = includeHidden ?
+    {
         terms: {
+            isHidden: [false, true]
+        }
+    }
+    :
+    {
+        term: {
             isHidden: false
         }
     };
@@ -184,8 +191,7 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
         query: {
             bool: {
                 must: [hiddenTerm]
-            },
-            match_all: {}
+            }
         },
         size: numLimit,
         from: elementOffset,
@@ -446,7 +452,7 @@ const multiFunc = async function(indexName, init, reset) {
 
 //     // await multiFunc(ELASTIC_INDEX_NAME_MAP.PROVIDERS, false, true); // TO SWITCH
     
-//     await multiFunc(ELASTIC_INDEX_NAME_MAP.PROVIDERS, true, false); // TO SWITCH
+//     // await multiFunc(ELASTIC_INDEX_NAME_MAP.PROVIDERS, true, false); // TO SWITCH
 // })();
 
 // initializeElasticClient().indices.get({
@@ -474,6 +480,9 @@ const multiFunc = async function(indexName, init, reset) {
 //     },
 //   });
 //   console.log(response7); });
+
+// const tz = new Date().getTimezoneOffset();
+// console.log(tz);
 
 module.exports = {
     queryElasticDB,

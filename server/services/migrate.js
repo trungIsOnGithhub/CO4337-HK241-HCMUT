@@ -88,7 +88,7 @@ async function migrateServiceDataFromMongoDBToElasticDB() {
             // elastic db does not allowed exiternal _id
 
             console.log(newObjectToAdd.id);
-            // await esDBModule.addToElasticDB(esDBConstant.SERVICES, newObjectToAdd);// TO SWITCH
+            await esDBModule.addToElasticDB(esDBConstant.SERVICES, newObjectToAdd);// TO SWITCH
             console.log("============", newObjectToAdd);
         }
 
@@ -294,7 +294,7 @@ async function checkAfter() {
 let prom1, prom2, prom3;
 // prom1 = migrateServiceDataFromMongoDBToElasticDB();
 // prom2 = migrateBlogDataFromMongoDBToElasticDB();
-prom3 = migrateProvidersDataFromMongoDBToElasticDB();
+// prom3 = migrateProvidersDataFromMongoDBToElasticDB();
 
 const proms = [];
 if(prom1) {proms.push(prom1);}
