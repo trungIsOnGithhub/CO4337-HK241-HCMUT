@@ -8,7 +8,7 @@ const FeaturedProduct = () => {
     const [providers, setProviders] = useState(null)
     const navigate = useNavigate()
     const fetchServiceProvider = async ()=>{
-        const response = await apiGetServiceProviders({limit:12})
+        const response = await apiGetServiceProviders({limit:6})
 
         if(response?.success){
             setProviders(response.AllServiceProviders)
