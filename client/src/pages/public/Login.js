@@ -343,6 +343,7 @@ const Login = () => {
                         {loginMethod === "email" ? "Email Address" : "Phone Number"}
                         </label>
                         <input
+                            cytest="email_input"
                             type={loginMethod === "email" ? "email" : "tel"}
                             id="email"
                             name="email"
@@ -371,17 +372,18 @@ const Login = () => {
                     </label>
                     <div className="relative">
                     <input
-                            type={showPassword ? "text" : "password"}
-                            id="password"
-                            name="password"
-                            value={payload.password}
-                            placeholder="Enter your password"
-                            onChange={handleInputChange}
-                            className={`w-full px-4 py-3 rounded-lg border ${errors.password ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:#0a66c2 focus:border-transparent transition-all duration-300 outline-none`}
-                            autoComplete="current-password"
-                            aria-invalid={errors.password ? "true" : "false"}
-                            aria-describedby={errors.password ? "password-error" : undefined}
-                        />
+                        cytest="password_input"
+                        type={showPassword ? "text" : "password"}
+                        id="password"
+                        name="password"
+                        value={payload.password}
+                        placeholder="Enter your password"
+                        onChange={handleInputChange}
+                        className={`w-full px-4 py-3 rounded-lg border ${errors.password ? "border-red-500" : "border-gray-300"} focus:ring-2 focus:#0a66c2 focus:border-transparent transition-all duration-300 outline-none`}
+                        autoComplete="current-password"
+                        aria-invalid={errors.password ? "true" : "false"}
+                        aria-describedby={errors.password ? "password-error" : undefined}
+                    />
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
@@ -403,9 +405,10 @@ const Login = () => {
                         </button>
                     </div>
                     <div className="w-[100%] my-2">
-                        <Button 
-                        handleOnclick={handleSubmit}
-                        style={`w-[100%] px-4 py-2 rounded-md text-white bg-[#0a66c2] font-semibold`}
+                        <Button
+                            cytest="login_button"
+                            handleOnclick={handleSubmit}
+                            style={`w-[100%] px-4 py-2 rounded-md text-white bg-[#0a66c2] font-semibold`}
                         >
                             {isRegister? 'Register' : 'Login'}
                         </Button>
