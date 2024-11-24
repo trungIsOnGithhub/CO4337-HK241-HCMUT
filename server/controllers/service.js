@@ -28,15 +28,20 @@ const createService = asyncHandler(async(req, res)=>{
     if(image) req.body.image = image
     const newService = await Service.create(req.body);
 
-    const esResult = await ESReplicator.addService(newService);
-    if (!esResult.success || !esResult.data) {
-        await Service.findByIdAndUpdate(newService._id, { synced: false });
-        // throw new Error('Canceled update for unresponsed Elastic Connection');
+    if (newService) {
+        const payload = newService.toObject(); // if modify output from mongoose, use this
+        // console.log('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbp', payload);
+        const esResult = await ESReplicator.addService(payload);
 
-        return res.status(200).json({
-            success: true,
-            mes: 'Created successfully but temporairily unavailable to search, contact support'
-        });
+        if (!esResult.success || !esResult.data) {
+            await Service.findByIdAndUpdate(newService._id, { synced: false });
+            // throw new Error('Canceled update for unresponsed Elastic Connection');
+    
+            return res.status(200).json({
+                success: true,
+                mes: 'Created successfully but temporairily unavailable to search, contact support'
+            });
+        }
     }
 
     // if (!elastic_query && newService) {

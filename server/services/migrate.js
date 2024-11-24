@@ -276,18 +276,17 @@ async function migrateProvidersDataFromMongoDBToElasticDB() {
 async function checkAfter() {
     // // {query:{match:{ name: {query: 'Traditional Herbal Hair Wash'} }}}
     // const allServiceAdded = await esDBModule.queryElasticDB(esDBConstant.SERVICES, {"query":{"bool":{ "must":[{"match":{"province":"Cà Mau"}}] ,"should":[{"term":{"catergory":"Gym"}},{"term":{"catergory":"Nail"}}]}}} );
-    const allServiceAdded = await esDBModule.queryElasticDB(esDBConstant.SERVICES, {"query":{match_all:{}}});
+    const allServiceAdded = await esDBModule.queryElasticDB(esDBConstant.SERVICES, {"size" : 999, "query":{match_all:{}}});
     console.log("SERVICE CHECK:  ", allServiceAdded?.hits?.hits.length, "DONE SERVICE");
-    // console.log("***********");
     console.log("**********");
     console.log("**********");
     // const allBlogAdded = await esDBModule.queryElasticDB(esDBConstant.BLOGS, {"query":{ "bool":{"must":[{"term":{"tags":"dia-diem-vui-choi"}},{"term":{"tags":"1vuichoi"}}]} }});
-    const allBlogAdded = await esDBModule.queryElasticDB(esDBConstant.BLOGS, {"query":{match_all:{}}});
+    const allBlogAdded = await esDBModule.queryElasticDB(esDBConstant.BLOGS, {"size" : 999, "query":{match_all:{}}});
     console.log("BLOG CHECK:  ", allBlogAdded?.hits?.hits?.length, "DONE BLGG");
     console.log("**********");
     console.log("**********");
     // const allBlogAdded = await esDBModule.queryElasticDB(esDBConstant.BLOGS, {"query":{ "bool":{"must":[{"term":{"tags":"dia-diem-vui-choi"}},{"term":{"tags":"1vuichoi"}}]} }});
-    const pAdded = await esDBModule.queryElasticDB(esDBConstant.PROVIDERS, {"query":{match_all:{}}});
+    const pAdded = await esDBModule.queryElasticDB(esDBConstant.PROVIDERS, {"size" : 999, "query":{match_all:{}}});
     console.log("PROVIDERR CHECK:  ", pAdded?.hits?.hits?.length, "DONE PRRVD");
 }
 

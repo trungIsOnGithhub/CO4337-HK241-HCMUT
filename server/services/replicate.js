@@ -90,12 +90,21 @@ const addService = async (payload) => {
         };
     }
 
+    console.log('_____________________');
+    console.log(payload);
+    console.log('_____________________');
+
     const cleanPayload = await cleanServiceData(payload);
+
+    console.log('||||||||||||||||||||||||||||||||||||||||');
+    console.log(cleanPayload);
+    console.log('|||||||||||||||||||||||||||||||||||||||||');
 
     const resp = await esClient.index({
         index: ELASTIC_INDEX_NAME_MAP.SERVICES,
+        refresh: "wait_for",
         body: cleanPayload
-    })
+    });
 
     return {
         success: resp ? true : false,
