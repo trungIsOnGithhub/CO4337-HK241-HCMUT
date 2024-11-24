@@ -384,11 +384,6 @@ const getTopProviderAuthorBlogs = asyncHandler(async(req, res)=>{
 
     const resp = await Blog.aggregate([
         {
-            $filter: {
-                isHidden: false
-            }
-        },
-        {
             $lookup: {
                 from: "users",
                 localField: "author",
