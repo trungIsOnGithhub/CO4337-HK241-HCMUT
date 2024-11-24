@@ -71,6 +71,7 @@ const GridPercentageCalendar = () => {
   };
 
   const handleMouseEnter = (day, occupancy) => {
+    console.log(day)
     const date = new Date(selectedYear, selectedMonth, day + 1).toLocaleDateString();
     setHoverInfo({ date, occupancy, isHovered: true });
   };
@@ -79,6 +80,9 @@ const GridPercentageCalendar = () => {
     setHoverInfo({ ...hoverInfo, isHovered: false });
   };
 
+
+  console.log(hoverInfo)
+  console.log(new Date(hoverInfo.date).getDate())
   return (
     <div className="max-w-md p-4 bg-white border-2 rounded-lg w-full h-fit">
       <div className="flex flex-col justify-center items-center mb-4 gap-4">
@@ -104,14 +108,6 @@ const GridPercentageCalendar = () => {
             ))}
           </select>
         </div>
-{/* 
-        <div className="flex items-center space-x-2">
-          <button onClick={() => changeMonth('prev')} className="text-gray-500">&lt;</button>
-          <span className="text-sm text-gray-500">
-            {new Date(selectedYear, selectedMonth).toLocaleString('default', { month: 'long' })} {selectedYear}
-          </span>
-          <button onClick={() => changeMonth('next')} className="text-gray-500">&gt;</button>
-        </div> */}
       </div>
 
       <div className="grid grid-cols-7 gap-2 text-center">
@@ -128,13 +124,13 @@ const GridPercentageCalendar = () => {
         {occupancyData.map((percentage, day) => (
           <div
             key={day}
-            className={`relative w-8 h-8 rounded-lg ${getOccupancyColor(percentage)} flex items-center justify-center text-white`}
-            onClick={() => handleMouseEnter(day, percentage)}
-            // onMouseLeave={handleMouseLeave}
+            className={`relative w-8 h-8 rounded-lg ${getOccupancyColor(percentage)} flex items-center justify-center text-white cursor-pointer`}
+            onMouseEnter={() => handleMouseEnter(day, percentage)}
+            onMouseLeave={handleMouseLeave}
           >
             {/* {day + 1} */}
-            {hoverInfo.isHovered && new Date(hoverInfo.date).getDate() === day && (
-              <div className="bottom-16 p-2 bg-white border border-gray-300 rounded-lg shadow-lg text-sm text-gray-700 z-10 w-fit">
+            {hoverInfo?.isHovered && (+hoverInfo?.date.split('/')[0]) === day+1 && (
+              <div className="absolute top-8 p-2 z-[999] bg-white border border-gray-300 rounded-lg shadow-lg text-sm text-gray-700 w-fit">
                 <div><strong>Date:</strong>&nbsp;{hoverInfo.date}</div>
                 <div><strong>Occupancy:</strong>&nbsp;{hoverInfo.occupancy || 0}%</div>
               </div>

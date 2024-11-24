@@ -98,6 +98,7 @@ const finalRegister = asyncHandler(async(req, res)=>{
 //Access_token => de xac thuc + phan quyen nguoi dung
 const login = asyncHandler(async(req, res)=>{
     const {email, password} = req.body
+    console.log(email, password)
     if(!email || !password){
         return res.status(400).json({
             success: false,
@@ -106,7 +107,9 @@ const login = asyncHandler(async(req, res)=>{
     
     
     const response = await User.findOne({email})
+    console.log(response)
     if(response && await response.isCorrectPassword(password)){
+        console.log('aaa')
         const objectResponse = response.toObject();
         const {isBlocked} = objectResponse;
 
