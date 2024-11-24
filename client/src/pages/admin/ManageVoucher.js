@@ -116,8 +116,8 @@ const ManageVoucher = () => {
               {coupons?.map(el => {
                 const {status, expiration} = checkCouponStatus(el?.expirationDate)
               return (
-                <div className='w-full flex border-b border-[#f4f6fa] gap-1 h-[40px]'>
-                  <span className='w-[20%] px-2 py-2 text-[#00143c] line-clamp-1'>{el?.name}</span>
+                <div className='w-full flex border-b border-[#f4f6fa] gap-1'>
+                  <span className='w-[20%] px-2 py-2 text-[#00143c]'>{el?.name}</span>
                   <span className='w-[20%] px-2 py-2 text-[#00143c] capitalize'>{el?.discount_type}</span>
                   <span className='w-[10%] px-2 py-2 text-[#00143c]'>{el?.noUsageLimit ? 'No Limit' : el?.usageLimit}</span>
                   <span className='w-[10%] px-2 py-2 text-[#00143c]'>{el?.noLimitPerUser ? 'No Limit' : el?.limitPerUser}</span>
