@@ -8,6 +8,7 @@ import { Button } from 'components';
 import { FaGoogle, FaSignOutAlt } from "react-icons/fa";
 import { FaSync } from "react-icons/fa";
 import { useSession, useSupabaseClient, useSessionContext } from '@supabase/auth-helpers-react';
+import moment from 'moment';
 
 
 const Calendar = () => {
@@ -17,9 +18,6 @@ const Calendar = () => {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const session = useSession();
   const supabase = useSupabaseClient(); //Khởi tạo supabase Client
-
-  console.log(session)
-  console.log(supabase)
 
   useEffect(() => {
     const fetchCalendarByUserId = async () => {
@@ -193,6 +191,15 @@ const Calendar = () => {
     }
   }
 
+  const formatDate = (isoString) => {
+    const date = new Date(isoString);
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Tháng bắt đầu từ 0
+    const year = date.getUTCFullYear();
+    return `${day}-${month}-${year}`;
+  };
+  
+
   return (
     <div className="max-w-6xl mx-auto p-4 bg-white shadow-lg rounded-lg flex flex-col overflow-y-hidden h-screen">
       {
@@ -252,7 +259,7 @@ const Calendar = () => {
               <div className='flex flex-col justify-between flex-grow'>
                 <h3 className="text-lg font-semibold text-gray-800 mb-1">{reservation.serviceName}</h3>
                 <div className='flex justify-between items-center'>
-                  <p className="text-sm text-gray-600">{new Date(reservation.localStart).toDateString()}</p>
+                  <p className="text-sm text-gray-600">{formatDate(reservation?.localStart)}</p>
                   {
                     !reservation?.emailsSync?.includes(session?.user?.email) ?
                     <img src={googleCalendar} className='w-8 h-8 rounded-md cursor-pointer' onClick={()=>handleAddCalendarEvent(reservation)}/>
