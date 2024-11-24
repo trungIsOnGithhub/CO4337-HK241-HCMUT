@@ -235,8 +235,10 @@
       @apply appearance-none;
     }
   }
-
-
+.rbc-today {
+  background-color: rgb(161, 224, 245) !important;
+  color: rgb(99, 93, 93) !important;
+}
   /* .blink {
     animation: blink-animation 0.5s steps(5, start) infinite;
   }

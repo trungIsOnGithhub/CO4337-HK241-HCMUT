@@ -34,7 +34,7 @@ const StaffCalendar = () => {
   const {register,formState:{errors}, handleSubmit, watch} = useForm()
   const [editService, setEditService] = useState(null)
   const [update, setUpdate] = useState(false)
-  const [variant, setVariant] = useState(null)
+  // const [variant, setVariant] = useState(null)
   const [staffs, setStaffs] = useState([])
   const [services, setServices] = useState([])
   const { current } = useSelector((state) => state.user);

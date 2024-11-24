@@ -383,6 +383,7 @@ const getTopProviderAuthorBlogs = asyncHandler(async(req, res)=>{
     const sortObj = { likesCount:-1, viewCount:-1 };
 
     const resp = await Blog.aggregate([
+        { $match: { isHidden: false } },
         {
             $lookup: {
                 from: "users",

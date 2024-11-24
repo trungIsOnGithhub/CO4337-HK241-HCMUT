@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+  import React, { useEffect, useState } from 'react'
 import { createSearchParams, useNavigate, useParams } from 'react-router-dom'
 import bgImage from '../../assets/clouds.svg'
 import { apiGetOrdersUserByAdmin, apiGetUserById } from 'apis'
@@ -26,6 +26,8 @@ const ViewStatistics = () => {
       const response = await apiGetOrdersUserByAdmin({limit: 999}, userId)
       if(response?.success){
         setBookings(response?.order)
+        console.log('====================||||======================');
+        console.log(response.order);
       }
     }
 
@@ -156,7 +158,7 @@ const ViewStatistics = () => {
                     <div>
                       <p className="text-gray-500">Highest Booking Value</p>
                       <h3 className="text-2xl font-bold">
-                      {`${formatPrice(Math.max([...bookings?.map(booking => booking.total)], 0))} VNĐ`}
+                      {`${formatPrice(Math.max(...[...bookings?.map(book => book.total), 0]))} VNĐ`}
                       </h3>
                     </div>
                     <FaTools className="text-3xl text-purple-500" />
@@ -167,7 +169,7 @@ const ViewStatistics = () => {
                     <div>
                       <p className="text-gray-500">Highest Order Value</p>
                       <h3 className="text-2xl font-bold">
-                        {`${formatPrice(Math.max([...orders?.map(order => order.totalPrice)], 0))} VNĐ`}
+                        {`${formatPrice(Math.max(...[...orders?.map(order => order.totalPrice), 0]))} VNĐ`}
                       </h3>
                     </div>
                     <FaShoppingCart className="text-3xl text-red-500" />
