@@ -7,7 +7,7 @@ const esDBConstant = require('./constant');
 const {default: mongoose} = require('mongoose');
 const Blog = require('../models/blog');
 
-const MONGO_DB_URL = 'mongodb://127.0.0.1:27017/dacn-tv1';
+const MONGO_DB_URL = 'mongodb://127.0.0.1:27017/ecommerce';
 
 async function migrateServiceDataFromMongoDBToElasticDB() {
     const conn = await mongoose.connect(MONGO_DB_URL);
@@ -231,6 +231,7 @@ async function migrateProvidersDataFromMongoDBToElasticDB() {
             //         lon: parseFloat(newObjectToAdd.provider_id.geolocation.coordinates[0])
             //     }
             // }
+            newObjectToAdd.isHidden = false;
 
             delete newObjectToAdd._id;
             delete newObjectToAdd.__v;
@@ -288,7 +289,10 @@ async function checkAfter() {
     console.log("**********");
     // const allBlogAdded = await esDBModule.queryElasticDB(esDBConstant.BLOGS, {"query":{ "bool":{"must":[{"term":{"tags":"dia-diem-vui-choi"}},{"term":{"tags":"1vuichoi"}}]} }});
     const pAdded = await esDBModule.queryElasticDB(esDBConstant.PROVIDERS, {"query":{match_all:{}}});
+
     console.log("PROVIDERR CHECK:  ", pAdded?.hits?.hits?.length, "DONE PRRVD");
+    const allServices = await Service.find({}).populate('provider_id');
+    console.log(">>>>>>>>>>", allServices?.length + " fetched from MongoDB");
 }
 
 let prom1, prom2, prom3;

@@ -442,10 +442,10 @@ const multiFunc = async function(indexName, init, reset) {
     console.log("~~~~~~~~", hitsRecord2, "**********");
 };
 
-// (async function () {
+(async function () {
 //     // // COMMENT THIS WHEN RUN MIGRATE OR ANY OTHE FILE INCLUDED THIS
-//     // await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, false, true); // TO SWITCH
-//     // await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, true, false); // TO SWITCH
+// await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, false, true); // TO SWITCH
+// await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, true, false); // TO SWITCH
 
 //     // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, false, true); // TO SWITCH
 //     // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, true, false); // TO SWITCH
@@ -453,7 +453,7 @@ const multiFunc = async function(indexName, init, reset) {
 //     // await multiFunc(ELASTIC_INDEX_NAME_MAP.PROVIDERS, false, true); // TO SWITCH
     
 //     // await multiFunc(ELASTIC_INDEX_NAME_MAP.PROVIDERS, true, false); // TO SWITCH
-// })();
+})();
 
 // initializeElasticClient().indices.get({
 //     index: ELASTIC_INDEX_NAME_MAP.SERVICES,
