@@ -18,6 +18,9 @@ const Calendar = () => {
   const session = useSession();
   const supabase = useSupabaseClient(); //Khởi tạo supabase Client
 
+  console.log(session)
+  console.log(supabase)
+
   useEffect(() => {
     const fetchCalendarByUserId = async () => {
       const response = await apiGetCalendarByUserId(current?._id);
@@ -71,49 +74,46 @@ const Calendar = () => {
   };
 
   const handleAddCalendarEvent = async (reservation) => {
-    console.log(reservation);
-  
-    const event = {
-      summary: reservation.serviceName,
-      description: `Status: ${reservation.status}`,
-      start: {
-        dateTime: reservation.localStart, // Dữ liệu chuẩn UTC
-        timeZone: "UTC", // Chỉ định múi giờ UTC để không bị chỉnh sửa
-      },
-      end: {
-        dateTime: reservation.localEnd, // Dữ liệu chuẩn UTC
-        timeZone: "UTC", // Chỉ định múi giờ UTC để không bị chỉnh sửa
-      },
-    };
-  
-    try {
-      const response = await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", {
+    if (!session) {
+      await googleSignIn(); // Gọi hàm đăng nhập nếu chưa có session
+    } else {
+      // Tạo sự kiện lịch
+      const event = {
+        'summary': reservation.serviceName,
+        'description': `Status: ${reservation.status}`,
+        'start': {
+          'dateTime': reservation.localStart,
+          'timeZone': "UTC"
+        },
+        'end': {
+          'dateTime': reservation.localEnd,
+          'timeZone': "UTC"
+        }
+      };
+
+      await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", {
         method: "POST",
         headers: {
-          Authorization: "Bearer " + session.provider_token, // Access token for Google
-          "Content-Type": "application/json",
+          'Authorization': 'Bearer ' + session.provider_token, // Access token for google
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(event),
-      });
-  
-      const data = await response.json();
-  
-      if (response.ok) {
+        body: JSON.stringify(event)
+      })
+      .then((response) => response.json())
+      .then(async(data) => {
         toast.success("Event created, check your Google Calendar!");
-        await apiUpdateEmailByBookingId({ bookingId: reservation?.bookingId, email: session?.user?.email });
-        const calendarResponse = await apiGetCalendarByUserId(current?._id);
-        if (calendarResponse?.success) {
-          setCalendar(calendarResponse?.bookings);
+        await apiUpdateEmailByBookingId({bookingId: reservation?.bookingId, email: session?.user?.email})
+        const response = await apiGetCalendarByUserId(current?._id);
+        if (response?.success) {
+          setCalendar(response?.bookings);
         } else {
-          toast.error("Something went wrong!");
+          toast.error('Something went wrong!');
         }
-      } else {
-        console.error("Error creating event:", data);
+      })
+      .catch((error) => {
+        console.error("Error creating event:", error);
         toast.error("Failed to create event.");
-      }
-    } catch (error) {
-      console.error("Error creating event:", error);
-      toast.error("Failed to create event.");
+      });
     }
   };
 
