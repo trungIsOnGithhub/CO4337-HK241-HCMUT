@@ -71,46 +71,49 @@ const Calendar = () => {
   };
 
   const handleAddCalendarEvent = async (reservation) => {
-    if (!session) {
-      await googleSignIn(); // Gọi hàm đăng nhập nếu chưa có session
-    } else {
-      // Tạo sự kiện lịch
-      const event = {
-        'summary': reservation.serviceName,
-        'description': `Status: ${reservation.status}`,
-        'start': {
-          'dateTime': reservation.localStart,
-          'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone
-        },
-        'end': {
-          'dateTime': reservation.localEnd,
-          'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone
-        }
-      };
-
-      await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", {
+    console.log(reservation);
+  
+    const event = {
+      summary: reservation.serviceName,
+      description: `Status: ${reservation.status}`,
+      start: {
+        dateTime: reservation.localStart, // Dữ liệu chuẩn UTC
+        timeZone: "UTC", // Chỉ định múi giờ UTC để không bị chỉnh sửa
+      },
+      end: {
+        dateTime: reservation.localEnd, // Dữ liệu chuẩn UTC
+        timeZone: "UTC", // Chỉ định múi giờ UTC để không bị chỉnh sửa
+      },
+    };
+  
+    try {
+      const response = await fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", {
         method: "POST",
         headers: {
-          'Authorization': 'Bearer ' + session.provider_token, // Access token for google
-          'Content-Type': 'application/json'
+          Authorization: "Bearer " + session.provider_token, // Access token for Google
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(event)
-      })
-      .then((response) => response.json())
-      .then(async(data) => {
-        toast.success("Event created, check your Google Calendar!");
-        await apiUpdateEmailByBookingId({bookingId: reservation?.bookingId, email: session?.user?.email})
-        const response = await apiGetCalendarByUserId(current?._id);
-        if (response?.success) {
-          setCalendar(response?.bookings);
-        } else {
-          toast.error('Something went wrong!');
-        }
-      })
-      .catch((error) => {
-        console.error("Error creating event:", error);
-        toast.error("Failed to create event.");
+        body: JSON.stringify(event),
       });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        toast.success("Event created, check your Google Calendar!");
+        await apiUpdateEmailByBookingId({ bookingId: reservation?.bookingId, email: session?.user?.email });
+        const calendarResponse = await apiGetCalendarByUserId(current?._id);
+        if (calendarResponse?.success) {
+          setCalendar(calendarResponse?.bookings);
+        } else {
+          toast.error("Something went wrong!");
+        }
+      } else {
+        console.error("Error creating event:", data);
+        toast.error("Failed to create event.");
+      }
+    } catch (error) {
+      console.error("Error creating event:", error);
+      toast.error("Failed to create event.");
     }
   };
 
@@ -142,11 +145,11 @@ const Calendar = () => {
           'description': `Status: ${calendar.status}`,
           'start': {
             'dateTime': calendar.localStart,
-            'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone
+            'timeZone': "UTC"
           },
           'end': {
             'dateTime': calendar.localEnd,
-            'timeZone': Intl.DateTimeFormat().resolvedOptions().timeZone
+            'timeZone': "UTC"
           }
         };
         return fetch("https://www.googleapis.com/calendar/v3/calendars/primary/events", {
@@ -230,10 +233,18 @@ const Calendar = () => {
               className="flex flex-col gap-2 p-4 h-full bg-white border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out"
             >
               <div className="flex justify-between items-center h-[20%]">
-                <span className="text-sm font-medium text-gray-600">
-                  {new Date(reservation.localStart).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })} -{" "}
-                  {new Date(reservation.localEnd).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                </span>
+              <span className="text-sm font-medium text-gray-600">
+                {new Date(reservation.localStart).toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  timeZone: "UTC", // Chỉ định múi giờ là UTC để không cộng thêm 7 giờ
+                })} -{" "}
+                {new Date(reservation.localEnd).toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  timeZone: "UTC", // Chỉ định múi giờ là UTC
+                })}
+              </span>
                 <span className={`text-xs font-semibold px-2 py-1 rounded-full ${getStatusColor(reservation.status)}`}>
                   {reservation.status}
                 </span>
