@@ -311,10 +311,16 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
 
     let queryFinish = {}
     const qr = {...formatedQueries, ...queryFinish, ...categoryFinish, 
-        $or: [
-            { isHidden: false },
-            { isHidden: { $exists: false } }
-        ]}
+        $and: [
+            queryFinish || {}, // Điều kiện tìm kiếm từ queries.q (nếu có)
+            {
+                $or: [
+                    { isHidden: false },
+                    { isHidden: { $exists: false } },
+                ],
+            },
+        ],
+    }
 
     let services = await Service.find(qr);
 
@@ -411,12 +417,6 @@ const getAllServicesPublic = asyncHandler(async (req, res) => {
                 };
             }
         }
-
-        //filtering
-        // if (req.query.fields){
-        //     const fields = req.query.fields.split(',').join(' ')
-        //     queryCommand.select(fields)
-        // }
 
         const page = +req.query.page || 1
         const limit = +req.query.limit || process.env.LIMIT_PRODUCT
@@ -774,10 +774,15 @@ const getAllServicesByProviderId = asyncHandler(async (req, res) => {
         }
     }
     const qr = {...formatedQueries, ...queryFinish, ...categoryFinish, provider_id,
-        $or: [
-            { isHidden: false },
-            { isHidden: { $exists: false } }
-        ]
+        $and: [
+            queryFinish || {}, // Điều kiện tìm kiếm từ queries.q (nếu có)
+            {
+                $or: [
+                    { isHidden: false },
+                    { isHidden: { $exists: false } },
+                ],
+            },
+        ],
     }
     let queryCommand =  Service.find(qr).populate({
         path: 'assigned_staff',

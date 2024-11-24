@@ -153,31 +153,21 @@ export const sorts = [
     },
     {
         id:2,
-        value: 'title',
-        text: 'A-Z'
-    },
-    {
-        id:3,
-        value: '-title',
-        text: 'Z-A'
-    },
-    {
-        id:4,
         value: 'price',
         text: 'Price (low to high)'
     },
     {
-        id:5,
+        id:3,
         value: '-price',
         text: 'Price (high to low)' 
     },
     {
-        id:6,
+        id:4,
         value: 'createdAt',
         text: 'Date (oldest to newest)'
     },
     {
-        id:7,
+        id:5,
         value: '-createdAt',
         text: 'Date (newest to oldest)'
     }, 
