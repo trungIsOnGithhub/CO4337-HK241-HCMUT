@@ -690,7 +690,7 @@ const updateCartService = asyncHandler(async (req, res) => {
         // min time before book same day handle
 
         const thisStaff = await Staff.findById(staff);
-        if (!thisStaff.isHidden) {
+        if (thisStaff.isHidden  === true) {
             return res.status(404).json({
                 success: false,
                 mes: 'Your chosen staff has been hidden, you can book other staff!'
