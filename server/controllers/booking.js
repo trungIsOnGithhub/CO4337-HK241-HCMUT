@@ -83,7 +83,11 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
     console.log('+++++++>' + currentDay.toISOString());
     // const endCurrentDay = (new Date(now)).setHours(23, 59, 59, 999);
 
-    let service = await Service.findById(svid).populate('assigned_staff').populate('provider_id');
+    let service = await Service.findById(svid)
+    .populate({
+        path: 'assigned_staff',
+        match: { isHidden: false }
+    }).populate('provider_id');
 
     // let ordersInCurrentDay = await Order.find({
     //     'info.0.service': svid,
@@ -240,7 +244,12 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
     console.log('INPUT OptsByDateRange: ', startDate.toISOString());
     console.log('INPUT OptsByDateRange: ', endDate.toISOString());
 
-    let service = await Service.findById(svid).populate('assigned_staff').populate('provider_id');
+    let service = await Service.findById(svid)
+    .populate({
+        path: 'assigned_staff',
+        match: { isHidden: false }
+    }).populate('provider_id');
+
     if (!service?.assigned_staff) {
         return res.status(400).json({
             success: false,

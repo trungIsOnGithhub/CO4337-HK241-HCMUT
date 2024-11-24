@@ -9,6 +9,7 @@ const Order = require('../models/order')
 const esIndexNameList = require('../services/constant');
 const esDBModule = require('../services/es');
 const ES_CONSTANT = require('../services/constant');
+const ESReplicator = require('../services/replicate');
 
 const createService = asyncHandler(async(req, res)=>{
     const {name, price, description, category, assigned_staff, hour, minute, provider_id,  elastic_query} = req.body
@@ -25,7 +26,18 @@ const createService = asyncHandler(async(req, res)=>{
     req.body.duration = +hour*60 + +minute
     if(thumb) req.body.thumb = thumb
     if(image) req.body.image = image
-    const newService = await Service.create(req.body)
+    const newService = await Service.create(req.body);
+
+    const esResult = await ESReplicator.addService(newService);
+    if (!esResult.success || !esResult.data) {
+        await Service.findByIdAndUpdate(newService._id, { synced: false });
+        // throw new Error('Canceled update for unresponsed Elastic Connection');
+
+        return res.status(200).json({
+            success: true,
+            mes: 'Created successfully but temporairily unavailable to search, contact support'
+        });
+    }
 
     // if (!elastic_query && newService) {
     //     const newServiceFull = await Service.findById(newService._id)
@@ -42,7 +54,7 @@ const createService = asyncHandler(async(req, res)=>{
     return res.status(200).json({
         success: newService ? true : false,
         mes: newService ? 'Created successfully' : "Cannot create new service"
-    })
+    });
 })
 
 const searchServiceAdvanced = asyncHandler(async (req, res) => {
@@ -167,7 +179,7 @@ const getAllServicesByAdmin = asyncHandler(async (req, res) => {
     const qr = {...formatedQueries, ...queryFinish, ...categoryFinish, provider_id}
     let queryCommand =  Service.find(qr).populate({
         path: 'assigned_staff',
-        select: 'firstName lastName avatar',
+        select: 'firstName lastName avatar'
     })
     try {
         // sorting
@@ -590,6 +602,7 @@ const getOneService = asyncHandler(async(req, res)=>{
     const service = await Service.findById(sid).populate({
         path: 'assigned_staff',
         select: 'firstName lastName avatar mobile email work shifts',
+        match: { isHidden: false }
     }).populate({
         path: 'rating',
         populate: {
@@ -769,6 +782,7 @@ const getAllServicesByProviderId = asyncHandler(async (req, res) => {
     let queryCommand =  Service.find(qr).populate({
         path: 'assigned_staff',
         select: 'firstName lastName avatar',
+        match: { isHidden: false }
     })
     try {
         // sorting

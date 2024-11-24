@@ -674,7 +674,7 @@ const updateCartService = asyncHandler(async (req, res) => {
             const hNeed = Math.trunc(+providerObj.advancedSetting.minutesBeforeSameDayBook / 60);
             const mNeed = +providerObj.advancedSetting.minutesBeforeSameDayBook % 60;
     
-            let msg = `Provider required ${hNeed} hours ${mNeed} before booking this timeslot!`;
+            let msg = `Provider required ${hNeed} hours ${mNeed} minutes before booking this timeslot!`;
             if (hNeed < 1) {
               msg = `Provider required ${mNeed} minutes before booking this timeslot!`;
             }
@@ -690,6 +690,12 @@ const updateCartService = asyncHandler(async (req, res) => {
         // min time before book same day handle
 
         const thisStaff = await Staff.findById(staff);
+        if (!thisStaff.isHidden) {
+            return res.status(404).json({
+                success: false,
+                mes: 'Your chosen staff has been hidden, you can book other staff!'
+            });
+        }
         // console.log('???????????????????'+thisStaff.work);
         // console.log('???????????????????======='+time);
 

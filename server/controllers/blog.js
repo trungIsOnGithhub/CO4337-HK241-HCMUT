@@ -280,18 +280,18 @@ const createNewPostTag = asyncHandler(async(req, res)=>{
 })
 
 const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
-    let { searchTerm, selectedTags, selectedSort,
-            page, pageSize } = req.query;
+    // let { searchTerm, selectedTags, selectedSort,
+    //         page, pageSize } = req.query;
 
-    if (!searchTerm) {
-        searchTerm = '';
-    }
-    if (!selectedTags) {
-        selectedTags = [];
-    }
-    if (!selectedSort) {
-        selectedSort = "";
-    }
+    // if (!searchTerm) {
+    //     searchTerm = '';
+    // }
+    // if (!selectedTags) {
+    //     selectedTags = [];
+    // }
+    // if (!selectedSort) {
+    //     selectedSort = "";
+    // }
 
     // Loại bỏ các trường đặc biệt ra khỏi query
     // const excludeFields = ['limit', 'sort', 'page', 'fields'];
@@ -304,73 +304,73 @@ const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
     //     (matchedEl) => `$${matchedEl}`
     // );
 
-    let queryFinish = {}
-    if(searchTerm?.length){
-        queryFinish = {
-            $or: [
-                {title: {$match: searchTerm}},
-                // {author: {$regex: searchTerm}}
-                {'provider_id.bussinessName': {$regex: searchTerm, $options: 'i' }}
-                // {'provider_id.province': {$regex: searchTerm, $options: 'i' }}
-            ]
-        }
-    }
+    // let queryFinish = {}
+    // if(searchTerm?.length){
+    //     queryFinish = {
+    //         $or: [
+    //             {title: {$match: searchTerm}},
+    //             // {author: {$regex: searchTerm}}
+    //             {'provider_id.bussinessName': {$regex: searchTerm, $options: 'i' }}
+    //             // {'provider_id.province': {$regex: searchTerm, $options: 'i' }}
+    //         ]
+    //     }
+    // }
 
-    const qr = { ...queryFinish }
+    // const qr = { ...queryFinish }
 
-    let queryCommand = Blog.find(qr).populate({
-        path: 'provider_id',
-        select: 'bussinessName province',
-    });
+    // let queryCommand = Blog.find(qr).populate({
+    //     path: 'provider_id',
+    //     select: 'bussinessName province',
+    // });
 
-    let blogs = await queryCommand;
+    // let blogs = await queryCommand;
 
-    // console.log(blogs.length);
+    // // console.log(blogs.length);
 
-    if (selectedTags?.length) {
-        blogs = blogs.filter(blog => {
-            for (const tag of selectedTags) {
-                if (blog?.tags.includes(tag)) {
-                    return true;
-                }
-            }
-            return false;
-        });    
-    }
+    // if (selectedTags?.length) {
+    //     blogs = blogs.filter(blog => {
+    //         for (const tag of selectedTags) {
+    //             if (blog?.tags.includes(tag)) {
+    //                 return true;
+    //             }
+    //         }
+    //         return false;
+    //     });    
+    // }
 
-    let fieldToSort = selectedSort;
-    if (selectedSort.indexOf('-') === 0) {
-        fieldToSort = selectedSort.slice(1);
-    }
-    if (selectedSort?.length && selectedSort.indexOf('-') === 0) {
-        blogs = blogs.sort(function(x, y) {
-            if (x[fieldToSort] > y[fieldToSort])
-              return -1;
-            if (x[fieldToSort] < y.createdAt)
-              return 1;
-            return 0;
-        });
-    }
-    else if (selectedSort?.length) {
-        blogs = blogs.sort(function(x, y) {
-            if (x.createdAt < y.createdAt)
-              return -1;
-            if (x.createdAt > y.createdAt)
-              return 1;
-            return 0;
-        });
-    }
+    // let fieldToSort = selectedSort;
+    // if (selectedSort.indexOf('-') === 0) {
+    //     fieldToSort = selectedSort.slice(1);
+    // }
+    // if (selectedSort?.length && selectedSort.indexOf('-') === 0) {
+    //     blogs = blogs.sort(function(x, y) {
+    //         if (x[fieldToSort] > y[fieldToSort])
+    //           return -1;
+    //         if (x[fieldToSort] < y.createdAt)
+    //           return 1;
+    //         return 0;
+    //     });
+    // }
+    // else if (selectedSort?.length) {
+    //     blogs = blogs.sort(function(x, y) {
+    //         if (x.createdAt < y.createdAt)
+    //           return -1;
+    //         if (x.createdAt > y.createdAt)
+    //           return 1;
+    //         return 0;
+    //     });
+    // }
     
 
-    const startIdx = page * pageSize;
-    console.log('-->', page, pageSize);
-    const endIdx = startIdx + pageSize;
-    blogs = blogs.slice(startIdx, endIdx);
+    // const startIdx = page * pageSize;
+    // console.log('-->', page, pageSize);
+    // const endIdx = startIdx + pageSize;
+    // blogs = blogs.slice(startIdx, endIdx);
 
     return res.status(200).json({
         success: blogs ? true : false,
         counts: blogs.length,
-        blogs: blogs ? blogs : "Cannot Find Post Blogs"
+        blogs: []
     })
 });
 
@@ -383,6 +383,11 @@ const getTopProviderAuthorBlogs = asyncHandler(async(req, res)=>{
     const sortObj = { likesCount:-1, viewCount:-1 };
 
     const resp = await Blog.aggregate([
+        {
+            $filter: {
+                isHidden: false
+            }
+        },
         {
             $lookup: {
                 from: "users",
@@ -630,7 +635,13 @@ const getAllBlogsByAdmin = asyncHandler(async (req, res) => {
             ]
         }
     }
-    const qr = {...formatedQueries, ...queryFinish, ...categoryFinish, provider_id}
+    const qr = {
+        ...formatedQueries, ...queryFinish, ...categoryFinish, provider_id,
+        $or: [
+            { isHidden: false },
+            { isHidden: { $exists: false } }
+        ]     
+    }
 
     let queryCommand =  Blog.find(qr)
     try {
