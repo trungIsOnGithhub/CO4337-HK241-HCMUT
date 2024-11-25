@@ -98,6 +98,7 @@ const updateBlog = async (id, payload) => {
         };
     }
 
+    delete payload.description;
     console.log('||||||||||||||||||||||||||||||||||||||||');
     console.log(payload);
     console.log('|||||||||||||||||||||||||||||||||||||||||');
@@ -224,6 +225,8 @@ const cleanServiceData = async (mongoPayload) => {
 
     const newObjectToAdd = { ...mongoPayload };
 
+    console.log(">>>>>>>>>>>>>>", mongoPayload);
+
     newObjectToAdd.provider_id = serviceProvider[0];
 
     newObjectToAdd.providername = newObjectToAdd.provider_id.bussinessName;
@@ -265,7 +268,7 @@ const addService = async (payload) => {
     console.log(payload);
     console.log('_____________________');
 
-    const cleanPayload = await cleanServiceData(payload);
+    // const cleanPayload = await cleanServiceData(payload);
 
     console.log('||||||||||||||||||||||||||||||||||||||||');
     console.log(cleanPayload);
@@ -275,7 +278,7 @@ const addService = async (payload) => {
         index: ELASTIC_INDEX_NAME_MAP.SERVICES,
         id: newId,
         refresh: "wait_for",
-        body: cleanPayload
+        body: payload
     });
 
     return {
@@ -293,19 +296,22 @@ const updateService = async (id, payload) => {
             mes: 'Elastic index for service not found'
         };
     }
+    console.log('_____________________');
+    console.log(payload);
+    console.log('_____________________');
 
-    const cleanPayload = await cleanServiceData(payload);
+    // const cleanPayload = await cleanServiceData(payload);
 
-    console.log('||||||||||||||||||||||||||||||||||||||||');
-    console.log(cleanPayload);
-    console.log('|||||||||||||||||||||||||||||||||||||||||');
+    // console.log('||||||||||||||||||||||||||||||||||||||||');
+    // console.log(cleanPayload);
+    // console.log('|||||||||||||||||||||||||||||||||||||||||');
 
     const resp = await esClient.update({
         index: ELASTIC_INDEX_NAME_MAP.SERVICES,
         id,
         refresh: "wait_for",
         body: {
-            doc: cleanPayload
+            doc: payload
         }
     });
 
@@ -319,5 +325,9 @@ const updateService = async (id, payload) => {
 
 module.exports = {
     addService,
-    updateService
+    updateService,
+    addProvider,
+    updateProvider,
+    addBlog,
+    updateBlog
 }

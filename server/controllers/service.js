@@ -28,8 +28,8 @@ const createService = asyncHandler(async(req, res)=>{
         if(image) req.body.image = image
         const newService = await Service.create(req.body);
 
-        if (newService) {
-            const payload = newService.toObject(); // if modify output from mongoose, use this
+    if (newService) {
+        const payload = newService.toObject(); // if modify output from mongoose, use this
             // console.log('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbp', payload);
         const esResult = await ESReplicator.addService(payload);
 
@@ -243,7 +243,7 @@ const updateServiceByAdmin = asyncHandler(async(req, res)=>{
     if (service) {
         const esResult = await ESReplicator.updateService(sid, req.body);
         if (!esResult.success || !esResult.data) {
-            await Service.findByIdAndUpdate(newService._id, { synced: false });
+            await Service.findByIdAndUpdate(service._id, { synced: false });
             // throw new Error('Canceled update for unresponsed Elastic Connection');
     
             return res.status(200).json({

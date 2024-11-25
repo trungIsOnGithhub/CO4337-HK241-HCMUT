@@ -7,7 +7,7 @@ const esDBConstant = require('./constant');
 const {default: mongoose} = require('mongoose');
 const Blog = require('../models/blog');
 
-const MONGO_DB_URL = 'mongodb://127.0.0.1:27017/ecom';
+const MONGO_DB_URL = 'mongodb://127.0.0.1:27017/dacn-tv1';
 
 async function migrateServiceDataFromMongoDBToElasticDB() {
     const conn = await mongoose.connect(MONGO_DB_URL);
@@ -62,6 +62,7 @@ async function migrateServiceDataFromMongoDBToElasticDB() {
                 }
             }
 
+            newObjectToAdd.id = "" + newObjectToAdd._id;
             const newId = "" + newObjectToAdd._id;
 
             delete newObjectToAdd._id;
@@ -89,7 +90,7 @@ async function migrateServiceDataFromMongoDBToElasticDB() {
 
             console.log(newObjectToAdd.id);
             await esDBModule.addToElasticDB(esDBConstant.SERVICES, newObjectToAdd, newId);// TO SWITCH
-            console.log("============", newObjectToAdd);
+            // console.log("============", newObjectToAdd);
         }
 
         console.log("C1: ", c1);console.log("C2: ", c2);
@@ -132,7 +133,7 @@ async function migrateBlogDataFromMongoDBToElasticDB() {
             const numDislikes = newObjectToAdd.dislikes?.length;
 
 
-            // newObjectToAdd.id = "" + newObjectToAdd._id;
+            newObjectToAdd.id = "" + newObjectToAdd._id;
 
             if (newObjectToAdd?.provider_id?.bussinessName) {
                 newObjectToAdd.providername = newObjectToAdd.provider_id.bussinessName;
@@ -171,7 +172,7 @@ async function migrateBlogDataFromMongoDBToElasticDB() {
 
             await esDBModule.addToElasticDB(esDBConstant.BLOGS, newObjectToAdd, newId);// TO SWITCH
 
-            console.log("============", newObjectToAdd);
+            // console.log("============", newObjectToAdd);
         }
     }
     else {
@@ -208,7 +209,7 @@ async function migrateProvidersDataFromMongoDBToElasticDB() {
             //     prov: serviceProvider[0]
             // });
 
-            // newObjectToAdd.id = "" + newObjectToAdd._id;
+            newObjectToAdd.id = "" + newObjectToAdd._id;
 
             // if (newObjectToAdd?.provider_id?.bussinessName) {
             //     newObjectToAdd.providername = newObjectToAdd.provider_id.bussinessName;
@@ -262,7 +263,7 @@ async function migrateProvidersDataFromMongoDBToElasticDB() {
 
             console.log(newObjectToAdd.id);
             await esDBModule.addToElasticDB(esDBConstant.PROVIDERS, newObjectToAdd, newId);// TO SWITCH
-            console.log("============", newObjectToAdd);
+            // console.log("============", newObjectToAdd);
         }
 
         // console.log("C1: ", c1);console.log("C2: ", c2);
