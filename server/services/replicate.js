@@ -3,7 +3,7 @@ const { Client } = require('@elastic/elasticsearch');
 // const { kMaxLength } = require('buffer');
 const ServiceProvider = require('../models/ServiceProvider');122
 const ELASTIC_INDEX_NAME_MAP = require('./constant');
-const MONGO_DB_URL = 'mongodb://127.0.0.1:27017/dacn-tv1';
+// const MONGO_DB_URL = 'mongodb://127.0.0.1:27017/dacn-tv1';
 
 const esClient = new Client({
     node: ELASTIC_INDEX_NAME_MAP.ELASTIC_URL
@@ -112,7 +112,39 @@ const addService = async (payload) => {
         data: resp
     };
 }
+const updateService = async (id, payload) => {
+    if ( !payload ||
+        !(await esClient.indices.exists({ index: ELASTIC_INDEX_NAME_MAP.SERVICES }))
+    ) {
+        return {
+            success: false,
+            mes: 'Elastic index for service not found'
+        };
+    }
+
+    // const cleanPayload = await cleanServiceData(payload);
+
+    console.log('||||||||||||||||||||||||||||||||||||||||');
+    console.log(payload);
+    console.log('|||||||||||||||||||||||||||||||||||||||||');
+
+    const resp = await esClient.update({
+        index: ELASTIC_INDEX_NAME_MAP.SERVICES,
+        id,
+        refresh: "wait_for",
+        body: {
+            doc: payload
+        }
+    });
+
+    return {
+        success: resp ? true : false,
+        mes: "Ended function, check status.",
+        data: resp
+    };
+}
 
 module.exports = {
-    addService
+    addService,
+    updateService
 }

@@ -25,12 +25,12 @@ const createService = asyncHandler(async(req, res)=>{
     }
     req.body.duration = +hour*60 + +minute
     if(thumb) req.body.thumb = thumb
-    if(image) req.body.image = image
-    const newService = await Service.create(req.body);
+        if(image) req.body.image = image
+        const newService = await Service.create(req.body);
 
-    if (newService) {
-        const payload = newService.toObject(); // if modify output from mongoose, use this
-        // console.log('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbp', payload);
+        if (newService) {
+            const payload = newService.toObject(); // if modify output from mongoose, use this
+            // console.log('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbp', payload);
         const esResult = await ESReplicator.addService(payload);
 
         if (!esResult.success || !esResult.data) {
@@ -43,18 +43,6 @@ const createService = asyncHandler(async(req, res)=>{
             });
         }
     }
-
-    // if (!elastic_query && newService) {
-    //     const newServiceFull = await Service.findById(newService._id)
-    //     .populate({
-    //         path: 'provider_id'
-    //     }).populate({
-    //         path: 'assigned_staff'
-    //     });
-
-    //     const esClient = esDBModule.esDBModule.initializeElasticClient();
-    //     const response = esDBModule.addToElasticDB(esClient, esIndexNameList.SERVICES ,newServiceFull);
-    // }
 
     return res.status(200).json({
         success: newService ? true : false,
@@ -85,6 +73,9 @@ const searchServiceAdvanced = asyncHandler(async (req, res) => {
     }
     else if (sortBy?.indexOf("price") > -1) {
         sortOption.push({price : {order : "asc"}});
+    }
+    else if (sortBy?.indexOf("-totalRatings") > -1) {
+        sortOption.push({totalRatings : {order : "desc"}});
     }
 
     if (sortBy?.indexOf("location") > -1) { geoSortOption = { unit: "km", order: "asc" }; }
@@ -248,6 +239,21 @@ const updateServiceByAdmin = asyncHandler(async(req, res)=>{
         req.body.image = files?.images?.map(el => el.path)
     }
     const service = await Service.findByIdAndUpdate(sid, req.body, {new: true})
+
+    if (service) {
+        const esResult = await ESReplicator.updateService(sid, req.body);
+        if (!esResult.success || !esResult.data) {
+            await Service.findByIdAndUpdate(newService._id, { synced: false });
+            // throw new Error('Canceled update for unresponsed Elastic Connection');
+    
+            return res.status(200).json({
+                success: true,
+                mes: 'Created successfully but temporairily unavailable to search, contact support'
+            });
+        }
+    
+    }
+
     return res.status(200).json({
         success: service ? true : false,
         mes: service ? 'Updated successfully' : "Cannot update service"

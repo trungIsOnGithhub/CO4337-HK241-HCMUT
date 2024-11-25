@@ -7,7 +7,7 @@ const esDBConstant = require('./constant');
 const {default: mongoose} = require('mongoose');
 const Blog = require('../models/blog');
 
-const MONGO_DB_URL = 'mongodb://127.0.0.1:27017/dacn-tv1';
+const MONGO_DB_URL = 'mongodb://127.0.0.1:27017/ecom';
 
 async function migrateServiceDataFromMongoDBToElasticDB() {
     const conn = await mongoose.connect(MONGO_DB_URL);
@@ -39,8 +39,6 @@ async function migrateServiceDataFromMongoDBToElasticDB() {
             //     prov: serviceProvider[0]
             // });
 
-            newObjectToAdd.id = "" + newObjectToAdd._id;
-
             if (newObjectToAdd?.provider_id?.bussinessName) {
                 newObjectToAdd.providername = newObjectToAdd.provider_id.bussinessName;
             }
@@ -63,6 +61,8 @@ async function migrateServiceDataFromMongoDBToElasticDB() {
                     lon: parseFloat(newObjectToAdd.provider_id.geolocation.coordinates[0].toFixed(1))
                 }
             }
+
+            const newId = "" + newObjectToAdd._id;
 
             delete newObjectToAdd._id;
             delete newObjectToAdd.__v;
@@ -88,7 +88,7 @@ async function migrateServiceDataFromMongoDBToElasticDB() {
             // elastic db does not allowed exiternal _id
 
             console.log(newObjectToAdd.id);
-            await esDBModule.addToElasticDB(esDBConstant.SERVICES, newObjectToAdd);// TO SWITCH
+            await esDBModule.addToElasticDB(esDBConstant.SERVICES, newObjectToAdd, newId);// TO SWITCH
             console.log("============", newObjectToAdd);
         }
 
@@ -132,7 +132,7 @@ async function migrateBlogDataFromMongoDBToElasticDB() {
             const numDislikes = newObjectToAdd.dislikes?.length;
 
 
-            newObjectToAdd.id = "" + newObjectToAdd._id;
+            // newObjectToAdd.id = "" + newObjectToAdd._id;
 
             if (newObjectToAdd?.provider_id?.bussinessName) {
                 newObjectToAdd.providername = newObjectToAdd.provider_id.bussinessName;
@@ -159,6 +159,7 @@ async function migrateBlogDataFromMongoDBToElasticDB() {
             //         lon: parseFloat(newObjectToAdd.provider_id.geolocation.coordinates[0].toFixed(1))
             //     }
             // }
+            const newId = "" + newObjectToAdd._id;
 
             delete newObjectToAdd._id;
             delete newObjectToAdd.__v;
@@ -168,7 +169,7 @@ async function migrateBlogDataFromMongoDBToElasticDB() {
             delete newObjectToAdd.provider_id;
             delete newObjectToAdd.author;
 
-            await esDBModule.addToElasticDB(esDBConstant.BLOGS, newObjectToAdd);// TO SWITCH
+            await esDBModule.addToElasticDB(esDBConstant.BLOGS, newObjectToAdd, newId);// TO SWITCH
 
             console.log("============", newObjectToAdd);
         }
@@ -207,7 +208,7 @@ async function migrateProvidersDataFromMongoDBToElasticDB() {
             //     prov: serviceProvider[0]
             // });
 
-            newObjectToAdd.id = "" + newObjectToAdd._id;
+            // newObjectToAdd.id = "" + newObjectToAdd._id;
 
             // if (newObjectToAdd?.provider_id?.bussinessName) {
             //     newObjectToAdd.providername = newObjectToAdd.provider_id.bussinessName;
@@ -231,6 +232,7 @@ async function migrateProvidersDataFromMongoDBToElasticDB() {
             //         lon: parseFloat(newObjectToAdd.provider_id.geolocation.coordinates[0])
             //     }
             // }
+            const newId = "" + newObjectToAdd._id;
 
             delete newObjectToAdd._id;
             delete newObjectToAdd.__v;
@@ -257,7 +259,7 @@ async function migrateProvidersDataFromMongoDBToElasticDB() {
             // elastic db does not allowed exiternal _id
 
             console.log(newObjectToAdd.id);
-            await esDBModule.addToElasticDB(esDBConstant.PROVIDERS, newObjectToAdd);// TO SWITCH
+            await esDBModule.addToElasticDB(esDBConstant.PROVIDERS, newObjectToAdd, newId);// TO SWITCH
             console.log("============", newObjectToAdd);
         }
 
