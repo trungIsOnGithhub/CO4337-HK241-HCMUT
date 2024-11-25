@@ -82,9 +82,16 @@ const getAllProduct = asyncHandler(async(req, res)=>{
             ]
         }
     }
-    const qr = {...colorFinish, ...formatedQueries, ...queryFinish,
+
+    const { $and: andFromFormatedQueries, ...remainingFormatedQueries } = formatedQueries;
+
+    const qr = {
+        ...colorFinish,
+        ...remainingFormatedQueries, // Đưa phần còn lại của formatedQueries vào
+        ...queryFinish,
         $and: [
-            queryFinish || {}, // Điều kiện tìm kiếm từ queries.q (nếu có)
+            ...(andFromFormatedQueries || []), // Thêm $and từ formatedQueries
+            queryFinish || {},                // Điều kiện tìm kiếm từ queries.q (nếu có)
             {
                 $or: [
                     { isHidden: false },
@@ -92,7 +99,7 @@ const getAllProduct = asyncHandler(async(req, res)=>{
                 ],
             },
         ],
-    }
+    };
     let queryCommand =  Product.find(qr)
     try {
         // sorting
