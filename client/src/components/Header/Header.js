@@ -94,7 +94,7 @@ const Header = () => {
                             }
 
                             {+current.role === 1411 &&
-                                <Link className="p-2 w-full hover:bg-sky-100 " to={`/${path.ADMIN}/${path.DASHBOARD}`} cytest="header_options">
+                                <Link className="p-2 w-full hover:bg-sky-100 " to={`/${path.ADMIN}/${path.DASHBOARD}`} >
                                 Admin Workspace
                                 </Link>
                             }

@@ -32,9 +32,9 @@ const DetailCart = () => {
     const [shippingPrices, setShippingPrices] = useState({});
 
      // Nhóm các sản phẩm theo provider
-     useEffect(() => {
-      const grouped = currentCartProduct.reduce((acc, item) => {
-          const providerId = item.provider._id;
+    useEffect(() => {
+      const grouped = currentCartProduct?.reduce((acc, item) => {
+          const providerId = item?.provider?._id;
           if (!acc[providerId]) {
               acc[providerId] = {
                   provider: item.provider,
@@ -45,7 +45,7 @@ const DetailCart = () => {
           return acc;
       }, {});
       setGroupedProducts(grouped);
-  }, [currentCartProduct]);
+    }, [currentCartProduct]);
 
   // Gọi API để lấy coupon cho mỗi nhà cung cấp
   useEffect(() => {
@@ -366,19 +366,13 @@ const DetailCart = () => {
     return totalSavings;
   };
 
-  console.log(couponsByProvider)
-
   const canUseDiscount = (coupon) => {
     if (!current) return false;
-    console.log(coupon)
     const { date, time } = coupon.expirationDate;
     const expirationDateTime = new Date(`${date.split('/').reverse().join('-')}T${time}:00`); // Chuyển đổi sang ISO format
 
     // Kiểm tra nếu thời gian hết hạn đã qua
     const now = new Date();
-    console.log(expirationDateTime)
-    console.log(now)
-
     if (expirationDateTime < now) return false;
 
     const userUsage = coupon.usedBy.find(usage => usage.user.toString() === current._id);
@@ -386,6 +380,7 @@ const DetailCart = () => {
     return coupon.noLimitPerUser || !userUsage || userUsage.usageCount < coupon.limitPerUser;
   };
 
+  console.log(groupedProducts)
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
@@ -439,9 +434,9 @@ const DetailCart = () => {
                 </div>
   
                 <div className="divide-y divide-gray-200">
-                  {seller?.products.map((product) => (
+                  {seller?.products?.map((product) => (
                     <div
-                      key={product.id}
+                      key={product?.id}
                       className="p-6 flex flex-col sm:flex-row items-center gap-6 transition-all hover:bg-gray-50"
                     >
                       <div className="relative">
@@ -461,18 +456,18 @@ const DetailCart = () => {
                           {product?.title}
                         </h3>
                         <div className="mt-2 flex items-center gap-2">
-                          {isDiscountedProduct(product, seller.provider._id) ? (
+                          {isDiscountedProduct(product, seller?.provider?._id) ? (
                             <>
                               <span className="text-xl font-bold text-gray-500 line-through">
-                                {`${formatPrice(formatPricee(product.price))} VNĐ`}
+                                {`${formatPrice(formatPricee(product?.price))} VNĐ`}
                               </span>
                               <span className="text-2xl font-bold text-[#0a66c2]">
-                                {`${formatPrice(formatPricee(calculateDiscountedPrice(product, seller.provider._id)))} VNĐ`}
+                                {`${formatPrice(formatPricee(calculateDiscountedPrice(product, seller?.provider?._id)))} VNĐ`}
                               </span>
                             </>
                           ) : (
                             <span className="text-2xl font-bold text-[#0a66c2]">
-                              {`${formatPrice(formatPricee(product.price))} VNĐ`}
+                              {`${formatPrice(formatPricee(product?.price))} VNĐ`}
                             </span>
                           )}
                         </div>
@@ -506,7 +501,7 @@ const DetailCart = () => {
                         </div>
   
                         <button
-                          onClick={() => initiateRemove(product.product, product?.colorCode)}
+                          onClick={() => initiateRemove(product?.product, product?.colorCode)}
                           className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
                           aria-label="Remove item"
                         >
@@ -519,7 +514,7 @@ const DetailCart = () => {
                 <div className="mt-2 flex items-center gap-2 p-6 text-[#0a66c2] font-semibold">
                   <FaShippingFast />
                   Shipping: 
-                  {shippingPrices[seller.provider._id] != null ? ` ${formatPrice(formatPricee(shippingPrices[seller.provider._id]))} VNĐ` : "Calculating..."}
+                  {shippingPrices[seller?.provider?._id] != null ? ` ${formatPrice(formatPricee(shippingPrices[seller?.provider?._id]))} VNĐ` : "Calculating..."}
                 </div>
                 <div className='w-full flex justify-between items-center border-t-2 border-[#0a66c2] p-[12px]'>
                     <span className='font-medium text-[#0a66c2] leading-7 text-lg'>Choose a voucher</span>

@@ -230,6 +230,8 @@ const deleteServiceByAdmin = asyncHandler(async (req, res) => {
 
 const updateServiceByAdmin = asyncHandler(async(req, res)=>{
     const {sid} = req.params
+    const {hour, minute} = req.body
+    req.body.duration = +hour*60 + +minute
 
     const files = req?.files
     if(files?.thumb){
@@ -622,7 +624,7 @@ const getOneService = asyncHandler(async(req, res)=>{
         }
     }).populate({
         path: 'provider_id',
-        select: 'bussinessName address province latitude longitude'
+        select: 'bussinessName address province latitude longitude mobile'
     })
     
     return res.status(200).json({
