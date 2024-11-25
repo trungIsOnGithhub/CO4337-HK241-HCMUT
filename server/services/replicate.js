@@ -98,13 +98,14 @@ const updateBlog = async (id, payload) => {
         };
     }
 
-    delete payload.description;
-    console.log('||||||||||||||||||||||||||||||||||||||||');
-    console.log(payload);
-    console.log('|||||||||||||||||||||||||||||||||||||||||');
+    delete payload.content;
+    // console.log('||||||||||||||||||||||||||||||||||||||||');
+    // console.log(payload);
+    // console.log('|||||||||||||||||||||||||||||||||||||||||');
+    // console.log(id);
 
     const resp = await esClient.update({
-        index: ELASTIC_INDEX_NAME_MAP.PROVIDERS,
+        index: ELASTIC_INDEX_NAME_MAP.BLOGS,
         id,
         refresh: "wait_for",
         body: {
@@ -268,7 +269,7 @@ const addService = async (payload) => {
     console.log(payload);
     console.log('_____________________');
 
-    // const cleanPayload = await cleanServiceData(payload);
+    const cleanPayload = await cleanServiceData(payload);
 
     console.log('||||||||||||||||||||||||||||||||||||||||');
     console.log(cleanPayload);

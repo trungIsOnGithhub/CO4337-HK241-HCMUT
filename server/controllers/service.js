@@ -681,7 +681,24 @@ const ratingService = asyncHandler(async(req, res)=>{
     // reduce: 2 doi so (callback + initial value)
     const totalScores = updatedService.rating.reduce((sum,ele) => sum + (+ele.star),0)
     updatedService.totalRatings = Math.round(totalScores/totalRatings)
-    await updatedService.save()
+    await updatedService.save();
+
+
+    if (updatedService) {
+        const esResult = await ESReplicator.updateService(sid, {
+            totalRatings: Math.round(totalScores/totalRatings)
+        });
+        if (!esResult.success || !esResult.data) {
+            await Service.findByIdAndUpdate(service._id, { synced: false });
+            // throw new Error('Canceled update for unresponsed Elastic Connection');
+    
+            return res.status(200).json({
+                success: true,
+                mes: 'Created successfully but temporairily unavailable to search, contact support'
+            });
+        }
+    
+    }
 
     return res.status(200).json({
         success: true,
@@ -868,6 +885,20 @@ const updateHiddenStatus = asyncHandler(async (req, res) => {
 
     if (!updatedService) {
         throw new Error("Service not found");
+    }
+
+    if (updatedService) {
+        const esResult = await ESReplicator.updateService(serviceId, { isHidden });
+
+        if (!esResult.success || !esResult.data) {
+            await Service.findByIdAndUpdate(serviceId, { synced: false });
+            // throw new Error('Canceled update for unresponsed Elastic Connection');
+    
+            return res.status(200).json({
+                success: true,
+                mes: 'Created successfully but temporairily unavailable to search, contact support'
+            });
+        }
     }
 
     res.status(200).json({
