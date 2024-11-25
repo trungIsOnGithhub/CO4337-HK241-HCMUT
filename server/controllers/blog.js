@@ -400,7 +400,12 @@ const getTopProviderAuthorBlogs = asyncHandler(async(req, res)=>{
     const sortObj = { likesCount:-1, viewCount:-1 };
 
     const resp = await Blog.aggregate([
-        { $match: { isHidden: false } },
+        { $match:{
+            $or: [
+                { isHidden: false },
+                { isHidden: { $exists: false } },
+            ],
+        }, },
         {
             $lookup: {
                 from: "users",

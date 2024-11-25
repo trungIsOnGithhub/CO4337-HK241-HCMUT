@@ -33,7 +33,8 @@ const cleanBlogData = async (mongoPayload) => {
     
     const numLikes = newObjectToAdd.likes?.length;
     const numDislikes = newObjectToAdd.dislikes?.length;
-    // newObjectToAdd.id = "" + newObjectToAdd._id;
+
+    newObjectToAdd.id = "" + newObjectToAdd._id;
 
     if (newObjectToAdd?.provider_id?.bussinessName) {
         newObjectToAdd.providername = newObjectToAdd.provider_id.bussinessName;
@@ -125,7 +126,8 @@ const updateBlog = async (id, payload) => {
 /* PROVIDER */
 const cleanProviderData = async (mongoPayload) => {
     const newObjectToAdd = { ...mongoPayload };
-    // newObjectToAdd.id = "" + newObjectToAdd._id;
+
+    newObjectToAdd.id = "" + newObjectToAdd._id;
 
     if (newObjectToAdd?.latitude
         && newObjectToAdd?.longitude
@@ -228,6 +230,8 @@ const cleanServiceData = async (mongoPayload) => {
     const newObjectToAdd = { ...mongoPayload };
 
     console.log(">>>>>>>>>>>>>>", mongoPayload);
+
+    newObjectToAdd.id = "" + newObjectToAdd._id;
 
     newObjectToAdd.provider_id = serviceProvider[0];
 

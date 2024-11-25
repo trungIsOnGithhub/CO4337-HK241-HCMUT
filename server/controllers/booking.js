@@ -86,7 +86,12 @@ const getTimeOptionsAvailableForDate = asyncHandler(async (req, res) => {
     let service = await Service.findById(svid)
     .populate({
         path: 'assigned_staff',
-        match: { isHidden: false }
+        match: {
+            $or: [
+                { isHidden: false },
+                { isHidden: { $exists: false } },
+            ],
+        },
     }).populate('provider_id');
 
     // let ordersInCurrentDay = await Order.find({
@@ -247,7 +252,12 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
     let service = await Service.findById(svid)
     .populate({
         path: 'assigned_staff',
-        match: { isHidden: false }
+        match: {
+            $or: [
+                { isHidden: false },
+                { isHidden: { $exists: false } },
+            ],
+        },
     }).populate('provider_id');
 
     if (!service?.assigned_staff) {

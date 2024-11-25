@@ -615,7 +615,12 @@ const getOneService = asyncHandler(async(req, res)=>{
     const service = await Service.findById(sid).populate({
         path: 'assigned_staff',
         select: 'firstName lastName avatar mobile email work shifts',
-        match: { isHidden: false }
+        match: {
+            $or: [
+                { isHidden: false },
+                { isHidden: { $exists: false } },
+            ],
+        }
     }).populate({
         path: 'rating',
         populate: {
@@ -817,7 +822,12 @@ const getAllServicesByProviderId = asyncHandler(async (req, res) => {
     let queryCommand =  Service.find(qr).populate({
         path: 'assigned_staff',
         select: 'firstName lastName avatar',
-        match: { isHidden: false }
+        match: {
+            $or: [
+                { isHidden: false },
+                { isHidden: { $exists: false } },
+            ],
+        },
     })
     try {
         // sorting

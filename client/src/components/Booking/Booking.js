@@ -109,6 +109,8 @@ const Booking = () => {
     }
   };
 
+  console.log(service)
+
   useEffect(() => {
     setOriginalPrice(service?.price)
   }, [service])
