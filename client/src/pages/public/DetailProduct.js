@@ -302,6 +302,16 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
       })
     }
     else{
+      if(quantity > currentProduct?.quantity){
+        return Swal.fire({
+          title: "Out of stock",
+          text: 'Please choose another product',
+          icon: 'warning',
+          showConfirmButton: true,
+          showCancelButton: false,
+          confirmButtonText: 'OK',             
+        })
+      }
       const response = await apiUpdateCartProduct({
         pid: product?._id, 
         quantity: quantity, 
@@ -407,7 +417,7 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
                 </div>
                 <div className="flex items-center gap-4">
                   <BsBoxSeam className="text-gray-600" size={20} />
-                  <span className="text-gray-600">In Stock: {currentProduct?.quantity} items</span>
+                  <span className="text-gray-600">In Stock: {currentProduct?.quantity >= 0 ? currentProduct?.quantity : 0} items</span>
                 </div>
                 <div className="flex items-center gap-4">
                   <IoColorPaletteOutline className="text-gray-600" size={20} />

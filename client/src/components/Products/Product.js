@@ -42,6 +42,16 @@ const Product = ({productData}) => {
       })
     }
     else{
+      if(productData?.quantity <= 0){
+        return Swal.fire({
+          title: "Out of stock",
+          text: 'Please choose another product',
+          icon: 'warning',
+          showConfirmButton: true,
+          showCancelButton: false,
+          confirmButtonText: 'OK',             
+        })
+      }
       const response = await apiUpdateCartProduct({
         pid: productData?._id, 
         quantity: 1, 
@@ -76,7 +86,7 @@ const Product = ({productData}) => {
             <div className='w-full flex flex-col gap-1'>
                 <span className='text-[18px] font-medium line-clamp-1'>{productData?.title}</span>
                 <span className='flex items-center gap-4'>
-                    <span className='text-[14px] text-[#868e96] flex gap-2 items-center'>Quantity <span className='text-black font-medium'>{`${productData?.quantity}`}</span></span>
+                    <span className='text-[14px] text-[#868e96] flex gap-2 items-center'>Quantity <span className='text-black font-medium'>{`${productData?.quantity >= 0 ? productData?.quantity : 0}`}</span></span>
                     <span className='text-[14px] text-[#868e96] flex gap-2 items-center'>Sold <span className='text-black font-medium'>{`${productData?.soldQuantity}`}</span></span>
                 </span>
                 <span className='text-[14px] text-[#868e96] flex items-center gap-2'><span className='flex gap-1 items-center'><MdOutlineCategory /> Category</span> <span className='font-medium'>{`${productData?.category}`}</span></span>

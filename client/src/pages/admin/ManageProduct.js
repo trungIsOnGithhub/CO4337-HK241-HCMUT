@@ -215,7 +215,7 @@ const ManageProduct = () => {
                       <div className='flex-1 max-w-[80%] line-clamp-2'>{el?.title}</div>
                     </span>
                     <span className='w-[10%] px-2 py-2 text-[#00143c] font-medium flex justify-center'>{el?.price}</span>
-                    <span className='w-[10%] px-2 py-2 text-[#00143c] font-medium flex justify-center'>{el?.quantity}</span>
+                    <span className='w-[10%] px-2 py-2 text-[#00143c] font-medium flex justify-center'>{el?.quantity >= 0 ? el?.quantity : 0}</span>
                     <span className='w-[10%] px-2 py-2 text-[#00143c] font-medium flex justify-center'>{el?.soldQuantity}</span>
                     <span className='w-[10%] px-2 py-2 text-[#00143c] font-medium flex justify-center'>{el?.totalRatings}</span>
                     <span className='w-[10%] px-2 py-2 text-[#00143c] font-medium flex justify-center'>{el?.color}</span>

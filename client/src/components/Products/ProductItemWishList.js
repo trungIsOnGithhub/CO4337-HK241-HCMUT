@@ -30,43 +30,6 @@ const ProductItemWishList = ({productData}) => {
         }
       }, [current, productData]);
   
-    const handleAddProductToCart = async() => {
-      if(!isLogin){
-        Swal.fire({
-            text: 'Login to review',
-            cancelButtonText: 'Cancel',
-            confirmButtonText: 'Go login',
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            title: 'Oops!',
-            showCancelButton: true,
-        }).then((rs)=>{
-            if(rs.isConfirmed){
-                navigate(`/${path.LOGIN}`)
-            }
-        })
-      }
-      else{
-        const response = await apiUpdateCartProduct({
-          pid: productData?._id, 
-          quantity: 1, 
-          color: productData?.color, 
-          colorCode: productData?.colorCode || "#000000",
-          price: productData?.price, 
-          thumb: productData?.thumb, 
-          title: productData?.title, 
-          provider: productData?.provider_id
-        })
-        if(response.success){
-          toast.success(response.mes)
-          dispatch(getCurrent())
-        }
-        else{
-          toast.error(response.mes)
-        }
-      }
-    }
-  
     const handleNavigateLearnMoreProduct = ( ) => {
       navigate(`/product/${productData.category?.toLowerCase()}/${productData?._id}/${productData?.title}`)
       console.log(productData)
@@ -120,14 +83,13 @@ const ProductItemWishList = ({productData}) => {
               <div className='w-full flex flex-col gap-1'>
                   <span className='text-[18px] font-medium line-clamp-1'>{productData?.title}</span>
                   <span className='flex items-center gap-4'>
-                      <span className='text-[14px] text-[#868e96] flex gap-2 items-center'>Quantity <span className='text-black font-medium'>{`${productData?.quantity}`}</span></span>
+                      <span className='text-[14px] text-[#868e96] flex gap-2 items-center'>Quantity <span className='text-black font-medium'>{`${productData?.quantity >= 0 ? productData?.quantity : 0}`}</span></span>
                       <span className='text-[14px] text-[#868e96] flex gap-2 items-center'>Sold <span className='text-black font-medium'>{`${productData?.soldQuantity}`}</span></span>
                   </span>
                   <span className='text-[14px] text-[#868e96] flex items-center gap-2'><span className='flex gap-1 items-center'><MdOutlineCategory/> Category</span> <span className='font-medium'>{`${productData?.category}`}</span></span>
               </div>
               <div className='flex justify-between'>
-              <Button handleOnclick={handleNavigateLearnMoreProduct} style={'px-[10px] rounded-md text-black border border-[#868e96] w-fit h-[40px] hover:bg-gray-400'}>Learn more</Button>
-              <Button handleOnclick={handleAddProductToCart} style={'px-[10px] rounded-md text-white bg-[#0a66c2] w-fit h-[40px] hover:bg-blue-400 flex items-center gap-1'}><FaCartPlus /> Add to cart</Button>
+              <Button handleOnclick={handleNavigateLearnMoreProduct} style={'px-[10px] rounded-md text-black border border-[#868e96] w-full h-[40px] hover:bg-gray-400'}>Learn more</Button>
               </div>
           </div>
           <div className='absolute right-2 top-2 w-fit h-fit px-[8px] py-[4px] bg-[#0a66c2] text-white rounded-md'>
