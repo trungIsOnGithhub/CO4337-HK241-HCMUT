@@ -124,6 +124,7 @@ const ViewBlog = () => {
     }
     useEffect(() => {
       updateViewBlog(params?.get('id'));
+      fetchPostData()
     }, []);
     
     const backToHomepage = () => {
@@ -615,24 +616,6 @@ const ViewBlog = () => {
             </div>
 
           </div>
-
-          <div className="border-t py-8 mt-8 px-6">
-              <h2 className="text-2xl font-bold text-[#00143c] mb-6">Related Posts</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {currBlogList.map((post) => (
-                  <div key={post.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-                    <img
-                      src={post?.thumb}
-                      alt={post?.title}
-                      className="w-full h-48 object-cover"
-                    />
-                    <div className="p-4">
-                      <h3 className="text-lg font-semibold text-[#00143c] mb-2">{post?.title}</h3>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
         </div>
       </div>
     </div>
