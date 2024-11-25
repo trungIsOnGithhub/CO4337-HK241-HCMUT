@@ -394,7 +394,7 @@ const DetailService = ({isQuickView, data}) => {
               </div>
               <div className="flex items-center gap-3 text-gray-700">
                 <FaPhone className="text-blue-600" />
-                <span className='text-[#0a66c2]'>{serviceData?.contact || 8888}</span>
+                <span className='text-[#0a66c2]'>{serviceData?.provider_id?.mobile || 8888}</span>
               </div>
               <div className="flex items-center gap-3 text-gray-700">
                 <FaMapMarkerAlt className="text-blue-600" />
