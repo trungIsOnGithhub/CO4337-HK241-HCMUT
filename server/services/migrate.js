@@ -258,6 +258,8 @@ async function migrateProvidersDataFromMongoDBToElasticDB() {
             // newObjectToAdd.
             // elastic db does not allowed exiternal _id
 
+            newObjectToAdd.isHidden = false; // only for provider to avoid bug
+
             console.log(newObjectToAdd.id);
             await esDBModule.addToElasticDB(esDBConstant.PROVIDERS, newObjectToAdd, newId);// TO SWITCH
             console.log("============", newObjectToAdd);
