@@ -656,11 +656,7 @@ const getAllBlogsByAdmin = asyncHandler(async (req, res) => {
         }
     }
     const qr = {
-        ...formatedQueries, ...queryFinish, ...categoryFinish, provider_id,
-        $or: [
-            { isHidden: false },
-            { isHidden: { $exists: false } }
-        ]     
+        ...formatedQueries, ...queryFinish, ...categoryFinish, provider_id  
     }
 
     let queryCommand =  Blog.find(qr)
@@ -762,6 +758,20 @@ const updateHiddenStatus = asyncHandler(async (req, res) => {
     if (!updatedBlog) {
         throw new Error("Blog not found");
     }
+
+    // if (updatedBlog) {
+        const esResult = await ESReplicator.updateBlog(blogId, { isHidden });
+
+        if (!esResult.success || !esResult.data) {
+            await Blog.findByIdAndUpdate(blogId, { synced: false });
+            // throw new Error('Canceled update for unresponsed Elastic Connection');
+    
+            return res.status(200).json({
+                success: true,
+                mes: 'Created successfully but temporairily unavailable to search, contact support'
+            });
+        }
+    // }
 
     res.status(200).json({
         success: true,
