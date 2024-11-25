@@ -16,6 +16,7 @@ import { FaSearch, FaUndo, FaBahai } from "react-icons/fa";
 import { toast } from 'react-toastify';
 import Select from 'react-select';
 import { FaHotjar } from "react-icons/fa";
+import defaultProvider from "../../assets/defaultProvider.jpg";
 
 const Blogs = () => {
   const location = useLocation();
@@ -458,7 +459,7 @@ useEffect(() => {
               {/* Service Image */}
               <div className='flex flex-col justify-center items-center'>
                 <img
-                  src={provider?.avatar[0]}
+                  src={provider?.avatar[0] || defaultProvider}
                   alt="avatar"
                   className="w-10 h-10 rounded-full mr-4 border p-2"
                 />
