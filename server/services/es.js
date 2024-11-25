@@ -271,10 +271,10 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
     if (categoriesIncluded?.length && queryObject?.query) {
         if (!queryObject.query.bool) queryObject.query.bool = {};
         // queryObject.query.bool.filter = categoriesIncluded.map(categoryLabel => { return { term: { catergory: categoryLabel } }; });
-        if (!queryObject.query.bool.should) queryObject.query.bool.should = [];
+        if (!queryObject.query.bool.must) queryObject.query.bool.must = [];
 
         for (const categoryLabel of categoriesIncluded) {
-            queryObject.query.bool.should.push({
+            queryObject.query.bool.must.push({
                 match: {
                     category: categoryLabel
                 }
@@ -308,7 +308,7 @@ async function fullTextSearchAdvanced(indexName, searchTerm, fieldNameArrayToMat
     return elasticResponse;
 }
 
-const addToElasticDB = async function(indexName, dataPayload) {
+const addToElasticDB = async function(indexName, dataPayload, id) {
     const esClient = initializeElasticClient();
     if (!indexName || !dataPayload) {
         throw new Error("Invalid populate ES Input!");
@@ -319,6 +319,7 @@ const addToElasticDB = async function(indexName, dataPayload) {
 
     return await esClient.index({
         index: indexName,
+        id,
         body: dataPayload
     })
 }
@@ -444,7 +445,7 @@ const multiFunc = async function(indexName, init, reset) {
 
 (async function () {
 //     // // COMMENT THIS WHEN RUN MIGRATE OR ANY OTHE FILE INCLUDED THIS
-// await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, false, true); // TO SWITCH
+//await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, false, true); // TO SWITCH
 //await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, true, false); // TO SWITCH
 
 //     // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, false, true); // TO SWITCH

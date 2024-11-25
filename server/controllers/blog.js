@@ -2,9 +2,10 @@ const Blog = require('../models/blog')
 const PostTag = require('../models/postTag')
 const asyncHandler = require('express-async-handler');
 const User = require('../models/user');
-const { prependListener } = require('../models/ServiceProvider');
+// const { prependListener } = require('../models/ServiceProvider');
 const ES_CONSTANT = require('../services/constant');
 const esDBModule = require('../services/es');
+const ESReplicator = require('../services/replicate');
 
 const createNewBlogPost = asyncHandler(async(req, res)=>{
     const {_id} = req.user
@@ -18,6 +19,22 @@ const createNewBlogPost = asyncHandler(async(req, res)=>{
         throw new Error ("Missing input")
     }
     const response = await Blog.create({...req.body, author: _id})
+
+    if (response) {
+        const payload = response.toObject(); // if modify output from mongoose, use this
+            // console.log('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbp', payload);
+        const esResult = await ESReplicator.addBlog(payload);
+
+        if (!esResult.success || !esResult.data) {
+            await Service.findByIdAndUpdate(response._id, { synced: false });
+            // throw new Error('Canceled update for unresponsed Elastic Connection');
+    
+            return res.status(200).json({
+                success: true,
+                mes: 'Created successfully but temporairily unavailable to search, contact support'
+            });
+        }
+    }
 
     return res.status(200).json({
         success: response ? true : false,
@@ -639,11 +656,7 @@ const getAllBlogsByAdmin = asyncHandler(async (req, res) => {
         }
     }
     const qr = {
-        ...formatedQueries, ...queryFinish, ...categoryFinish, provider_id,
-        $or: [
-            { isHidden: false },
-            { isHidden: { $exists: false } }
-        ]     
+        ...formatedQueries, ...queryFinish, ...categoryFinish, provider_id  
     }
 
     let queryCommand =  Blog.find(qr)
@@ -694,6 +707,21 @@ const updateBlog = asyncHandler(async(req, res) => {
         req.body.thumb = files?.thumb[0]?.path
     }
     const blog = await Blog.findByIdAndUpdate(bid, req.body, {new: true})
+
+    if (blog) {
+        const esResult = await ESReplicator.updateBlog(bid, req.body);
+        if (!esResult.success || !esResult.data) {
+            await Service.findByIdAndUpdate(blog._id, { synced: false });
+            // throw new Error('Canceled update for unresponsed Elastic Connection');
+    
+            return res.status(200).json({
+                success: true,
+                mes: 'Created successfully but temporairily unavailable to search, contact support'
+            });
+        }
+    
+    }
+
     return res.status(200).json({
         success: blog ? true : false,
         mes: blog ? 'Updated successfully' : "Cannot update blog"
@@ -730,6 +758,20 @@ const updateHiddenStatus = asyncHandler(async (req, res) => {
     if (!updatedBlog) {
         throw new Error("Blog not found");
     }
+
+    // if (updatedBlog) {
+        const esResult = await ESReplicator.updateBlog(blogId, { isHidden });
+
+        if (!esResult.success || !esResult.data) {
+            await Blog.findByIdAndUpdate(blogId, { synced: false });
+            // throw new Error('Canceled update for unresponsed Elastic Connection');
+    
+            return res.status(200).json({
+                success: true,
+                mes: 'Created successfully but temporairily unavailable to search, contact support'
+            });
+        }
+    // }
 
     res.status(200).json({
         success: true,

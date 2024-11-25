@@ -363,7 +363,7 @@ useEffect(() => {
                           </h2>
                           {/* <p className="text-gray-600 mb-4">{blog.excerpt}</p> */}
                           <div className="flex flex-wrap gap-2">
-                            {blog.tags.map((tag) => (
+                            {Array.isArray(blog.tags) ? blog.tags.map((tag) => (
                               <span
                                 key={tag}
                                 className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800"
@@ -371,7 +371,14 @@ useEffect(() => {
                                 <FiTag className="h-3 w-3 mr-1" />
                                 {tag}
                               </span>
-                            ))}
+                            )) :
+                            (<span
+                              className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800"
+                            >
+                              <FiTag className="h-3 w-3 mr-1" />
+                              {blog.tags}
+                            </span>)
+                            }
                           </div>
                         </div>
                       </div>
