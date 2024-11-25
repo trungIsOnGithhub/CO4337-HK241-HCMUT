@@ -316,7 +316,7 @@ const UpdateBlog = () => {
                                 </span>
                             ) : (
                                 <span className='flex items-center'>
-                                Updata post
+                                Update Post
                                 </span>
                             )}
                         </Button>
