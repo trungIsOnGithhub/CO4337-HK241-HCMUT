@@ -40,14 +40,15 @@ const register = asyncHandler(async(req, res) => {
             success: false,
             mes: "Missing input"
         })}
-    
-    const user = await User.findOne({email})
+
+    const user = null
     if(user){
         throw new Error("User has existed already")
     }
     else{
         const token = makeTokenNumber()
         const email_edit = btoa(email) + '@' + token
+<<<<<<< HEAD
         const newUser = await User.create({
             email:email_edit,password,firstName,lastName,mobile, avatar
         })
@@ -73,9 +74,25 @@ const register = asyncHandler(async(req, res) => {
         setTimeout(async()=>{
             await User.deleteOne({email: email_edit})
         },[15*60*1000])
+=======
+        // const newUser = await User.create({
+        //     email:email_edit,password,firstName,lastName,mobile
+        // })
+        const newUser = {};
+        res.cookie('dataregister', {...req.body, token}, {httpOnly: true, maxAge: 15*60*1000})
+
+        // if(newUser){
+        //     const html = `<h2>Register code: </h2><br /><blockquote>${token}</blockquote>`
+        //     await sendMail({email, html, subject: 'Complete Registration'})
+        // }
+        // setTimeout(async()=>{
+        //     await User.deleteOne({email: email_edit})
+        // },[15*60*1000])
+
+>>>>>>> trung_add_testing
         return res.json({
             success: newUser ? true : false,
-            mes: newUser? "Please check your email to active accout!" : "Something went wrong"
+            mes: newUser ? "Please check your email to active accout!" : "Something went wrong"
         })
     }
 })
@@ -106,8 +123,13 @@ const login = asyncHandler(async(req, res)=>{
         })}
     
     
+<<<<<<< HEAD
     const response = await User.findOne({email})
     console.log(response)
+=======
+    // const response = await User.findOne({email})
+    const response = {};
+>>>>>>> trung_add_testing
     if(response && await response.isCorrectPassword(password)){
         console.log('aaa')
         const objectResponse = response.toObject();

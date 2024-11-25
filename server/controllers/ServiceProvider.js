@@ -22,7 +22,7 @@ const createServiceProvider = asyncHandler(async(req, res)=>{
             success: false,
             mes: "Missing input"
         })}
-    
+
     let user = await User.findOne({email})
     if(user){
         return res.status(400).json({
@@ -48,17 +48,13 @@ const createServiceProvider = asyncHandler(async(req, res)=>{
         },[15*60*1000])
     }
 
-    const { bussinessName, address } = req.body
-    if (!bussinessName || !address ) {
+    const { bussinessName, province } = req.body
+    if (!bussinessName || !province ) {
         return res.status(400).json({
             success: false,
             mes: "Missing Input On Provider"
         })
     }
-
-    const images = req.files?.images[0]?.path
-    console.log(images)
-    req.body.images = images
 
     const bname = await ServiceProvider.findOne({bussinessName})
     if(bname){
@@ -155,7 +151,6 @@ const getAllServiceProvider = asyncHandler(async(req, res) => {
 
     // chuyen tu chuoi json sang object
     const formatedQueries = JSON.parse(queryString);
-    
     let queryCommand = ServiceProvider.find(formatedQueries).select('-createdAt -updatedAt');
     
     try {
@@ -288,7 +283,7 @@ const getServiceProviderByOwnerId = asyncHandler(async(req, res)=>{
         throw new Error('Missing input')
     }
     // console.log(req.body);
-    const response = await User.findById(owner).populate('provider_id');
+    const response = await ServiceProvider.findOne({});
     return res.status(200).json({
         success: response ? true : false,
         provider: response?.provider_id?._id ? response.provider_id : "Cannot get service provider"

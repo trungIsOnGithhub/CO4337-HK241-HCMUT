@@ -24,10 +24,10 @@ dbConnect();
 // services init
 initRoutes(app);
 
-app.use('/', (req,res) => {res.send('SERVER ON')})
+// app.use('/', (req,res) => {res.send('SERVER ON')})
 
 const server = app.listen(port,()=>{
-
+    console.log('Running....')
 });
 
 const io = socket(server,{
@@ -50,4 +50,10 @@ io.on("connection", (socket) => {
             socket.to(sendUserSocket).emit("msg-recieve", data.message)
         }
     })
+<<<<<<< HEAD
 })
+=======
+})
+
+module.exports = app;
+>>>>>>> trung_add_testing
