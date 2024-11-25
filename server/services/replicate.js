@@ -1,7 +1,8 @@
 const { Client } = require('@elastic/elasticsearch');
 // const { match } = require('assert');
 // const { kMaxLength } = require('buffer');
-const ServiceProvider = require('../models/ServiceProvider');122
+const ServiceProvider = require('../models/ServiceProvider');
+const User = require('../models/user');
 const ELASTIC_INDEX_NAME_MAP = require('./constant');
 // const MONGO_DB_URL = 'mongodb://127.0.0.1:27017/dacn-tv1';
 
@@ -13,7 +14,7 @@ const esClient = new Client({
 /* BLOGS */
 const cleanBlogData = async (mongoPayload) => {
     const serviceProvider = await ServiceProvider.findById(mongoPayload.provider_id);
-    if (!serviceProvider?.length) {
+    if (!serviceProvider) {
         return null;
     }
     const author = await User.findById(mongoPayload.author);
@@ -269,6 +270,7 @@ const addService = async (payload) => {
     console.log(payload);
     console.log('_____________________');
 
+    const newId = "" + payload._id;
     const cleanPayload = await cleanServiceData(payload);
 
     console.log('||||||||||||||||||||||||||||||||||||||||');
@@ -279,7 +281,7 @@ const addService = async (payload) => {
         index: ELASTIC_INDEX_NAME_MAP.SERVICES,
         id: newId,
         refresh: "wait_for",
-        body: payload
+        body: cleanPayload
     });
 
     return {
