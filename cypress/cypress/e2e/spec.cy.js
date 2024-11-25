@@ -1,28 +1,34 @@
 const credential = require('./credential');
 
-describe('template spec', () => {
+describe('Test Example Template', () => {
   it('auto-passes', () => {
     cy.visit("/");
   })
 })
 
-// describe('Login Test', () => {
-//   it('Login success and redirect', () => {
-//     cy.visit('/login');
-
-//     cy.get('[cytest]')
-//   });
-// });
-
-describe('HomePage Test', () => {
-  it('Successfully load after admin login - Header', () => {
+describe('Login Page Test', () => {
+  beforeEach('Init session manually', () => {
     cy.visit("/login");
-    // cy.get('[cytest="header_options"]').contains("Admin Workspace");
-    cy.get('[cytest="email_input"]').type(credential.EMAIL_USERNAME_SUCCESS);
-    cy.get('[cytest="password_input"]').type(credential.PASSWORD_SUCCESS);
+  });
+  afterEach('Logout test session', () => {
+    cy.get('[cytest=""]').contains('Sign out').click();
+  })
 
-    cy.get('[cytest="login_button"]').contains('Login').click()
+  it('Success load after admin login - Header', () => {
+    // cy.get('[cytest="header_options"]').contains("Admin Workspace");
+    cy.get('[cytest="email_input"]').type(credential.ADMIN_EMAIL_USERNAME_TEST_SUCCESS);
+    cy.get('[cytest="password_input"]').type(credential.ADMIN_PASSWORD_TEST_SUCCESS);
 
     cy.url().should('eq', `${Cypress.config().baseUrl}/`);
+    cy.get();
+  });
+
+  it('Success load after customer login - Header', () => {
+    // cy.get('[cytest="header_options"]').contains("Admin Workspace");
+    cy.get('[cytest="email_input"]').type(credential.ADMIN_EMAIL_USERNAME_TEST_SUCCESS);
+    cy.get('[cytest="password_input"]').type(credential.ADMIN_PASSWORD_TEST_SUCCESS);
+
+    cy.url().should('eq', `${Cypress.config().baseUrl}/`);
+    cy.get();
   });
 });
