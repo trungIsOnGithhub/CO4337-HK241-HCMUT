@@ -70,7 +70,7 @@ const Header = () => {
                 </div>
 
                 { +current.role === 202 &&
-                <div onClick={()=> navigate(`/${path.USER}/${path.MY_CALENDAR}`)} className="cursor-pointer flex items-center justify-center gap-2 px-6 border-r relative">
+                <div onClick={()=> navigate(`/${path.USER}/${path.MY_CALENDAR}`)} className="cursor-pointer flex items-center justify-center gap-2 px-6 border-r relative" cytest="personal_calendar_icon">
                     <FaCalendarAlt color='white' />
                 </div>
                 }
@@ -80,26 +80,27 @@ const Header = () => {
                         setIsShowOptions(!isShowOptions)}}
                         id="profile"
 //to = {+current?.role === 1411 ? `/${path.ADMIN}/${path.DASHBOARD}` : `/${path.USER}/${path.PERSONAL}`}
-                    className="cursor-pointer flex items-center justify-center px-6 gap-2 relative">
-
+                    className="cursor-pointer flex items-center justify-center px-6 gap-2 relative"
+                    cytest="personal_icon"
+                >
                     <FaUser color='white' />
                     <span>Profile</span>
                     {isShowOptions &&
                         <span className="z-68">
                         <div onClick={(e)=>{e.stopPropagation()}} className="flex flex-col absolute top-full left-0 bg-gray-100 text-[#0a66c2] font-medium border min-w-[150px] py-2">
                             {+current.role === 202 &&
-                                <Link className="p-2 w-full hover:bg-sky-100" to={`/${path.USER}/${path.PERSONAL}`} cytest="header_options">
+                                <Link className="p-2 w-full hover:bg-sky-100" to={`/${path.USER}/${path.PERSONAL}`} cytest="header_personal_options">
                                     Personal
                                 </Link>
                             }
 
                             {+current.role === 1411 &&
-                                <Link className="p-2 w-full hover:bg-sky-100 " to={`/${path.ADMIN}/${path.DASHBOARD}`} >
+                                <Link className="p-2 w-full hover:bg-sky-100 " to={`/${path.ADMIN}/${path.DASHBOARD}`} cytest="header_admin_options">
                                 Admin Workspace
                                 </Link>
                             }
 
-                            <span onClick={() => dispatch(logout())} className="p-2 w-full hover:bg-sky-100">
+                            <span onClick={() => dispatch(logout())} className="p-2 w-full hover:bg-sky-100" cytest="logout-btn">
                                 Logout
                             </span>
                         </div>
