@@ -33,7 +33,6 @@ const FeaturedProduct = () => {
             className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300 hover:scale-105 cursor-pointer"
             role="article"
             aria-label={`Service provider ${provider?.bussinessName}`}
-            cytest={""+idx}
           >
             <div className="relative h-36">
               <img
@@ -61,6 +60,7 @@ const FeaturedProduct = () => {
                 onClick={() => handleViewDetails(provider?._id)}
                 className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 aria-label={`View details for ${provider.name}`}
+                cytest={"view_provider_idx_"+idx}
               >
                 View Details
               </button>
@@ -73,7 +73,8 @@ const FeaturedProduct = () => {
             <img
             src="https://thietkethicong.org/Uploads/images/SALONTOC/1/thiet-ke-salon-toc%20(8).jpg"
             className="w-full h-full object-cover col-span-2 row-span-2 transition-transform duration-300 hover:scale-110"
-            alt="Book your service today"
+            alt="
+             your service today"
             />
             <img
                 src="https://cdn.dealtoday.vn/img/c500x334/bcab3057a7fb404ba36cd6dd372d9492.jpg?sign=iRf3wRKFPRC_hhDi48xuFg"

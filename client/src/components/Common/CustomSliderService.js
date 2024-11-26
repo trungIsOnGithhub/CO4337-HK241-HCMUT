@@ -108,7 +108,7 @@ const CustomSliderService = ({services, normal}) => {
     >
       <div className="relative" role="region" aria-label="Services carousel">
         <div className="flex items-stretch gap-8 transition-transform duration-300 ease-in-out">
-          {displayedServices.map((service) => (
+          {displayedServices.map((service,idx) => (
             <div
               key={service?.sv?._id}
               className="flex-1 h-fit rounded-md relative shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 cursor-pointer"
@@ -124,7 +124,7 @@ const CustomSliderService = ({services, normal}) => {
                 </div>
                 <div className='flex justify-between'>
                   <Button handleOnclick={()=>handleNavigateLearnMoreService(service?.sv)} style='px-[18px] rounded-md text-black border border-[#868e96] w-fit h-[40px] font-medium text-sm bg-white hover:bg-gray-200'> Learn moree</Button>
-                  <Button handleOnclick={()=>handleBookService(service?.sv)} style='px-[18px] rounded-md text-white bg-[#0a66c2] w-fit h-[40px] font-medium text-sm hover:bg-blue-600'> Book now</Button>
+                  <Button handleOnclick={()=>handleBookService(service?.sv)} style='px-[18px] rounded-md text-white bg-[#0a66c2] w-fit h-[40px] font-medium text-sm hover:bg-blue-600' cytest={"book_srv_from_slider_idx_"+idx}> Book now</Button>
                 </div>
               </div>
               <div className='absolute right-2 top-2 w-fit h-fit px-[8px] py-[4px] bg-[#0a66c2] text-white rounded-md'>

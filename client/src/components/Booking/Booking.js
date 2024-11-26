@@ -467,7 +467,9 @@ const Booking = () => {
                 timeOptions[el?._id].map((time, idx) => (
                 (
                   <div className={clsx('w-[15%] h-[46px] border border-[#0a66c2] rounded-md cursor-pointer flex items-center justify-center gap-1 hover:bg-blue-400 hover:border-none', (selectedStaff.time === convertM2H(time.start) && selectedStaff?.staff?._id === el?._id) && 'bg-blue-400 border-none')}
-                      key={idx} onClick={() =>{handleOnClick(time,el)}}>
+                      key={idx} onClick={() =>{handleOnClick(time,el)}}
+                    cytest={`timeslot_stff${index}_srv${idx}`}
+                  >
                     <span className='text-[14px] leading-5 font-medium'>{convertM2H(time.start)} - {convertM2H(time.end)}</span>
                     {/* <span className='text-[12px] leading-4 text-[#00143c]'>{(time[0]/60) >= 12 ? 'pm' : 'am'}</span> */}
                   </div>
@@ -552,7 +554,7 @@ const Booking = () => {
             }
           </div>
           <div className='text-right'>
-            {(selectedStaff?.staff && parseTimee(selectedStaff?.time) >= currentTime) && <Button style='px-6 py-1 rounded-md text-white bg-[#0a66c2] font-semibold w-fit h-fit mt-2' handleOnclick={handleCheckout}>Checkout</Button>}
+            {(selectedStaff?.staff && parseTimee(selectedStaff?.time) >= currentTime) && <Button style='px-6 py-1 rounded-md text-white bg-[#0a66c2] font-semibold w-fit h-fit mt-2' handleOnclick={handleCheckout} name="booking_checkout_btn">Checkout</Button>}
           </div>
         </div>
 
