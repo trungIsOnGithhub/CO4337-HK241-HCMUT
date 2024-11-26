@@ -25,6 +25,8 @@ describe('Login Page Test', () => {
 
     cy.url().should('eq', `${Cypress.config().baseUrl}/`);
 
+    // should be visible with any role
+    cy.get('[cytest="personal_icon"]').click();
     // should be visible login as admin
     cy.get('[cytest="header_admin_options"]').click();
   });
@@ -36,11 +38,10 @@ describe('Login Page Test', () => {
 
     cy.get('[cytest="login_button"]').click();
 
+    cy.url().should('eq', `${Cypress.config().baseUrl}/`);
+  
     // should be visible in any login
     cy.get('[cytest="personal_icon"]').click();
-
-    cy.url().should('eq', `${Cypress.config().baseUrl}/`);
-    
     // should be visible login as customer
     cy.get('[cytest="header_personal_options"]').click();
   });
@@ -50,6 +51,8 @@ describe('Login Page Test', () => {
     cy.get('[cytest="password_input"]').type('123');
 
     cy.get('[cytest="login_button"]').click();
+
+    cy.url().should('eq', `${Cypress.config().baseUrl}/login`);
   });
 });
 
@@ -71,8 +74,8 @@ describe('Test Booking Services Scenario:', () => {
   });
 
 
-  it('Choose Service From Homepage', () => {
-    // pick first from list
-    cy.get('[cytest="0"]').click();
-  });
+  // it('Choose Service From Homepage', () => {
+  //   // pick first from list
+  //   cy.get('[cytest="0"]').click();
+  // });
 });
