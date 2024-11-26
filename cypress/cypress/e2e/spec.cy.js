@@ -61,8 +61,8 @@ describe('Test Booking Services Scenario:', () => {
   before(() => {
     cy.visit('/login');
 
-    cy.get('[cytest="email_input"]').type(credential.CUSTOMER_EMAIL_USERNAME_TEST_SUCCESS);
-    cy.get('[cytest="password_input"]').type(credential.CUSTOMER_PASSWORD_TEST_SUCCESS);
+    cy.get('[cytest="email_input"]').type(credential.ADMIN_EMAIL_USERNAME_TEST_SUCCESS);
+    cy.get('[cytest="password_input"]').type(credential.ADMIN_PASSWORD_TEST_SUCCESS);
 
     cy.get('[cytest="login_button"]').click();
   });
