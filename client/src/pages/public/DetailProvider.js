@@ -814,7 +814,7 @@ const DetailProvider = () => {
 
         {
           (adminData && current?._id !== adminData[0]?._id) &&
-          <div className='fixed right-12 bottom-12'>
+          <div className='fixed right-6 bottom-6'>
             <span onClick={()=>handleShowChat()}
               className="cursor-pointer bg-[#0a66c2] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#084a93] transition-all"
             >
