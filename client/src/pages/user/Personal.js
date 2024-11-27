@@ -447,9 +447,9 @@ const Personal = () => {
           </div>
 
           <div className="space-y-6">
-            {[
-              { name: "email", icon: FiMail, type: "email", label: "Email" },
-              { name: "phone", icon: FiPhone, type: "tel", label: "Phone Number" },
+          {[
+    { name: "email", icon: FiMail, type: "email", label: "Email", readOnly: true },
+    { name: "phone", icon: FiPhone, type: "tel", label: "Phone Number" },
             ].map((field) => (
               <div key={field.name}>
                 <label
@@ -468,7 +468,12 @@ const Personal = () => {
                     name={field.name}
                     value={formData[field.name]}
                     onChange={handleInputChange}
-                    className={`block w-full pl-10 px-4 py-3 rounded-lg border ${errors[field.name] ? "border-red-300" : "border-blue-300"} focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 transition-all duration-300 hover:border-blue-400`}
+                    readOnly={field.readOnly} // Thêm thuộc tính readOnly cho email
+                    className={`block w-full pl-10 px-4 py-3 rounded-lg border ${
+                      errors[field.name] ? "border-red-300" : "border-blue-300"
+                    } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 transition-all duration-300 hover:border-blue-400 ${
+                      field.readOnly ? "bg-gray-100 cursor-not-allowed" : "" // Thêm hiệu ứng cho trường read-only
+                    }`}
                     aria-describedby={`${field.name}-error`}
                   />
                   {errors[field.name] && (
@@ -479,6 +484,7 @@ const Personal = () => {
                 </div>
               </div>
             ))}
+
 
             <div>
               <label
