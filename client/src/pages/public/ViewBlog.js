@@ -302,7 +302,10 @@ const ViewBlog = () => {
                 </div>
               </div>
               <div>
-                <h2 className="text-xl font-bold text-[#00143c] hover:underline cursor-pointer">{post?.provider_id?.bussinessName}</h2>
+                <h2 href={``}
+                  className="text-xl font-bold text-[#00143c] hover:underline cursor-pointer">
+                    {post?.provider_id?.bussinessName}
+                </h2>
               </div>
           </div>
           <div className="p-6">

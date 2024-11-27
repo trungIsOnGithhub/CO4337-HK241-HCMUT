@@ -1,59 +1,60 @@
 const credential = require('./credential');
 
-// describe('Test Example Template', () => {
-//   it('auto-passes', () => {
-//     cy.visit("/");
-//   })
-// })
-
-describe('Login Page Test', () => {
-  beforeEach('Init session manually', () => {
-    cy.visit("/login");
-  });
-  afterEach('Logout test session', () => {
-    // should be visible in any login
-    cy.visit("/logout");
+describe('Test Example Template', () => {
+  it('auto-passes', () => {
+    cy.visit("/");
   })
+})
 
-  it('Success load after admin login - Header', () => {
-    // cy.get('[cytest="header_options"]').contains("Admin Workspace");
-    cy.get('[cytest="email_input"]').type(credential.ADMIN_EMAIL_USERNAME_TEST_SUCCESS);
-    cy.get('[cytest="password_input"]').type(credential.ADMIN_PASSWORD_TEST_SUCCESS);
 
-    cy.get('[cytest="login_button"]').click();
+// describe('Login Page Test', () => {
+//   beforeEach('Init session manually', () => {
+//     cy.visit("/login");
+//   });
+//   afterEach('Logout test session', () => {
+//     // should be visible in any login
+//     cy.visit("/logout");
+//   })
 
-    cy.url().should('eq', `${Cypress.config().baseUrl}/`);
+//   it('Success load after admin login - Header', () => {
+//     // cy.get('[cytest="header_options"]').contains("Admin Workspace");
+//     cy.get('[cytest="email_input"]').type(credential.ADMIN_EMAIL_USERNAME_TEST_SUCCESS);
+//     cy.get('[cytest="password_input"]').type(credential.ADMIN_PASSWORD_TEST_SUCCESS);
 
-    // should be visible with any role
-    cy.get('[cytest="personal_icon"]').click();
-    // should be visible login as admin
-    cy.get('[cytest="header_admin_options"]').click();
-  }); 
+//     cy.get('[cytest="login_button"]').click();
 
-  it('Success load after customer login - Header', () => {
-    // cy.get('[cytest="header_options"]').contains("Admin Workspace");
-    cy.get('[cytest="email_input"]').type(credential.CUSTOMER_EMAIL_USERNAME_TEST_SUCCESS);
-    cy.get('[cytest="password_input"]').type(credential.CUSTOMER_PASSWORD_TEST_SUCCESS);
+//     cy.url().should('eq', `${Cypress.config().baseUrl}/`);
 
-    cy.get('[cytest="login_button"]').click();
+//     // should be visible with any role
+//     cy.get('[cytest="personal_icon"]').click();
+//     // should be visible login as admin
+//     cy.get('[cytest="header_admin_options"]').click();
+//   }); 
 
-    cy.url().should('eq', `${Cypress.config().baseUrl}/`);
+//   it('Success load after customer login - Header', () => {
+//     // cy.get('[cytest="header_options"]').contains("Admin Workspace");
+//     cy.get('[cytest="email_input"]').type(credential.CUSTOMER_EMAIL_USERNAME_TEST_SUCCESS);
+//     cy.get('[cytest="password_input"]').type(credential.CUSTOMER_PASSWORD_TEST_SUCCESS);
+
+//     cy.get('[cytest="login_button"]').click();
+
+//     cy.url().should('eq', `${Cypress.config().baseUrl}/`);
   
-    // should be visible in any login
-    cy.get('[cytest="personal_icon"]').click();
-    // should be visible login as customer
-    cy.get('[cytest="header_personal_options"]').click();
-  });
+//     // should be visible in any login
+//     cy.get('[cytest="personal_icon"]').click();
+//     // should be visible login as customer
+//     cy.get('[cytest="header_personal_options"]').click();
+//   });
 
-  it('Failed login', () => {
-    cy.get('[cytest="email_input"]').type('123asd');
-    cy.get('[cytest="password_input"]').type('123');
+//   it('Failed login', () => {
+//     cy.get('[cytest="email_input"]').type('123asd');
+//     cy.get('[cytest="password_input"]').type('123');
 
-    cy.get('[cytest="login_button"]').click();
+//     cy.get('[cytest="login_button"]').click();
 
-    cy.url().should('eq', `${Cypress.config().baseUrl}/login`);
-  });
-});
+//     cy.url().should('eq', `${Cypress.config().baseUrl}/login`);
+//   });
+// });
 
 
 // describe('Test: Book Service From Homepage:', () => {
@@ -138,3 +139,30 @@ describe('Login Page Test', () => {
 //     cy.get('#firstName').should('not.have.value');
 //   });
 // });
+
+describe('User Interact With Blog', () => {
+  // login before all test
+  before(() => {
+    cy.visit('/login');
+
+    cy.get('[cytest="email_input"]').type(credential.ADMIN_EMAIL_USERNAME_TEST_SUCCESS);
+    cy.get('[cytest="password_input"]').type(credential.ADMIN_PASSWORD_TEST_SUCCESS);
+
+    cy.get('[cytest="login_button"]').click();
+  });
+
+
+  it('Search Blog On Filter And View', () => {
+    cy.visit("/blogs");
+
+    cy.get('#q').type('cy8ey080840926v8mn9831zx7s988xa***w55##$');
+    // this term search result in no post
+
+    cy.get('[cytest="blog_item"').should('not.exists');
+
+    cy.get('#q').type('dia diem');
+
+    cy.get('[cytest="blog_item"').first().click()
+  })
+
+})

@@ -324,6 +324,7 @@ useEffect(() => {
                       onClick={() => handleChooseBlogPost(blog?._id || blog?.id)}
                       key={idx}
                       className="cursor-pointer bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:transform hover:scale-[1.02]"
+                      cytest="blog_item"
                     >
                       <div className="md:flex">
                         <div className="md:flex-shrink-0">

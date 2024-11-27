@@ -4,7 +4,7 @@ const ADMIN_PASSWORD_TEST_SUCCESS = "123";
 const EMAIL_USERNAME_TEST_FAIL = "fail@mail.com";
 const PASSWORD_TEST_FAIL = "123";
 
-const CUSTOMER_EMAIL_USERNAME_TEST_SUCCESS = "nhung3@hotmail.com";
+const CUSTOMER_EMAIL_USERNAME_TEST_SUCCESS = "trung.nguyen106@hcmut.edu.vn";
 const CUSTOMER_PASSWORD_TEST_SUCCESS = "123";
 
 const SAMPLE_STAFF_DATA = {
