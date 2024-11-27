@@ -248,8 +248,8 @@ const Personal = () => {
     switch (name) {
       case "firstName":
       case "lastName":
-        if (!/^[A-Za-z]{2,}$/.test(value)) {
-          error = `${name === "firstName" ? "First" : "Last"} name must contain only letters and be at least 2 characters long`;
+        if (!/^[\p{L}\s]{2,}$/u.test(value)) {
+          error = `${name === "firstName" ? "First" : "Last"} name must contain only letters (including accented characters) and be at least 2 characters long`;
         }
         break;
       case "email":
