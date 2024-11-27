@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-const Button = ({children, handleOnclick, style, fullWidth, name="", type = 'button', cytest="" }) => {
+const Button = ({children, handleOnclick, style, fullWidth, name="", type = 'button', cytest=""}) => {
   return (
     <button type= {type}
     cytest={cytest}

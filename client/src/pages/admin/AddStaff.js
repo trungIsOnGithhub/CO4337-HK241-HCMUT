@@ -200,7 +200,7 @@ const AddStaff = () => {
                     )}
 
                     <div className='mt-8'>
-                        <Button type='submit'>
+                        <Button type='submit' cytest="add_new_staff_btn">
                             Add a new staff
                         </Button>
                     </div>
