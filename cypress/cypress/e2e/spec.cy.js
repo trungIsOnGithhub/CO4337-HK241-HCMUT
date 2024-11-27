@@ -1,10 +1,10 @@
 const credential = require('./credential');
 
-describe('Test Example Template', () => {
-  it('auto-passes', () => {
-    cy.visit("/");
-  })
-})
+// describe('Test Example Template', () => {
+//   it('auto-passes', () => {
+//     cy.visit("/");
+//   })
+// })
 
 
 // describe('Login Page Test', () => {
@@ -157,10 +157,13 @@ describe('User Interact With Blog', () => {
 
     cy.get('#q').type('cy8ey080840926v8mn9831zx7s988xa***w55##$');
     // this term search result in no post
+    cy.get('[cytest="search_blog_btn"]').click();
 
-    cy.get('[cytest="blog_item"').should('not.exists');
+    cy.get('[cytest="blog_item"').should('not.exist');
 
     cy.get('#q').type('dia diem');
+    // this term search should has some post in fixtures
+    cy.get('[cytest="search_blog_btn"]').click();
 
     cy.get('[cytest="blog_item"').first().click()
   })

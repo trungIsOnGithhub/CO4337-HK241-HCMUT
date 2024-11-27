@@ -286,6 +286,7 @@ useEffect(() => {
                 setOffset(0);
               }}
               style="px-4 py-2 rounded-md text-white bg-blue-600 font-semibold"
+              cytest="search_blog_btn"
             >
               <span className="flex justify-center gap-2 items-center">
                 <FaSearch /><span>Search</span>
