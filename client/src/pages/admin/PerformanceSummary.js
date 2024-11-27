@@ -171,13 +171,13 @@ function PerformanceSummary({ providerId }) {
               </div>
               <div className="flex justify-between items-center mt-2">
                 <span>Occupancy rate</span>
-                <span>{service.occupancy?.toFixed(2)}%</span>
+                <span>{(service.occupancy < 100.0 ? service.occupancy : 100.0)?.toFixed(2)}%</span>
               </div>
             </div>
             {/* Occupancy Rate Bar */}
             <div className="w-full bg-gray-200 h-1 rounded-full mt-2">
               <div
-                style={{ width: `${service.occupancy}%` }}
+                style={{ width: `${service.occupancy < 100.0 ? service.occupancy : 100.0}%` }}
                 className="bg-blue-600 h-1 rounded-full"
               ></div>
             </div>
