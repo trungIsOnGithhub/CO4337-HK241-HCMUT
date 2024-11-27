@@ -153,7 +153,7 @@ const MessageBox = ({currentChat}) => {
 
       {/* Expanded MessageBox */}
 
-        <div className="w-full max-w-md md:max-w-lg lg:max-w-2xl min-h-[60vh] bg-white shadow-lg rounded-lg flex flex-col overflow-hidden border border-[#0a66c2] transition-all">
+        <div className="w-full max-w-[350px] min-h-[60vh] max-h-[75vh] bg-white shadow-lg rounded-lg flex flex-col overflow-hidden border border-[#0a66c2] transition-all">
           {/* Header */}
           <div className="bg-[#0a66c2] text-white px-4 py-3 flex items-start space-x-3 relative">
             <img
