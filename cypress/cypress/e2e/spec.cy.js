@@ -288,5 +288,10 @@ describe('Service Provider Register Account', () => {
     cy.get('[name="address"]').type(credential.SAMPLE_SP_REGISTER_DATA.addressFeed);
 
     cy.get('[cytest="goong_location_option"]').first().click();
+
+    cy.get('[cytest="close_goong_map"]').click();
+
+    cy.get('[cytest="sp_register_open_time_select"]').click();
+    cy.get('[cytest="sp_register_signup_btn"]').click();
   })
 })

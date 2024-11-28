@@ -843,7 +843,9 @@ const ServiceProviderRegister = () => {
                                 )}
                             </div>
 
-                            <button className="bg-[#0a66c2] hover:bg-blue-700 text-sm text-white font-bold py-3 px-4 rounded-md w-full mx-auto" onClick={() => { setIsInTimeForm(prev => !prev) }}>
+                            <button className="bg-[#0a66c2] hover:bg-blue-700 text-sm text-white font-bold py-3 px-4 rounded-md w-full mx-auto" onClick={() => { setIsInTimeForm(prev => !prev) }}
+                                cytest="sp_register_open_time_select"
+                            >
                                 <span className="flex gap-2 w-full justify-center items-center">
                                     <FaClock />
                                     {isInTimeForm ? 'Close Time Select' : 'Open Time Select'}
@@ -854,7 +856,8 @@ const ServiceProviderRegister = () => {
                                 onClick={handleSubmit}
                                 disabled={isLoading}
                                 className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#0a66c2] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
-                                >
+                                cytest="sp_register_signup_btn"
+                            >
                                 {isLoading ? (
                                     <span className="flex items-center">
                                     <FaSpinner className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
@@ -929,7 +932,9 @@ const ServiceProviderRegister = () => {
 
             <div className={clsx("absolute inset-0 w-screen h-screen", isMapVisible ? 'flex items-center justify-center' : 'hidden')}>
                 <div ref={mapContainer} className={clsx("absolute w-[75%] h-[90%] border-2 border-gray-300 rounded-md", isMapVisible ? 'block' : 'hidden')} style={{ zIndex: 1000 }}>
-                    <button onClick={handleCloseMap} className={clsx("absolute top-2 right-2 bg-red-500 text-white p-2 rounded", isMapVisible ? 'block' : 'hidden')} style={{ zIndex: 1000 }}>X</button>
+                    <button onClick={handleCloseMap} className={clsx("absolute top-2 right-2 bg-red-500 text-white p-2 rounded", isMapVisible ? 'block' : 'hidden')} style={{ zIndex: 1000 }}
+                        cytest="close_goong_map"
+                    >X</button>
                 </div>
             </div>
 
