@@ -8,6 +8,7 @@ const CUSTOMER_EMAIL_USERNAME_TEST_SUCCESS = "trung.nguyen106@hcmut.edu.vn";
 const CUSTOMER_PASSWORD_TEST_SUCCESS = "123";
 
 const SP_AVATAR_IMAGE_PATH = 'cypress/fixtures/sp_avatar.jpg';
+const EXAMPLE_IMAGE = 'cypress/fixtures/example.png';
 
 const SAMPLE_STAFF_DATA = {
     firstName: 'Sample Name',
@@ -37,5 +38,6 @@ module.exports = {
     PASSWORD_TEST_FAIL,
     SAMPLE_STAFF_DATA,
     SAMPLE_SP_REGISTER_DATA,
-    SP_AVATAR_IMAGE_PATH
+    SP_AVATAR_IMAGE_PATH,
+    EXAMPLE_IMAGE
 }

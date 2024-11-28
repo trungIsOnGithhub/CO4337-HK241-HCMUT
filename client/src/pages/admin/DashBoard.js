@@ -455,20 +455,19 @@ const DashBoard = () => {
       <div className="flex justify-start gap-4">
         <div className="w-[65%]">
           <CenterChart providerId={currentUser.provider_id?._id}/>
-        </div>
-        <div className="w-[33%]">
-          <GridPercentageCalendar providerId={currentUser.provider_id?._id}/>
-        </div>
-      </div>
-
-      <div className="flex justify-center gap-4">
-        <div className="w-[65%]">
           <OrdersList />
         </div>
         <div className="w-[33%]">
+          <GridPercentageCalendar providerId={currentUser.provider_id?._id}/>
           <PerformanceSummary providerId={currentUser.provider_id?._id}/>
         </div>
       </div>
+{/* 
+      <div className="flex justify-center gap-4">
+        <div className="w-[65%]">
+
+        </div>
+      </div> */}
 
         </div>
       </div>

@@ -271,10 +271,11 @@ const credential = require('./credential');
 
 
 describe('Service Provider Register Account', () => {
-  it('Normal Flow - Provide Full Information No Images', () => {
+  it('Normal Flow - Provide Full Information No Working Time', () => {
     cy.visit("/sp_register");
 
     cy.get('[name="avatar"]').selectFile(credential.SAMPLE_SP_REGISTER_DATA.avatar);
+
     cy.get('[name="firstName"]').type(credential.SAMPLE_SP_REGISTER_DATA.firstName);
     cy.get('[name="lastName"]').type(credential.SAMPLE_SP_REGISTER_DATA.lastName);
     cy.get('[name="mobile"]').type(credential.SAMPLE_SP_REGISTER_DATA.mobile);
@@ -282,6 +283,9 @@ describe('Service Provider Register Account', () => {
     cy.get('[name="password"]').type(credential.SAMPLE_SP_REGISTER_DATA.password);
 
     cy.get('[cytest="sp_register_next_btn"]').click();
+
+    // opening new section upload images
+    cy.get('[name="avatar"]').selectFile(credential.EXAMPLE_IMAGE);
 
     cy.get('[name="bussinessName"]').type(credential.SAMPLE_SP_REGISTER_DATA.bussinessName);
 
