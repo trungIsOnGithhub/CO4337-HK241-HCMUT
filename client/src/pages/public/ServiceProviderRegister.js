@@ -844,7 +844,7 @@ const ServiceProviderRegister = () => {
                             </div>
 
                             <button className="bg-[#0a66c2] hover:bg-blue-700 text-sm text-white font-bold py-3 px-4 rounded-md w-full mx-auto" onClick={() => { setIsInTimeForm(prev => !prev) }}
-                                cytest="sp_register_open_time_select"
+                                cytest={isInTimeForm ? "sp_register_close_time_select" : "sp_register_open_time_select"}
                             >
                                 <span className="flex gap-2 w-full justify-center items-center">
                                     <FaClock />

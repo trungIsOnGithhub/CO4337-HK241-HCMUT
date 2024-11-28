@@ -292,6 +292,8 @@ describe('Service Provider Register Account', () => {
     cy.get('[cytest="close_goong_map"]').click();
 
     cy.get('[cytest="sp_register_open_time_select"]').click();
+    cy.get('[cytest="sp_register_close_time_select"]').click();
+
     cy.get('[cytest="sp_register_signup_btn"]').click();
   })
 })
