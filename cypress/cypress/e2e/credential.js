@@ -7,6 +7,8 @@ const PASSWORD_TEST_FAIL = "123";
 const CUSTOMER_EMAIL_USERNAME_TEST_SUCCESS = "trung.nguyen106@hcmut.edu.vn";
 const CUSTOMER_PASSWORD_TEST_SUCCESS = "123";
 
+const SP_AVATAR_IMAGE_PATH = 'cypress/fixtures/sp_avatar.jpg';
+
 const SAMPLE_STAFF_DATA = {
     firstName: 'Sample Name',
     lastName: 'Staff',
@@ -18,12 +20,12 @@ const SAMPLE_SP_REGISTER_DATA = {
     firstName: 'Provider Admin',
     lastName: 'Sample',
     email: 'nviettrung20@gmail.com',
-    avatar: example.png,
+    avatar: SP_AVATAR_IMAGE_PATH,
     images: null,
     mobile: '0808080899',
     password: '12345678',
     bussinessName: 'Sample Provider',
-    address: '',
+    addressFeed: '268 Ly Thuong Kiet',
 }
 
 module.exports = {
@@ -34,5 +36,6 @@ module.exports = {
     EMAIL_USERNAME_TEST_FAIL,
     PASSWORD_TEST_FAIL,
     SAMPLE_STAFF_DATA,
-    SAMPLE_SP_REGISTER_DATA
+    SAMPLE_SP_REGISTER_DATA,
+    SP_AVATAR_IMAGE_PATH
 }

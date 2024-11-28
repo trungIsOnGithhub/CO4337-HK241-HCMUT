@@ -619,7 +619,7 @@ const ServiceProviderRegister = () => {
                                         name="avatar"
                                         accept="image/*"
                                         onChange={handleAvatarChange}
-                                        className="hidden"
+                                        // className="hidden"
                                     />
                                 </label>
                             </div>
@@ -726,7 +726,9 @@ const ServiceProviderRegister = () => {
                             )}
                             </div>
 
-                            <button onClick={handleNextStep} className="w-full h-[40px] bg-[#0a66c2] text-white flex justify-center items-center rounded-md p-4 font-medium">Next</button>
+                            <button onClick={handleNextStep} className="w-full h-[40px] bg-[#0a66c2] text-white flex justify-center items-center rounded-md p-4 font-medium"
+                                cytest="sp_register_next_btn"
+                            >Next</button>
                             <p className="mt-2 text-center text-sm text-gray-600">
                                 Already have an account?{" "}
                                 <button onClick={() => {navigate(`/${path.LOGIN}`)}} className="font-medium text-[#0a66c2]">
@@ -828,6 +830,7 @@ const ServiceProviderRegister = () => {
                                                     key={suggestion.place_id}
                                                     onClick={() => handleSuggestionSelect(suggestion)}
                                                     className="p-2 cursor-pointer hover:bg-gray-200"
+                                                    cytest="goong_location_option"
                                                 >
                                                     {suggestion.description}
                                                 </li>

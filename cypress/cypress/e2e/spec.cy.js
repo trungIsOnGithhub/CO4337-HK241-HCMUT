@@ -1,3 +1,6 @@
+Cypress.config('viewportWidth', 1224);
+Cypress.config('viewportHeight', 860);
+
 const credential = require('./credential');
 
 // describe('Test Example Template', () => {
@@ -268,16 +271,22 @@ const credential = require('./credential');
 
 
 describe('Service Provider Register Account', () => {
-  it('Search and View Detail, Change Status', () => {
+  it('Normal Flow - Provide Full Information No Images', () => {
     cy.visit("/sp_register");
 
-    cy.get('[name="firstName"]').click(credential.SAMPLE_SP_REGISTER_DATA.firstName);
-    cy.get('[name="lastName"]').click(credential.SAMPLE_SP_REGISTER_DATA.lastName);
-    cy.get('[name="mobile"]').click(credential.SAMPLE_SP_REGISTER_DATA.mobile);
-    cy.get('[name="email"]').click(credential.SAMPLE_SP_REGISTER_DATA.email);
-
-    cy.get('[name="bussinessName"]').click(credential.SAMPLE_SP_REGISTER_DATA.bussinessName);
     cy.get('[name="avatar"]').selectFile(credential.SAMPLE_SP_REGISTER_DATA.avatar);
+    cy.get('[name="firstName"]').type(credential.SAMPLE_SP_REGISTER_DATA.firstName);
+    cy.get('[name="lastName"]').type(credential.SAMPLE_SP_REGISTER_DATA.lastName);
+    cy.get('[name="mobile"]').type(credential.SAMPLE_SP_REGISTER_DATA.mobile);
+    cy.get('[name="email"]').type(credential.SAMPLE_SP_REGISTER_DATA.email);
+    cy.get('[name="password"]').type(credential.SAMPLE_SP_REGISTER_DATA.password);
 
+    cy.get('[cytest="sp_register_next_btn"]').click();
+
+    cy.get('[name="bussinessName"]').type(credential.SAMPLE_SP_REGISTER_DATA.bussinessName);
+
+    cy.get('[name="address"]').type(credential.SAMPLE_SP_REGISTER_DATA.addressFeed);
+
+    cy.get('[cytest="goong_location_option"]').first().click();
   })
 })

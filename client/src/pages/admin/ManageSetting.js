@@ -18,8 +18,8 @@ function ManageSetting() {
   const [minTimeCanceling, setMinTimeCanceling] = useState('Disabled');
   const [showStaffDetailBooking, setShowStaffDetailBooking] = useState(false);
   const [daysInAdvance, setDaysInAdvance] = useState(100);
-  const [dateFormat, setDateFormat] = useState('MMMM D, YYYY');
-  const [timeFormat, setTimeFormat] = useState('h:mm a');
+  // const [dateFormat, setDateFormat] = useState('MMMM D, YYYY');
+  // const [timeFormat, setTimeFormat] = useState('h:mm a');
   // // const [timeZone, setTimeZone] = useState('Bangkok');
   // const [firstDayOfWeek, setFirstDayOfWeek] = useState('Monday');
   // const [phoneCountryCode, setPhoneCountryCode] = useState('United States');
