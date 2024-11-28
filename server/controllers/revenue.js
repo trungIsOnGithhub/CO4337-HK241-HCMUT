@@ -634,6 +634,11 @@ let getCustomerDataByMonth = asyncHandler(async (req, res) => {
             'info.0.provider': spid,
             orderBy: customer._id
         });
+        pastOrder.filter(order => {
+            let [day, month, year] = order.info[0].date.split('/').map(Number);
+
+            return month < currMonth && year <= currYear;
+        });
 
 
         let havePastOrder = false;
