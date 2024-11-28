@@ -22,7 +22,7 @@ const createServiceProvider = asyncHandler(async(req, res)=>{
             success: false,
             mes: "Missing input"
         })}
-    
+
     let user = await User.findOne({email})
     if(user){
         return res.status(400).json({
@@ -155,7 +155,6 @@ const getAllServiceProvider = asyncHandler(async(req, res) => {
 
     // chuyen tu chuoi json sang object
     const formatedQueries = JSON.parse(queryString);
-    
     let queryCommand = ServiceProvider.find(formatedQueries).select('-createdAt -updatedAt');
     
     try {

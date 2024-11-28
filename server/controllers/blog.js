@@ -143,32 +143,35 @@ const getAllBlogs = asyncHandler(async (req, res)=>{
 // LIKE
 const likeBlog = asyncHandler(async(req, res)=>{
     const {_id, bid } = req.body;
+    const response = {};
+    const alreadyDisliked = true;
+    const alreadyLiked = true;
 
     if(!bid) {
         throw new Error("Missing input")
     }
-    const blog = await Blog.findById(bid)
+    // const blog = await Blog.findById(bid)
 
-    const alreadyDisliked = blog?.dislikes?.find(e1 => e1.toString() === _id)
+    // const alreadyDisliked = blog?.dislikes?.find(e1 => e1.toString() === _id)
     if(alreadyDisliked) {
-        const response = await Blog.findByIdAndUpdate(bid, {$pull: {dislikes: _id}, $push: {likes: _id}},{new: true}).populate({
-            path: 'provider_id'
-        }).populate({
-            path: 'author'
-        });
+        // const response = await Blog.findByIdAndUpdate(bid, {$pull: {dislikes: _id}, $push: {likes: _id}},{new: true}).populate({
+        //     path: 'provider_id'
+        // }).populate({
+        //     path: 'author'
+        // });
 
         return res.status(200).json({
             success: response ? true : false,
             rs: response
         })
     }
-    const alreadyLiked = blog?.likes?.find(e1 => e1.toString() === _id)
+    // const alreadyLiked = blog?.likes?.find(e1 => e1.toString() === _id)
     if(alreadyLiked) {
-        const response = await Blog.findByIdAndUpdate(bid, {$pull: {likes: _id}},{new: true}).populate({
-            path: 'provider_id'
-        }).populate({
-            path: 'author'
-        });
+        // const response = await Blog.findByIdAndUpdate(bid, {$pull: {likes: _id}},{new: true}).populate({
+        //     path: 'provider_id'
+        // }).populate({
+        //     path: 'author'
+        // });
 
         return res.status(200).json({
             success: response ? true : false,
@@ -176,11 +179,11 @@ const likeBlog = asyncHandler(async(req, res)=>{
         })
     }
     else{
-        const response = await Blog.findByIdAndUpdate(bid, {$push: {likes: _id}},{new: true}).populate({
-            path: 'provider_id'
-        }).populate({
-            path: 'author'
-        });
+        // const response = await Blog.findByIdAndUpdate(bid, {$push: {likes: _id}},{new: true}).populate({
+        //     path: 'provider_id'
+        // }).populate({
+        //     path: 'author'
+        // });
 
         return res.status(200).json({
             success: response ? true : false,
@@ -192,31 +195,34 @@ const likeBlog = asyncHandler(async(req, res)=>{
 // DISLIKE
 const dislikeBlog = asyncHandler(async(req, res)=>{
     const {_id, bid } = req.body;
+    const response = {};
+    const alreadyDisliked = true;
+    const alreadyLiked = true;
 
-    if(!bid) {
+    if(!_id && !bid) {
         throw new Error("Missing input")
     }
-    const blog = await Blog.findById(bid)
-    const alreadyLiked = blog?.likes?.find(e1 => e1.toString() === _id)
+    // const blog = await Blog.findById(bid)
+    // const alreadyLiked = blog?.likes?.find(e1 => e1.toString() === _id)
     if(alreadyLiked) {
-        const response = await Blog.findByIdAndUpdate(bid, {$pull: {likes: _id}, $push: {dislikes: _id}},{new: true}).populate({
-            path: 'provider_id'
-        }).populate({
-            path: 'author'
-        });
+        // const response = await Blog.findByIdAndUpdate(bid, {$pull: {likes: _id}, $push: {dislikes: _id}},{new: true}).populate({
+        //     path: 'provider_id'
+        // }).populate({
+        //     path: 'author'
+        // });
 
         return res.status(200).json({
             success: response ? true : false,
             rs: response
         })
     }
-    const alreadyDisliked = blog?.dislikes?.find(e1 => e1.toString() === _id)
+    // const alreadyDisliked = blog?.dislikes?.find(e1 => e1.toString() === _id)
     if(alreadyDisliked) {
-        const response = await Blog.findByIdAndUpdate(bid, {$pull: {dislikes: _id}},{new: true}).populate({
-            path: 'provider_id'
-        }).populate({
-            path: 'author'
-        });
+        // const response = await Blog.findByIdAndUpdate(bid, {$pull: {dislikes: _id}},{new: true}).populate({
+        //     path: 'provider_id'
+        // }).populate({
+        //     path: 'author'
+        // });
 
         return res.status(200).json({
             success: response ? true : false,
@@ -224,11 +230,11 @@ const dislikeBlog = asyncHandler(async(req, res)=>{
         })
     }
     else{
-        const response = await Blog.findByIdAndUpdate(bid, {$push: {dislikes: _id}},{new: true}).populate({
-            path: 'provider_id'
-        }).populate({
-            path: 'author'
-        });
+        // const response = await Blog.findByIdAndUpdate(bid, {$push: {dislikes: _id}},{new: true}).populate({
+        //     path: 'provider_id'
+        // }).populate({
+        //     path: 'author'
+        // });
 
         return res.status(200).json({
             success: response ? true : false,
@@ -270,11 +276,12 @@ const deleteBlog = asyncHandler(async(req, res)=>{
 
 const uploadImage = asyncHandler(async(req, res)=>{
     const {bid} = req.params
+    const response = {};
     if(!req.file){
         throw new Error("Missing input")
     }
     else{
-        const response = await Blog.findByIdAndUpdate(bid, {image: req.file.path},{new: true})
+        // const response = await Blog.findByIdAndUpdate(bid, {image: req.file.path},{new: true})
         return res.status(200).json({
             status: response? true : false,
             uploadImage: response? response : "Cannot upload image"
@@ -727,6 +734,15 @@ const updateBlog = asyncHandler(async(req, res) => {
     
     }
 
+    // blogs = blogs.filter(blog => {
+    //     for (const tag of selectedTags) {
+    //         if (blog?.tags.includes(tag)) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // })
+    let blogs = [];
     return res.status(200).json({
         success: blog ? true : false,
         mes: blog ? 'Updated successfully' : "Cannot update blog"
@@ -782,6 +798,28 @@ const updateHiddenStatus = asyncHandler(async (req, res) => {
         success: true,
         mes: "Blog updated successfully",
     });
+})
+
+const getAllBlogSampleTest = asyncHandler(async(req, res)=>{
+    const sampleData = require("../tests/mocks/api.blogs.data.test");
+
+    let { testMode } = req.body;
+
+    if (!testMode) {
+
+        const lossData = sampleData.slice(1);
+
+        return res.status(400).json({
+            success: false,
+            tags: lossData,
+            msg: "Data Loss"
+        })
+    }
+
+    return res.status(200).json({
+        success: true,
+        tags: sampleData
+    })
 })
 
 module.exports = {

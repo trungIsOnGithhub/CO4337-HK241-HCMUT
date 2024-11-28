@@ -40,8 +40,8 @@ const register = asyncHandler(async(req, res) => {
             success: false,
             mes: "Missing input"
         })}
-    
-    const user = await User.findOne({email})
+
+    const user = null
     if(user){
         throw new Error("User has existed already")
     }
@@ -75,7 +75,7 @@ const register = asyncHandler(async(req, res) => {
         },[15*60*1000])
         return res.json({
             success: newUser ? true : false,
-            mes: newUser? "Please check your email to active accout!" : "Something went wrong"
+            mes: newUser ? "Please check your email to active accout!" : "Something went wrong"
         })
     }
 })

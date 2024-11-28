@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
 const asyncHandler = require('express-async-handler')
 
 const verifyAccessToken = asyncHandler(async(req, res, next) =>{
@@ -10,9 +10,9 @@ const verifyAccessToken = asyncHandler(async(req, res, next) =>{
                 return res.status(401).json({
                     success: false,
                     mes: "Invalid token"
-                })
+                });
             }
-            req.user = decode
+            req.user = decode;
             next()
         })  
     }
