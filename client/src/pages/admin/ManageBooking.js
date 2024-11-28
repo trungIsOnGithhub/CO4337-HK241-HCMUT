@@ -372,7 +372,9 @@ const ManageBooking = () => {
                     <span className='text-[#0a66c2] font-medium'>{el?.info[0]?.time}</span>
                     <span className='text-xs text-gray-400'>{el?.info[0]?.date}</span>
                   </span>
-                  <span onClick={()=>handleNavigateBookingDetail(el?._id)} className='w-[25%] py-2 text-[#00143c] text-sm flex justify-start font-medium'>
+                  <span onClick={()=>handleNavigateBookingDetail(el?._id)} className='w-[25%] py-2 text-[#00143c] text-sm flex justify-start font-medium'
+                    cytest="booking_name_click_to_view_detail"
+                  >
                     <div className='pl-[4px] flex items-center' style={{borderLeft: `4px solid ${getColorByCategory(el?.serviceDetails?.category)}` }}>
                       {el?.serviceDetails?.name}
                     </div>

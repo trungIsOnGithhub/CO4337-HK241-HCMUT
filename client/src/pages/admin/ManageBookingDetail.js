@@ -79,7 +79,9 @@ const ManageBookingDetail = ({ dispatch, navigate }) => {
       </div>
       <div className="relative z-10"> {/* Thêm lớp này để đảm bảo dòng chữ không bị che mất */}
         <div className='w-full h-20 flex items-end gap-1 p-4'>
-          <div onClick={handleBackManageBooking} className='text-[#00143c] cursor-pointer'><FaArrowLeft size={28}/></div>
+          <div onClick={handleBackManageBooking} className='text-[#00143c] cursor-pointer'
+            cytest="manage_booking_detail_handle_back_manage"
+          ><FaArrowLeft size={28}/></div>
           <span className='text-[#00143c] text-3xl font-semibold'>Booking Detail</span>
         </div>
         <div className='w-[95%] min-h-[600px] shadow-2xl rounded-md bg-white ml-4 mb-[200px] px-6 py-4 flex flex-col gap-4'>
@@ -222,18 +224,21 @@ const ManageBookingDetail = ({ dispatch, navigate }) => {
                               <button
                                 onClick={() => handleStatusChange("Pending")}
                                 className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors duration-300 ${status === "Pending" ? "bg-yellow-200 text-yellow-800" : "bg-gray-200 text-gray-600 hover:bg-yellow-100"}`}
+                                cytest="manage_booking_detail_change_status_btn"
                               >
                                 Pending
                               </button>
                               <button
                                 onClick={() => handleStatusChange("Successful")}
                                 className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors duration-300 ${status === "Successful" ? "bg-green-200 text-green-800" : "bg-gray-200 text-gray-600 hover:bg-green-100"}`}
+                                cytest="manage_booking_detail_change_status_btn"
                               >
                                 Successful
                               </button>
                               <button
                                 onClick={() => handleStatusChange("Cancelled")}
                                 className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors duration-300 ${status === "Cancelled" ? "bg-red-200 text-red-800" : "bg-gray-200 text-gray-600 hover:bg-red-100"}`}
+                                cytest="manage_booking_detail_change_status_btn"
                               >
                                 Cancelled
                               </button>

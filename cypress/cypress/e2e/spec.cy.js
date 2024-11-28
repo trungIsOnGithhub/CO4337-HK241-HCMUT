@@ -140,32 +140,99 @@ const credential = require('./credential');
 //   });
 // });
 
-describe('User Interact With Blog', () => {
-  // login before all test
-  before(() => {
+// describe('User Interact With Blog', () => {
+//   // login before all test
+//   before(() => {
+//     cy.visit('/login');
+
+//     cy.get('[cytest="email_input"]').type(credential.ADMIN_EMAIL_USERNAME_TEST_SUCCESS);
+//     cy.get('[cytest="password_input"]').type(credential.ADMIN_PASSWORD_TEST_SUCCESS);
+
+//     cy.get('[cytest="login_button"]').click();
+//   });
+
+
+//   it('Search Blog On Filter And View', () => {
+//     cy.visit("/blogs");
+
+//     cy.get('#q').type('cy8ey080840926v8mn9831zx7s988xa***w55##$');
+//     // this term search result in no post
+//     cy.get('[cytest="search_blog_btn"]').click();
+
+//     cy.get('[cytest="blog_item"').should('not.exist');
+
+//     cy.get('#q').type('dia diem');
+//     // this term search should has some post in fixtures
+//     cy.get('[cytest="search_blog_btn"]').click();
+
+//     cy.get('[cytest="blog_item"').first().click()
+//   })
+
+// })
+
+describe('Admin View And Mange Order', () => {
+
+  it('Search and View Detail, Change Status', () => {
     cy.visit('/login');
 
     cy.get('[cytest="email_input"]').type(credential.ADMIN_EMAIL_USERNAME_TEST_SUCCESS);
     cy.get('[cytest="password_input"]').type(credential.ADMIN_PASSWORD_TEST_SUCCESS);
 
     cy.get('[cytest="login_button"]').click();
-  });
 
+    cy.get('[cytest="personal_icon"]').click();
+    // should be visible login as admin
+    cy.get('[cytest="header_admin_options"]').click();
 
-  it('Search Blog On Filter And View', () => {
-    cy.visit("/blogs");
+    // cy.get('[to="/admin/manage_booking"]').click();
+    cy.visit("/admin/manage_booking");
+    // cy.wait(2000);
+    // cy.get('#q').type('class'); // fixture should has > 1 record with this
+    // // // cy.get('#q').();
 
-    cy.get('#q').type('cy8ey080840926v8mn9831zx7s988xa***w55##$');
-    // this term search result in no post
-    cy.get('[cytest="search_blog_btn"]').click();
+    // cy.get('[cytest="booking_name_click_to_view_detail"]').first();
+    // // fixtures must have more than 1 order
 
-    cy.get('[cytest="blog_item"').should('not.exist');
+    // cy.get('[cytest="booking_name_click_to_view_detail"]').first().click();
 
-    cy.get('#q').type('dia diem');
-    // this term search should has some post in fixtures
-    cy.get('[cytest="search_blog_btn"]').click();
+    // cy.url().should('contains', 'manage_booking_dt');
 
-    cy.get('[cytest="blog_item"').first().click()
+    // cy.get('[cytest="manage_booking_detail_change_status_btn"]').last().contains('Cancelled');
+    // // check contains of last button
+
+    // cy.get('[cytest="manage_booking_detail_change_status_btn"]').last().click();
+    // // last button mean cancel, and no longer any options to choose
+
+    // cy.get('[cytest="manage_booking_detail_change_status_btn"]').should('not.exist');
+    // // check for any oher button
+
+    // cy.get('[cytest="manage_booking_detail_handle_back_manage"]').click(); // back to homepage
   })
-
 })
+
+
+// describe('Service Provider Register Account', () => {
+//   it('Search and View Detail, Change Status', () => {
+//     cy.visit("/admin/manage_booking");
+
+//     cy.get('#q').type('class'); // fixture should has > 1 record with this
+
+//     cy.get('[cytest="manage_item_order"]').first();
+//     // fixtures must have more than 1 order
+
+//     cy.get('[cytest="booking_name_click_to_view_detail"]').first().click();
+
+//     cy.url().should('contains', 'manage_booking_dt');
+
+//     cy.get('[cytest="manage_booking_detail_change_status_btn"]').last().contains('Cancelled');
+//     // check contains of last button
+
+//     cy.get('[cytest="manage_booking_detail_change_status_btn"]').last().click();
+//     // last button mean cancel, and no longer any options to choose
+
+//     cy.get('[cytest="manage_booking_detail_change_status_btn"]').should('not.exist');
+//     // check for any oher button
+
+//     cy.get('[cytest="manage_booking_detail_handle_back_manage"]').click(); // back to homepage
+//   })
+// })

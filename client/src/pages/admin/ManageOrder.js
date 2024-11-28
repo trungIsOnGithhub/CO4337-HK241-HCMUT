@@ -172,7 +172,9 @@ const ManageOrder = () => {
             </div>
             <div>
               {orders?.map((el,index) => (
-                <div key={index} className='w-full flex border-b border-[#f4f6fa] gap-1 h-[56px] px-[8px] py-[12px] cursor-pointer hover:bg-blue-200'>
+                <div key={index} className='w-full flex border-b border-[#f4f6fa] gap-1 h-[56px] px-[8px] py-[12px] cursor-pointer hover:bg-blue-200'
+                  cytest="manage_order_item"
+                >
                   <span className='w-[10%] py-2 text-[#00143c]'>{moment(el?.createdAt).format('YYYY-MM-DD')}</span>
                   <span onClick={()=>{handleShowDetailOrderProduct(el?._id)}} className='w-[25%] py-2 text-[#00143c] text-sm flex justify-center font-medium'>
                     {el?._id}
