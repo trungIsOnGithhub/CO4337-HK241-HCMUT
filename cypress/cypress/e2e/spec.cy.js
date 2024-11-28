@@ -170,45 +170,45 @@ const credential = require('./credential');
 
 // })
 
-describe('Admin View And Mange Order', () => {
+// describe('Admin View And Mange Order', () => {
 
-  it('Search and View Detail, Change Status', () => {
-    cy.visit('/login');
+//   it('Search and View Detail, Change Status', () => {
+//     cy.visit('/login');
 
-    cy.get('[cytest="email_input"]').type(credential.ADMIN_EMAIL_USERNAME_TEST_SUCCESS);
-    cy.get('[cytest="password_input"]').type(credential.ADMIN_PASSWORD_TEST_SUCCESS);
+//     cy.get('[cytest="email_input"]').type(credential.ADMIN_EMAIL_USERNAME_TEST_SUCCESS);
+//     cy.get('[cytest="password_input"]').type(credential.ADMIN_PASSWORD_TEST_SUCCESS);
 
-    cy.get('[cytest="login_button"]').click();
+//     cy.get('[cytest="login_button"]').click();
 
-    cy.get('[cytest="personal_icon"]').click();
-    // should be visible login as admin
-    cy.get('[cytest="header_admin_options"]').click();
+//     cy.get('[cytest="personal_icon"]').click();
+//     // should be visible login as admin
+//     cy.get('[cytest="header_admin_options"]').click();
 
-    // cy.get('[to="/admin/manage_booking"]').click();
-    cy.visit("/admin/manage_booking");
-    // cy.wait(2000);
-    // cy.get('#q').type('class'); // fixture should has > 1 record with this
-    // // // cy.get('#q').();
+//     // cy.get('[to="/admin/manage_booking"]').click();
+//     cy.visit("/admin/manage_booking");
+//     // cy.wait(2000);
+//     // cy.get('#q').type('class'); // fixture should has > 1 record with this
+//     // // // cy.get('#q').();
 
-    // cy.get('[cytest="booking_name_click_to_view_detail"]').first();
-    // // fixtures must have more than 1 order
+//     // cy.get('[cytest="booking_name_click_to_view_detail"]').first();
+//     // // fixtures must have more than 1 order
 
-    // cy.get('[cytest="booking_name_click_to_view_detail"]').first().click();
+//     // cy.get('[cytest="booking_name_click_to_view_detail"]').first().click();
 
-    // cy.url().should('contains', 'manage_booking_dt');
+//     // cy.url().should('contains', 'manage_booking_dt');
 
-    // cy.get('[cytest="manage_booking_detail_change_status_btn"]').last().contains('Cancelled');
-    // // check contains of last button
+//     // cy.get('[cytest="manage_booking_detail_change_status_btn"]').last().contains('Cancelled');
+//     // // check contains of last button
 
-    // cy.get('[cytest="manage_booking_detail_change_status_btn"]').last().click();
-    // // last button mean cancel, and no longer any options to choose
+//     // cy.get('[cytest="manage_booking_detail_change_status_btn"]').last().click();
+//     // // last button mean cancel, and no longer any options to choose
 
-    // cy.get('[cytest="manage_booking_detail_change_status_btn"]').should('not.exist');
-    // // check for any oher button
+//     // cy.get('[cytest="manage_booking_detail_change_status_btn"]').should('not.exist');
+//     // // check for any oher button
 
-    // cy.get('[cytest="manage_booking_detail_handle_back_manage"]').click(); // back to homepage
-  })
-})
+//     // cy.get('[cytest="manage_booking_detail_handle_back_manage"]').click(); // back to homepage
+//   })
+// })
 
 
 // describe('Service Provider Register Account', () => {
@@ -236,3 +236,48 @@ describe('Admin View And Mange Order', () => {
 //     cy.get('[cytest="manage_booking_detail_handle_back_manage"]').click(); // back to homepage
 //   })
 // })
+
+
+
+// describe('Service Provider Register Account', () => {
+//   it('Search and View Detail, Change Status', () => {
+//     cy.visit("/admin/manage_booking");
+
+//     cy.get('#q').type('class'); // fixture should has > 1 record with this
+
+//     cy.get('[cytest="manage_item_order"]').first();
+//     // fixtures must have more than 1 order
+
+//     cy.get('[cytest="booking_name_click_to_view_detail"]').first().click();
+
+//     cy.url().should('contains', 'manage_booking_dt');
+
+//     cy.get('[cytest="manage_booking_detail_change_status_btn"]').last().contains('Cancelled');
+//     // check contains of last button
+
+//     cy.get('[cytest="manage_booking_detail_change_status_btn"]').last().click();
+//     // last button mean cancel, and no longer any options to choose
+
+//     cy.get('[cytest="manage_booking_detail_change_status_btn"]').should('not.exist');
+//     // check for any oher button
+
+//     cy.get('[cytest="manage_booking_detail_handle_back_manage"]').click(); // back to homepage
+//   })
+// })
+
+
+
+describe('Service Provider Register Account', () => {
+  it('Search and View Detail, Change Status', () => {
+    cy.visit("/sp_register");
+
+    cy.get('[name="firstName"]').click(credential.SAMPLE_SP_REGISTER_DATA.firstName);
+    cy.get('[name="lastName"]').click(credential.SAMPLE_SP_REGISTER_DATA.lastName);
+    cy.get('[name="mobile"]').click(credential.SAMPLE_SP_REGISTER_DATA.mobile);
+    cy.get('[name="email"]').click(credential.SAMPLE_SP_REGISTER_DATA.email);
+
+    cy.get('[name="bussinessName"]').click(credential.SAMPLE_SP_REGISTER_DATA.bussinessName);
+    cy.get('[name="avatar"]').selectFile(credential.SAMPLE_SP_REGISTER_DATA.avatar);
+
+  })
+})

@@ -14,6 +14,18 @@ const SAMPLE_STAFF_DATA = {
     mobile: '0808996699'
 }
 
+const SAMPLE_SP_REGISTER_DATA = {
+    firstName: 'Provider Admin',
+    lastName: 'Sample',
+    email: 'nviettrung20@gmail.com',
+    avatar: example.png,
+    images: null,
+    mobile: '0808080899',
+    password: '12345678',
+    bussinessName: 'Sample Provider',
+    address: '',
+}
+
 module.exports = {
     ADMIN_EMAIL_USERNAME_TEST_SUCCESS,
     ADMIN_PASSWORD_TEST_SUCCESS,
@@ -21,5 +33,6 @@ module.exports = {
     CUSTOMER_PASSWORD_TEST_SUCCESS,
     EMAIL_USERNAME_TEST_FAIL,
     PASSWORD_TEST_FAIL,
-    SAMPLE_STAFF_DATA
+    SAMPLE_STAFF_DATA,
+    SAMPLE_SP_REGISTER_DATA
 }
