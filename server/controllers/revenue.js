@@ -1142,13 +1142,13 @@ let getOccupancyByStaffs = asyncHandler(async (req, res) => {
     // let numDaysInMonth = new Date(currYear, currMonth, 0).getDate();
     for (let idx in allStaffInOrders) {
         let staffId = allStaffInOrders[idx]._id;
-        let staffShiftHour = calculateWorkingHourOfStaffWholeWeek(allStaffInOrders[idx]);
+        let staffShiftHour = calculateWorkingHourOfStaffWholeWeek(allStaffInOrders[idx].shifts);
 
         let stffOccupancy = 0;
         if (staffShiftHour >= 1) {
-            stffOccupancy = sumWorkedHourByStaff[staffId] * 100 / staffShiftHour;
+            stffOccupancy = sumWorkedHourByStaff[staffId] * 100 / (staffShiftHour * 4);
         }
-        if (stffOcupancy > 100.0) {
+        if (stffOccupancy > 100.0) {
             stffOccupancy = 100.0;
         }
 
