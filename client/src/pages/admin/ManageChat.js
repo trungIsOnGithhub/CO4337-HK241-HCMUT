@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { apiAddServiceProvidersGivenQnA } from 'apis';
 import { FiEdit2, FiTrash2, FiPlus, FiX, FiCheck, FiChevronDown, FiChevronUp } from "react-icons/fi";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import bgImage from '../../assets/clouds.svg';
 import {useDispatch, useSelector} from 'react-redux';
 import Swal from "sweetalert2";
@@ -146,7 +145,6 @@ const ManageChat = () => {
             <img src={bgImage} className='w-full h-full object-cover'/>
         </div>
         <div className="relative z-10"> 
-            <ToastContainer position="top-right" autoClose={3000} />
             <div className='w-full h-20 flex justify-between'>
                 <span className='text-[#00143c] text-3xl font-semibold'>Manage Chat</span>
             </div>
