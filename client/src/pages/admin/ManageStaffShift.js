@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { FaClock, FaTrashAlt } from 'react-icons/fa';
 import { apiGetOneStaff, apiUpdateStaffShift } from 'apis/staff';
 import bgImage from '../../assets/clouds.svg'
+import clsx from 'clsx';
 
 const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 // const timeOptions = ["9:00 am", "10:00 am", "11:00 am", "12:00 pm", "1:00 pm", "2:00 pm", "3:00 pm", "4:00 pm", "5:00 pm", "6:00 pm", "7:00 pm", "8:00 pm"];
@@ -238,7 +239,7 @@ const ManageStaffShift = ({ staffId, setManageStaffShift, parentHandleSubmitStaf
   };
 
   return (
-    <div className='mt-[-68px]'>
+    <div className={clsx(!staffId ? 'mt-[-68px]' : '')}>
       <div className='inset-0 absolute z-0'>
         <img src={bgImage} className='w-full h-full object-cover'/>
       </div>
