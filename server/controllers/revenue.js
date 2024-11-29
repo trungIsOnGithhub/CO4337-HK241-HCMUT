@@ -362,7 +362,7 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
             return order.orderBy.toString();
         });
         lastWeekCustomers = lastWeekCustomers.filter(function(item, pos, self) {
-            return self.indexOf(item) == pos;
+            return self.indexOf(item) === pos;
         })
 
         newCusCnt = 0;
@@ -404,7 +404,7 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
             return order.orderBy.toString();
         });
         prevWeekCustomers = prevWeekCustomers.filter(function(item, pos, self) {
-            return self.indexOf(item) == pos;
+            return self.indexOf(item) === pos;
         })
 
         newCusCnt = 0;
@@ -435,7 +435,6 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
         // console.log(last3Months[2].end);
         let providerOrders = await Order.find({
             'info.0.provider': spid,
-            status: 'Successful'
         }).populate('info.service');
 
         let currentMonthOrders = providerOrders.filter(order => {
@@ -490,6 +489,7 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
             return cDate < last3Months[1].end && cDate > last3Months[1].start;
             // return order.orderBy;
         });
+
         let lastMonthCustomers = lastMonthOrders.map(order => {
             return order.orderBy.toString();
         });
@@ -545,15 +545,18 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
         let prevMonthOrders = providerOrders.filter(order => {
             let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
             let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+            console.log(cDate);
+            console.log("-----" + JSON.stringify(last3Months[2]));
 
             return cDate < last3Months[2].end && cDate > last3Months[2].start;
             // return order.orderBy;
         });
+        console.log("******", prevMonthOrders);
         let prevMonthCustomers = prevMonthOrders.map(order => {
             return order.orderBy.toString();
         });
         // console.log('Last Week Customer: =====', lastMonthCustomers);
-        prevMonthCustomers = lastMonthCustomers.filter((item, pos, self) => {
+        prevMonthCustomers = prevMonthCustomers.filter((item, pos, self) => {
             return self.indexOf(item) === pos;
         });
 
@@ -659,7 +662,7 @@ let getCustomerDataByMonth = asyncHandler(async (req, res) => {
         return order.orderBy;
     });
     allCustomersThisMonth = allCustomersThisMonth.filter(function(item, pos, self) {
-        return self.indexOf(item) == pos;
+        return self.indexOf(item) === pos;
     })
 
     let newCusCnt = 0;
@@ -1029,7 +1032,7 @@ let getOccupancyByServices = asyncHandler(async (req, res) => {
                 }
                 sumWorkedHourByService[item.service?._id] = (sumWorkedHourByService[item.service?._id] || 0) + item.service.duration;
                 orderCountByService[item.service?._id] = (orderCountByService[item.service?._id] || 0) + 1;
-                revenueCountByService[item.service?._id] = (revenueCountByService[item.service?._id] || 0) + item.service.price;
+                revenueCountByService[item.service?._id] = (revenueCountByService[item.service?._id] || 0) + order.total;
             }
         }
     });
@@ -1108,7 +1111,7 @@ let getOccupancyByStaffs = asyncHandler(async (req, res) => {
                 }
                 sumWorkedHourByStaff[item.staff?._id] = (sumWorkedHourByStaff[item.staff?._id] || 0) + item.service?.duration;
                 orderCountByStaff[item.staff?._id] = (orderCountByStaff[item.staff?._id] || 0) + 1;
-                revenueCountByStaff[item.staff?._id] = (revenueCountByStaff[item.staff?._id] || 0) + item.service?.price;
+                revenueCountByStaff[item.staff?._id] = (revenueCountByStaff[item.staff?._id] || 0) + order.total;
             }
         }
     });
