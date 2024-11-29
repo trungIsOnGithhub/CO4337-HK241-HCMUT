@@ -268,13 +268,13 @@ const DataExportSheetModal = ({ rawData, onClose, propsToExport }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 text-[#00143c]">
       <div className="bg-white p-6 rounded shadow-lg w-80 transition duration-200">
-        <h3 className="text-lg font-semibold mb-4 text-gray-500 text-center">
+        <h3 className="text-lg font-semibold mb-4 text-center">
           Configure your Export File
         </h3>
         <div className="space-y-2 border-2 p-2 rounded-md flex justify-center flex-wrap gap-1">
-          <label htmlFor='sh' className='text-gray-500 text-sm'>Sheet Name</label>
+          <label htmlFor='sh' className=' text-sm'>Sheet Name</label>
           <InputFormm
             id='sh'
             register={() => {}}
@@ -283,12 +283,12 @@ const DataExportSheetModal = ({ rawData, onClose, propsToExport }) => {
             placeholder= 'Sheet Name...'
             defaultValue={sheetName}
             style={'w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'}
-            styleInput={'w-[100%] bg-[#f4f6fa]   text-[#99a1b1]'}
+            styleInput={'w-[100%] bg-[#f4f6fa]  text-[#00143c]'}
             onChange={event => setSheetName(event.target.value)}
           >
           </InputFormm>
 
-          <label htmlFor='wb' className='text-gray-500 text-sm'>Workbook Name</label>
+          <label htmlFor='wb' className='text-sm'>Workbook Name</label>
           <InputFormm
             id='wb'
             register={() => {}}
@@ -297,13 +297,13 @@ const DataExportSheetModal = ({ rawData, onClose, propsToExport }) => {
             placeholder= 'Workbook Name...'
             defaultValue={workbookName}
             style={'w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'}
-            styleInput={'w-[100%] bg-[#f4f6fa] text-[#99a1b1]'}
+            styleInput={'w-[100%] bg-[#f4f6fa] text-[#00143c]'}
             onChange={event => setWorkbookName(event.target.value)}
           >
           </InputFormm>
 
-          <label htmlFor='wb' className='text-gray-500 text-sm'>File Type</label>
-          <select className='w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center text-gray-500'
+          <label htmlFor='wb' className='text-sm'>File Type</label>
+          <select className='w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'
             onChange={event => setFileType(event.target.value)}
           >
             <option value="xlsx">xlsx</option>
@@ -311,10 +311,10 @@ const DataExportSheetModal = ({ rawData, onClose, propsToExport }) => {
           </select>
         </div>
         <div className="mt-4 flex justify-end space-x-2 gap-4">
-          <button onClick={onClose} className="text-gray-500 hover:opacity-50 bg-red-500 p-2 rounded-md text-white">Cancel</button>
+          <button onClick={onClose} className="hover:opacity-50 bg-red-600 p-2 rounded-md text-white">Cancel</button>
           <button
             onClick={() => { exportExcelFile(); onClose(); }}
-            className='text-blue-600 hover:opacity-50 bg-blue-600 p-2 rounded-md text-white'
+            className='hover:opacity-50 bg-blue-600 p-2 rounded-md text-white'
           >
             Confirm
           </button>

@@ -16,6 +16,7 @@ import { apiGetAdminData } from 'apis'
 import { showMessageBox } from 'store/app/appSlice'
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
+import { toast } from 'react-toastify'
 
 
 const History = () => {
@@ -114,7 +115,6 @@ const History = () => {
     }
   };
   
-
   return (
     <div className="container mx-auto px-4 py-8 max-w-5xl">
       <h1 className="text-3xl font-bold mb-8 text-gray-800">Booking History</h1>
@@ -184,22 +184,38 @@ const History = () => {
                 </div>
 
                 <div className='flex items-center gap-4'>
-                  <button
-                    onClick={() => {
-                      if (booking?.status === 'Pending') {
-                        handleCancelBooking(booking?._id);
-                      }
-                    }}
-                    disabled={isLoading || booking?.status !== 'Pending'}
-                    className={clsx("px-6 py-2 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed", booking?.status === 'Pending' ? "bg-red-600 hover:bg-red-700 cursor-pointer" : "bg-gray-400 cursor-not-allowed")}
-                    aria-label={`Cancel booking for ${booking?.info[0]?.service?.name}`}
-                  >
-                    {isLoading ? (
-                      <FaSpinner className="animate-spin inline-block" />
-                    ) : (
-                      "Cancel Booking"
-                    )}
-                  </button>
+                <button
+                  onClick={() => {
+                    const bookingDateTime = new Date(
+                      `${booking?.info[0]?.date.split("/").reverse().join("-")}T${booking?.info[0]?.time}`
+                    );
+                    const now = new Date();
+                    console.log(bookingDateTime)
+                    console.log(now)
+
+                    if (booking?.status === 'Pending' && bookingDateTime >= now) {
+                      handleCancelBooking(booking?._id);
+                    } else if (bookingDateTime < now) {
+                      toast.error("You cannot cancel a booking that has already passed.");
+                    }
+                  }}
+                  disabled={
+                    isLoading ||
+                    booking?.status !== 'Pending' ||
+                    new Date(`${booking?.info[0]?.date.split("/").reverse().join("-")}T${booking?.info[0]?.time}`) < new Date()
+                  }
+                  className={clsx(
+                    "px-6 py-2 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed",
+                    booking?.status === 'Pending' ? "bg-red-600 hover:bg-red-700 cursor-pointer" : "bg-gray-400 cursor-not-allowed"
+                  )}
+                  aria-label={`Cancel booking for ${booking?.info[0]?.service?.name}`}
+                >
+                  {isLoading ? (
+                    <FaSpinner className="animate-spin inline-block" />
+                  ) : (
+                    "Cancel Booking"
+                  )}
+                </button>
 
                   <button
                     onClick={(e) => handleContactProvider(e, booking)}

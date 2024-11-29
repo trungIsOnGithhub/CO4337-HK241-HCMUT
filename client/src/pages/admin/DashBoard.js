@@ -27,14 +27,14 @@ const MetricIndicator = ({ prev, current }) => {
       current > prev &&
         (<span className="flex">
             <span className="text-teal-500 text-xs"><FaAngleDoubleUp style={{color: 'green' }} className='text-teal-500 rotate-45'/></span>
-            <span className='text-teal-500 pr-1 text-base'>&nbsp;{(current >= 1 ? (current - prev)/current*100.0 : 0)?.toFixed(1)} %</span>
+            <span className='text-teal-500 pr-1 text-base'>&nbsp;{(current >= 1 ? (current - prev)/current*100.0 : 0)?.toFixed(2)} %</span>
         </span>)
       }
       {
       current < prev && 
         (<span className="flex">
             <span className="text-rose-700 text-xs"><FaAngleDoubleDown className='text-rose-700 -rotate-45'/></span>
-            <span className='text-rose-700 pr-1 text-base'>&nbsp;{(current >= 1 ? (current - prev)/current*100.0 : 0)?.toFixed(1)} %</span>
+            <span className='text-rose-700 pr-1 text-base'>&nbsp;{(current >= 1 ? (current - prev)/current*100.0 : 0)?.toFixed(2)} %</span>
         </span>)
       }
       {current === prev && (<span className="flex items-center flex-col flex-wrap">
@@ -378,10 +378,10 @@ const DashBoard = () => {
                   Occupancy
               </h5>
               <span className='text-lg font-bold flex flex-col text-center'>
-                { currentMetricView.occupancy === 3 && occupancyTriplet[2]?.toFixed(1) }
-                { currentMetricView.occupancy === 2 && occupancyTriplet[1]?.toFixed(1) }
-                { currentMetricView.occupancy === 1 && occupancyTriplet[2]?.toFixed(1) }
-                { currentMetricView.occupancy === 0 && occupancyTriplet[1]?.toFixed(1) }
+                { currentMetricView.occupancy === 3 && occupancyTriplet[2]?.toFixed(2) }
+                { currentMetricView.occupancy === 2 && occupancyTriplet[1]?.toFixed(2) }
+                { currentMetricView.occupancy === 1 && occupancyTriplet[2]?.toFixed(2) }
+                { currentMetricView.occupancy === 0 && occupancyTriplet[1]?.toFixed(2) }
                 <span className='text-sm font-semibold'>%</span>
               
                   {

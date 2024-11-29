@@ -151,11 +151,11 @@ const Login = () => {
           }
         }
         if (name === "password") {
-        //   if (value.length < 8) {
-        //     newErrors.password = "Password must be at least 8 characters long";
-        //   } else {
-        //     delete newErrors.password;
-        //   }
+          if (value.length < 8) {
+            newErrors.password = "Password must be at least 8 characters long";
+          } else {
+            delete newErrors.password;
+          }
         }
         setErrors(newErrors);
         }
@@ -343,7 +343,6 @@ const Login = () => {
                         {loginMethod === "email" ? "Email Address" : "Phone Number"}
                         </label>
                         <input
-                            cytest="email_input"
                             type={loginMethod === "email" ? "email" : "tel"}
                             id="email"
                             name="email"
@@ -372,7 +371,6 @@ const Login = () => {
                     </label>
                     <div className="relative">
                     <input
-                        cytest="password_input"
                         type={showPassword ? "text" : "password"}
                         id="password"
                         name="password"
@@ -406,7 +404,6 @@ const Login = () => {
                     </div>
                     <div className="w-[100%] my-2">
                         <Button
-                            cytest="login_button"
                             handleOnclick={handleSubmit}
                             style={`w-[100%] px-4 py-2 rounded-md text-white bg-[#0a66c2] font-semibold`}
                         >

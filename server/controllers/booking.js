@@ -342,10 +342,10 @@ const getTimeOptionsAvailableByDateRange = asyncHandler(async (req, res) => {
         // // const curtStaffShift = currentStaff[0].shifts;
         // console.log('========q>>>>>>>>', workSchedule);
 
-        // for (const day of weekdays) {
+        // for (const day of weekdays) { 
             const weekday = weekdays[currentDate.getDay()];
             // console.log('+++++++>>>', stfs);
-            if (!currentStaff.shifts[weekday]) {
+            if (!currentStaff.shifts[weekday]?.isEnabled) {
                 continue;
             }
             // const workingStart = new Date(`${bookingDate}T${stfs.shifts?.periods?.start}`);

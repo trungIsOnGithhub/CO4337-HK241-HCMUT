@@ -140,7 +140,7 @@ const MessageBox = ({currentChat}) => {
 }
 
   return (
-    <div className="fixed bottom-0 right-8 z-[9999] max-w-[380px]">
+    <div className="fixed bottom-2 right-2 z-[9999] max-w-[380px]">
       {/* Minimized MessageBox */}
       {/* {!isOpen && (
         <button
@@ -153,7 +153,7 @@ const MessageBox = ({currentChat}) => {
 
       {/* Expanded MessageBox */}
 
-        <div className="w-full max-w-md md:max-w-lg lg:max-w-2xl min-h-[70vh] bg-white shadow-lg rounded-lg flex flex-col overflow-hidden border border-[#0a66c2] transition-all">
+        <div className="w-full max-w-[350px] min-h-[60vh] max-h-[75vh] bg-white shadow-lg rounded-lg flex flex-col overflow-hidden border border-[#0a66c2] transition-all">
           {/* Header */}
           <div className="bg-[#0a66c2] text-white px-4 py-3 flex items-start space-x-3 relative">
             <img
@@ -239,31 +239,33 @@ const MessageBox = ({currentChat}) => {
 
 
           {/* Custom Message Input */}
-          <div className="p-2 bg-gray-100 border-t border-[#0a66c2] flex items-center w-full gap-1 h-[100px]">
-            <div className='text-yellow-400 cursor-pointer text-xl font-semibold flex items-center relative w-[7%]'>
-              <BsEmojiSmileFill onClick={handleEmojiPickerHideShow}/>
-              {
-                  showEmojiPicker && 
-                  <div className='absolute top-[-350px] left-0 bg-[#080420] border border-[#9186f3] shadow-lg shadow-[#9a86f3]'>
-                    <Picker onEmojiClick={handleEmojiClick} />
-                  </div>
-              }
-            </div>
-            <input
-              type="text"
-              value={msg}
-              onChange={e=>setMsg(e.target.value)}
-              onKeyDown={e=>{
-                if (e.key === 'Enter' && e.target.value?.length > 0) {
-                  setMsg(e.target.value);
+          <div className="p-2 bg-gray-100 border-t border-[#0a66c2] flex justify-between items-center h-[100px]">
+            <div className='flex items-center gap-1 w-[80%]'>
+              <div className='text-yellow-400 cursor-pointer text-xl font-semibold flex items-center relative w-[7%]'>
+                <BsEmojiSmileFill onClick={handleEmojiPickerHideShow}/>
+                {
+                    showEmojiPicker && 
+                    <div className='absolute top-[-350px] left-0 bg-[#080420] border border-[#9186f3] shadow-lg shadow-[#9a86f3]'>
+                      <Picker onEmojiClick={handleEmojiClick} />
+                    </div>
                 }
-              }}
-              placeholder="Write a message..."
-              className="max-w-[68%] px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0a66c2]"
-            />
+              </div>
+              <input
+                type="text"
+                value={msg}
+                onChange={e=>setMsg(e.target.value)}
+                onKeyDown={e=>{
+                  if (e.key === 'Enter' && e.target.value?.length > 0) {
+                    setMsg(e.target.value);
+                  }
+                }}
+                placeholder="Write a message..."
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0a66c2]"
+              />
+            </div>
             <button
               onClick={(e)=>sendChat(e)}
-              className="bg-[#0a66c2] text-white px-4 py-2 rounded-md hover:bg-[#084a93] transition w-[20%]"
+              className="bg-[#0a66c2] text-white px-4 py-2 rounded-md hover:bg-[#084a93] transition w-[15%] h-fit flex items-center justify-center"
             >
               Send
             </button>

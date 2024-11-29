@@ -509,7 +509,7 @@ const StaffCalendar = () => {
                     <div className="space-y-2">
                       <p><span className="font-semibold">Date:</span> {format(selectedOrder?.start, "PP")}</p>
                       <p><span className="font-semibold">Time:</span> {format(selectedOrder?.start, "p")} - {format(selectedOrder?.end, "p")}</p>
-                      <p><span className="font-semibold">Duration:</span> {selectedOrder?.service?.duration}</p>
+                      <p><span className="font-semibold">Duration:</span> {`${selectedOrder?.service?.duration}min`}</p>
                       <div className="flex items-center gap-2">
                         <span className="font-semibold">Staff:</span>
                         <div className="flex items-center gap-2">

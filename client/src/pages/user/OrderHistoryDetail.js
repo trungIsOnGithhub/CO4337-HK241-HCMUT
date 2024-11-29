@@ -7,8 +7,7 @@ import { TbMessageCirclePlus } from 'react-icons/tb';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import { showMessageBox } from 'store/app/appSlice';
 import { formatPrice } from 'ultils/helper';
 
@@ -70,7 +69,6 @@ const OrderHistoryDetail = () => {
     const handleCancelOrder = async() => {
         setIsLoading(true);
         const response = await apiUpdatePaymentStatusOrderProduct({orderId: orderProductData?._id, status: 'Cancelled'})
-        console.log(response)
         if(response?.success){
           toast.success("Order has been cancelled successfully");
           setShowCancelModal(false);
@@ -176,8 +174,6 @@ const OrderHistoryDetail = () => {
             </div>
         </div>
         )}
-
-        <ToastContainer position="top-right" />
     </div>
   )
 }
