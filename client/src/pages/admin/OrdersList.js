@@ -123,7 +123,7 @@ const OrdersList = () => {
         <tbody>
           {orders.map((order, index) => (
             <tr key={index} className="border-b border-gray-100">
-              <td className="py-4 text-gray-500">{formatTimestamp(order?.createdAt)}</td>
+              <td className="py-4 text-gray-500">{order?.info[0]?.date}</td>
               <td className="flex items-center justify-center space-x-2">
                 <span
                   onClick={() => {handleNavigateBookingDetail(order?._id)}}

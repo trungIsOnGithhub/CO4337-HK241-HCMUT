@@ -150,7 +150,7 @@ function getLastThreeMonthsStartEnd(inputDate) {
             end: endOfMonth
         });
     }
-    // console.log('LAST 3 MONTHS: ' + JSON.stringify(results));
+    console.log('LAST 3 MONTHS: ' + JSON.stringify(results));
 
     return results;
 }
@@ -850,7 +850,7 @@ let getOccupancy3RecentStatistic = asyncHandler(async (req, res) => {
             return acc + order?.info[0].service?.duration;
         }, 0);
         // console.log('..//////////', sumDurationsAllOrders);
-        occupancyData[2] = sumDurationsAllOrders * 100 / totalWorkingHoursOfProviderPerWeek;
+        occupancyData[2] = sumDurationsAllOrders * 100 / (totalWorkingHoursOfProviderPerWeek * 4);
         console.log('..////////// totalWorkingHoursOfProviderPerWeek: ////////', totalWorkingHoursOfProviderPerWeek);
 
         // let newCusCnt = 0;
@@ -886,7 +886,7 @@ let getOccupancy3RecentStatistic = asyncHandler(async (req, res) => {
             return acc + order?.info[0].service?.duration;
         }, 0);
         // console.log('..//////////', sumDurationsAllOrders);
-        occupancyData[1] = sumDurationsAllOrders * 100 / totalWorkingHoursOfProviderPerWeek;
+        occupancyData[1] = sumDurationsAllOrders * 100 / (totalWorkingHoursOfProviderPerWeek * 4);
         // newCusCnt = 0;
         // orderIdsArr = lastWeekOrders.map(o => o._id.toString());
         // for (let customer of lastWeekCustomers) {
@@ -919,7 +919,7 @@ let getOccupancy3RecentStatistic = asyncHandler(async (req, res) => {
             return acc + order?.info[0].service?.duration;
         }, 0);
         // console.log('..//////////', sumDurationsAllOrders);
-        occupancyData[0] = sumDurationsAllOrders * 100 / totalWorkingHoursOfProviderPerWeek;
+        occupancyData[0] = sumDurationsAllOrders * 100 / (totalWorkingHoursOfProviderPerWeek * 4);
     }
     return res.json({
         success: true,
@@ -1010,6 +1010,9 @@ let getOccupancyByServices = asyncHandler(async (req, res) => {
     }
 
     let allOrdersThisMonth = await getAllOrderSpecificMonth(currMonth, currYear, spid);
+    allOrdersThisMonth = allOrdersThisMonth.filter(order => {   
+        return order.status === 'Successful';
+    });
     console.log('ALl Service In Orders: ', allOrdersThisMonth.length, currMonth, currYear);
 
     let allServiceInOrders = [];
@@ -1064,7 +1067,7 @@ let getOccupancyByServices = asyncHandler(async (req, res) => {
             ...(allServiceInOrders[idx].toObject()),
             numberOrders: orderCountByService[serviceId],
             revenue: revenueCountByService[serviceId],
-            occupancy: sumWorkedHourByService[serviceId] * 100 / totalWorkingHoursOfProviderPerWeek * 4
+            occupancy: sumWorkedHourByService[serviceId] * 100 / (totalWorkingHoursOfProviderPerWeek * 4)
         }
         //     ;
         // allServiceInOrders[idx].;
@@ -1093,6 +1096,9 @@ let getOccupancyByStaffs = asyncHandler(async (req, res) => {
     }
 
     let allOrdersThisMonth = await getAllOrderSpecificMonth(currMonth, currYear, spid);
+    allOrdersThisMonth = allOrdersThisMonth.filter(order => {
+        return order.status === 'Successful';
+    });
     console.log('ALl Orders This Month: ', allOrdersThisMonth.length, currMonth, currYear);
     let allStaffInOrders = [];
 
@@ -1141,7 +1147,7 @@ let getOccupancyByStaffs = asyncHandler(async (req, res) => {
             ...(allStaffInOrders[idx].toObject()),
             numberOrders: orderCountByStaff[staffId],
             revenue: revenueCountByStaff[staffId],
-            occupancy: sumWorkedHourByStaff[staffId] * 100 / totalWorkingHoursOfProviderPerWeek * 4
+            occupancy: sumWorkedHourByStaff[staffId] * 100 / (totalWorkingHoursOfProviderPerWeek * 4)
         }
     }
 
