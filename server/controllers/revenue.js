@@ -637,7 +637,7 @@ let getAllOrderSpecificMonth = async (month, year, spid) => {
 
     let res = ordersByProv.filter(order => {
         let dates = order?.info[0]?.date?.split('/').map(Number);
-        console.log(month, "-------------))))", dates);
+        // console.log(month, "-------------))))", dates);
         return dates[1] === month && dates[2] === year;
     });
 
