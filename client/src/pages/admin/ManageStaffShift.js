@@ -238,7 +238,7 @@ const ManageStaffShift = ({ staffId, setManageStaffShift, parentHandleSubmitStaf
   };
 
   return (
-    <div>
+    <div className='mt-[-68px]'>
       <div className='inset-0 absolute z-0'>
         <img src={bgImage} className='w-full h-full object-cover'/>
       </div>
