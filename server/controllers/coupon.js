@@ -214,7 +214,7 @@ const getAllCouponsByAdmin = asyncHandler(async (req, res) => {
         }
     }
     const qr = {...formatedQueries, ...queryFinish, providerId: provider_id}
-    let queryCommand =  Coupon.find(qr).populate('services', 'name thumb'); // Populate trường services với thông tin name
+    let queryCommand =  Coupon.find(qr).populate('services', 'name thumb').populate('products', 'title thumb'); // Populate trường services với thông tin name
 
     try {
         // sorting

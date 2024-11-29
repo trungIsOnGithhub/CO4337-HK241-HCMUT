@@ -52,6 +52,7 @@ const ManageVoucher = () => {
 
 
   const [showServices, setShowServices] = useState(false)
+  const [showProducts, setShowProducts] = useState(false)
 
   const checkCouponStatus = (expirationDate) => {
     const { date, time } = expirationDate;
@@ -105,23 +106,24 @@ const ManageVoucher = () => {
           </div>
           <div className='text-[#99a1b1]'>
             <div className='w-full flex gap-1 border-b border-[##dee1e6] py-1'>
-              <span className='w-[20%]'>Vouchers</span>
-              <span className='w-[20%]'>Discount Type</span>
-              <span className='w-[10%]'>Usage</span>
-              <span className='w-[10%]'>Per User</span>
-              <span className='w-[20%]'>Services</span>
-              <span className='w-[20%]'>Valid</span>
+              <span className='w-[20%] flex justify-center items-center'>Vouchers</span>
+              <span className='w-[20%] flex justify-center items-center'>Discount Type</span>
+              <span className='w-[10%] flex justify-center items-center'>Usage</span>
+              <span className='w-[10%] flex justify-center items-center'>Per User</span>
+              <span className='w-[10%] flex justify-center items-center'>Services</span>
+              <span className='w-[10%] flex justify-center items-center'>Products</span>
+              <span className='w-[20%] flex justify-center items-center'>Valid</span>
             </div>
             <div>
               {coupons?.map(el => {
                 const {status, expiration} = checkCouponStatus(el?.expirationDate)
               return (
                 <div className='w-full flex border-b border-[#f4f6fa] gap-1'>
-                  <span className='w-[20%] px-2 py-2 text-[#00143c]'>{el?.name}</span>
-                  <span className='w-[20%] px-2 py-2 text-[#00143c] capitalize'>{el?.discount_type}</span>
-                  <span className='w-[10%] px-2 py-2 text-[#00143c]'>{el?.noUsageLimit ? 'No Limit' : el?.usageLimit}</span>
-                  <span className='w-[10%] px-2 py-2 text-[#00143c]'>{el?.noLimitPerUser ? 'No Limit' : el?.limitPerUser}</span>
-                  <span className='w-[20%] px-2 text-[#00143c]'>
+                  <span className='w-[20%] flex justify-center items-center px-2 py-2 text-[#00143c]'>{el?.name}</span>
+                  <span className='w-[20%] flex justify-center items-center px-2 py-2 text-[#00143c] capitalize'>{el?.discount_type}</span>
+                  <span className='w-[10%] flex justify-center items-center px-2 py-2 text-[#00143c]'>{el?.noUsageLimit ? 'No Limit' : el?.usageLimit}</span>
+                  <span className='w-[10%] flex justify-center items-center px-2 py-2 text-[#00143c]'>{el?.noLimitPerUser ? 'No Limit' : el?.limitPerUser}</span>
+                  <span className='w-[10%] flex justify-center items-center px-2 text-[#00143c]'>
                     <div className='flex h-full relative cursor-pointer items-center'
                         onMouseEnter = {e => {
                           e.stopPropagation();
@@ -131,7 +133,7 @@ const ManageVoucher = () => {
                           e.stopPropagation();
                           setShowServices(null)
                         }}>
-                      {el.services.map((service, index) => {
+                      {el?.services?.map((service, index) => {
                         if(+index <= 1){
                           return <img className={`w-[34px] h-[34px] border-[3px] border-white rounded-full ml-[-10px] mr-[0px] z-[${el?.services?.length - index}]`} src={service?.thumb}/>
                         }
@@ -140,9 +142,9 @@ const ManageVoucher = () => {
                         }
                       })}
 
-                      { showServices === el._id &&
+                      { showServices === el?._id &&
                         <div className='flex flex-col gap-1 bg-[#00143c] text-white rounded-md w-[200px] p-[12px] absolute top-10 left-[-50px] z-50'>
-                        {el.services.map((service, index) => (
+                        {el?.services?.map((service, index) => (
                         <div key={index} className='flex justify-start items-center w-full'>
                           <img key={index} src={service?.thumb}  className={'w-[24px] h-[24px] mr-[10px] rounded-full'}></img>
                           <span className='px-0 text-sm font-medium'>{`${service?.name}`}</span>
@@ -151,7 +153,37 @@ const ManageVoucher = () => {
                       }
                     </div>
                   </span>
-                  <span className='w-[20%] px-2 py-2 flex items-center gap-1'>
+                  <span className='w-[10%] flex justify-center items-center px-2 text-[#00143c]'>
+                    <div className='flex h-full relative cursor-pointer items-center'
+                        onMouseEnter = {e => {
+                          e.stopPropagation();
+                          setShowProducts(el?._id)
+                        }}
+                        onMouseLeave = {e => {
+                          e.stopPropagation();
+                          setShowProducts(null)
+                        }}>
+                      {el?.products?.map((product, index) => {
+                        if(+index <= 1){
+                          return <img className={`w-[34px] h-[34px] border-[3px] border-white rounded-full ml-[-10px] mr-[0px] z-[${el?.products?.length - index}]`} src={product?.thumb}/>
+                        }
+                        else if(index === 2){
+                          return <span className='w-[34px] h-[34px] bg-[rgba(230,239,254,1)] rounded-full ml-[-10px] mr-[0px] text-[#005aee] font-medium border-[3px] border-white text-sm flex items-center justify-center'>{`+ ${el?.products?.length - 2}`}</span>
+                        }
+                      })}
+
+                      { showProducts === el._id &&
+                        <div className='flex flex-col gap-1 bg-[#00143c] text-white rounded-md w-[200px] p-[12px] absolute top-10 left-[-50px] z-50'>
+                        {el?.products?.map((product, index) => (
+                        <div key={index} className='flex justify-start items-center w-full'>
+                          <img key={index} src={product?.thumb}  className={'w-[24px] h-[24px] mr-[10px] rounded-full'}></img>
+                          <span className='px-0 text-sm font-medium'>{`${product?.title}`}</span>
+                        </div>))}
+                        </div>
+                      }
+                    </div>
+                  </span>
+                  <span className='w-[20%] flex justify-center items-center px-2 py-2 gap-1'>
                     {status === 'Expired' ? (
                       <span className="text-red-500">Expired</span>
                     ) : (

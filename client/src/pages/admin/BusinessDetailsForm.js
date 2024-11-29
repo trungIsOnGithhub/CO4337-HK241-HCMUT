@@ -162,7 +162,7 @@ const BusinessDetailsForm = () => {
       fData.append(i[0], i[1]);
     }
     fData.delete('avatar');
-    // if (newFormDataObj.avatar) fData.append('avatar', newFormDataObj.avatar);
+    if (newFormDataObj.avatar) fData.append('avatar', newFormDataObj.avatar);
 
     // for (let p of fData.entries()) {
     //   console.log("kkkkkkkkkkkkkkkk", p);
