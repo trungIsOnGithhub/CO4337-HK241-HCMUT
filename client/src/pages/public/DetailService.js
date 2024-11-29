@@ -384,7 +384,7 @@ const DetailService = ({isQuickView, data}) => {
             {
               serviceData?.description?.length === 1 
                 &&
-              <div className='text-base leading-6 line-clamp-[10] mb-8' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(serviceData?.description[0])}}></div>
+              <div className='text-base leading-6 line-clamp-[10] mb-8 max-h-[400px] overflow-y-auto scrollbar-thin p-1' dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(serviceData?.description[0])}}></div>
             }
             
             <div className="space-y-4">

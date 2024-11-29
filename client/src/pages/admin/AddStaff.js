@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ManageStaffShift from './ManageStaffShift';
 import Swal from 'sweetalert2';
 import { useNavigate} from 'react-router-dom';
+import { FaPlus, FaSpinner } from 'react-icons/fa';
 // const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 const AddStaff = () => {
@@ -200,17 +201,20 @@ const AddStaff = () => {
                     )}
 
                     <div className='mt-8'>
-                        <Button type='submit'>
-                            Add a new staff
-                        </Button>
+                    <button disabled={isLoading} type='submit' className={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center disabled:opacity-50 disabled:cursor-not-allowed'}>
+                        {isLoading ? (
+                            <span className="flex items-center">
+                            <FaSpinner className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                            Adding staff...
+                            </span>
+                        ) : (
+                            <span className='flex items-center'>
+                            <FaPlus /> Add staff
+                            </span>
+                        )}
+                    </button>
                     </div>
                 </form>
-                {/* Loading spinner */}
-                {isLoading && (
-                  <div className='flex justify-center z-50 w-full h-full fixed top-0 left-0 items-center bg-overlay'>
-                      <HashLoader className='z-50' color='#3B82F6' loading={isLoading} size={80} />
-                  </div>
-                )}
             </div>
         </div>
         </div>

@@ -48,7 +48,7 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
           <div className="flex flex-col w-1/2">
             <label className="text-sm font-medium text-gray-600">Start</label>
             <div className="flex items-center px-3 py-2 mt-1 bg-gray-50 border border-gray-300 rounded-md">
-              <FaClock className="mr-2 text-gray-500" />
+              <FaClock className="mr-2 text-[#00143c]" />
 
               <input
                 name="startShift"
@@ -64,7 +64,7 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
           <div className="flex flex-col w-1/2">
             <label className="text-sm font-medium text-gray-600">Finish</label>
             <div className="flex items-center px-3 py-2 mt-1 bg-gray-50 border border-gray-300 rounded-md">
-              <FaClock className="mr-2 text-gray-500" />
+              <FaClock className="mr-2 text-[#00143c]" />
 
               <input
                 name="endShift"
@@ -79,7 +79,7 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
           </div>
 
           {/* <button
-            className="flex items-center justify-center w-10 h-10 mt-6 text-gray-500 transition bg-gray-100 rounded hover:bg-gray-200"
+            className="flex items-center justify-center w-10 h-10 mt-6 text-[#00143c] transition bg-gray-100 rounded hover:bg-gray-200"
             onClick={() => onPeriodChange(day, 'delete')}
             disabled={!isEnabled}  // Disables delete if isEnabled is false
           >
@@ -303,12 +303,12 @@ const ApplyToDaysModal = ({ sourceDay, onApply, onClose }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
       <div className="bg-white p-6 rounded shadow-lg w-80 transition duration-200">
-        <h3 className="text-md font-semibold mb-4 text-gray-500">Apply
+        <h3 className="text-md font-semibold mb-4 text-[#00143c]">Apply
             <span className="border-2 border-blue-500 p-1 m-1 rounded-md">{sourceDay}</span>
           to Other Days</h3>
         <div className="space-y-2 border-2 p-2 rounded-md flex justify-center flex-wrap gap-6">
           {daysOfWeek.map((day) => (
-            <label key={day} className={`flex items-center text-gray-500 font-semibold ${day === sourceDay ? 'opacity-50' : ''}`}>
+            <label key={day} className={`flex items-center text-[#00143c] font-semibold ${day === sourceDay ? 'opacity-50' : ''}`}>
               <input
                 type="checkbox"
                 checked={selectedDays.includes(day)}
@@ -321,7 +321,7 @@ const ApplyToDaysModal = ({ sourceDay, onApply, onClose }) => {
           ))}
         </div>
         <div className="mt-4 flex justify-end space-x-2 gap-4">
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">Cancel</button>
+          <button onClick={onClose} className="text-[#00143c] hover:text-gray-700">Cancel</button>
           <button
             onClick={() => onApply(selectedDays)}
             disabled={!selectedDays.length}

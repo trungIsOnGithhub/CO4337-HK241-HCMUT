@@ -151,11 +151,11 @@ const Login = () => {
           }
         }
         if (name === "password") {
-          if (value.length < 8) {
-            newErrors.password = "Password must be at least 8 characters long";
-          } else {
-            delete newErrors.password;
-          }
+        //   if (value.length < 8) {
+        //     newErrors.password = "Password must be at least 8 characters long";
+        //   } else {
+        //     delete newErrors.password;
+        //   }
         }
         setErrors(newErrors);
         }

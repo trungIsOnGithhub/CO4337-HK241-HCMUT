@@ -14,7 +14,7 @@ import { minute } from 'ultils/constant'
 import { apiAddService } from 'apis/service'
 import { HashLoader } from 'react-spinners';
 import bgImage from '../../assets/clouds.svg'
-import { FaPlus } from 'react-icons/fa'
+import { FaPlus, FaSpinner } from 'react-icons/fa'
 
 const AddService = () => {
   const {categories_service} = useSelector(state => state.category)
@@ -310,7 +310,18 @@ const AddService = () => {
               }
             </div>
             <div className='w-full mt-6 mb-4 flex justify-center'>
-              <Button type='submit' style={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center'}><FaPlus /> Create a new service</Button>
+              <button disabled={isLoading} type='submit' className={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center disabled:opacity-50 disabled:cursor-not-allowed'}>
+                  {isLoading ? (
+                      <span className="flex items-center">
+                      <FaSpinner className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                      Creating a new service...
+                      </span>
+                  ) : (
+                      <span className='flex items-center'>
+                      <FaPlus /> Create a new service
+                      </span>
+                  )}
+              </button>
             </div>
           </form>
         </div>
