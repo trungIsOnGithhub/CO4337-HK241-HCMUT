@@ -20,7 +20,7 @@ import dayjs from 'dayjs';
 import { HiPencil } from "react-icons/hi";
 import clsx from 'clsx';
 import { IoIosCloseCircleOutline } from "react-icons/io";
-import { FaGift, FaTag, FaStar, FaCrown, FaHeart, FaGem, FaDownload } from "react-icons/fa";
+import { FaGift, FaTag, FaStar, FaCrown, FaHeart, FaGem, FaDownload, FaSpinner } from "react-icons/fa";
 import { MdOutlineFileDownload } from 'react-icons/md';
 
 const AddVoucher = () => {
@@ -1135,10 +1135,21 @@ const AddVoucher = () => {
               </label>
             </div>
 
-            <Button type='submit' style={'w-fit flex gap-1 items-center bg-[#005aee] px-4 py-2 rounded-md text-white shadow-inner mx-auto mb-4'}>
-              Create a new voucher
-              <span><RiCoupon2Fill size={20}/></span>
-            </Button>
+            <div className='w-full mt-6 mb-4 flex justify-center'>
+              <button disabled={isLoading} type='submit' className={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center disabled:opacity-50 disabled:cursor-not-allowed'}>
+                    {isLoading ? (
+                        <span className="flex items-center gap-1">
+                        <FaSpinner className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                        Creating a new voucher...
+                        </span>
+                    ) : (
+                        <span className='flex items-center gap-1'>
+                          Create a new voucher
+                          <span><RiCoupon2Fill size={20}/></span>
+                        </span>
+                    )}
+              </button>
+            </div>
           </form>
         </div>
       </div>

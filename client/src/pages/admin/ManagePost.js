@@ -143,8 +143,8 @@ const ManagePost = () => {
                   </span>
                 </div>
                 <div className='w-[20%] flex justify-center items-center gap-2 px-2 py-2 text-[#00143c]'>
-                  <div className='flex items-center text-green-600'><FiThumbsUp className="h-4 w-4 mr-1" /></div>
-                  <div className='flex items-center text-red-600'><FiThumbsDown className="h-4 w-4 mr-1" /></div>
+                  <div className='flex items-center text-green-600 gap-1'><FiThumbsUp className="h-4 w-4 mr-1" /><span>{el?.likes?.length}</span></div>
+                  <div className='flex items-center text-red-600 gap-1'><FiThumbsDown className="h-4 w-4 mr-1" /><span>{el?.dislikes?.length}</span></div>
                 </div>
                 <div className='w-[10%] px-2 py-2 text-[#00143c] flex justify-center items-center'>{el?.numberView}</div>
                 <div className='w-[10%] px-2 py-2 text-[#00143c] flex justify-center items-center'>{el?.isHidden ? 'Hidden' : 'Visible'}</div>

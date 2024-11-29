@@ -324,7 +324,7 @@ const AddPost = () => {
               }
             </div>
             <div className='w-full mt-6 mb-4 flex justify-center'>
-              <Button type='submit' style={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center'}>
+              <button disabled={isLoading} type='submit' className={'px-4 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center disabled:opacity-50 disabled:cursor-not-allowed'}>
                 {isLoading ? (
                     <span className="flex items-center">
                     <FaSpinner className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
@@ -332,10 +332,10 @@ const AddPost = () => {
                     </span>
                 ) : (
                     <span className='flex items-center'>
-                     <FaPlus />&nbsp;Create a new post
+                    <FaPlus />&nbsp;Create a new post
                     </span>
                 )}
-              </Button>
+              </button>
             </div>
           </form>
         </div>

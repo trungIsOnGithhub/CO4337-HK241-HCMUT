@@ -288,7 +288,7 @@ const ViewBlog = () => {
             alt={post?.title}
             className="w-full h-auto object-cover"
           />
-          <div className="flex items-center space-x-4 px-6 py-3">
+          <div className="flex items-center space-x-4 px-6 py-3 cursor-pointer" onClick={()=>{navigate(`/detail_provider/${post?.provider_id?._id}`)}}>
               <div className="relative">
                 <img
                   src={post?.provider_id?.images[0] || defaultProvider}
