@@ -285,8 +285,15 @@ const ManageProduct = () => {
                                           e.target.src = "https://images.unsplash.com/photo-1633613286991-611fe299c4be";
                                         }}
                                       />
-                                      <div>
+                                      <div className='flex flex-col gap-1 items-start'>
                                         <p className="font-medium">{variant?.title}</p>
+                                        <div className='flex items-center gap-1'>
+                                          <span>Color:</span>
+                                          <div
+                                            className="w-6 h-6 rounded-full border-2 border-white"
+                                            style={{ backgroundColor: variant?.colorCode || '#111111' }}
+                                          ></div>
+                                        </div>
                                       </div>
 
                                     </div>

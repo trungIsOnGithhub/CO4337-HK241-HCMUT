@@ -165,10 +165,9 @@ const ManageOrder = () => {
               <span className='w-[10%] flex items-end justify-center'>Order Date</span>
               <span className='w-[25%] flex items-end justify-center'>OrderId</span>
               <span className='w-[15%] flex items-end justify-center'>Customer</span>
-              <span className='w-[15%] flex items-end justify-center'>Shipping Status</span>
-              <span className='w-[15%] flex items-end justify-center'>Payment Status</span>
+              <span className='w-[20%] flex items-end justify-center'>Shipping Status</span>
+              <span className='w-[20%] flex items-end justify-center'>Payment Status</span>
               <span className='w-[10%] flex items-end justify-center'>Total</span>
-              <span className='w-[10%]'>Action</span>
             </div>
             <div>
               {orders?.map((el,index) => (
@@ -178,7 +177,7 @@ const ManageOrder = () => {
                     {el?._id}
                   </span>
                   <span className='w-[15%] py-2 text-[#00143c] text-sm line-clamp-1 flex items-center justify-center'>{`${el?.orderBy?.lastName} ${el?.orderBy?.firstName}`}</span>
-                  <span className='w-[15%] py-2 text-[#00143c] text-sm flex items-center justify-center relative' onClick={()=>{handleShowOptionShippingStatus(el?._id)}}>
+                  <span className='w-[20%] py-2 text-[#00143c] text-sm flex items-center justify-center relative' onClick={()=>{handleShowOptionShippingStatus(el?._id)}}>
                     <div className='w-full flex justify-between items-center border rounded-md px-2 shadow-sm h-[26px]'>
                       <span className='flex gap-[6px] items-center'><FaCircleHalfStroke style={{ transform: 'rotate(90deg)'}} color={el?.statusShipping === 'Pending' ? 'orange' : el?.statusShipping === 'Shipping' ? 'blue' : 'green'}/>{el?.statusShipping}</span>
                       <FaAngleDown size={10}/>
@@ -192,7 +191,7 @@ const ManageOrder = () => {
                     </div>
                     }
                   </span>
-                  <span className='w-[15%] py-2 text-[#00143c] flex items-center justify-center relative cursor-pointer text-sm' onClick={()=>{handleShowOptionPaymentStatus(el?._id)}}>
+                  <span className='w-[20%] py-2 text-[#00143c] flex items-center justify-center relative cursor-pointer text-sm' onClick={()=>{handleShowOptionPaymentStatus(el?._id)}}>
                     <div className='w-full flex justify-between items-center border rounded-md px-2 shadow-sm h-[26px]'>
                       <span className='flex gap-[6px] items-center'><FaCircleHalfStroke style={{ transform: 'rotate(90deg)'}} color={el?.statusPayment === 'Successful' ? 'green' : el?.statusPayment === 'Pending' ? 'orange' : 'red'}/>{el?.statusPayment}</span>
                       <FaAngleDown size={10}/>
@@ -209,7 +208,6 @@ const ManageOrder = () => {
                   <span className='w-[10%] py-2 text-[#00143c] flex items-center justify-center'>
                   {formatPrice(el?.totalPrice)}
                   </span>
-                  <span className='w-[10%] px-2 py-2 text-[#00143c] font-bold text-xl'><GoPlusCircle /></span>
                 </div>
               ))}
             </div>

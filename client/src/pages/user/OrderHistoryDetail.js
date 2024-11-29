@@ -69,7 +69,6 @@ const OrderHistoryDetail = () => {
     const handleCancelOrder = async() => {
         setIsLoading(true);
         const response = await apiUpdatePaymentStatusOrderProduct({orderId: orderProductData?._id, status: 'Cancelled'})
-        console.log(response)
         if(response?.success){
           toast.success("Order has been cancelled successfully");
           setShowCancelModal(false);
