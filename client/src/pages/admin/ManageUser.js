@@ -261,7 +261,7 @@ const DataExportSheetModal = ({ rawData, onClose, propsToExport }) => {
             placeholder= 'Sheet Name...'
             defaultValue={sheetName}
             style={'w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'}
-            styleInput={'w-[100%] bg-[#f4f6fa]   text-[#99a1b1]'}
+            styleInput={'w-[100%] bg-[#f4f6fa] text-[#00143c]'}
             onChange={event => setSheetName(event.target.value)}
           >
           </InputFormm>
@@ -275,7 +275,7 @@ const DataExportSheetModal = ({ rawData, onClose, propsToExport }) => {
             placeholder= 'Workbook Name...'
             defaultValue={workbookName}
             style={'w-full bg-[#f4f6fa] h-10 rounded-md pl-2 flex items-center'}
-            styleInput={'w-[100%] bg-[#f4f6fa] text-[#99a1b1]'}
+            styleInput={'w-[100%] bg-[#f4f6fa] text-[#00143c]'}
             onChange={event => setWorkbookName(event.target.value)}
           >
           </InputFormm>
