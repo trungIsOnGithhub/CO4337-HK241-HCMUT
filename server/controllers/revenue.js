@@ -1123,31 +1123,40 @@ let getOccupancyByStaffs = asyncHandler(async (req, res) => {
     });
     // console.log('----:::::::', allStaffInOrders);
 
-    let serviceProviderInfo = await ServiceProvider.findById(spid);
-    let totalWorkingHoursOfProviderPerWeek = 0;
-    [
-        'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
-    ].forEach(day => {
-        totalWorkingHoursOfProviderPerWeek +=
-            getMinutesDifference(serviceProviderInfo?.time[`start${day}`], serviceProviderInfo?.time[`end${day}`]);
-    });
-    if (totalWorkingHoursOfProviderPerWeek < 1) {
-        return res.json({
-            success: true,
-            performance: allStaffInOrders
-        });
-    }
+    // let serviceProviderInfo = await ServiceProvider.findById(spid);
+    // let totalWorkingHoursOfProviderPerWeek = 0;
+    // [
+    //     'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
+    // ].forEach(day => {
+    //     totalWorkingHoursOfProviderPerWeek +=
+    //         getMinutesDifference(serviceProviderInfo?.time[`start${day}`], serviceProviderInfo?.time[`end${day}`]);
+    // });
+    // if (totalWorkingHoursOfProviderPerWeek < 1) {
+    //     return res.json({
+    //         success: true,
+    //         performance: allStaffInOrders
+    //     });
+    // }
     // console.log("----->", orderCountByService);
 
     // let numDaysInMonth = new Date(currYear, currMonth, 0).getDate();
     for (let idx in allStaffInOrders) {
         let staffId = allStaffInOrders[idx]._id;
+        let staffShiftHour = calculateWorkingHourOfStaffWholeWeek(allStaffInOrders[idx].shifts);
+
+        let stffOccupancy = 0;
+        if (staffShiftHour >= 1) {
+            stffOccupancy = sumWorkedHourByStaff[staffId] * 100 / (staffShiftHour * 4);
+        }
+        if (stffOccupancy > 100.0) {
+            stffOccupancy = 100.0;
+        }
 
         allStaffInOrders[idx] = {
             ...(allStaffInOrders[idx].toObject()),
             numberOrders: orderCountByStaff[staffId],
             revenue: revenueCountByStaff[staffId],
-            occupancy: sumWorkedHourByStaff[staffId] * 100 / (totalWorkingHoursOfProviderPerWeek * 4)
+            occupancy: stffOccupancy
         }
     }
 
@@ -1162,6 +1171,23 @@ let getOccupancyByStaffs = asyncHandler(async (req, res) => {
         performance: allStaffInOrders
     });
 });
+
+const calculateWorkingHourOfStaffWholeWeek = (staffShift) => {
+    if (!staffShift) {
+        return 0;
+    }
+
+    let sumWorking = 0;
+    for (const value of Object.values(staffShift)) {
+        if (!value?.isEnabled || !value?.periods?.start && !value?.periods?.end) {
+            continue;
+        }
+
+        sumWorking += getMinutesDifference(value.periods.start, value.periods.end)
+    }
+
+    return sumWorking;
+};
 
 module.exports = {
     getRevenueByDateRange,
