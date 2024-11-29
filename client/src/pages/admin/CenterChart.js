@@ -88,7 +88,7 @@ const CenterChart = ({ providerId }) => {
     setAppointmentsBookedChange(ratioFinish);
     setCanceledAppointmentsChange(ratioCanceled);
 
-    const dayLabelArray = [...Array(new Date(selectedYear, selectedMonth+1, 0).getDate()).keys().map(e => e.toString())];
+    const dayLabelArray = [...Array(new Date(selectedYear, selectedMonth+1, 0).getDate()).keys().map(e => (e+1).toString())];
     setLineData({
       labels: dayLabelArray,
       datasets: [
@@ -117,7 +117,7 @@ const CenterChart = ({ providerId }) => {
     responsive: true,
     plugins: {
       legend: {
-        display: false,
+        display: true,
       },
       tooltip: {
         enabled: true,
@@ -141,7 +141,7 @@ const CenterChart = ({ providerId }) => {
           beginAtZero: true,
         },
         ticks: {
-          display: false,
+          display: true,
         },
         min: 0
       },

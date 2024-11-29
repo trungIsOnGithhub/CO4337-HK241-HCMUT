@@ -75,7 +75,16 @@ const ManageChat = () => {
     });
 
       if (resp.success && resp.qna) {
-        setQaItems(newQna);
+        console.log('--===============  >' + JSON.stringify(resp?.qna?.chatGivenQuestions));
+        setQaItems(resp?.qna?.chatGivenQuestions.map(
+          (ele, idx) => {
+              return {
+                  ...ele,
+                  id: idx+1
+              };
+          }
+      )
+      || []);
         dispatch(getCurrent())
         if (editingId) {
             toast.success("Q&A pair updated successfully!");
@@ -120,21 +129,31 @@ const ManageChat = () => {
           delete q.id
         });
 
+        // console.log("------------------->>>>>>>", qaItems);
         // console.log("3412424231>>>>>>>", newQna);
         // let resp;
-        let resp = await apiAddServiceProvidersGivenQnA({
-            provider_id: current.provider_id._id,
-            qna: newQna
-        });
-    
-        if (resp.success && resp.qna) {
-            setQaItems(newQna);
-            dispatch(getCurrent());
-            toast.success("Q&A pair deleted successfully!");
-        }
-        else {
-            toast.success("Error ocurred!!");
-        }
+          let resp = await apiAddServiceProvidersGivenQnA({
+              provider_id: current.provider_id._id,
+              qna: newQna
+          });
+      
+          if (resp.success && resp.qna) {
+            // console.log('--           >' + JSON.stringify(resp?.qna?.chatGivenQuestions));
+              setQaItems(resp.qna?.chatGivenQuestions.map(
+                (ele, idx) => {
+                    return {
+                        ...ele,
+                        id: idx+1
+                    };
+                }
+            )
+            || []);
+              dispatch(getCurrent());
+              toast.success("Q&A pair deleted successfully!");
+          }
+          else {
+              toast.success("Error ocurred!!");
+          }
     }
 
   };
@@ -205,7 +224,7 @@ const ManageChat = () => {
                         <h3 className="text-lg font-medium text-gray-800">{item.question}</h3>
                         <div className="flex space-x-2">
                             <button
-                            onClick={() => handleEdit(item)}
+                            onClick={() => {window.scrollTo(0,0); handleEdit(item);}}
                             className="p-2 text-gray-600 hover:text-[#0a66c2] transition-colors rounded-full"
                             aria-label="Edit Q&A pair"
                             >
