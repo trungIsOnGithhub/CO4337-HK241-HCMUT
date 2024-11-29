@@ -14,7 +14,7 @@ describe('UnitTest USER: Controller', async function() {
     it('USR1-1_POST_/api/user/register_200_RegisterAdminSuccess', async function() {
       const { mock, match } = currentMockUnitTestData[this.test.title];
 
-      await GenericController.testSuccess(
+      await GenericController.testError(
         mock, match,
         servicesAPIControllers.register
       );

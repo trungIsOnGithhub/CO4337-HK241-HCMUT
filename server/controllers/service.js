@@ -21,14 +21,10 @@ const createService = asyncHandler(async(req, res)=>{
     const thumb = req.files?.thumb[0]?.path
     const image = req.files?.images?.map(el => el.path)
 
-<<<<<<< HEAD
     if(!category){
         throw new Error("Missing category")
     }
     if(!name || !price || !description || !assigned_staff || !hour || !minute || !provider_id){
-=======
-    if(!name || !price || !description || !assigned_staff || !category || !provider_id){
->>>>>>> trung_add_testing
         throw new Error("Missing input")
     }
     req.body.duration = +hour*60 + +minute
@@ -255,7 +251,6 @@ const updateServiceByAdmin = asyncHandler(async(req, res)=>{
     }
     const service = await Service.findByIdAndUpdate(sid, req.body, {new: true})
 
-<<<<<<< HEAD
     if (service) {
         const esResult = await ESReplicator.updateService(sid, req.body);
         if (!esResult.success || !esResult.data) {
@@ -270,8 +265,6 @@ const updateServiceByAdmin = asyncHandler(async(req, res)=>{
     
     }
 
-=======
->>>>>>> trung_add_testing
     return res.status(200).json({
         success: service ? true : false,
         mes: service ? 'Updated successfully' : "Cannot update service"

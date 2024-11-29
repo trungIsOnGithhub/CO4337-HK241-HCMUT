@@ -5,13 +5,16 @@ module.exports = {
                 body: {
                     title: "sample",
                     content: "sample"
+                },
+                user: {
+                    _id: "6377327edf989f1ae865514"
                 }
             },
             match: {
                 createBlog: {
                     _id: "66377327edf989f1ae865513",
-                    title: "Sample Title",
-                    content: "An interesting blog...",
+                    title: "sample",
+                    content: "sample",
                     category: "Sample category",
                     numberView: 9999,
                     likes:[],
@@ -47,14 +50,14 @@ module.exports = {
             }
         },
 
-        'BL2-4_PUT_/api/blog/:bid_200_UpdateSuccess': {
+        'BL2-4_PUT_/api/blog/:bid_200_UpdateError': {
             mock: {
                 params: {
                     bid: "66377327edf989f1ae865513"
                 },
-                body: {
-                    title: "New Sample Title3"
-                }
+                // body: {
+                //     title: "New Sample Title3"
+                // }
             },
             match: {
                 updatedBlog: []

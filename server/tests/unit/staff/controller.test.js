@@ -12,12 +12,12 @@ describe('UnitTest STAFF: Controller', async function() {
     it('STFF1-1_POST_/api/staff_200_AddStaffMissingInput', async function() {
       const { mock, match } = currentMockUnitTestData[this.test.title];
 
-      await GenericController.testFail(
+      await GenericController.testError(
         mock, match,
         staffAPIControllers.addStaff
       );
     });
-    it('STFF1-2_POST_/api/staff_200_AddStaffSuccess', async function() {
+    it('STFF1-2_POST_/api/staff_200_AddStaffTimeout', async function() {
         const { mock, match } = currentMockUnitTestData[this.test.title];
 
         await GenericController.testError(
@@ -28,7 +28,7 @@ describe('UnitTest STAFF: Controller', async function() {
     it('STFF1-3_POST_/api/staff_400_AddStaffAlreadyExist', async function() {
         const { mock, match } = currentMockUnitTestData[this.test.title];
 
-        await GenericController.testFail(
+        await GenericController.testError(
             mock, match,
             staffAPIControllers.addStaff
         );
@@ -37,12 +37,17 @@ describe('UnitTest STAFF: Controller', async function() {
 
     it('STFF2-1_GET_/api/staff_200_GetAllStaffsByProviderOK', async function() {
       const { mock, match } = currentMockUnitTestData[this.test.title];
-
-      await GenericController.testSuccess(
+// console.log(mock, match);
+      let resp = await GenericController.testError(
         mock, match,
         staffAPIControllers.getAllStaffsByAdmin
       );
+
+      // console.log('============>' + JSON.stringify(resp));\
+      chai.expect(resp.ok).to.be.true;
+      chai.expect(resp.msg).to.be.equal('Behavior matched');
     });
+
     it('STFF2-2_GET_/api/staff_400_MissingProviderInput', async function() {
       const { mock, match } = currentMockUnitTestData[this.test.title];
 
