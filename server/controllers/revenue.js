@@ -328,7 +328,13 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
                 'info.0.provider': spid,
                 orderBy: customerId
             });
-            console.log("=======:::::|||<<<<", pastOrder.map(o=>o._id.toString()));
+            //  console.log("=======:::::|||<<<<", pastOrder.map(o=>o._id.toString()));
+            pastOrder = pastOrder.filter(order => {
+                let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
+                let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+    
+                return cDate < last3Weeks[0][0];
+            });
 
             let havePastOrder = false;
             for (const o of pastOrder) {
@@ -349,7 +355,7 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
             let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
             let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
 
-            return cDate < last3Months[1].end && cDate > last3Months[1].start;
+            return cDate < last3Weeks[1][1] && cDate > last3Weeks[1][0];
         });
 
         let lastWeekCustomers = lastWeekOrders.map(order => {
@@ -365,6 +371,12 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
             let pastOrder = await Order.find({
                 'info.0.provider': spid,
                 orderBy: customerId
+            });
+            pastOrder = pastOrder.filter(order => {
+                let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
+                let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+    
+                return cDate < last3Weeks[1][0];
             });
 
             let havePastOrder = false;
@@ -401,6 +413,12 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
             let pastOrder = await Order.find({
                 'info.0.provider': spid,
                 orderBy: customerId
+            });
+            pastOrder = pastOrder.filter(order => {
+                let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
+                let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+    
+                return cDate < last3Weeks[2][0];
             });
 
             if (!pastOrder) {
@@ -441,6 +459,12 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
                 'info.0.provider': spid,
                 orderBy: customerId
             });
+            pastOrder = pastOrder.filter(order => {
+                let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
+                let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+    
+                return cDate < last3Months[0].start;
+            });
 
 
             let havePastOrder = false;
@@ -480,6 +504,12 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
             let pastOrder = await Order.find({
                 'info.0.provider': spid,
                 orderBy: customerId
+            });
+            pastOrder = pastOrder.filter(order => {
+                let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
+                let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+    
+                return cDate < last3Months[1].start;
             });
 
 
@@ -534,7 +564,12 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
                 'info.0.provider': spid,
                 orderBy: customerId
             });
-
+            pastOrder = pastOrder.filter(order => {
+                let [day, month, year] = order.info[0].date.split('/').map(e => e.padStart(2,'0'));
+                let cDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+    
+                return cDate < last3Months[2].start;
+            });
 
             let havePastOrder = false;
             for (const o of pastOrder) {
@@ -553,10 +588,10 @@ let getNewCustomer3RecentStatistic = asyncHandler(async (req, res) => {
 
     // console.log('----><<', newCustomerData, '------<><>', periodData);
 
-    let pastOrder = await Order.find({
-        'info.0.provider': '663771db2463a33c6f3a39d2',
-        orderBy: '6613f975bc65bac9278a7b51'
-    });
+    // let pastOrder = await Order.find({
+    //     'info.0.provider': '663771db2463a33c6f3a39d2',
+    //     orderBy: '6613f975bc65bac9278a7b51'
+    // });
 
     // console.log("=======>}}}}" + JSON.stringify(pastOrder));
 
@@ -634,7 +669,7 @@ let getCustomerDataByMonth = asyncHandler(async (req, res) => {
             'info.0.provider': spid,
             orderBy: customer._id
         });
-        pastOrder.filter(order => {
+        pastOrder = pastOrder.filter(order => {
             let [day, month, year] = order.info[0].date.split('/').map(Number);
 
             return month < currMonth && year <= currYear;
