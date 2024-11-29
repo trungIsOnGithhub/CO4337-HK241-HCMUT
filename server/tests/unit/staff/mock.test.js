@@ -16,7 +16,7 @@ module.exports = {
                 mes: "Cannot create new staff"
             }
         },
-        'STFF1-2_POST_/api/staff_200_AddStaffSuccess': {
+        'STFF1-2_POST_/api/staff_200_AddStaffTimeout': {
             mock: {
                 body: {
                     email: "aaa@aaa.aaa",

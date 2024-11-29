@@ -47,7 +47,7 @@ module.exports = {
         },
 
 
-        'PRVD2-1_GET_/api/service_provider_200_GetAllProviderOK': {
+        'PRVD2-1_GET_/api/service_provider_200_GetAllProviderTimeout': {
             mock: {
                 query: {
                     limit: 0,
