@@ -13,7 +13,7 @@ const makeTokenNumber = () => {
 };
 
 const createServiceProvider = asyncHandler(async(req, res)=>{
-    console.log(req.body)
+    // console.log(req.body)
     const { email, password, firstName, lastName, mobile } = req.body
     const avatar = req.files?.avatar[0]?.path
 
@@ -75,14 +75,14 @@ const createServiceProvider = asyncHandler(async(req, res)=>{
     });
 
     if (!newProvider) {
-        console.log('test333')
+        //console.log('test333')
         res.status(400).json({
             success: false,
             mes: "Cannot Create Provider Register"
         })
     }
     else{
-        console.log('test444')
+        ///console.log('test444')
         setTimeout(async()=>{
             await ServiceProvider.deleteOne({bussinessName: req.body.bussinessName + "@" + token})
         },[15*60*1000])

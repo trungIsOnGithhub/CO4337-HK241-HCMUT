@@ -52,8 +52,8 @@ describe('UnitTest APP: Middlewares', async function() {
 
         mock.headers.authorization += accessToken;
 
-        console.log("11111", mock, "1111");
-        console.log("22222", match, "2222");
+        // console.log("11111", mock, "1111");
+        // console.log("22222", match, "2222");
 
         await GenericController.testFailMiddleware(
             mock, match,

@@ -98,7 +98,7 @@ const finalRegister = asyncHandler(async(req, res)=>{
 //Access_token => de xac thuc + phan quyen nguoi dung
 const login = asyncHandler(async(req, res)=>{
     const {email, password} = req.body
-    console.log(email, password)
+    // console.log(email, password)
     if(!email || !password){
         return res.status(400).json({
             success: false,
@@ -107,9 +107,9 @@ const login = asyncHandler(async(req, res)=>{
     
     
     const response = await User.findOne({email})
-    console.log(response)
+    // console.log(response)
     if(response && await response.isCorrectPassword(password)){
-        console.log('aaa')
+        // console.log('aaa')
         const objectResponse = response.toObject();
         const {isBlocked} = objectResponse;
 
@@ -177,7 +177,7 @@ const getOneUser = asyncHandler(async(req, res)=>{
 
 const getOneUserById = asyncHandler(async(req, res)=>{
     const {userId} = req.params
-    console.log(userId)
+    // console.log(userId)
 
     const user = await User.findById(userId).select('-refresh_token -password').populate({
         path: 'cart_service',
@@ -492,8 +492,8 @@ const getAllCustomers = asyncHandler(async (req, res) => {
             .exec();
 
         ordersFromOrderModel.forEach(order => {
-            console.log(order.orderBy);  // Kiểm tra toàn bộ thông tin của orderBy
-            });
+            // console.log(order.orderBy);  // Kiểm tra toàn bộ thông tin của orderBy
+        });
         
         //console.log(ordersFromOrderModel)
         // console.log(ordersFromOrderProductModel)
@@ -937,8 +937,7 @@ const addContact = asyncHandler(async (req, res) => {
 });
 
 const getAdmin = asyncHandler(async (req, res) => {
-    console.log('testttt')
-    console.log(req.query)
+    // console.log(req.query)
     const {prid} = req.query;
 
     if (!prid) {
