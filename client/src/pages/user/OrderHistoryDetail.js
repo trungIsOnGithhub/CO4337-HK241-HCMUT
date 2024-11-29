@@ -7,8 +7,7 @@ import { TbMessageCirclePlus } from 'react-icons/tb';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import { showMessageBox } from 'store/app/appSlice';
 import { formatPrice } from 'ultils/helper';
 
@@ -176,8 +175,6 @@ const OrderHistoryDetail = () => {
             </div>
         </div>
         )}
-
-        <ToastContainer position="top-right" />
     </div>
   )
 }

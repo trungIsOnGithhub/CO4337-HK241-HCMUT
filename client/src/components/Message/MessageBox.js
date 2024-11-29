@@ -140,7 +140,7 @@ const MessageBox = ({currentChat}) => {
 }
 
   return (
-    <div className="fixed bottom-0 right-2 z-[9999] max-w-[380px]">
+    <div className="fixed bottom-2 right-2 z-[9999] max-w-[380px]">
       {/* Minimized MessageBox */}
       {/* {!isOpen && (
         <button
