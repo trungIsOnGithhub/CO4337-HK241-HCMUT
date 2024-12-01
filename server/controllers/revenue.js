@@ -36,9 +36,8 @@ let getRevenueByDateRange = asyncHandler(async(req, res) => {
 
     let dailyRevenue = []
     for(let dateKey of revByDate.keys()) {
-        let ddmmyyArr = dateKey.split('/').map(Number)
-        let revDate = new Date(ddmmyyArr[2], ddmmyyArr[1]-1, ddmmyyArr[0], 0, 0, 0)
-
+        let ddmmyyArr = dateKey.split('/').map(Number);
+        let revDate = new Date(ddmmyyArr[2], ddmmyyArr[1]-1, ddmmyyArr[0], 0, 0, 0);
 
         dailyRevenue.push([revDate, revByDate.get(dateKey)])
     }
