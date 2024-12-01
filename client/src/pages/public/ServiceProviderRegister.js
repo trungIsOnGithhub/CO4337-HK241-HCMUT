@@ -619,7 +619,7 @@ const ServiceProviderRegister = () => {
                                         name="avatar"
                                         accept="image/*"
                                         onChange={handleAvatarChange}
-                                        // className="hidden"
+                                        className="hidden"
                                     />
                                 </label>
                             </div>

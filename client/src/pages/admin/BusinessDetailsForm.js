@@ -131,7 +131,7 @@ const BusinessDetailsForm = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrls(reader.result);
-        // console.log(reader.result);
+        console.log(reader.result);
       };
       reader.readAsDataURL(file);
     }

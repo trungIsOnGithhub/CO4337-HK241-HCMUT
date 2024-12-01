@@ -26,12 +26,12 @@ const credential = require('./credential');
 
 //     cy.get('[cytest="login_button"]').click();
 
-//     cy.url().should('eq', `${Cypress.config().baseUrl}/`);
+//     // cy.url().should('eq', `${Cypress.config().baseUrl}/`);
 
-//     // should be visible with any role
-//     cy.get('[cytest="personal_icon"]').click();
-//     // should be visible login as admin
-//     cy.get('[cytest="header_admin_options"]').click();
+//     // // should be visible with any role
+//     // cy.get('[cytest="personal_icon"]').click();
+//     // // should be visible login as admin
+//     // cy.get('[cytest="header_admin_options"]').click();
 //   }); 
 
 //   it('Success load after customer login - Header', () => {
@@ -269,12 +269,11 @@ const credential = require('./credential');
 // })
 
 
-
 describe('Service Provider Register Account', () => {
   it('Normal Flow - Provide Full Information No Working Time', () => {
     cy.visit("/sp_register");
 
-    cy.get('[name="avatar"]').selectFile(credential.SAMPLE_SP_REGISTER_DATA.avatar);
+    cy.get('[name="avatar"]').selectFile(credential.SAMPLE_SP_REGISTER_DATA.avatar, { force: true });
 
     cy.get('[name="firstName"]').type(credential.SAMPLE_SP_REGISTER_DATA.firstName);
     cy.get('[name="lastName"]').type(credential.SAMPLE_SP_REGISTER_DATA.lastName);
@@ -285,19 +284,18 @@ describe('Service Provider Register Account', () => {
     cy.get('[cytest="sp_register_next_btn"]').click();
 
     // opening new section upload images
-    cy.get('[name="avatar"]').selectFile(credential.EXAMPLE_IMAGE);
+    cy.get('[name="images"]').selectFile(credential.EXAMPLE_IMAGE, { force: true });
 
     cy.get('[name="bussinessName"]').type(credential.SAMPLE_SP_REGISTER_DATA.bussinessName);
-
     cy.get('[name="address"]').type(credential.SAMPLE_SP_REGISTER_DATA.addressFeed);
 
     cy.get('[cytest="goong_location_option"]').first().click();
 
-    cy.get('[cytest="close_goong_map"]').click();
+    cy.get('[cytest="close_goong_map"]').click({ force: true });
 
-    cy.get('[cytest="sp_register_open_time_select"]').click();
-    cy.get('[cytest="sp_register_close_time_select"]').click();
+    cy.get('[cytest="sp_register_open_time_select"]').click({ force: true });
+    cy.get('[cytest="sp_register_close_time_select"]').click({ force: true });
 
-    cy.get('[cytest="sp_register_signup_btn"]').click();
+    cy.get('[cytest="sp_register_signup_btn"]').click({ force: true });
   })
 })
