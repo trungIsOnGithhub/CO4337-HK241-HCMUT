@@ -26,7 +26,7 @@ const CheckoutService = () => {
 
   // Lấy giá từ URL
   const searchParams = new URLSearchParams(location.search);
-  const priceFromURL = searchParams.get('price');
+  // const priceFromURL = searchParams.get('price');
   const couponCodeFromURL = searchParams.get('couponCode');
   const [payload, setPayload] = useState([])
   const [showPaypal, setShowPaypal] = useState(false);
@@ -45,7 +45,7 @@ const CheckoutService = () => {
   const paymentMethods = [
     { id: "paypal", name: "PayPal", icon: FaPaypal },
     // { id: "zalopay", name: "ZaloPay", icon: SiZalo },
-    { id: "cod", name: "Cash on Delivery", icon: TbTruckDelivery, iconColor: "text-green-600" }
+    { id: "cod", name: "Cash When Use", icon: TbTruckDelivery, iconColor: "text-green-600" }
   ];
   console.log(selectedPayment)
   
@@ -77,8 +77,8 @@ const CheckoutService = () => {
     fetchExchangeRate();
   }, []); 
 
-  // Sử dụng giá từ URL nếu có, nếu không thì sử dụng giá từ currentCartService
-  const price = priceFromURL ? parseFloat(priceFromURL) : currentCartService[0]?.price;
+
+  const price = currentCartService[0]?.price;
 
   // quy doi tu VND -> USD
   const totalPriceUSD = exchangeRate ? price / exchangeRate : null;
@@ -185,7 +185,7 @@ const CheckoutService = () => {
                     <div>
                       <p className="text-lg font-medium text-gray-900">{method.name}</p>
                       <p className="text-sm text-gray-600">
-                        {method.id === "cod" ? "Pay when you receive your order" : `Pay with ${method.name}`}
+                        {method.id === "cod" ? "Pay when you use service" : `Pay with ${method.name}`}
                       </p>
                     </div>
                   </div>
