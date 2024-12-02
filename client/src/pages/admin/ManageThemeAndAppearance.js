@@ -70,19 +70,19 @@ const ManageThemeAndAppearance = () => {
                   <span className='w-full font-medium'>Light</span>
                 </div>
               </div>
-              <div className={clsx('w-[25%] h-fit cursor-pointer rounded-lg shadow-xl border border-[#ebeef5] hover:border-2', theme==="blossom" && 'border border-[#005aee]')} onClick={()=>{setTheme("blossom")}}>
+              <div className={clsx('w-[25%] h-fit rounded-lg shadow-xl border border-[#ebeef5] hover:border-2 opacity-50 cursor-not-allowed', theme==="blossom" && 'border border-[#005aee]')}>
                 <img src={blossomTheme} className='max-w-full h-auto object-cover rounded-t-lg'/>
                 <div className={clsx('px-[16px] py-[12px] rounded-b-lg', theme === "blossom" ? 'bg-[#005aee] text-white':'bg-white text-[#00143c]')}>
                   <span className='w-full font-medium'>Blossom</span>
                 </div>
               </div>
-              <div className={clsx('w-[25%] h-fit cursor-pointer rounded-lg shadow-xl border border-[#ebeef5] hover:border-2', theme==="everest" && 'border border-[#005aee]')} onClick={()=>{setTheme("everest")}}>
+              <div className={clsx('w-[25%] h-fit rounded-lg shadow-xl border border-[#ebeef5] hover:border-2 opacity-50 cursor-not-allowed', theme==="everest" && 'border border-[#005aee]')}>
                 <img src={everestTheme} className='max-w-full h-auto object-cover rounded-t-lg'/>
                 <div className={clsx('px-[16px] py-[12px] rounded-b-lg', theme === "everest" ? 'bg-[#005aee] text-white':'bg-white text-[#00143c]')}>
                 <span className='w-full font-medium'>Everest</span>
                 </div>
               </div>
-              <div className={clsx('w-[25%] h-fit cursor-pointer rounded-lg shadow-xl border border-[#ebeef5] hover:border-2', theme==="ocean" && 'border border-[#005aee]')} onClick={()=>{setTheme("ocean")}}>
+              <div className={clsx('w-[25%] h-fit rounded-lg shadow-xl border border-[#ebeef5] hover:border-2 opacity-50 cursor-not-allowed', theme==="ocean" && 'border border-[#005aee]')}>
                 <img src={oceanTheme} className='max-w-full h-auto object-cover rounded-t-lg'/>
                 <div className={clsx('px-[16px] py-[12px] rounded-b-lg', theme === "ocean" ? 'bg-[#005aee] text-white':'bg-white text-[#00143c]')}>
                 <span className='w-full font-medium'>Ocean</span>
@@ -96,19 +96,19 @@ const ManageThemeAndAppearance = () => {
                 <span className='w-full font-medium'>Dark</span>
                 </div>
               </div>
-              <div className={clsx('w-[25%] h-fit cursor-pointer rounded-lg shadow-xl border border-[#ebeef5] hover:border-2', theme==="brooklyn" && 'border border-[#005aee]')} onClick={()=>{setTheme("brooklyn")}}>
+              <div className={clsx('w-[25%] h-fit rounded-lg shadow-xl border border-[#ebeef5] hover:border-2 opacity-50 cursor-not-allowed', theme==="brooklyn" && 'border border-[#005aee]')}>
                 <img src={brooklynTheme} className='max-w-full h-auto object-cover rounded-t-lg'/>
                 <div className={clsx('px-[16px] py-[12px] rounded-b-lg', theme === "brooklyn" ? 'bg-[#005aee] text-white':'bg-white text-[#00143c]')}>
                 <span className='w-full font-medium'>Brooklyn</span>
                 </div>
               </div>
-              <div className={clsx('w-[25%] h-fit cursor-pointer rounded-lg shadow-xl border border-[#ebeef5] hover:border-2', theme==="honeycomb" && 'border border-[#005aee]')} onClick={()=>{setTheme("honeycomb")}}>
+              <div className={clsx('w-[25%] h-fit rounded-lg shadow-xl border border-[#ebeef5] hover:border-2 opacity-50 cursor-not-allowed', theme==="honeycomb" && 'border border-[#005aee]')}>
                 <img src={honeycombTheme} className='max-w-full h-auto object-cover rounded-t-lg'/>
                 <div className={clsx('px-[16px] py-[12px] rounded-b-lg]', theme === "honeycomb" ? 'bg-[#005aee] text-white':'bg-white text-[#00143c]')}>
                 <span className='w-full font-medium'>Honeycomb</span>
                 </div>
               </div>
-              <div className={clsx('w-[25%] h-fit cursor-pointer rounded-lg shadow-xl border border-[#ebeef5] hover:border-2', theme==="neo" && 'border border-[#005aee]')} onClick={()=>{setTheme("neo")}}>
+              <div className={clsx('w-[25%] h-fit rounded-lg shadow-xl border border-[#ebeef5] hover:border-2 opacity-50 cursor-not-allowed', theme==="neo" && 'border border-[#005aee]')}>
                 <img src={neoTheme} className='max-w-full h-auto object-cover rounded-t-lg'/>
                 <div className={clsx('px-[16px] py-[12px] rounded-b-lg', theme === "neo" ? 'bg-[#005aee] text-white':'bg-white text-[#00143c]')}>
                 <span className='w-full font-medium'>Neo</span>

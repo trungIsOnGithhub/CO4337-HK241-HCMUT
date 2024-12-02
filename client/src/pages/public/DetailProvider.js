@@ -23,7 +23,7 @@ import instagramm from '../../assets/instagram.png'
 import likedIn from '../../assets/likedin.png'
 import youTube from '../../assets/youtube.png'
 import twitter from '../../assets/twitter.jpg'
-import tiktok from '../../assets/tiktok.jpg'
+import tiktok from '../../assets/tiktok.png'
 // import { TbMessageCircleFilled } from 'react-icons/tb';
 import {showMessageBox} from '../../store/app/appSlice'
 import { useSelector } from 'react-redux';
@@ -252,16 +252,16 @@ const DetailProvider = () => {
                   }
                 }
                 else if(item?.isVisible && item?.field === 'slogan' && providerData?.slogan !== ""){
-                  return <span key={index} className='text-white text-sm italic font-light'>{`"${providerData?.slogan}"`}</span>
+                  return <span key={index} className={clsx('text-sm italic font-light', providerData?.theme === 'dark' ? 'text-white' : providerData?.theme === 'light' ? 'text-black' : '')}>{`"${providerData?.slogan}"`}</span>
                 }
                 else if(item?.isVisible && item?.field === 'businessName'){
-                  return <span key={index} className='text-white text-sm'>{providerData?.bussinessName}</span>
+                  return <span key={index} className={clsx('text-sm', providerData?.theme === 'dark' ? 'text-white' : providerData?.theme === 'light' ? 'text-black' : '')}>{providerData?.bussinessName}</span>
                 }
                 else if(item?.isVisible && item?.field === 'address' && providerData?.address !== ""){
-                  return <span key={index} className='text-white text-sm'>{`Address: ${providerData?.address}`}</span>
+                  return <span key={index} className={clsx('text-sm', providerData?.theme === 'dark' ? 'text-white' : providerData?.theme === 'light' ? 'text-black' : '')}>{`Address: ${providerData?.address}`}</span>
                 }
                 else if(item?.isVisible && item?.field === 'mobile'){
-                  return <span key={index} className='text-white text-sm'>{providerData?.mobile}</span>
+                  return <span key={index} className={clsx('text-sm', providerData?.theme === 'dark' ? 'text-white' : providerData?.theme === 'light' ? 'text-black' : '')}>{providerData?.mobile}</span>
                 }
                 else if(item?.isVisible && item?.field === 'social'){
                   return (
@@ -312,16 +312,16 @@ const DetailProvider = () => {
                   }
                 }
                 else if(item?.isVisible && item?.field === 'slogan' && providerData?.slogan !== ""){
-                  return <span key={index} className='text-white text-sm italic font-light'>{`"${providerData?.slogan}"`}</span>
+                  return <span key={index} className={clsx('text-sm italic font-light', providerData?.theme === 'dark' ? 'text-white' : providerData?.theme === 'light' ? 'text-black' : '')}>{`"${providerData?.slogan}"`}</span>
                 }
                 else if(item?.isVisible && item?.field === 'businessName'){
-                  return <span key={index} className='text-white text-sm'>{providerData?.bussinessName}</span>
+                  return <span key={index} className={clsx('text-sm', providerData?.theme === 'dark' ? 'text-white' : providerData?.theme === 'light' ? 'text-black' : '')}>{providerData?.bussinessName}</span>
                 }
                 else if(item?.isVisible && item?.field === 'address' && providerData?.address !== ""){
-                  return <span key={index} className='text-white text-sm'>{`Address: ${providerData?.address}`}</span>
+                  return <span key={index} className={clsx('text-sm', providerData?.theme === 'dark' ? 'text-white' : providerData?.theme === 'light' ? 'text-black' : '')}>{`Address: ${providerData?.address}`}</span>
                 }
                 else if(item?.isVisible && item?.field === 'mobile'){
-                  return <span key={index} className='text-white text-sm'>{providerData?.mobile}</span>
+                  return <span key={index} className={clsx('text-sm', providerData?.theme === 'dark' ? 'text-white' : providerData?.theme === 'light' ? 'text-black' : '')}>{providerData?.mobile}</span>
                 }
                 else if(item?.isVisible && item?.field === 'social'){
                   return (
@@ -393,17 +393,17 @@ const DetailProvider = () => {
 
   return (
     <div className='w-full'>
-        <div className={clsx('w-full fixed top-0 left-0 h-[86px] flex justify-center z-[100]', providerData?.theme === 'dark' && 'bg-[#212529] text-white')}>
+        <div className={clsx('w-full fixed top-0 left-0 h-[86px] flex justify-center z-[100]', providerData?.theme === 'dark' ? 'bg-[#212529] text-white' : providerData?.theme === 'light' ? 'bg-[#fff] text-black border-b border-gray-200 shadow-md' : '')}>
           <div className='w-[90%] h-full flex gap-10 items-center text-[15px]'>
             <div onClick={handleBackOurProvider} className='flex items-center py-2 gap-1 justify-center cursor-pointer'>
                 <img src={logoWeb} className='w-12 h-12'/>
                 <span className='font-semibold text-4xl mb-1'>Biz<span className='text-blue-500'>Serv</span></span>
             </div>
-            <span onClick={()=>{setVariable('service')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'service' && 'border-b-2 border-[#15a9e8]')}>Service</span>
-            <span onClick={()=>{setVariable('book')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'book' && 'border-b-2 border-[#15a9e8]')}>Book Now</span>
-            <span onClick={()=>{setVariable('product')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'product' && 'border-b-2 border-[#15a9e8]')}>Product</span>
-            <span onClick={()=>{setVariable('blog')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'blog' && 'border-b-2 border-[#15a9e8]')}>Blog</span>
-            <span onClick={()=>{setVariable('find-us')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'find-us' && 'border-b-2 border-[#15a9e8]')}>Find us</span>
+            <span onClick={()=>{setVariable('service')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'service' && 'border-b-2', providerData?.theme === 'dark' ? 'border-[#15a9e8]' : providerData?.theme === 'light' ? 'border-[#191eb9]' : '')}>Service</span>
+            <span onClick={()=>{setVariable('book')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'book' && 'border-b-2', providerData?.theme === 'dark' ? 'border-[#15a9e8]' : providerData?.theme === 'light' ? 'border-[#191eb9]' : '')}>Book Now</span>
+            <span onClick={()=>{setVariable('product')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'product' && 'border-b-2', providerData?.theme === 'dark' ? 'border-[#15a9e8]' : providerData?.theme === 'light' ? 'border-[#191eb9]' : '')}>Product</span>
+            <span onClick={()=>{setVariable('blog')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'blog' && 'border-b-2', providerData?.theme === 'dark' ? 'border-[#15a9e8]' : providerData?.theme === 'light' ? 'border-[#191eb9]' : '')}>Blog</span>
+            <span onClick={()=>{setVariable('find-us')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'find-us' && 'border-b-2', providerData?.theme === 'dark' ? 'border-[#15a9e8]' : providerData?.theme === 'light' ? 'border-[#191eb9]' : '')}>Find us</span>
           </div>
         </div>
         <div className='w-full h-[86px]'></div>
@@ -414,34 +414,46 @@ const DetailProvider = () => {
               <div className='w-full flex justify-between'>
                 <span className='text-[22px] font-semibold'>Services</span>
                 <div className='relative'>
-                  <Button handleOnclick={()=>{setShowSort(prev => !prev)}} style={'px-[23px] rounded-l-full rounded-r-full text-white border border-[##e6ebef] w-fit h-[40px] flex items-center gap-2'}><MdOutlineSort />Sort by</Button>
+                  <Button handleOnclick={()=>{setShowSort(prev => !prev)}} style={clsx('px-[23px] rounded-l-full rounded-r-full border border-[##e6ebef] w-fit h-[40px] flex items-center gap-2', providerData?.theme === 'dark' ? 'text-white' : providerData?.theme === 'light' ? 'text-black' : '')}><MdOutlineSort />Sort by</Button>
                   {
                     showSort && 
-                    <div className='absolute w-[160px] h-[152px] px-[8px] py-[6px] bg-[#212529] rounded-md right-0 mt-2 z-50 flex flex-col'>
-                      <span onClick={()=>handleSetSort("price")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Price (lowest)</span>
-                      <span onClick={()=>handleSetSort("-price")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Price (highest)</span>
-                      <span onClick={()=>handleSetSort("-bookingQuantity")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Popularity</span>
-                      <span onClick={()=>handleSetSort("name")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Name (ascending)</span>
-                      <span onClick={()=>handleSetSort("-name")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Name (descending)</span>
+                    <div className={clsx('absolute w-[160px] h-[152px] px-[8px] py-[6px] rounded-md right-0 mt-2 z-50 flex flex-col', providerData?.theme === 'dark' ? 'bg-[#212529]' : providerData?.theme === 'light' ? 'bg-white border border-gray-200 shadow-md' : '')}>
+                      <span onClick={()=>handleSetSort("price")} className={clsx('h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer', providerData?.theme === 'dark' ? 'hover:bg-gray-700' : providerData?.theme === 'light' ? 'hover:bg-gray-200' : '')}>Price (lowest)</span>
+                      <span onClick={()=>handleSetSort("-price")} className={clsx('h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer', providerData?.theme === 'dark' ? 'hover:bg-gray-700' : providerData?.theme === 'light' ? 'hover:bg-gray-200' : '')}>Price (highest)</span>
+                      <span onClick={()=>handleSetSort("-bookingQuantity")} className={clsx('h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer', providerData?.theme === 'dark' ? 'hover:bg-gray-700' : providerData?.theme === 'light' ? 'hover:bg-gray-200' : '')}>Popularity</span>
+                      <span onClick={()=>handleSetSort("name")} className={clsx('h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer', providerData?.theme === 'dark' ? 'hover:bg-gray-700' : providerData?.theme === 'light' ? 'hover:bg-gray-200' : '')}>Name (ascending)</span>
+                      <span onClick={()=>handleSetSort("-name")} className={clsx('h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer', providerData?.theme === 'dark' ? 'hover:bg-gray-700' : providerData?.theme === 'light' ? 'hover:bg-gray-200' : '')}>Name (descending)</span>
                     </div>
                   }
                 </div>
               </div>
               <div className='w-full h-full flex gap-6'>
                 <div className='w-[18%] h-full  mt-[32px] border-r border-white'>
-                  <div className='w-[187px] h-[40px] flex gap-1 items-center border rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px] bg-[#212529]'>
+                  <div className={clsx('w-[187px] h-[40px] flex gap-1 items-center border rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px]', providerData?.theme === 'dark' ? 'bg-[#212529]' : providerData?.theme === 'light' ? 'bg-[#e6ebef]' : '')}>
                     <span className='text-xl'><CiSearch size={20}/></span>
                     <form className='flex-1' >
+                      {providerData?.theme === 'dark' && 
                       <InputFormm
                         id='q'
                         register={register}
                         errors={errors}
                         fullWidth
                         placeholder= 'Search service'
-                        style={'w-full  h-10 rounded-md pl-2 flex items-center'}
+                        style={'w-full h-10 rounded-md pl-2 flex items-center'}
                         styleInput={'w-[100%] bg-[#212529] outline-none text-white'}
                       >
-                      </InputFormm>
+                      </InputFormm>}
+                      {providerData?.theme === 'light' && 
+                      <InputFormm
+                        id='q'
+                        register={register}
+                        errors={errors}
+                        fullWidth
+                        placeholder= 'Search service'
+                        style={'w-full h-10 rounded-md pl-2 flex items-center'}
+                        styleInput={'w-[100%] bg-[#e6ebef] outline-none text-[#212529]'}
+                      >
+                      </InputFormm>}
                     </form>
                   </div>
                 </div>
@@ -458,7 +470,7 @@ const DetailProvider = () => {
                           ))
                         }
                       </div>
-                      <div className='text-white flex-1 flex items-end'>
+                      <div className={clsx(providerData?.theme === 'dark' ? 'text-white flex-1 flex items-end' : providerData?.theme === 'light' ? 'text-black flex-1 flex items-end' : '')}>
                         <Pagination totalCount={countServices} />
                       </div>
                     </div>
@@ -481,34 +493,49 @@ const DetailProvider = () => {
               <div className='w-full flex justify-between'>
                 <span className='text-[22px] font-semibold'>Products</span>
                 <div className='relative'>
-                  <Button handleOnclick={()=>{setShowSort(prev => !prev)}} style={'px-[23px] rounded-l-full rounded-r-full text-white border border-[##e6ebef] w-fit h-[40px] flex items-center gap-2'}><MdOutlineSort />Sort by</Button>
+                  <Button handleOnclick={()=>{setShowSort(prev => !prev)}} style={clsx('px-[23px] rounded-l-full rounded-r-full border border-[##e6ebef] w-fit h-[40px] flex items-center gap-2', providerData?.theme === 'dark' ? 'text-white' : providerData?.theme === 'light' ? 'text-black' : '')}><MdOutlineSort />Sort by</Button>
                   {
                     showSort && 
-                    <div className='absolute w-[160px] h-[152px] px-[8px] py-[6px] bg-[#212529] rounded-md right-0 mt-2 z-50 flex flex-col'>
-                      <span onClick={()=>handleSetSort("price")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Price (lowest)</span>
-                      <span onClick={()=>handleSetSort("-price")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Price (highest)</span>
-                      <span onClick={()=>handleSetSort("-soldQuantity")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Best Seller</span>
-                      <span onClick={()=>handleSetSort("title")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Name (ascending)</span>
-                      <span onClick={()=>handleSetSort("-title")} className='h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer hover:bg-gray-700'>Name (descending)</span>
+                    <div className={clsx('absolute w-[160px] h-[152px] px-[8px] py-[6px] rounded-md right-0 mt-2 z-50 flex flex-col', providerData?.theme === 'dark' ? 'bg-[#212529]' : providerData?.theme === 'light' ? 'bg-white border border-gray-200 shadow-md' : '')}>
+                      <span onClick={()=>handleSetSort("price")} className={clsx('h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer', providerData?.theme === 'dark' ? 'hover:bg-gray-700' : providerData?.theme === 'light' ? 'hover:bg-gray-200' : '')}>Price (lowest)</span>
+                      <span onClick={()=>handleSetSort("-price")} className={clsx('h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer', providerData?.theme === 'dark' ? 'hover:bg-gray-700' : providerData?.theme === 'light' ? 'hover:bg-gray-200' : '')}>Price (highest)</span>
+                      <span onClick={()=>handleSetSort("-soldQuantity")} className={clsx('h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer', providerData?.theme === 'dark' ? 'hover:bg-gray-700' : providerData?.theme === 'light' ? 'hover:bg-gray-200' : '')}>Best Seller</span>
+                      <span onClick={()=>handleSetSort("title")} className={clsx('h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer', providerData?.theme === 'dark' ? 'hover:bg-gray-700' : providerData?.theme === 'light' ? 'hover:bg-gray-200' : '')}>Name (ascending)</span>
+                      <span onClick={()=>handleSetSort("-title")} className={clsx('h-[20%] text-[14px] px-[8px] py-[4px] font-medium cursor-pointer', providerData?.theme === 'dark' ? 'hover:bg-gray-700' : providerData?.theme === 'light' ? 'hover:bg-gray-200' : '')}>Name (descending)</span>
                     </div>
                   }
                 </div>
               </div>
               <div className='w-full h-full flex gap-6'>
                 <div className='w-[18%] h-full  mt-[32px] border-r border-white'>
-                <div className='w-[187px] h-[40px] flex gap-1 items-center border rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px] bg-[#212529]'>
+                <div className={clsx('w-[187px] h-[40px] flex gap-1 items-center border rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px]',  providerData?.theme === 'dark' ? 'bg-[#212529]' : providerData?.theme === 'light' ? 'bg-[#e6ebef]' : '')}>
                   <span className='text-xl'><CiSearch size={20}/></span>
                   <form className='flex-1' >
-                    <InputFormm
-                      id='q'
-                      register={register}
-                      errors={errors}
-                      fullWidth
-                      placeholder= 'Search product'
-                      style={'w-full  h-10 rounded-md pl-2 flex items-center'}
-                      styleInput={'w-[100%] bg-[#212529] outline-none text-white'}
-                    >
-                    </InputFormm>
+                    {providerData?.theme === 'dark' && 
+                      <InputFormm
+                        id='q'
+                        register={register}
+                        errors={errors}
+                        fullWidth
+                        placeholder= 'Search product'
+                        style={'w-full  h-10 rounded-md pl-2 flex items-center'}
+                        styleInput={'w-[100%] bg-[#212529] outline-none text-white'}
+                      >
+                      </InputFormm>
+                    }
+                    {
+                      providerData?.theme === 'light' &&
+                      <InputFormm
+                        id='q'
+                        register={register}
+                        errors={errors}
+                        fullWidth
+                        placeholder= 'Search product'
+                        style={'w-full  h-10 rounded-md pl-2 flex items-center'}
+                        styleInput={'w-[100%] bg-[#e6ebef] outline-none text-[#212529]'}
+                      >
+                      </InputFormm>
+                    }
                   </form>
                 </div>
                 </div>
@@ -519,11 +546,11 @@ const DetailProvider = () => {
                         <div className='flex flex-wrap gap-4 min-h-[300px]'>    
                           {product?.map((el,index) => (
                             <div key={index} className='w-[31%]'>
-                              <ProductItem productData={el}/>
+                              <ProductItem providerData={providerData} productData={el}/>
                             </div>
                           ))} 
                         </div>
-                        <div className='text-white flex-1 flex items-end'>
+                        <div className={clsx(providerData?.theme === 'dark' ? 'text-white flex-1 flex items-end' : providerData?.theme === 'light' ? 'text-black flex-1 flex items-end' : '')}>
                           <Pagination totalCount={countProducts} />
                         </div>
                       </div>
@@ -541,93 +568,105 @@ const DetailProvider = () => {
 
         {
             variable === 'book' && 
-            <div className={clsx('w-full min-h-[476px] flex justify-center', providerData?.theme === 'dark' &&  'bg-[#343a40] text-white')}>
-          <div className='w-[90%] flex gap-8'>
-            <div className='w-[66%] h-fit bg-[#212529] mt-[32px] rounded-md p-[24px] flex flex-col gap-4 mb-16'>
-                <div className='w-full h-[40px] flex justify-between items-center'>
-                  <span className='text-[18px] font-semibold'>Choose Service</span>
-                  <div className='w-[187px] h-[40px] flex gap-1 items-center border rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px] bg-[#212529]'>
-                      <span className='text-xl'><CiSearch size={20}/></span>
-                      <form className='flex-1' >
-                        <InputFormm
-                          id='q'
-                          register={register}
-                          errors={errors}
-                          fullWidth
-                          placeholder= 'Search service'
-                          style={'w-full  h-10 rounded-md pl-2 flex items-center'}
-                          styleInput={'w-[100%] bg-[#212529] outline-none text-white'}
-                        >
-                        </InputFormm>
-                      </form>
-                  </div>
-                </div>
-                {
-                service?.length > 0 ?       
-                  <div className='w-full flex flex-col gap-8'>
-                    <div className='w-full flex flex-col gap-4 min-h-[300px]'>
-                      {service?.map((el, index) => 
-                        <BookingFromProvider providerData={providerData} serviceData={el}/>
-                      )}
-                    </div> 
+            <div className={clsx('w-full min-h-[476px] flex justify-center', providerData?.theme === 'dark' ? 'bg-[#343a40] text-white' : providerData?.theme === 'light' ? 'bg-[#fff] text-black' : '')}>
+              <div className='w-[90%] flex gap-8'>
+                <div className={clsx('w-[66%] h-fit mt-[32px] rounded-md p-[24px] flex flex-col gap-4 mb-16', providerData?.theme === 'dark' ? 'bg-[#343a40]' : providerData?.theme === 'light' ? 'bg-[#fff] border border-gray-200 shadow-md' : '')}>
+                    <div className='w-full h-[40px] flex justify-between items-center'>
+                      <span className='text-[18px] font-semibold'>Choose Service</span>
+                      <div className={clsx('w-[187px] h-[40px] flex gap-1 items-center border rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px]', providerData?.theme === 'dark' ? 'bg-[#212529]' : providerData?.theme === 'light' ? 'bg-[#e6ebef]' : '')}>
+                          <span className='text-xl'><CiSearch size={20}/></span>
+                          <form className='flex-1' >
+                            {providerData?.theme === 'dark' && 
+                            <InputFormm
+                              id='q'
+                              register={register}
+                              errors={errors}
+                              fullWidth
+                              placeholder= 'Search service'
+                              style={'w-full  h-10 rounded-md pl-2 flex items-center'}
+                              styleInput={'w-[100%] bg-[#212529] outline-none text-white'}
+                            >
+                            </InputFormm>}
+                            {providerData?.theme === 'light' && 
+                            <InputFormm
+                              id='q'
+                              register={register}
+                              errors={errors}
+                              fullWidth
+                              placeholder= 'Search service'
+                              style={'w-full h-10 rounded-md pl-2 flex items-center'}
+                              styleInput={'w-[100%] bg-[#e6ebef] outline-none text-[#212529]'}
+                            >
+                            </InputFormm>}
+                          </form>
+                      </div>
+                    </div>
+                    {
+                    service?.length > 0 ?       
+                      <div className='w-full flex flex-col gap-8'>
+                        <div className='w-full flex flex-col gap-4 min-h-[300px]'>
+                          {service?.map((el, index) => 
+                            <BookingFromProvider providerData={providerData} serviceData={el}/>
+                          )}
+                        </div> 
 
-                    <div className='text-white flex-1 flex items-end'>
-                      <Pagination totalCount={countServices} />
-                    </div>
-                  </div> 
-                  :
-                  <div className='w-full h-[272px] flex flex-col gap-1 items-center justify-center'>
-                        <MdSearchOff size={128}/>
-                        <span>No services available</span>
-                  </div>
-                }
-            </div>
-            <div className='w-[30%] flex flex-col gap-4'>
-                <div className='h-fit pt-[20px] pb-[16px] bg-[#212529] mt-[32px] rounded-md'>
-                  <div className='border-b border-[#868e96] w-full h-[49px] pl-[20px] pr-[12px] py-[12px] text-[18px] font-semibold leading-6'>Booking Details</div>
-                  <div className='px-[8px] pt-[8px]'>
-                    <div className='w-full p-[8px] border-b border-[#868e96]'>
-                      <div className='w-full py-[4px] flex gap-2 items-center'>
-                        <FaLocationDot color='#1696ca'/>
-                        <span className='text-[12px] text-[#868e96] font-medium'>Location</span>
+                        <div className={clsx(providerData?.theme === 'dark' ? 'text-white flex-1 flex items-end' : providerData?.theme === 'light' ? 'text-black flex-1 flex items-end' : '')}>
+                          <Pagination totalCount={countServices} />
+                        </div>
+                      </div> 
+                      :
+                      <div className='w-full h-[272px] flex flex-col gap-1 items-center justify-center'>
+                            <MdSearchOff size={128}/>
+                            <span>No services available</span>
                       </div>
-                      <div className='w-full pl-[26px] flex flex-col gap-1'>
-                        <span className='text-[13px] font-medium'>{providerData?.bussinessName}</span>
-                        <span className='text-[#868e96] text-[12px] leading-4 line-clamp-2'>{providerData?.address}</span>
-                      </div>
-                    </div>
-                    <div className='w-full p-[8px] border-b border-[#868e96]'>
-                      <div className='w-full py-[4px] flex gap-2 items-center text-[#868e96] text-[12px] font-medium'>
-                        <span><BsFillTagsFill/></span>
-                        <span>Service</span>
-                      </div>
-                      <div className='w-full pl-[26px] flex flex-col gap-1'>
-                        <span className='text-[13px] font-medium'>{""}</span>
-                      </div>
-                    </div>
-                    <div className='w-full p-[8px] border-b border-[#868e96]'>
-                      <div className='w-full py-[4px] flex gap-2 items-center text-[#868e96] text-[12px] font-medium'>
-                        <span><FaUserGear /></span>
-                        <span>Employee</span>
-                      </div>
-                      <div className='w-full pl-[26px] flex flex-col gap-1'>
-                        <span className='text-[13px] font-medium'>{""}</span>
-                      </div>
-                    </div>
-                    <div className='w-full p-[8px]'>
-                      <div className='w-full py-[4px] flex gap-2 items-center text-[#868e96] text-[12px] font-medium'>
-                        <span><SlCalender /></span>
-                        <span>Date & Time</span>
-                      </div>
-                      <div className='w-full pl-[26px] flex flex-col gap-1'>
-                        <span className='text-[13px] font-medium'>{""}</span>
-                      </div>
-                        
-                    </div>
-                  </div>
+                    }
                 </div>
+                <div className='w-[30%] flex flex-col gap-4'>
+                    <div className={clsx('h-fit pt-[20px] pb-[16px] mt-[32px] rounded-md', providerData.theme === 'dark' ? 'bg-[#212529]' : providerData?.theme === 'light' ? 'bg-[#fff] border border-gray-200 shadow-md' : '')}>
+                      <div className='border-b border-[#868e96] w-full h-[49px] pl-[20px] pr-[12px] py-[12px] text-[18px] font-semibold leading-6'>Booking Details</div>
+                      <div className='px-[8px] pt-[8px]'>
+                        <div className='w-full p-[8px] border-b border-[#868e96]'>
+                          <div className='w-full py-[4px] flex gap-2 items-center'>
+                            <FaLocationDot color={providerData?.theme === 'dark' ? '#1696ca' : providerData?.theme === 'light' ? '#191eb9' : ''}/>
+                            <span className='text-[12px] text-[#868e96] font-medium'>Location</span>
+                          </div>
+                          <div className='w-full pl-[26px] flex flex-col gap-1'>
+                            <span className='text-[13px] font-medium'>{providerData?.bussinessName}</span>
+                            <span className='text-[#868e96] text-[12px] leading-4 line-clamp-2'>{providerData?.address}</span>
+                          </div>
+                        </div>
+                        <div className='w-full p-[8px] border-b border-[#868e96]'>
+                          <div className='w-full py-[4px] flex gap-2 items-center text-[#868e96] text-[12px] font-medium'>
+                            <span><BsFillTagsFill/></span>
+                            <span>Service</span>
+                          </div>
+                          <div className='w-full pl-[26px] flex flex-col gap-1'>
+                            <span className='text-[13px] font-medium'>{""}</span>
+                          </div>
+                        </div>
+                        <div className='w-full p-[8px] border-b border-[#868e96]'>
+                          <div className='w-full py-[4px] flex gap-2 items-center text-[#868e96] text-[12px] font-medium'>
+                            <span><FaUserGear /></span>
+                            <span>Employee</span>
+                          </div>
+                          <div className='w-full pl-[26px] flex flex-col gap-1'>
+                            <span className='text-[13px] font-medium'>{""}</span>
+                          </div>
+                        </div>
+                        <div className='w-full p-[8px]'>
+                          <div className='w-full py-[4px] flex gap-2 items-center text-[#868e96] text-[12px] font-medium'>
+                            <span><SlCalender /></span>
+                            <span>Date & Time</span>
+                          </div>
+                          <div className='w-full pl-[26px] flex flex-col gap-1'>
+                            <span className='text-[13px] font-medium'>{""}</span>
+                          </div>
+                            
+                        </div>
+                      </div>
+                    </div>
+                  </div>
               </div>
-          </div>
             </div>
         }
 
@@ -640,19 +679,35 @@ const DetailProvider = () => {
             </div>
             <div className='w-full h-full flex gap-6'>
               <div className='w-[18%] h-full  mt-[32px] border-r border-white'>
-                <div className='w-[187px] h-[40px] flex gap-1 items-center border rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px] bg-[#212529]'>
+                <div className={clsx('w-[187px] h-[40px] flex gap-1 items-center border rounded-l-full rounded-r-full pl-[8px] pr-[16px] py-[8px]', providerData?.theme === 'dark' ? 'bg-[#212529]' : providerData?.theme === 'light' ? 'bg-[#e6ebef]' : '')}>
                   <span className='text-xl'><CiSearch size={20}/></span>
                   <form className='flex-1' >
-                    <InputFormm
-                      id='q'
-                      register={register}
-                      errors={errors}
-                      fullWidth
-                      placeholder= 'Search blog'
-                      style={'w-full  h-10 rounded-md pl-2 flex items-center'}
-                      styleInput={'w-[100%] bg-[#212529] outline-none text-white'}
-                    >
-                    </InputFormm>
+                    {
+                      providerData?.theme === 'dark' &&
+                        <InputFormm
+                          id='q'
+                          register={register}
+                          errors={errors}
+                          fullWidth
+                          placeholder= 'Search blog'
+                          style={'w-full  h-10 rounded-md pl-2 flex items-center'}
+                          styleInput={'w-[100%] bg-[#212529] outline-none text-white'}
+                        >
+                        </InputFormm>
+                    }
+                    {
+                      providerData?.theme === 'light' && 
+                        <InputFormm
+                          id='q'
+                          register={register}
+                          errors={errors}
+                          fullWidth
+                          placeholder= 'Search blog'
+                          style={'w-full h-10 rounded-md pl-2 flex items-center'}
+                          styleInput={'w-[100%] bg-[#e6ebef] outline-none text-[#212529]'}
+                        >
+                        </InputFormm>
+                    }
                   </form>
                 </div>
               </div>
@@ -713,7 +768,7 @@ const DetailProvider = () => {
                         ))
                       }
                     </div>
-                    <div className='text-white flex-1 flex items-end'>
+                    <div className={clsx(providerData?.theme === 'dark' ? 'text-white flex-1 flex items-end' : providerData?.theme === 'light' ? 'text-black flex-1 flex items-end' : '')}>
                       <Pagination totalCount={countBlogs} />
                     </div>
                   </div>
@@ -732,25 +787,25 @@ const DetailProvider = () => {
         {
             variable === 'find-us' &&
             <>
-            <div className={clsx('w-full min-h-[476px] flex justify-center', providerData?.theme === 'dark' &&  'bg-[#343a40] text-white')}>
+            <div className={clsx('w-full min-h-[476px] flex justify-center', providerData?.theme === 'dark' ? 'bg-[#343a40] text-white' : providerData?.theme === 'light' ? 'bg-[#fff] text-black' : '')}>
             <div className='w-[90%]'>
               <div className='w-[800px] h-fit pt-[24px] pb-[48px] mx-auto flex flex-col gap-8'>
                 <div className='w-full text-[22px] leading-7 font-semibold'>Location</div>
-                <div className='w-full h-fit p-[20px] border border-[#868e96] rounded-md bg-[#212529] flex flex-col gap-6'>
+                <div className={clsx('w-full h-fit p-[20px] border border-[#868e96] rounded-md flex flex-col gap-6', providerData?.theme === 'dark' ? 'bg-[#343a40] text-white' : providerData?.theme === 'light' ? 'bg-[#fff] text-black' : '')}>
                   <div className='w-full flex items-center justify-between h-[40px]'>
                     <span className='text-[22px] font-semibold leading-7'>{providerData?.bussinessName}</span>
-                    <Button handleOnclick={handleShowDistance} style={'px-[23px] rounded-md text-white bg-[#15a9e8] w-fit h-[40px]'}>Show distance</Button>
+                    <Button handleOnclick={handleShowDistance} style={clsx('px-[23px] rounded-md text-white w-fit h-[40px]', providerData?.theme === 'dark' ? 'bg-[#15a9e8]' : providerData?.theme === 'light' ? 'bg-[#191eb9]' : '')}>Show distance</Button>
                   </div>
                   <div className='w-full h-fit flex gap-8'>
                     <div className='flex flex-1 flex-col gap-2'>
-                      <div className='w-full h-[40px] flex gap-2 items-center text-[#868e96]'>
-                        <FaLocationDot />
-                        <span className='text-[14px] leading-5 font-normal text-white'>{providerData?.address}</span>
+                      <div className='w-full h-[40px] flex gap-2 items-center'>
+                        <span className='text-[#868e96]'><FaLocationDot /></span>
+                        <span className='text-[14px] leading-5 font-normal'>{providerData?.address}</span>
                       </div>
                       <div className='w-full flex flex-col gap-4'>
-                        <div className='w-full h-[24px] flex gap-2 items-center text-[#868e96]'>
-                          <FaRegClock />
-                          <span className='text-[14px] leading-5 font-normal text-white'>Working Hours</span>
+                        <div className='w-full h-[24px] flex gap-2 items-center'>
+                          <span className='text-[#868e96]'><FaRegClock /></span>
+                          <span className='text-[14px] leading-5 font-normal'>Working Hours</span>
                           <span onClick={()=>{setShowWorkingHours(prev => !prev)}} className='cursor-pointer'>{!showWorkingHours ? <FaChevronDown /> : <FaChevronUp />}</span>
                         </div>
                         {
@@ -816,13 +871,13 @@ const DetailProvider = () => {
           (adminData && current?._id !== adminData[0]?._id) &&
           <div className='fixed right-6 bottom-6'>
             <span onClick={()=>handleShowChat()}
-              className="cursor-pointer bg-[#0a66c2] text-white px-4 py-2 rounded-full shadow-lg hover:bg-[#084a93] transition-all"
+              className={clsx('cursor-pointer text-white px-4 py-2 rounded-full shadow-lg hover:opacity-50 transition-all', providerData?.theme === 'dark' ? 'bg-[#15a9e8]' : providerData?.theme === 'light' ? 'bg-[#191eb9]' : '')}
             >
             💬 Chat with Us
             </span>
           </div>
         }
-      </div>
+    </div>
   )
 }
 

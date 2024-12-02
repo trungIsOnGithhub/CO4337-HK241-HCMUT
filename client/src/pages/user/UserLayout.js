@@ -1,15 +1,29 @@
 import React from 'react'
-import { Outlet, Navigate } from 'react-router-dom'
+import { Outlet, Navigate, useNavigate } from 'react-router-dom'
 import path from 'ultils/path'
 import { useSelector } from 'react-redux'
 import { UserSideBar } from 'components'
+import Swal from 'sweetalert2'
 
 
 const UserLayout = () => {
-  // const {isLogin,current} = useSelector(state => state.user)
-  // if(!isLogin || !current){
-  //   return <Navigate to={`/${path.LOGIN}`} replace={true}/>
-  // }
+  const navigate = useNavigate()
+  const {isLogin} = useSelector(state => state.user)
+  if(!isLogin ){
+    Swal.fire({
+        text: 'Login to review',
+        cancelButtonText: 'Cancel',
+        confirmButtonText: 'Go login',
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        title: 'Oops!',
+        showCancelButton: true,
+    }).then((rs)=>{
+        if(rs.isConfirmed){
+            navigate(`/${path.LOGIN}`)
+        }
+    })
+  }
 
   return (
     <div className='flex w-screen h-screen'>
