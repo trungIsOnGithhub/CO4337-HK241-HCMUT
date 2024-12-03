@@ -246,10 +246,10 @@ const DetailProvider = () => {
               {leftColumn.map((item,index) => {
                 if(item?.isVisible && item?.field === 'logo'){
                   if(providerData?.logoSize === 'small'){
-                    return <img className='w-[52px] max-h-[32px] object-cover' key={index} src={providerData?.images[0] || defaultProvider} alt="Logo" />;
+                    return <img className='w-[52px] max-h-[32px] object-contain' key={index} src={providerData?.images[0] || defaultProvider} alt="Logo" />;
                   }
                   else{
-                    return <img className='w-[102px] max-h-[64px] object-cover' key={index} src={providerData?.images[0] || defaultProvider} alt="Logo" />;
+                    return <img className='w-[102px] max-h-[64px] object-contain' key={index} src={providerData?.images[0] || defaultProvider} alt="Logo" />;
                   }
                 }
                 else if(item?.isVisible && item?.field === 'slogan' && providerData?.slogan !== ""){
@@ -306,10 +306,10 @@ const DetailProvider = () => {
               {rightColumn.map((item, index) => {
                 if(item?.isVisible && item?.field === 'logo'){
                   if(providerData?.logoSize === 'small'){
-                    return <img className='w-[52px] max-h-[32px] object-cover' key={index} src={providerData?.images[0] || defaultProvider} alt="Logo" />;
+                    return <img className='w-[52px] max-h-[32px] object-contain' key={index} src={providerData?.images[0] || defaultProvider} alt="Logo" />;
                   }
                   else{
-                    return <img className='w-[102px] max-h-[64px] object-cover' key={index} src={providerData?.images[0] || defaultProvider} alt="Logo" />;
+                    return <img className='w-[102px] max-h-[64px] object-contain' key={index} src={providerData?.images[0] || defaultProvider} alt="Logo" />;
                   }
                 }
                 else if(item?.isVisible && item?.field === 'slogan' && providerData?.slogan !== ""){

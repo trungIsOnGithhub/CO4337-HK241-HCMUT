@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import goongjs from '@goongmaps/goong-js';
 import axios from 'axios';
 import { FiUser, FiMail, FiPhone, FiMapPin, FiUpload, FiX, FiInfo } from "react-icons/fi";
+import { FaSpinner } from "react-icons/fa";
 
 const GOONG_API_KEY = 'HjmMHCMNz4xyFqc54FsgxrobHmt48vwp7U8xzQUC';
 const GOONG_MAPTILES_KEY = 'hzX8cXab72XCozZSYvZqkV26qMMQ8JdpkiUwK1Iy';
@@ -31,6 +32,7 @@ const BusinessDetailsForm = () => {
   const suggestionRef = useRef(null);
   const [addressSuggestions, setAddressSuggestions] = useState([]); // State for address suggestions
   const [coordinates, setCoordinates] = useState(null);
+  const [isLoading, setIsLoading] = useState(false)
 
   const currentProviderEffectHanlder = async () => {
     if (!current?.provider_id) {
@@ -169,6 +171,7 @@ const BusinessDetailsForm = () => {
     // }
     // console.log('=========;;;;;;;;;' + );
 
+    setIsLoading(true)
     const response = await apiUpdateCurrentServiceProvider(current.provider_id._id, fData)
     if(response.success){
       dispatch(getCurrent())
@@ -177,6 +180,7 @@ const BusinessDetailsForm = () => {
     else{
       toast.error("Cannot update data of provider!");
     }
+    setIsLoading(false)
   }
 
   const handleClickOutside = (event) => {
@@ -398,7 +402,7 @@ console.log(formData)
             />
             <label
               htmlFor="avatar-upload"
-              className="flex justify-center h-fit p-1 border border-transparent text-sm text-gray-500 rounded-md bg-slate-300 shadow-md"
+              className="flex justify-center h-fit p-1 border border-transparent text-sm text-gray-500 rounded-md bg-slate-300 shadow-md cursor-pointer hover:opacity-50"
             >
               <FiUpload className="mr-2" />
               Upload Image
@@ -576,10 +580,20 @@ console.log(formData)
       </label>
 
       <button
+        disabled={isLoading}
         onClick={() => {handleUpdateInfo();}}
-        className="mt-4 w-full bg-blue-600 text-white font-semibold p-2 rounded-md hover:bg-blue-700 focus:outline-none"
+        className={'mx-auto mt-4 px-6 py-2 rounded-md text-white bg-[#005aee] font-semibold w-fit h-fit flex gap-1 items-center disabled:opacity-50 disabled:cursor-not-allowed'}
       >
-        Submit
+        {isLoading ? (
+              <span className="flex items-center">
+              <FaSpinner className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+              Updating ...
+              </span>
+          ) : (
+              <span className='flex items-center'>
+              Update
+              </span>
+          )}
       </button>
     </div>
   );

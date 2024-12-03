@@ -405,7 +405,7 @@ const DashBoard = () => {
                   {
                     currentMetricView.occupancy === 0 &&
                       <MetricIndicator
-                        prev={occupancyTriplet[1]} current={occupancyTriplet[0]}>
+                        prev={occupancyTriplet[0]} current={occupancyTriplet[1]}>
                       </MetricIndicator>
                   }
               </span>
