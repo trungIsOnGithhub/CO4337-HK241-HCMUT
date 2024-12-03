@@ -80,7 +80,7 @@ const CenterChart = ({ providerId }) => {
     setAppointmentsBooked(chartData.finished);
     setCanceledAppointments(chartData.canceled);
 
-    const sumOrdersChartData = chartData.total || (chartData.finished + chartData.canceled);
+    const sumOrdersChartData = chartData.total || (chartData.finished + chartData.canceled) || 1;
     // console.log(sumOrdersChartData, "------");
     const ratioFinish = (chartData.finished * 100 / sumOrdersChartData)?.toFixed(1);
     const ratioCanceled = (chartData.canceled * 100 / sumOrdersChartData)?.toFixed(1);
