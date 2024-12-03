@@ -78,7 +78,7 @@ const CheckoutService = () => {
   }, []); 
 
   // Sử dụng giá từ URL nếu có, nếu không thì sử dụng giá từ currentCartService
-  const price = priceFromURL ? parseFloat(priceFromURL) : currentCartService[0]?.price;
+  const price = currentCartService[0]?.discountPrice > 0 ? currentCartService[0]?.discountPrice : currentCartService[0]?.originalPrice;
 
   // quy doi tu VND -> USD
   const totalPriceUSD = exchangeRate ? price / exchangeRate : null;
