@@ -1,0 +1,808 @@
+[{
+  "_id": {
+    "$oid": "66377a64e479e46dab038104"
+  },
+  "firstName": "Duy",
+  "lastName": "Nguyen Ngoc Lam",
+  "avatar": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714911845/ecommerce/pwy7r8ykuypjch3brstj.png",
+  "mobile": "0938673888",
+  "email": "nnduy@outlook.com",
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "createdAt": {
+    "$date": "2024-05-05T12:24:04.799Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-25T12:59:32.653Z"
+  },
+  "__v": 1,
+  "work": [
+    {
+      "_id": {
+        "$oid": "67418772c0da28979bd64664"
+      },
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "time": "13:52",
+      "date": "26/05/2024",
+      "duration": 60
+    },
+    {
+      "_id": {
+        "$oid": "67418772c0da28979bd64665"
+      },
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "time": "18:19",
+      "date": "16/11/2024",
+      "duration": 60
+    },
+    {
+      "_id": {
+        "$oid": "67418772c0da28979bd64666"
+      },
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "time": "15:31",
+      "date": "16/11/2024",
+      "duration": 60
+    },
+    {
+      "_id": {
+        "$oid": "67418772c0da28979bd64667"
+      },
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "time": "18:00",
+      "date": "19/11/2024",
+      "duration": 60
+    },
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "duration": 60,
+      "date": "16/11/2024",
+      "time": "19:23",
+      "_id": {
+        "$oid": "6738737a7bdf04cd23bb5d59"
+      }
+    },
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "duration": 60,
+      "date": "26/11/2024",
+      "time": "19:00",
+      "_id": {
+        "$oid": "67388232ab952e9f94f161f2"
+      }
+    },
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "duration": 60,
+      "date": "25/11/2024",
+      "time": "09:00",
+      "_id": {
+        "$oid": "6742687428d096082737898f"
+      }
+    },
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "duration": 60,
+      "date": "25/11/2024",
+      "time": "08:00",
+      "_id": {
+        "$oid": "6742cf0daeb7a5bcd3ad92da"
+      }
+    }
+  ],
+  "shifts": {
+    "Monday": {
+      "isEnabled": true,
+      "periods": {
+        "start": "08:00",
+        "end": "23:00"
+      }
+    },
+    "Tuesday": {
+      "isEnabled": true,
+      "periods": {
+        "start": "06:00",
+        "end": "23:30"
+      }
+    },
+    "Wednesday": {
+      "isEnabled": true,
+      "periods": {
+        "start": "08:00",
+        "end": "13:00"
+      }
+    },
+    "Thursday": {
+      "isEnabled": false,
+      "periods": {
+        "start": "00:00",
+        "end": "00:00"
+      }
+    },
+    "Friday": {
+      "isEnabled": false,
+      "periods": {
+        "start": "00:00",
+        "end": "00:00"
+      }
+    },
+    "Saturday": {
+      "isEnabled": true,
+      "periods": {
+        "start": "08:00",
+        "end": "10:00"
+      }
+    },
+    "Sunday": {
+      "isEnabled": true,
+      "periods": {
+        "start": "08:00",
+        "end": "21:00"
+      }
+    }
+  },
+  "isHidden": false
+},
+{
+  "_id": {
+    "$oid": "663785bde479e46dab0383cd"
+  },
+  "firstName": "Long",
+  "lastName": "Tran Hoang",
+  "avatar": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714914750/ecommerce/xwwnfchr0gp7gdd470ec.png",
+  "mobile": "0908080808",
+  "email": "thl@outlook.com",
+  "provider_id": {
+    "$oid": "66378581e479e46dab0383bb"
+  },
+  "createdAt": {
+    "$date": "2024-05-05T13:12:29.157Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-03T09:10:48.826Z"
+  },
+  "__v": 0,
+  "shifts": {
+    "monday": [
+      {
+        "start": "10:32",
+        "end": "11:33"
+      },
+      {
+        "start": "06:00",
+        "end": "20:20"
+      }
+    ],
+    "sunday": [
+      {
+        "start": "06:32",
+        "end": "08:33"
+      }
+    ]
+  },
+  "work": [
+    {
+      "service": {
+        "$oid": "6637863ce479e46dab0383d2"
+      },
+      "provider": {
+        "$oid": "66378581e479e46dab0383bb"
+      },
+      "time": "13:40",
+      "date": "05/11/2024",
+      "duration": 30
+    }
+  ],
+  "isHidden": false
+},
+{
+  "_id": {
+    "$oid": "663780fde479e46dab03832c"
+  },
+  "firstName": "Anh",
+  "lastName": "Nguyen Ngoc",
+  "avatar": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714913534/ecommerce/d0rkjjt91qpizmczn1q1.jpg",
+  "mobile": "0923518648",
+  "email": "ngnganh@yahoo.com",
+  "provider_id": {
+    "$oid": "6637808fe479e46dab03831a"
+  },
+  "createdAt": {
+    "$date": "2024-05-05T12:52:13.310Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-21T04:42:07.737Z"
+  },
+  "__v": 0,
+  "work": [
+    {
+      "service": {
+        "$oid": "663781cce479e46dab038339"
+      },
+      "provider": {
+        "$oid": "6637808fe479e46dab03831a"
+      },
+      "time": "14:35",
+      "date": "5/21/2024",
+      "duration": 45
+    }
+  ],
+  "shifts": {
+    "monday": [
+      {
+        "start": "10:32",
+        "end": "11:33"
+      },
+      {
+        "start": "06:00",
+        "end": "20:20"
+      }
+    ],
+    "sunday": [
+      {
+        "start": "06:32",
+        "end": "08:33"
+      }
+    ]
+  },
+  "isHidden": false
+},
+{
+  "_id": {
+    "$oid": "66377a8ce479e46dab038106"
+  },
+  "firstName": "Thao",
+  "lastName": "Truong Thanh",
+  "avatar": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714911885/ecommerce/kegtektkzdwpcul5crcz.jpg",
+  "mobile": "0923571388",
+  "email": "ttthao@outlook.com",
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "createdAt": {
+    "$date": "2024-05-05T12:24:44.914Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-29T17:00:53.088Z"
+  },
+  "__v": 1,
+  "work": [
+    {
+      "_id": {
+        "$oid": "6742626783797718f1bd5ba8"
+      },
+      "service": {
+        "$oid": "664c5f232d016b9c12f94488"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "time": "14:52",
+      "date": "26/05/2024",
+      "duration": 60
+    },
+    {
+      "_id": {
+        "$oid": "6742626783797718f1bd5ba9"
+      },
+      "service": {
+        "$oid": "664c5f232d016b9c12f94488"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "time": "15:52",
+      "date": "26/05/2024",
+      "duration": 60
+    },
+    {
+      "_id": {
+        "$oid": "6742626783797718f1bd5baa"
+      },
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "time": "22:00",
+      "date": "06/11/2024",
+      "duration": 60
+    },
+    {
+      "_id": {
+        "$oid": "6742626783797718f1bd5bab"
+      },
+      "service": {
+        "$oid": "66377e7ee479e46dab0382fa"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "time": "21:40",
+      "date": "11/3/2024",
+      "duration": 50
+    },
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "duration": 60,
+      "date": "16/11/2024",
+      "time": "18:46",
+      "_id": {
+        "$oid": "67386ae1da78f0906d648c25"
+      }
+    },
+    {
+      "service": {
+        "$oid": "66377e7ee479e46dab0382fa"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "duration": 50,
+      "date": "16/11/2024",
+      "time": "20:30",
+      "_id": {
+        "$oid": "67388f03b177714dd0dfa573"
+      }
+    },
+    {
+      "service": {
+        "$oid": "66377e7ee479e46dab0382fa"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "duration": 50,
+      "date": "16/11/2024",
+      "time": "21:20",
+      "_id": {
+        "$oid": "6738902db05ac137970c53c0"
+      }
+    },
+    {
+      "service": {
+        "$oid": "66377e7ee479e46dab0382fa"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "duration": 50,
+      "date": "17/11/2024",
+      "time": "17:10",
+      "_id": {
+        "$oid": "67399e6f77ed5ee0fcdf6fa2"
+      }
+    },
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "duration": 60,
+      "date": "24/11/2024",
+      "time": "08:00",
+      "_id": {
+        "$oid": "6742682d28d096082737880b"
+      }
+    },
+    {
+      "service": {
+        "$oid": "66377e7ee479e46dab0382fa"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "duration": 50,
+      "date": "24/11/2024",
+      "time": "11:20",
+      "_id": {
+        "$oid": "6742689e28d0960827378afc"
+      }
+    },
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "duration": 60,
+      "date": "25/11/2024",
+      "time": "08:00",
+      "_id": {
+        "$oid": "674268ef28d0960827378c7f"
+      }
+    },
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "duration": 60,
+      "date": "27/11/2024",
+      "time": "08:00",
+      "_id": {
+        "$oid": "6742ef8ea05ac463302fe895"
+      }
+    },
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "duration": 60,
+      "date": "24/11/2024",
+      "time": "18:00",
+      "_id": {
+        "$oid": "6742f6ede64f2faf528a115a"
+      }
+    }
+  ],
+  "shifts": {
+    "Monday": {
+      "isEnabled": true,
+      "periods": {
+        "start": "08:00",
+        "end": "23:00"
+      }
+    },
+    "Tuesday": {
+      "isEnabled": true,
+      "periods": {
+        "start": "06:00",
+        "end": "23:30"
+      }
+    },
+    "Wednesday": {
+      "isEnabled": true,
+      "periods": {
+        "start": "08:00",
+        "end": "21:00"
+      }
+    },
+    "Thursday": {
+      "isEnabled": false,
+      "periods": {
+        "start": "00:00",
+        "end": "00:00"
+      }
+    },
+    "Friday": {
+      "isEnabled": false,
+      "periods": {
+        "start": "00:00",
+        "end": "00:00"
+      }
+    },
+    "Saturday": {
+      "isEnabled": false,
+      "periods": {
+        "start": "08:00",
+        "end": "23:30"
+      }
+    },
+    "Sunday": {
+      "isEnabled": true,
+      "periods": {
+        "start": "08:00",
+        "end": "21:00"
+      }
+    }
+  },
+  "isHidden": false
+},
+{
+  "_id": {
+    "$oid": "66378139e479e46dab03832e"
+  },
+  "firstName": "Ngoc",
+  "lastName": "Truong Anh",
+  "avatar": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714913594/ecommerce/h7y1ch6uw11ogkb3yzew.png",
+  "mobile": "0988989667",
+  "email": "tangoc@gmail.com",
+  "provider_id": {
+    "$oid": "6637808fe479e46dab03831a"
+  },
+  "createdAt": {
+    "$date": "2024-05-05T12:53:13.111Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-05T12:53:13.111Z"
+  },
+  "__v": 0,
+  "shifts": {
+    "monday": [
+      {
+        "start": "10:32",
+        "end": "11:33"
+      },
+      {
+        "start": "06:00",
+        "end": "20:20"
+      }
+    ],
+    "sunday": [
+      {
+        "start": "06:32",
+        "end": "08:33"
+      }
+    ]
+  },
+  "isHidden": false
+},
+{
+  "_id": {
+    "$oid": "663867f876daa06bc350ea3f"
+  },
+  "firstName": "Hoa",
+  "lastName": "Nguyen Thi",
+  "avatar": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714972665/ecommerce/g3owqrh3qjbrazydimja.png",
+  "mobile": "0908346868",
+  "email": "nthoa@gmail.com",
+  "provider_id": {
+    "$oid": "663866ca76daa06bc350ea29"
+  },
+  "createdAt": {
+    "$date": "2024-05-06T05:17:44.496Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-06T05:17:44.496Z"
+  },
+  "__v": 0,
+  "shifts": {
+    "monday": [
+      {
+        "start": "10:32",
+        "end": "11:33"
+      },
+      {
+        "start": "06:00",
+        "end": "20:20"
+      }
+    ],
+    "sunday": [
+      {
+        "start": "06:32",
+        "end": "08:33"
+      }
+    ]
+  },
+  "isHidden": false
+},
+{
+  "_id": {
+    "$oid": "66386d9376daa06bc350ea9e"
+  },
+  "firstName": "Nhung",
+  "lastName": "Nguyen",
+  "avatar": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714974100/ecommerce/bt4zqspvtnqknmjdkbab.png",
+  "mobile": "0908956688",
+  "email": "nhung@gmail.com",
+  "provider_id": {
+    "$oid": "66386d3276daa06bc350ea8b"
+  },
+  "createdAt": {
+    "$date": "2024-05-06T05:41:39.197Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T06:53:15.959Z"
+  },
+  "__v": 0,
+  "shifts": {
+    "Monday": {
+      "isEnabled": false,
+      "periods": {
+        "start": "00:00",
+        "end": "00:00"
+      }
+    },
+    "Tuesday": {
+      "isEnabled": true,
+      "periods": {
+        "start": "00:39",
+        "end": "20:45"
+      }
+    },
+    "Wednesday": {
+      "isEnabled": false,
+      "periods": {
+        "start": "00:00",
+        "end": "00:00"
+      }
+    },
+    "Thursday": {
+      "isEnabled": false,
+      "periods": {
+        "start": "00:00",
+        "end": "00:00"
+      }
+    },
+    "Friday": {
+      "isEnabled": true,
+      "periods": {
+        "start": "00:39",
+        "end": "20:45"
+      }
+    },
+    "Saturday": {
+      "isEnabled": true,
+      "periods": {
+        "start": "00:39",
+        "end": "20:45"
+      }
+    },
+    "Sunday": {
+      "isEnabled": true,
+      "periods": {
+        "start": "00:39",
+        "end": "20:45"
+      }
+    }
+  },
+  "isHidden": false
+},
+{
+  "_id": {
+    "$oid": "66dd6b05110292760162ca1b"
+  },
+  "firstName": "Le",
+  "lastName": "Duy",
+  "avatar": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1725787038/ecommerce/za4x14a5oechfig3lccs.png",
+  "mobile": "0912456897",
+  "email": "duy.le@yahoo.com",
+  "provider_id": {
+    "$oid": "66dd67fb110292760162c9f7"
+  },
+  "createdAt": {
+    "$date": "2024-09-08T09:14:45.067Z"
+  },
+  "updatedAt": {
+    "$date": "2024-09-08T09:14:45.067Z"
+  },
+  "__v": 0,
+  "shifts": {
+    "monday": [
+      {
+        "start": "10:32",
+        "end": "11:33"
+      },
+      {
+        "start": "06:00",
+        "end": "20:20"
+      }
+    ],
+    "sunday": [
+      {
+        "start": "06:32",
+        "end": "08:33"
+      }
+    ]
+  },
+  "isHidden": false
+},
+{
+  "_id": {
+    "$oid": "67380262e2485d6617e7c00c"
+  },
+  "firstName": "Vui",
+  "lastName": "Ve Moi Ngay",
+  "avatar": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1731727938/ecommerce/rx15o2wcd1aioiljomy5.png",
+  "mobile": "0901203066",
+  "email": "sssss@sss.ss",
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "createdAt": {
+    "$date": "2024-11-16T02:24:34.208Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T09:25:58.642Z"
+  },
+  "__v": 1,
+  "shifts": {
+    "Monday": {
+      "isEnabled": true,
+      "periods": {
+        "start": "08:00",
+        "end": "23:00"
+      }
+    },
+    "Tuesday": {
+      "isEnabled": true,
+      "periods": {
+        "start": "06:00",
+        "end": "23:30"
+      }
+    },
+    "Wednesday": {
+      "isEnabled": true,
+      "periods": {
+        "start": "08:00",
+        "end": "21:00"
+      }
+    },
+    "Thursday": {
+      "isEnabled": false,
+      "periods": {
+        "start": "00:00",
+        "end": "00:00"
+      }
+    },
+    "Friday": {
+      "isEnabled": false,
+      "periods": {
+        "start": "00:00",
+        "end": "00:00"
+      }
+    },
+    "Saturday": {
+      "isEnabled": true,
+      "periods": {
+        "start": "08:00",
+        "end": "23:30"
+      }
+    },
+    "Sunday": {
+      "isEnabled": true,
+      "periods": {
+        "start": "08:00",
+        "end": "21:00"
+      }
+    }
+  },
+  "work": [],
+  "isHidden": true
+}]

@@ -2,6 +2,7 @@ const router = require("express").Router();
 const ctrls = require('../controllers/service')
 const {verifyAccessToken, isAdmin} = require('../middlewares/verify_token')
 const uploader = require('../config/cloudinary.config')
+
 router.put('/variant/:sid', [verifyAccessToken, isAdmin],uploader.fields([
     {
         name: 'images',

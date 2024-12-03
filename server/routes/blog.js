@@ -8,7 +8,7 @@ router.get('/tags', ctrls.getAllBlogTags)
 router.get('/blogofprovider/:provider_id', ctrls.getAllBlogByProviderId)
 router.get('/getAllBlogByAdmin', [verifyAccessToken, isAdmin], ctrls.getAllBlogsByAdmin)
 router.post('/', ctrls.getAllBlogs)
-router.get('/', ctrls.getBlogsBySearchTerm)
+// router.get('/', ctrls.getBlogsBySearchTerm)
 router.post('/create', [verifyAccessToken, isAdmin], uploader.fields([
     {
         name: 'thumb',

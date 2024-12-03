@@ -22,11 +22,11 @@ export const apiGetOneStaff = (stid) => axios({
     url: '/staff/'+stid,
     method: 'get',
 })
-export const apiUpdateStaffWork = (data) => axios({
-    url: '/staff/update_work',
-    method: 'put',
-    data
-})
+// export const apiUpdateStaffWork = (data) => axios({
+//     url: '/staff/update_work',
+//     method: 'put',
+//     data
+// })
 export const apiUpdateStaffShift = (data) => axios({
     url: '/staff/update_shift',
     method: 'post',

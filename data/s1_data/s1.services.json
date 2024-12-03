@@ -1,0 +1,755 @@
+[{
+  "_id": {
+    "$oid": "66377b05e479e46dab038112"
+  },
+  "name": "Cardio Class For Advanced Member HHEHEH",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714912006/ecommerce/yhgxp0susa4ubhcpsudn.jpg",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714912005/ecommerce/jcgozcltvl7mubiizgqm.jpg"
+  ],
+  "description": [
+    "<p>High Intensity Workout to boost your energy after long day work.</p>\r\n<p>Suitable for Advanced</p>"
+  ],
+  "price": 1050000,
+  "category": "Gym",
+  "duration": 60,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "66377a8ce479e46dab038106"
+    }
+  ],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-05-05T12:26:45.135Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-25T14:15:50.769Z"
+  },
+  "__v": 0,
+  "rating": [
+    {
+      "star": 4,
+      "postedBy": {
+        "$oid": "663771db2463a33c6f3a39cf"
+      },
+      "comment": "jdkalda\ndjakdlduu iosd., ;ad'sc\ndjkjla",
+      "updatedAt": {
+        "$date": "2024-09-15T09:00:51.713Z"
+      },
+      "_id": {
+        "$oid": "66e6a2437ad2d07b29000477"
+      }
+    }
+  ],
+  "bookingQuantity": 14,
+  "totalRatings": 4,
+  "isHidden": false
+},
+{
+  "_id": {
+    "$oid": "663781cce479e46dab038339"
+  },
+  "name": "Herbal Massage and Relax",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714913741/ecommerce/teqiwdtavtb6q1gust0m.jpg",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714913741/ecommerce/nyfw77oxcf8txwddropi.jpg"
+  ],
+  "description": [
+    "<p>Fresh Herb and skillful practioner will bring you best experience</p>"
+  ],
+  "price": 690000,
+  "category": "Massage",
+  "duration": 45,
+  "provider_id": {
+    "$oid": "6637808fe479e46dab03831a"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "663780fde479e46dab03832c"
+    }
+  ],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-05-05T12:55:40.824Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-02T22:50:50.541Z"
+  },
+  "__v": 1,
+  "isHidden": false,
+  "rating": [
+    {
+      "star": 4,
+      "postedBy": {
+        "$oid": "663771db2463a33c6f3a39cf"
+      },
+      "_id": {
+        "$oid": "674c7f9eabc9a26af0522528"
+      }
+    }
+  ],
+  "bookingQuantity": 0,
+  "extra": [],
+  "totalRatings": 4
+},
+{
+  "_id": {
+    "$oid": "6637863ce479e46dab0383d2"
+  },
+  "name": "Haircut - washing and styling",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714914877/ecommerce/ogxplhbnygulw31p0uzr.jpg",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714914877/ecommerce/n0pjaqys21a325srzfwr.jpg"
+  ],
+  "description": [
+    "<p>Get a fresh cut and nice look only after 30 minutes</p>"
+  ],
+  "price": 1000000,
+  "category": "Barber",
+  "duration": 30,
+  "provider_id": {
+    "$oid": "66378581e479e46dab0383bb"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "663785bde479e46dab0383cd"
+    }
+  ],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-05-05T13:14:36.312Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-25T13:53:34.702Z"
+  },
+  "__v": 1,
+  "isHidden": false,
+  "rating": [
+    {
+      "star": 5,
+      "postedBy": {
+        "$oid": "663771db2463a33c6f3a39cf"
+      },
+      "comment": "5saooo31o3o3o1\nduada",
+      "updatedAt": {
+        "$date": "2024-11-25T13:53:34.638Z"
+      },
+      "_id": {
+        "$oid": "67447fabe8f0ef3d4da43e2a"
+      }
+    }
+  ],
+  "bookingQuantity": 0,
+  "extra": [],
+  "totalRatings": 5
+},
+{
+  "_id": {
+    "$oid": "66378250e479e46dab03833b"
+  },
+  "name": "Sauna & Steam Bath",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714913873/ecommerce/we2ah10ddd7d2vjbohxs.jpg",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714913872/ecommerce/irj2zvjtuiso73y38h0s.jpg"
+  ],
+  "description": [
+    "<p>Sauna and Steam help you refresh after long day of work.</p>"
+  ],
+  "price": 500000,
+  "category": "Massage",
+  "duration": 30,
+  "provider_id": {
+    "$oid": "6637808fe479e46dab03831a"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "66378139e479e46dab03832e"
+    }
+  ],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-05-05T12:57:52.102Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-05T12:57:52.102Z"
+  },
+  "__v": 0,
+  "isHidden": false
+},
+{
+  "_id": {
+    "$oid": "6638689776daa06bc350ea46"
+  },
+  "name": "Nail and Face Makeup Combo",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714972824/ecommerce/l7vntd0upkl2cmiad1gg.jpg",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714972824/ecommerce/hpnum8xkoygjsl3zajsq.jpg"
+  ],
+  "description": [
+    "<p>Prepare you for the most excellent looking for any party - combined service with discounted price!!!</p>"
+  ],
+  "price": 686500,
+  "category": "Nail",
+  "duration": 50,
+  "provider_id": {
+    "$oid": "663866ca76daa06bc350ea29"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "663867f876daa06bc350ea3f"
+    }
+  ],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-05-06T05:20:23.270Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-06T05:20:23.270Z"
+  },
+  "__v": 0,
+  "isHidden": false
+},
+{
+  "_id": {
+    "$oid": "66386db576daa06bc350eaa3"
+  },
+  "name": "Traditional Herbal Hair Wash",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714974135/ecommerce/hecxm9s8sq9jh8fchyzv.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714974134/ecommerce/eosburpl2blgxru6xcic.jpg"
+  ],
+  "description": [
+    "<p>This special service lasts for 40 minutes, including scalp and hair cleansing combined with a head massage.</p>\r\n<p>This treatment helps to care for the scalp and hair from the inside, stimulates hair growth, brings a sense of relaxation as well as helps reduce headache pain</p>"
+  ],
+  "price": 188000,
+  "category": "Massage",
+  "duration": 40,
+  "provider_id": {
+    "$oid": "66386d3276daa06bc350ea8b"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "66386d9376daa06bc350ea9e"
+    }
+  ],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-05-06T05:42:13.866Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T06:57:00.908Z"
+  },
+  "__v": 0,
+  "isHidden": false
+},
+{
+  "_id": {
+    "$oid": "66377e7ee479e46dab0382fa"
+  },
+  "name": "Yoga Class For Beginner VuiVui",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714912894/ecommerce/o770lsinlsnvjazpyedb.jpg",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1714912894/ecommerce/uwz4dsugfbquub80mrvo.jpg"
+  ],
+  "description": [
+    "<p>Relax and Soothe your muscle with our Yoga Professionals.</p>\r\n<p>Suitable for All Members and vui ve h,wjdkjwdljqx232</p>"
+  ],
+  "price": 10000000,
+  "category": "Tattoo",
+  "duration": 50,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "66377a8ce479e46dab038106"
+    },
+    {
+      "$oid": "66377a64e479e46dab038104"
+    }
+  ],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-05-05T12:41:34.013Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-01T10:06:14.771Z"
+  },
+  "__v": 0,
+  "bookingQuantity": 0,
+  "isHidden": false
+},
+{
+  "_id": {
+    "$oid": "664c5f232d016b9c12f94488"
+  },
+  "name": "AHDJAOIJWDAO",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1716281560/ecommerce/tulmjqzydyo0ti2ydqs0.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1716281561/ecommerce/nbekbxg9fkyywp6l82lk.png"
+  ],
+  "description": [
+    "<p>fjakldjfla</p>\r\n<p>klf</p>\r\n<p>dk</p>"
+  ],
+  "price": 22222,
+  "category": "Gym",
+  "duration": 60,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "66377a8ce479e46dab038106"
+    }
+  ],
+  "totalRatings": 0,
+  "bookingQuantity": 0,
+  "variants": [],
+  "rating": [],
+  "createdAt": {
+    "$date": "2024-05-21T08:45:23.996Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-21T08:45:23.996Z"
+  },
+  "__v": 0,
+  "isHidden": false
+},
+{
+  "_id": {
+    "$oid": "66dd6b7b110292760162ca2a"
+  },
+  "name": "Ăn Trưa 8 món Phòng Vip Máy Lạnh",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1725787156/ecommerce/nip9kuizxzos14z06i5g.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1725787156/ecommerce/dfwrz9xwudhoztae2g9c.png"
+  ],
+  "description": [
+    "<ul>\r\n<li style=\"text-align: left;\">Thực đơn đa dạng m&oacute;n ăn ba miền</li>\r\n<li style=\"text-align: left; font-style: italic;\"><em>Ph&ograve;ng vip ri&ecirc;ng tư c&oacute; m&aacute;y lạnh</em></li>\r\n<li style=\"text-align: left;\">Kh&ocirc;ng gian giải tr&iacute; ngo&agrave;i trời s&acirc;n vườn</li>\r\n<li style=\"text-align: left;\"><img src=\"https://thietkeaz.com/files/thiet-ke-nha-hang-san-vuon-1.jpg\" alt=\"khong gian san vuon\" width=\"290\" height=\"199\"></li>\r\n</ul>"
+  ],
+  "price": 3888000,
+  "category": "Nail",
+  "duration": 390,
+  "provider_id": {
+    "$oid": "66dd67fb110292760162c9f7"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "66dd6b05110292760162ca1b"
+    }
+  ],
+  "totalRatings": 0,
+  "bookingQuantity": 0,
+  "variants": [],
+  "rating": [],
+  "createdAt": {
+    "$date": "2024-09-08T09:16:43.743Z"
+  },
+  "updatedAt": {
+    "$date": "2024-09-08T09:16:43.743Z"
+  },
+  "__v": 0,
+  "isHidden": false
+},
+{
+  "_id": {
+    "$oid": "674313013835cb1481c78e9e"
+  },
+  "name": "Vui Ve",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732449075/ecommerce/pjw1etgpmmuqjfrmgra8.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732449075/ecommerce/ci0foelkcgpq8ymmw8eh.png"
+  ],
+  "description": [
+    "<p><strong><em>Mot service test......</em></strong></p>"
+  ],
+  "price": 150000,
+  "category": "Gym",
+  "duration": 100,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "67380262e2485d6617e7c00c"
+    },
+    {
+      "$oid": "66377a8ce479e46dab038106"
+    }
+  ],
+  "totalRatings": 0,
+  "bookingQuantity": 0,
+  "isHidden": false,
+  "extra": [],
+  "rating": [],
+  "createdAt": {
+    "$date": "2024-11-24T11:50:25.334Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T11:50:25.334Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6743157f3835cb1481c7923f"
+  },
+  "name": "jjjjjjjjjjjjjjjjjjjjjjjj",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732449713/ecommerce/rfjjcssfmzwshgkpzto9.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732449713/ecommerce/q9udzhshgzcp3pkhrxcn.png"
+  ],
+  "description": [
+    "<p>slkdajlkd</p>"
+  ],
+  "price": 888888,
+  "category": "Hairstylist",
+  "duration": 30,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "673802dee2485d6617e7c028"
+    }
+  ],
+  "totalRatings": 0,
+  "bookingQuantity": 0,
+  "isHidden": false,
+  "extra": [],
+  "rating": [],
+  "createdAt": {
+    "$date": "2024-11-24T12:01:03.453Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T12:01:03.453Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67435afb3e70c14eb520ea0d"
+  },
+  "name": "mmmmmmmmmm",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732467502/ecommerce/yykxfwydpgp5havwr1wg.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732467502/ecommerce/towp5afwbrjrxw4gs6mt.png"
+  ],
+  "description": [
+    "<p>mmmmmmmmmmmmmmmmmm</p>"
+  ],
+  "price": 372830,
+  "category": "Gym",
+  "duration": 35,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "673802dee2485d6617e7c028"
+    }
+  ],
+  "totalRatings": 0,
+  "bookingQuantity": 0,
+  "isHidden": false,
+  "extra": [],
+  "rating": [],
+  "createdAt": {
+    "$date": "2024-11-24T16:57:31.661Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T16:57:31.661Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67439c21a8666641989d9ec0"
+  },
+  "name": "yyyyyyyyyyyyyyyyyyyy",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732484180/ecommerce/qsrixamehgunh91ehitm.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732484181/ecommerce/bu4oxuuzb7uh1d2psu3s.png"
+  ],
+  "description": [
+    "<p>yyyyyyyyyyyyyyyyyyyyyyyyyyy</p>"
+  ],
+  "price": 8888888,
+  "category": "Hairstylist",
+  "duration": 180,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "673802dee2485d6617e7c028"
+    }
+  ],
+  "totalRatings": 0,
+  "bookingQuantity": 0,
+  "isHidden": false,
+  "extra": [],
+  "rating": [],
+  "createdAt": {
+    "$date": "2024-11-24T21:35:29.849Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T21:35:29.849Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67439eb25f17f6979b71c53c"
+  },
+  "name": "vvvvvvvvvvvvvvvv",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732484837/ecommerce/gsopl9vgjtqoo6hx4zq6.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732484837/ecommerce/jhx9evd6qwdmamdvp9uf.png"
+  ],
+  "description": [
+    "<p>vvvvvvvvvvvvvvvvvvv</p>"
+  ],
+  "price": 10000,
+  "category": "Hairstylist",
+  "duration": 60,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "67380262e2485d6617e7c00c"
+    }
+  ],
+  "totalRatings": 0,
+  "bookingQuantity": 0,
+  "isHidden": false,
+  "extra": [],
+  "rating": [],
+  "createdAt": {
+    "$date": "2024-11-24T21:46:26.385Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T21:46:26.385Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67439f6459d9d2a546d30914"
+  },
+  "name": "rrrrrrrrrrrrrrrrrrrrr",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732485015/ecommerce/kr7klnobatycuajksvzv.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732485015/ecommerce/yj2ax4vf5qjydxphfvk6.png"
+  ],
+  "description": [
+    "<p>gggggggggggggggggggg</p>"
+  ],
+  "price": 88888888,
+  "category": "Hairstylist",
+  "duration": 60,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "67380262e2485d6617e7c00c"
+    }
+  ],
+  "totalRatings": 0,
+  "bookingQuantity": 0,
+  "isHidden": true,
+  "extra": [],
+  "rating": [],
+  "createdAt": {
+    "$date": "2024-11-24T21:49:24.168Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-02T22:50:50.265Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6743a1e3ab1da9568d359a43"
+  },
+  "name": "bbbbbbbbbbbbbbbbbb",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732485654/ecommerce/s74okoxjtyo7ebb1t5mh.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732485654/ecommerce/ykjfs6qujzfsnvdmarnb.png"
+  ],
+  "description": [
+    "<p>bbbbbbbbbbbbbbbbbb</p>"
+  ],
+  "price": 444,
+  "category": "Nail",
+  "duration": 60,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "67380262e2485d6617e7c00c"
+    }
+  ],
+  "totalRatings": 0,
+  "bookingQuantity": 0,
+  "isHidden": false,
+  "extra": [],
+  "rating": [],
+  "createdAt": {
+    "$date": "2024-11-24T22:00:03.517Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T22:00:03.517Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6743a42b3658a15a6dc60edd"
+  },
+  "name": "wwwwwwwwwwwwwwwwwwww",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732486238/ecommerce/i3rmauagtfimk0qrgyzm.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732486238/ecommerce/xrtmanluge8dgx92i15m.png"
+  ],
+  "description": [
+    "<p>wwwwwwwwwwwwwwwwwwwwww</p>"
+  ],
+  "price": 55555555555,
+  "category": "Gym",
+  "duration": 120,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "66377a8ce479e46dab038106"
+    }
+  ],
+  "totalRatings": 0,
+  "bookingQuantity": 0,
+  "isHidden": false,
+  "extra": [],
+  "rating": [],
+  "createdAt": {
+    "$date": "2024-11-24T22:09:47.185Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T22:09:47.185Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6743a5312331dfa307021e50"
+  },
+  "name": ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732486500/ecommerce/is2torx7r4grfysxevmz.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732486500/ecommerce/ivq5hd4ur6joinkpcwvb.png"
+  ],
+  "description": [
+    "<p>dsssssssssssssssssssssssssssssssssssssssssss</p>"
+  ],
+  "price": 100000,
+  "category": "Fitness",
+  "duration": 85,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "66377a64e479e46dab038104"
+    }
+  ],
+  "totalRatings": 0,
+  "bookingQuantity": 0,
+  "isHidden": false,
+  "extra": [],
+  "rating": [],
+  "createdAt": {
+    "$date": "2024-11-24T22:14:09.530Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T22:14:09.530Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6743a94fd02c5f2ad66a1374"
+  },
+  "name": "ccccccccccccccccc",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732487555/ecommerce/oh1bxsauhf3fyl9o2ht6.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732487555/ecommerce/yczrjl8pg4w2rxzefttl.png"
+  ],
+  "description": [
+    "<p>ccccccccccccccccc</p>"
+  ],
+  "price": 12,
+  "category": "Tattoo",
+  "duration": 135,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "66377a8ce479e46dab038106"
+    }
+  ],
+  "totalRatings": 0,
+  "bookingQuantity": 0,
+  "isHidden": false,
+  "extra": [],
+  "rating": [],
+  "createdAt": {
+    "$date": "2024-11-24T22:31:43.954Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T22:31:43.954Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6743abcbac20a3515113f3ff"
+  },
+  "name": "Class High Intensive for Workour Advanced Member",
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732488191/ecommerce/ex3zyv0z5lbwtotdkkcv.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732488191/ecommerce/e0jvfrilp1iackqit3q4.png"
+  ],
+  "description": [
+    "<p>jdakjdlad</p>"
+  ],
+  "price": 8888,
+  "category": "Gym",
+  "duration": 0,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "assigned_staff": [
+    {
+      "$oid": "66377a8ce479e46dab038106"
+    }
+  ],
+  "totalRatings": 0,
+  "bookingQuantity": 0,
+  "isHidden": false,
+  "extra": [],
+  "rating": [],
+  "createdAt": {
+    "$date": "2024-11-24T22:42:19.940Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T22:42:19.940Z"
+  },
+  "__v": 0
+}]

@@ -334,7 +334,7 @@ const updateFooterSection = asyncHandler(async(req,res) => {
     const {provider_id} = await User.findById({_id}).select('provider_id');
     console.log(req?.body);
     const sp = await ServiceProvider.findById(provider_id);
-    
+
     // Update the footer section with the new data from req.body
     if (sp) {
         // Update indexFooter

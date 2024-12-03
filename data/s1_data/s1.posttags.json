@@ -1,0 +1,106 @@
+[{
+  "_id": {
+    "$oid": "66e2984cc70c5bb6781044bf"
+  },
+  "label": "an-uong",
+  "created_by": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66e297a66b1fd765934cf041"
+  },
+  "label": "dia-diem-du-lich",
+  "created_by": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66e29980c70c5bb6781044c1"
+  },
+  "label": "vui-choi",
+  "created_by": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66e2976b6b1fd765934cf03e"
+  },
+  "label": "dia-diem-vui-choi",
+  "created_by": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66e299c1c70c5bb6781044c5"
+  },
+  "label": "du-lich",
+  "created_by": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66e360eb49662babdd558225"
+  },
+  "label": "dffsdfag",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66e688af213b154b6b0dce44"
+  },
+  "label": "nha-hang-san-vuon",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66eff4667e197e9c00fc07d7"
+  },
+  "label": "BằngđạiHọc",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "672789b3e5ef33d0ce30c5c3"
+  },
+  "label": "eq",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "672789b3e5ef33d0ce30c5c5"
+  },
+  "label": "eqq",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "673e6334248779fa41d5e486"
+  },
+  "label": "ff-ff",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "673e6334248779fa41d5e488"
+  },
+  "label": "iijdal sd",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "673e67c2248779fa41d5e76e"
+  },
+  "label": "dia-diem-an-uong",
+  "__v": 0
+}]
