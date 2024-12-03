@@ -32,6 +32,7 @@ import logoWeb from '../../assets/logoWeb.png'
 // import { IoChatbubbleEllipsesSharp } from 'react-icons/io5';
 import useDebounce from 'hook/useDebounce'
 import { useForm } from 'react-hook-form';
+import defaultProvider from '../../assets/defaultProvider.jpg'
 
 const DetailProvider = () => {
     const {register,formState:{errors}, handleSubmit, watch, reset} = useForm()
@@ -245,10 +246,10 @@ const DetailProvider = () => {
               {leftColumn.map((item,index) => {
                 if(item?.isVisible && item?.field === 'logo'){
                   if(providerData?.logoSize === 'small'){
-                    return <img className='w-[52px] max-h-[32px] object-cover' key={index} src={providerData?.images[0]} alt="Logo" />;
+                    return <img className='w-[52px] max-h-[32px] object-cover' key={index} src={providerData?.images[0] || defaultProvider} alt="Logo" />;
                   }
                   else{
-                    return <img className='w-[102px] max-h-[64px] object-cover' key={index} src={providerData?.images[0]} alt="Logo" />;
+                    return <img className='w-[102px] max-h-[64px] object-cover' key={index} src={providerData?.images[0] || defaultProvider} alt="Logo" />;
                   }
                 }
                 else if(item?.isVisible && item?.field === 'slogan' && providerData?.slogan !== ""){
@@ -305,10 +306,10 @@ const DetailProvider = () => {
               {rightColumn.map((item, index) => {
                 if(item?.isVisible && item?.field === 'logo'){
                   if(providerData?.logoSize === 'small'){
-                    return <img className='w-[52px] max-h-[32px] object-cover' key={index} src={providerData?.images[0]} alt="Logo" />;
+                    return <img className='w-[52px] max-h-[32px] object-cover' key={index} src={providerData?.images[0] || defaultProvider} alt="Logo" />;
                   }
                   else{
-                    return <img className='w-[102px] max-h-[64px] object-cover' key={index} src={providerData?.images[0]} alt="Logo" />;
+                    return <img className='w-[102px] max-h-[64px] object-cover' key={index} src={providerData?.images[0] || defaultProvider} alt="Logo" />;
                   }
                 }
                 else if(item?.isVisible && item?.field === 'slogan' && providerData?.slogan !== ""){
