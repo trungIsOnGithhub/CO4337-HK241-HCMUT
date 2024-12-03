@@ -384,27 +384,27 @@ const multiFunc = async function(indexName, init, reset) {
     // });
     // console.log('---->', response1 ,'------');
 
-    const qAllTest = await queryElasticDB(indexName, {
-        query: {
-            // bool: {
-            //     must: [
-            //         {
-            //             match: { f1: "vũng tàu" }
-            //         }
-            //     ],
-            //     filter: {
-            //         term: { id: "1" }
-            //     }
-            // }
-            match_all: {}
-        }
-        // sort: [
-        //     { f2: { order: 'desc' } }
-        // ]
-    });
-    // console.log("TEST ALL DOC QUERY", qAllTest?.hits,"TEST ALL DOC QUERY");
-    console.log("TEST ALL DOC QUERY INNER", qAllTest?.hits?.hits,"TEST ALL DOC QUERY INNER");
-    console.log("*****************************************");
+    // const qAllTest = await queryElasticDB(indexName, {
+    //     query: {
+    //         // bool: {
+    //         //     must: [
+    //         //         {
+    //         //             match: { f1: "vũng tàu" }
+    //         //         }
+    //         //     ],
+    //         //     filter: {
+    //         //         term: { id: "1" }
+    //         //     }
+    //         // }
+    //         match_all: {}
+    //     }
+    //     // sort: [
+    //     //     { f2: { order: 'desc' } }
+    //     // ]
+    // });
+    // // console.log("TEST ALL DOC QUERY", qAllTest?.hits,"TEST ALL DOC QUERY");
+    // console.log("TEST ALL DOC QUERY INNER", qAllTest?.hits?.hits,"TEST ALL DOC QUERY INNER");
+    // console.log("*****************************************");
 
     // const q1 = await fullTextSearchAdvanced(ELASTIC_INDEX_NAME_MAP.SERVICES,
     //     "vung tau",
@@ -443,18 +443,18 @@ const multiFunc = async function(indexName, init, reset) {
     console.log("~~~~~~~~", hitsRecord2, "**********");
 };
 
-(async function () {
-//     // // COMMENT THIS WHEN RUN MIGRATE OR ANY OTHE FILE INCLUDED THIS
-//await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, false, true); // TO SWITCH
-//await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, true, false); // TO SWITCH
+// (async function () {
+// //     // // COMMENT THIS WHEN RUN MIGRATE OR ANY OTHE FILE INCLUDED THIS
+// //await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, false, true); // TO SWITCH
+// //await multiFunc(ELASTIC_INDEX_NAME_MAP.SERVICES, true, false); // TO SWITCH
 
-//     // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, false, true); // TO SWITCH
-//     // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, true, false); // TO SWITCH
+// //     // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, false, true); // TO SWITCH
+// //     // await multiFunc(ELASTIC_INDEX_NAME_MAP.BLOGS, true, false); // TO SWITCH
 
-//     // await multiFunc(ELASTIC_INDEX_NAME_MAP.PROVIDERS, false, true); // TO SWITCH
+// //     // await multiFunc(ELASTIC_INDEX_NAME_MAP.PROVIDERS, false, true); // TO SWITCH
     
-//     // await multiFunc(ELASTIC_INDEX_NAME_MAP.PROVIDERS, true, false); // TO SWITCH
-})();
+// //     // await multiFunc(ELASTIC_INDEX_NAME_MAP.PROVIDERS, true, false); // TO SWITCH
+// })();
 
 // initializeElasticClient().indices.get({
 //     index: ELASTIC_INDEX_NAME_MAP.SERVICES,
