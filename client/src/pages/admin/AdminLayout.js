@@ -7,9 +7,9 @@ import {AdminSideBar} from 'components'
 
 const AdminLayout = () => {
   const {isLogin,current} = useSelector(state => state.user)
-  // if(!isLogin || !current || +current.role !== 1411){
-  //   return <Navigate to={`/${path.LOGIN}`} replace={true}/>
-  // }
+  if(!isLogin || !current || +current.role !== 1411){
+    return <Navigate to={`/`} replace={true}/>
+  }
   return (
     <div className='flex w-screen bg-zinc-900 min-h-screen relative text-white overflow-x-hidden'>
       <div className='w-[280px] flex-none fixed top-0 bottom-0 z-30 overflow-y-auto scrollbar-thin'>
