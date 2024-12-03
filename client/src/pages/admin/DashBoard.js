@@ -27,14 +27,16 @@ const MetricIndicator = ({ prev, current }) => {
       current > prev &&
         (<span className="flex">
             <span className="text-teal-500 text-xs"><FaAngleDoubleUp style={{color: 'green' }} className='text-teal-500 rotate-45'/></span>
-            <span className='text-teal-500 pr-1 text-base'>&nbsp;{(current >= 1 ? (current - prev)/current*100.0 : 0)?.toFixed(2)} %</span>
+            { prev === 0 && <span className='text-teal-500 pr-1 text-base'>&nbsp;100%</span> }
+            { prev > 0 && <span className='text-teal-500 pr-1 text-base'>&nbsp;{Math.ceil((current - prev)/current*100.0)?.toFixed(2)}%</span> }
         </span>)
       }
       {
       current < prev && 
         (<span className="flex">
             <span className="text-rose-700 text-xs"><FaAngleDoubleDown className='text-rose-700 -rotate-45'/></span>
-            <span className='text-rose-700 pr-1 text-base'>&nbsp;{(current >= 1 ? (current - prev)/current*100.0 : 0)?.toFixed(2)} %</span>
+            { current === 0 && <span className='text-rose-700 pr-1 text-base'>&nbsp;100%</span> }
+            { current > 0 && <span className='text-rose-700 pr-1 text-base'>&nbsp;{Math.ceil((prev - current)/current*100.0)?.toFixed(2)}%</span> }
         </span>)
       }
       {current === prev && (<span className="flex items-center flex-col flex-wrap">
@@ -251,7 +253,7 @@ const DashBoard = () => {
                   {
                     currentMetricView.new_customer === 0 &&
                       <MetricIndicator
-                        prev={newCustomerTriplet[1]} current={newCustomerTriplet[0]}>
+                        prev={newCustomerTriplet[0]} current={newCustomerTriplet[1]}>
                       </MetricIndicator>
                   }
               </span>
@@ -329,7 +331,7 @@ const DashBoard = () => {
                   {
                     currentMetricView.revenue === 0 &&
                       <MetricIndicator
-                        prev={revenueTriplet[1]} current={revenueTriplet[0]}>
+                        prev={revenueTriplet[0]} current={revenueTriplet[1]}>
                       </MetricIndicator>
                   }
               </span>
@@ -405,7 +407,7 @@ const DashBoard = () => {
                   {
                     currentMetricView.occupancy === 0 &&
                       <MetricIndicator
-                        prev={occupancyTriplet[1]} current={occupancyTriplet[0]}>
+                        prev={occupancyTriplet[0]} current={occupancyTriplet[1]}>
                       </MetricIndicator>
                   }
               </span>
