@@ -16,7 +16,7 @@ const ViewOrderDetail = ({ bookingId, onClose }) => {
         setIsChanged(true); // Show the submit button when a change is made
     };
     const handleStatusSubmit = async () => {
-        // console.log("Status submitted:", status);
+        // // removed log
         if (!orderData?._id) {
             Swal.fire("Error Occured!", "Cannot Find User Session!", "error");
             return;
@@ -33,7 +33,7 @@ const ViewOrderDetail = ({ bookingId, onClose }) => {
     };
     const fetchOrderData = async () => {
         const data = await apiGetOneOrderByAdmin(bookingId);
-        // console.log("+++++++}}}", data.booking);
+        // // removed log
         setOrderData(data?.booking);
         setStatus(data?.booking?.status);
 

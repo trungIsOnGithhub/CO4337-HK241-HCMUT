@@ -15,7 +15,7 @@ const FlashSaleItem = ({flashsaleData}) => {
   const location = useLocation()
   const {current} = useSelector(state => state.user)
 
-  console.log(flashsaleData)
+  // removed log
 
   const [isFlashing, setIsFlashing] = useState(false);
 

@@ -13,7 +13,7 @@ const WishListService = () => {
     dispatch(getCurrent())
   }, []);
 
-  console.log(current)
+  // removed log
 
   return (
     <div className='w-full relative px-4'>

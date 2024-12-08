@@ -366,10 +366,10 @@ const ManageFooterSection = () => {
     const formattedData = formatDataForAPI(elements, visibleElements);
     const socialLinksWithoutIcons = socialLinks?.map(({ icon, ...rest }) => rest);
 
-    console.log(formattedData);
-    console.log(socialLinksWithoutIcons);
-    console.log(logoSize)
-    console.log(slogan)
+    // removed log
+    // removed log
+    // removed log
+    // removed log
 
     const response = await apiUpdateFooterSection({
       formattedData,

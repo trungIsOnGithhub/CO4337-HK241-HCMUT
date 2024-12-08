@@ -48,13 +48,13 @@ const DetailProvider = () => {
     const [flashSale, setFlashSale] = useState([])
     const [currentFlashSaleIndex, setCurrentFlashSaleIndex] = useState(0); // Thêm state để theo dõi chỉ số hiện tại
 
-    console.log(flashSale)
+    // removed log
 
     useEffect(() => {
         const fetchProviderData = async() => {
           const response = await apiGetServiceProviderById(prid)
           if(response?.success){
-            console.log('++++++++', response.payload);
+            // removed log
             setProviderData(response?.payload)
           }
         }
@@ -235,10 +235,10 @@ const DetailProvider = () => {
         });
 
         if (openSwalResult.isConfirmed) {
-          console.log('+++++++++++', {uid: current?._id, ucid: providerData.owner})
+          // removed log
           let response = await apiAddContactToCurrentUser({uid: current?._id, ucid: providerData.owner});
           if (response?.success && response.contact) {
-            console.log('||||||||||||||||||', providerData.owner)
+            // removed log
             navigate(`/${path.CHAT}`,{ state: { currenRedirectedChatUserId: providerData.owner } });
           }
         } 

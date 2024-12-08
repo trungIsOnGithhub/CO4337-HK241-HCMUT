@@ -26,7 +26,7 @@ const UpdateProduct = () => {
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
 
-  console.log(editProduct)
+  // removed log
   const [payload, setPayload] = useState({
     description: ''
   })

@@ -64,7 +64,7 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload, setIsSuccess}) 
 }
 
 export default function PaypalProduct({amount, payload, setIsSuccess}) {
-    console.log('aaaa')
+    // removed log
     return (
         <div style={{ maxWidth: "750px", minHeight: "200px", margin: "auto" }}>
             <PayPalScriptProvider options={{ clientId: "test", components: "buttons", currency: "USD" }}>

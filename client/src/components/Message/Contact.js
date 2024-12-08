@@ -23,9 +23,9 @@ const Contact = ({contacts, currentUser, changeChat}) => {
     }
   }, [currentUser]);
 
-  console.log(contacts)
-  console.log(currentUserImage)
-  console.log(currentUserName)
+  // removed log
+  // removed log
+  // removed log
   
 
   const changeCurrentChat = (index, contact) => { 

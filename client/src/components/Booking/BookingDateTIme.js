@@ -57,8 +57,8 @@ const BookingDateTIme = () => {
 
       // addMinutes(startDate, startDate.getTimezoneOffset());
       // addMinutes(endDate, endDate.getTimezoneOffset());
-      // console.log('0000--' + mmTzOffset);
-      // console.log(startDate + 'ccccccccc' + endDate);
+      // // removed log
+      // // removed log
       let now = new Date();
       // const mStarted = now.getHours() * 60 + now.getMinutes();
 
@@ -71,7 +71,7 @@ const BookingDateTIme = () => {
       });
 
       if (resp.success && resp.timeOptions) {
-        // console.log('VVVVVVVVVV---', resp.timeOptions, '++++++++++++++');
+        // // removed log
         setTimeOptions(resp.timeOptions);
       }
   }, [])
@@ -96,14 +96,14 @@ const BookingDateTIme = () => {
 
   const canUseDiscount = (coupon) => {
     if (!currentUser) return false;
-    console.log(coupon)
+    // removed log
     const { date, time } = coupon.expirationDate;
     const expirationDateTime = new Date(`${date.split('/').reverse().join('-')}T${time}:00`); // Chuyển đổi sang ISO format
 
     // Kiểm tra nếu thời gian hết hạn đã qua
     const now = new Date();
-    console.log(expirationDateTime)
-    console.log(now)
+    // removed log
+    // removed log
 
     if (expirationDateTime < now) return false;
 
@@ -219,7 +219,7 @@ const BookingDateTIme = () => {
         const startWeek = startOfWeek(nowPrev7days);
         const endWeek = endOfWeek(nowPrev7days);
 
-        console.log(startWeek.toISOString() + '-----' + endWeek.toISOString());
+        // removed log
 
         fetchBookingTimeOptionsData(startWeek, endWeek);
         setDisplayTime(startWeek);
@@ -246,7 +246,7 @@ const BookingDateTIme = () => {
         const startWeek = startOfWeek(nowNext7days);
         const endWeek = endOfWeek(nowNext7days);
 
-        console.log(startWeek.toISOString() + '-----' + endWeek.toISOString());
+        // removed log
 
         fetchBookingTimeOptionsData(startWeek, endWeek);
         setDisplayTime(startWeek);
@@ -269,7 +269,7 @@ const BookingDateTIme = () => {
   };
 
   const handleOnClick = async (time) => {
-    // console.log('xxxxxxxx-xxx-' + JSON.stringify(time));
+    // // removed log
     if (!time?.start || !time?.end) {
       return;
     }
@@ -286,9 +286,9 @@ const BookingDateTIme = () => {
     // Kết hợp formattedDate và time để tạo datetime
     const dateTime = new Date(`${formattedDate}T${timeStartHH}:00Z`);
 
-    // console.log('=====>', time)
+    // // removed log
 
-    // console.log('......', {
+    // // removed log
     //   service: service?._id,
     //   provider: provider?._id,
     //   staff: staff?._id,
@@ -329,7 +329,7 @@ const BookingDateTIme = () => {
       toast.success("Service cart updated successfully!");
     }
     else if (resp.mes) {
-      // console.log('==============', resp);
+      // // removed log
       toast.error(resp.mes);
 
       if (type === 'Week') {
@@ -365,7 +365,7 @@ const BookingDateTIme = () => {
 
     const dateTime = new Date(`${formattedDate}T${selectedTime}:00Z`);
 
-    // console.log('........', {
+    // // removed log
     //   service: service?._id, 
     //   provider: provider?._id, 
     //   staff: staff?._id, 
@@ -401,7 +401,7 @@ const BookingDateTIme = () => {
       }
     }
     else if (resp.mes) {
-      console.log('==============', resp);
+      // removed log
       toast.error(resp.mes);
 
       if (type === 'Week') {
@@ -480,7 +480,7 @@ const BookingDateTIme = () => {
       search: createSearchParams({sid: service?._id}).toString()
     })
   }
-  // console.log(discountValue)
+  // // removed log
 
   return (
     <div className='w-main'>
@@ -533,7 +533,7 @@ const BookingDateTIme = () => {
                   <div className='font-semibold text-xs'>{dayOfWeek.slice(0, 3)}</div>
                   <div className={clsx('w-full h-[72px] flex items-center justify-center border border-[#0a66c2] rounded-md hover:bg-blue-400  cursor-pointer', date === datetime && 'bg-blue-400 border-[rgba(22,157,215,1)]',new Date(date).setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0) ? 'opacity-50 cursor-not-allowed hover:bg-slate-300' : 'cursor-pointer')}
                   onClick={()=>{
-                    // console.log('+++++++++++>>>>', getISOStringDateOnly(date));
+                    // // removed log
                     if (new Date(date).setHours(0, 0, 0, 0) > new Date().setHours(0, 0, 0, 0)) {
                       setDatetime(getISOStringDateOnly(date)); setSelectedTime()}}
                     }
@@ -550,7 +550,7 @@ const BookingDateTIme = () => {
                     <div className={clsx('w-full h-[72px] flex items-center justify-center border border-[#0a66c2] rounded-md hover:bg-blue-400 cursor-pointer', date === datetime && 'bg-blue-400 border-[rgba(22,157,215,1)]',new Date(date).setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0) ? 'opacity-50 cursor-not-allowed hover:bg-slate-300' : 'cursor-pointer')} 
                       onClick={() => {
                         if (new Date(date).setHours(0, 0, 0, 0) > new Date().setHours(0, 0, 0, 0)) {
-                          // // // console.log('+++++++++++>>>>', getISOStringDateOnly(date));
+                          // // // // removed log
                           setDatetime(getISOStringDateOnly(date));
                           setSelectedTime();
                         }

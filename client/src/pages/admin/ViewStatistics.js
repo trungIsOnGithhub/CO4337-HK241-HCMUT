@@ -26,8 +26,8 @@ const ViewStatistics = () => {
       const response = await apiGetOrdersUserByAdmin({limit: 999}, userId)
       if(response?.success){
         setBookings(response?.order)
-        console.log('====================||||======================');
-        console.log(response.order);
+        // removed log
+        // removed log
       }
     }
 

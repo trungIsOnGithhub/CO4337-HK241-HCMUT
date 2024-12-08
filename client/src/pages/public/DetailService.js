@@ -117,9 +117,9 @@ const DetailService = ({isQuickView, data}) => {
     }
   }, [current, serviceData]);
 
-  console.log(current)
+  // removed log
 
-  console.log(isWishlisted)
+  // removed log
   
   const handleWishlist = async() => {
     if(!isLogin){

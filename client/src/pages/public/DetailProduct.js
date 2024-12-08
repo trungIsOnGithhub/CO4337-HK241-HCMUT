@@ -150,7 +150,7 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
       setSelectedColor(product?.colorCode)
     }
   }, [product]);
-  console.log(product)
+  // removed log
   
   useEffect(() => {
     if(data){

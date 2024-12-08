@@ -50,7 +50,7 @@ const ManageSaleEvent = () => {
 
   const [showServices, setShowServices] = useState(false)
 
-  console.log(showServices)
+  // removed log
   return (
     <div className="w-full h-full relative">
       <div className='inset-0 absolute z-0'>

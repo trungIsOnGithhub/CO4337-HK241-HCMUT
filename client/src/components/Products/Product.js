@@ -74,7 +74,7 @@ const Product = ({productData}) => {
 
   const handleNavigateLearnMoreProduct = ( ) => {
     navigate(`/product/${productData.category?.toLowerCase()}/${productData?._id}/${productData?.title}`)
-    console.log(productData)
+    // removed log
   }
 
   return (

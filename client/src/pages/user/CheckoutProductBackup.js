@@ -25,7 +25,7 @@ const CheckoutProduct = ({dispatch, navigate}) => {
   
   const allProducts = providerProductDetails.flatMap(provider => provider.products);
 
-  console.log(allProducts);
+  // removed log
 
 
   useEffect(() => {

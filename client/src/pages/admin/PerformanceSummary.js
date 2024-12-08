@@ -45,7 +45,7 @@ function PerformanceSummary({ providerId }) {
       }
   
       if (resp.success && resp.performance) {
-        console.log("---------------", resp.performance, "-----------")
+        // removed log
         if (performanceViewOption === "service") setServices(resp.performance);
         else if (performanceViewOption === "staff") setStaffs(resp.performance);
       }
@@ -84,7 +84,7 @@ function PerformanceSummary({ providerId }) {
             </select>
           </div>
 
-          {/* <button onClick={() => console.log('Open settings')} className="text-gray-400 hover:text-gray-600 ml-2">
+          {/* <button onClick={() => // removed log
             <FaCog />
           </button> */}
         </div>

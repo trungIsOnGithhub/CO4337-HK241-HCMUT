@@ -9,7 +9,7 @@ export const productSlice = createSlice({
     },
     reducers:{
         getDealDaily: (state, action) => {
-          console.log(action.payload)
+          // removed log
           state.dealDaily = action.payload
         }
 

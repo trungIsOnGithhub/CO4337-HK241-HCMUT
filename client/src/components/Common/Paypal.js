@@ -26,10 +26,10 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload, setIsSuccess, o
     }, [currency, showSpinner])
 
     const handleCreateOrder = async(captureId) => {
-        console.log(captureId)
-        console.log(payload)
+        // removed log
+        // removed log
         const payloadWithCaptureId = { ...payload, captureId, status: 'Successful', paymentMethod: 'paypal'};
-        console.log(payloadWithCaptureId);
+        // removed log
         const response = await apiCreateOrder(payloadWithCaptureId)
         if(response.success){
             setIsSuccess(true)

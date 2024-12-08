@@ -46,7 +46,7 @@ const OrdersList = () => {
       return;
     }
 
-    console.log('Orders: ', orders);
+    // removed log
 
     setOrders(orders.orders);
     setCurrentPage(page);

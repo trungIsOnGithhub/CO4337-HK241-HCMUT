@@ -23,7 +23,7 @@ const Cart = () => {
         }    
     }
 
-    console.log(currentCartProduct)
+    // removed log
 
     return (
     <div onClick={e=> e.stopPropagation()} className='w-[400px] h-screen bg-black grid grid-rows-10 text-white p-4'>

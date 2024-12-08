@@ -88,8 +88,8 @@ const DetailProviderServicee = () => {
       const leftColumn = sortedFooter.filter(item => item.column === 'left');
       const rightColumn = sortedFooter.filter(item => item.column === 'right');
     
-      console.log(leftColumn)
-      console.log(rightColumn)
+      // removed log
+      // removed log
       return (
         <div className="footer flex justify-center pt-[32px] pb-[28px] px-[18px] w-full h-full">
           <div className='w-[1200px] flex gap-4 justify-between'>

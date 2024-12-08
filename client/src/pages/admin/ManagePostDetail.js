@@ -234,7 +234,7 @@ const ManagePostDetail = ({ dispatch, navigate }) => {
     </div>
   );
 
-  console.log(post)
+  // removed log
 
   const handleBackManagePost = () => {
     window.history.back()

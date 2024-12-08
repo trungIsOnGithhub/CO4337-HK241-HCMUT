@@ -168,7 +168,7 @@ const ServiceProviderRegister = () => {
                 }
             }
             if (coordinates) {
-                console.log(coordinates);
+                // removed log
                 payload.longitude = coordinates.lng;
                 payload.latitude = coordinates.lat;
                 payload.geolocation = {
@@ -180,7 +180,7 @@ const ServiceProviderRegister = () => {
                 return;
             }
             payload.role = 1411;
-            console.log(payload)
+            // removed log
             const formData = new FormData()
             for(let i of Object.entries(payload)){
                 formData.append(i[0],i[1])
@@ -196,7 +196,7 @@ const ServiceProviderRegister = () => {
             formData.append('geolocation.coordinates[1]', payload.geolocation.coordinates[1]); // latitude
 
             for (let [key, value] of formData.entries()) {
-                console.log(`${key}:`, value);
+                // removed log
             }
             let response = await apiCreateServiceProvider(formData);
             setIsLoading(false)

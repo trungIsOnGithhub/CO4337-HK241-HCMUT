@@ -186,7 +186,7 @@ const UpdateService = () => {
     window.history.back()
   }
 
-  // console.log(editService)
+  // // removed log
   return (
     <div className='w-full h-full relative'>
       <div className='inset-0 absolute z-0'>

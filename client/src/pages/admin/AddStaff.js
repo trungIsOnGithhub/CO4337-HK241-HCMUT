@@ -45,7 +45,7 @@ const AddStaff = () => {
         //     data.shifts = staffShifts;
         // }
 
-        console.log(')))))))))))))))', data);
+        // removed log
 
         const formData = new FormData();
         for (let i of Object.entries(data)) {
@@ -59,8 +59,8 @@ const AddStaff = () => {
         formData.delete('avatar');
         if (data.avatar) formData.append('avatar', data.avatar[0]);
 
-        console.log('++++++++++++++++++', staffShifts);
-        // console.log('------AADAAAAADADA', formData);
+        // removed log
+        // // removed log
 
         setIsLoading(true);
         const response = await apiAddStaff(formData);

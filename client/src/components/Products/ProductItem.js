@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import clsx from 'clsx'
 
 const ProductItem = ({providerData, productData}) => {
-    console.log(productData)
+    // removed log
     const navigate = useNavigate()
 
     const handleNavigateProductDetail  = () => {

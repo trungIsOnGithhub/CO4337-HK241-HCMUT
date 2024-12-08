@@ -37,9 +37,9 @@ const MessageBox = ({currentChat}) => {
   useEffect(() => {
     const fetchCurrentChatProvider = async() => {
       let response = await apiGetProviderByOwnerId({owner:currentChat?.id});
-      console.log("111111111111111>>>>", response.provider);
+      // removed log
       if (response?.success && response?.provider?.bussinessName) {
-        // console.log('[[[[[[[[[[');
+        // // removed log
         setCurrentChatProvider(response.provider)
       }
     }
@@ -59,8 +59,8 @@ const MessageBox = ({currentChat}) => {
 
   useEffect(() => {
     if(currentChat){
-        console.log('================');
-        console.log(currentChat);
+        // removed log
+        // removed log
         const fetchMessages = async() => {
             const response = await apigetAllMessageFromSenderToReceiver({
                 from: current._id,

@@ -12,7 +12,7 @@ import { useLocation } from 'react-router-dom';
 
 const CheckoutService = ({ dispatch, navigate }) => {
   const { currentCartService, current: currentUser } = useSelector((state) => state.user);
-  console.log(currentCartService)
+  // removed log
   const [isSuccess, setIsSuccess] = useState(false);
   const [exchangeRate, setExchangeRate] = useState(null); // State để lưu trữ tỉ giá hối đoái
   const location = useLocation();
@@ -22,7 +22,7 @@ const CheckoutService = ({ dispatch, navigate }) => {
   const priceFromURL = searchParams.get('price');
   const couponCodeFromURL = searchParams.get('couponCode');
 
-  console.log(couponCodeFromURL)
+  // removed log
 
   const fetchCheckoutData = async () => {
     dispatch(getCurrent());

@@ -26,7 +26,7 @@ const ManagePost = () => {
   const [update, setUpdate] = useState(false)
 
 
-  console.log(current?.provider_id?._id)
+  // removed log
   const fetchPost = async (params) => {
       if (!current?.provider_id) {
         toast.success('Please Log In To Continue!');

@@ -22,7 +22,7 @@ const FeaturedProduct = () => {
         navigate(`/detail_provider/${providerId}`)
     }
 
-    console.log(providers)
+    // removed log
   return (
     <div className='w-main mb-8'>
         <h3 className='text-[20px] font-semibold py-[12px] border-b-2 border-[#0a66c2] mb-8'>OUR SERVICE PROVIDERS</h3>

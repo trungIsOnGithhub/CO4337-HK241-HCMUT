@@ -617,7 +617,7 @@ const DetailProvider = () => {
   
           const formattedDate = `${year}-${month}-${day}`;
           if(datetime === formattedDate){
-            console.log('test111')
+            // removed log
             const getCurrentTime = () => {
               const now = new Date();
               const hour = now.getHours();
@@ -645,7 +645,7 @@ const DetailProvider = () => {
             const { openingTime, closingTime } = getOpeningHoursForToday();
       
             const generateTimeOptions = (openingTime, closingTime, currentTime, duration) => {
-              console.log('check1');
+              // removed log
               const timeOptions = [];
               if (openingTime>=0 && closingTime>=0 && duration>=0) {
                 let currentHour = Math.floor(currentTime / 100);
@@ -676,7 +676,7 @@ const DetailProvider = () => {
           }
           else{
             const getOpeningHoursForToday = () => {
-              console.log('test222')
+              // removed log
               const dateObject = new Date(datetime);
               const dayOfWeek = dateObject.getDay();
               const openingTimeKey = `start${dayOfWeek === 0 ? 'sunday' : dayOfWeek === 1 ? 'monday' : dayOfWeek === 2 ? 'tuesday' : dayOfWeek === 3 ? 'wednesday' : dayOfWeek === 4 ? 'thursday' : dayOfWeek === 5 ? 'friday' : 'saturday'}`;
@@ -698,7 +698,7 @@ const DetailProvider = () => {
             const { openingTime, closingTime } = getOpeningHoursForToday();
       
             const generateTimeOptions = (openingTime, closingTime, duration) => {
-              console.log('check2')
+              // removed log
               const timeOptions = [];
               if (openingTime>=0 && closingTime>=0 && duration>=0) {
                 let serviceDurationInMinutes = duration;

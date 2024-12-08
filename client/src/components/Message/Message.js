@@ -30,7 +30,7 @@ const Message = () => {
     dispatch(showMessageBox({from:current?._id, to: to}))
   }
 
-  console.log(lastMessages)
+  // removed log
   return (
     <div className='w-[300px] h-[350px] bg-white border border-[#0a66c2] rounded-md message_box overflow-hidden shadow-lg'>
       <div className='flex justify-between items-center px-4 py-2 border-b border-[#0a66c2] h-[50px]'>

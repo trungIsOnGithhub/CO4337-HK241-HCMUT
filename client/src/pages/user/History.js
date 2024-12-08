@@ -71,9 +71,9 @@ const History = () => {
   }, [params])
 
   const handleCancelBooking = async(bookingId) => {
-    console.log(bookingId)
+    // removed log
     const response = await apiUpdateStatusOrder({bookingId, status: 'Cancelled'})
-    console.log(response)
+    // removed log
     if(response.success){
       fetchOrders(Object.fromEntries([...params]))
     }
@@ -86,7 +86,7 @@ const History = () => {
 
   const handleContactProvider = async (e, booking) => {
     e.preventDefault();
-    console.log(booking?.info?.[0]?.provider?._id)
+    // removed log
     try {
       if (!booking?.info?.[0]?.provider?._id) {
         console.error("Provider ID không tồn tại.");
@@ -95,7 +95,7 @@ const History = () => {
   
   
       const response = await apiGetAdminData({ prid: booking.info[0].provider._id });
-      console.log(response);
+      // removed log
       if (!response?.admin || response.admin.length === 0) {
         console.error("Không tìm thấy admin nào phù hợp.");
         return;
@@ -190,8 +190,8 @@ const History = () => {
                       `${booking?.info[0]?.date.split("/").reverse().join("-")}T${booking?.info[0]?.time}`
                     );
                     const now = new Date();
-                    console.log(bookingDateTime)
-                    console.log(now)
+                    // removed log
+                    // removed log
 
                     if (booking?.status === 'Pending' && bookingDateTime >= now) {
                       handleCancelBooking(booking?._id);

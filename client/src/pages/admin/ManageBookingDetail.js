@@ -38,7 +38,7 @@ const ManageBookingDetail = ({ dispatch, navigate }) => {
     setStatus(booking?.status)
   }, [booking])
   
-  console.log(booking)
+  // removed log
 
   const getStatusClass = (status) => {
     switch(status) {

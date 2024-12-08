@@ -132,7 +132,7 @@ const CreateProduct = () => {
       }
 
       for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
+        // removed log
       }
       setIsLoading(true)
       const response = await apiCreateProduct(formData)

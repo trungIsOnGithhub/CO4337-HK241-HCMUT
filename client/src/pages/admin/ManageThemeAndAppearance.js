@@ -22,7 +22,7 @@ const ManageThemeAndAppearance = () => {
 
   const fetchThemeProvider = async () => {
     const response = await apiGetServiceProviderById(current?.provider_id?._id) 
-    console.log(response)
+    // removed log
     if(response?.payload?.theme){
       setProviderTheme(response?.payload?.theme)
       setTheme(response?.payload?.theme)
@@ -39,7 +39,7 @@ const ManageThemeAndAppearance = () => {
 
   const handleSaveTheme = async() => {
     const response = await apiUpdateServiceProviderTheme(current?.provider_id?._id, {theme})
-    console.log(response)
+    // removed log
     if(response.success) {
       toast.success(response.mes)
     }

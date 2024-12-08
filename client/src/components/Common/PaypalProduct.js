@@ -71,12 +71,12 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload, setIsSuccess}) 
                 const response = await apiCreateOrder(orderData);
     
                 if (response.success) {
-                    console.log(`Order created successfully for provider ${providerId}`);
+                    // removed log
                     if(discountObj?.selectedDiscount){
                         await apiUpdateCouponUsage({ couponCode: discountObj?.selectedDiscount?.code, userId: current._id });
                     }
                 } else {
-                    console.log(`Failed to create order for provider ${providerId}`);
+                    // removed log
                 }
             }
     
@@ -117,7 +117,7 @@ const ButtonWrapper = ({ currency, showSpinner, amount, payload, setIsSuccess}) 
 }
 
 export default function PaypalProduct({amount, payload, setIsSuccess}) {
-    console.log(payload)
+    // removed log
     return (
         <div style={{ maxWidth: "750px", minHeight: "200px", margin: "auto" }}>
             <PayPalScriptProvider options={{ clientId: "test", components: "buttons", currency: "USD" }}>

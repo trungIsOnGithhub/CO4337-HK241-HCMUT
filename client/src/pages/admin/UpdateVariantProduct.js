@@ -68,11 +68,11 @@ const UpdateVariantProduct = () => {
     const handleUpdateVariant = async(data) => {
       const finalPayload = {...data, colorCode}
       if(data.thumb?.length === 0){
-        console.log('aa')
+        // removed log
         finalPayload.thumb = originalPreview.thumb
       }
       else{
-        console.log('bb')
+        // removed log
         finalPayload.thumb = data.thumb[0]
       }
 
@@ -91,7 +91,7 @@ const UpdateVariantProduct = () => {
       for (let image of finalPayload.images) formData.append('images', image)
 
       for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
+        // removed log
       }
       setIsLoading(true)
       const response = await apiUpdateVariant(formData, productData?._id, variantData?._id)
@@ -114,7 +114,7 @@ const UpdateVariantProduct = () => {
     }
 
     const handlePreviewThumb = async(file) => {
-      console.log('Preview thumb')
+      // removed log
       const base64Thumb = await getBase64(file)
       setPreview(prev => ({...prev, thumb: base64Thumb}))
     }

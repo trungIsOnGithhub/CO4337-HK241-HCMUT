@@ -27,7 +27,7 @@ const settings = {
 
 
 const DetailService = ({isQuickView, data}) => {
-  console.log('aaaaaaaaaaaaaaaa')
+  // removed log
   const location = useLocation()
   const dispatch = useDispatch()
   const navigate = useNavigate()

@@ -54,7 +54,7 @@ const OurProviders = () => {
 
   const fetchProviders = async (queries) =>{
     const response = await apiSearchProviderAdvanced(queries);
-    console.log('RESPONSE________L>>>>' + response);
+    // removed log
 
     if(response.success && response.providers?.hits){
       setAllProviders(response.providers?.hits.map(p => {

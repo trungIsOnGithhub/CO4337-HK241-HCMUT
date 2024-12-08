@@ -68,7 +68,7 @@ const Login = () => {
         // Hàm xử lý khi nhấn phím
         const handleKeyDown = (event) => {
           if (event.key === "Enter") {
-            console.log('enter')
+            // removed log
             handleSubmit(event);
           }
         };
@@ -190,11 +190,11 @@ const Login = () => {
 
     //SUBMIT
     const handleSubmit = useCallback(async(e) =>{
-        console.log("Submit")
+        // removed log
         //login
         if(!isRegister){
-            console.log("login")
-            console.log(payload)
+            // removed log
+            // removed log
             if (Object.keys(errors).length === 0 && payload.email !== "" && payload.password !== "") {
                 const {firstName, lastName, mobile, ...data} = payload
                 setIsLoading(true)
@@ -228,7 +228,7 @@ const Login = () => {
                 }
 
                 for (let [key, value] of formData.entries()) {
-                    console.log(`${key}:`, value);
+                    // removed log
                 }
                 const result = await apiRegister(formData)
                 setIsLoading(false)

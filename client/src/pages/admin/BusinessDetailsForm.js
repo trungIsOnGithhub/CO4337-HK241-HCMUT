@@ -38,9 +38,9 @@ const BusinessDetailsForm = () => {
       return;
     }
 
-    // console.log('------>', current);
+    // // removed log
     const response = await apiGetServiceProviderById(current.provider_id._id)
-    // console.log(':::::>', response);
+    // // removed log
 
     if (!response?.success && !response?.payload) {
       Swal.fire('Oops!', "Cannot Get Data", 'error');
@@ -131,7 +131,7 @@ const BusinessDetailsForm = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrls(reader.result);
-        // console.log(reader.result);
+        // // removed log
       };
       reader.readAsDataURL(file);
     }
@@ -155,19 +155,19 @@ const BusinessDetailsForm = () => {
       newFormDataObj['province'] = province
     }
 
-    // console.log('=====>', data);
+    // // removed log
     const fData = new FormData();
     for (let i of Object.entries(newFormDataObj)) {
-      // console.log(i);
+      // // removed log
       fData.append(i[0], i[1]);
     }
     fData.delete('avatar');
     if (newFormDataObj.avatar) fData.append('avatar', newFormDataObj.avatar);
 
     // for (let p of fData.entries()) {
-    //   console.log("kkkkkkkkkkkkkkkk", p);
+    //   // removed log
     // }
-    // console.log('=========;;;;;;;;;' + );
+    // // removed log
 
     const response = await apiUpdateCurrentServiceProvider(current.provider_id._id, fData)
     if(response.success){
@@ -322,7 +322,7 @@ const BusinessDetailsForm = () => {
     //   Swal.fire('Error Occured!', 'Cannot find address location info', 'error');
     //   return;
     // }
-    // console.log('aaaaaaaa');
+    // // removed log
 
     setFormData(prev => ({ ...prev, address: value })); // Update address in payload
 
@@ -350,7 +350,7 @@ const BusinessDetailsForm = () => {
 //   window.alert('=====>' + JSON.stringify(coordinates));
 // }, [coordinates]);
 
-console.log(formData)
+// removed log
   return (
     <div className="w-3/4 mx-auto p-6 bg-white shadow-md rounded-md">
       <div className='flex gap-3 justify-center'>

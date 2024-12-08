@@ -13,7 +13,7 @@
 // const Blogs = () => {
 //   const location = useLocation();
 //   useEffect(() => {
-//     console.log('=========', location?.state);
+//     // removed log
 //     if (location?.state?.searchKey) {
 //       setSearchTerm(location.state.searchKey);
 //     }

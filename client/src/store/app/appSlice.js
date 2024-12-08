@@ -26,7 +26,7 @@ export const appSlice = createSlice({
         showMessageBox: (state, action) => {
           if(action?.payload?.from && action?.payload?.to) {
             state.isShowMessageBox = state.isShowMessageBox === false ? true : false;
-            console.log(action?.payload.to, "0000000000000000000");
+            // removed log
             state.currentChat = action?.payload?.to
           }
           else{

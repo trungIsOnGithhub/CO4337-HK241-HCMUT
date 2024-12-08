@@ -155,7 +155,7 @@ const DetailProvider = () => {
     }, [prid, params]);
 
     useEffect(() => {
-      console.log('aaa')
+      // removed log
         const searchParams = Object.fromEntries([...params]) 
         const fetchData = async() => {
           const response = await apiGetProductByProviderId(prid, {...searchParams, limit: process.env.REACT_APP_LIMIT})

@@ -29,7 +29,7 @@ const GridPercentageCalendar = () => {
   const fetchOccupancyData = async () => {
     // const daysInMonth = getDaysInMonth(selectedMonth, selectedYear);
     // const newData = Array.from({ length: daysInMonth }, () => Math.floor(Math.random() * 101));
-    console.log(selectedMonth, ';;;;');
+    // removed log
     let resp = await apiGetOccupancyDataByMonth({ currMonth: selectedMonth+1, currYear: selectedYear, spid: currentUser?.provider_id?._id });
 
     if (resp.success && resp.occupancySeries) {
@@ -71,7 +71,7 @@ const GridPercentageCalendar = () => {
   };
 
   const handleMouseEnter = (day, occupancy) => {
-    console.log(day)
+    // removed log
     const date = new Date(selectedYear, selectedMonth, day + 1).toLocaleDateString();
     setHoverInfo({ date, occupancy, isHovered: true });
   };
@@ -81,8 +81,8 @@ const GridPercentageCalendar = () => {
   };
 
 
-  console.log(hoverInfo)
-  console.log(new Date(hoverInfo.date).getDate())
+  // removed log
+  // removed log
   return (
     <div className="max-w-md p-4 bg-white border-2 rounded-lg w-full h-fit">
       <div className="flex flex-col justify-center items-center mb-4 gap-4">

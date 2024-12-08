@@ -282,7 +282,7 @@ const Personal = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result);
-        console.log(reader.result);
+        // removed log
       };
       reader.readAsDataURL(file);
     }
@@ -351,7 +351,7 @@ const Personal = () => {
     </div>
   );
 
-  console.log(formData)
+  // removed log
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-blue-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto bg-white/80 backdrop-blur-md rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-shadow duration-300">

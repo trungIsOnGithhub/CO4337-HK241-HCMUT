@@ -109,7 +109,7 @@ const Booking = () => {
     }
   };
 
-  console.log(service)
+  // removed log
 
   useEffect(() => {
     setOriginalPrice(service?.price)
@@ -151,7 +151,7 @@ const Booking = () => {
       setIsLoading(true)
       let resp = await apiGetServiceTimeOptionAvailableCurrentDay({ now:now.getTime(), dow, mStarted, svid: service._id });
 
-      // console.log('}}}}', resp.timeOptions);
+      // // removed log
 
       if (resp.success && resp.timeOptions) {
         setTimeOptions(resp.timeOptions);
@@ -175,7 +175,7 @@ const Booking = () => {
   };
   
   const handleOnClick = async(time, el) => {
-    // console.log('|'+time+'|');
+    // // removed log
     const fetchData = async () => {
       if (!service?._id) {
         return;
@@ -230,7 +230,7 @@ const Booking = () => {
     // // Kết hợp formattedDate và time để tạo datetime
     const dateTime = new Date(`${formattedDate}T${time}:00Z`);
 
-    // console.log('......', {
+    // // removed log
     //   service: service?._id, 
     //   provider: provider?._id,
     //   staff: el?._id, 
@@ -259,7 +259,7 @@ const Booking = () => {
       toast.success("Service cart updated successfully!");
     }
     else if (resp.mes) {
-      // console.log('==============', resp);
+      // // removed log
       toast.error(resp.mes);
       fetchData();
       setSelectedStaff({
@@ -329,7 +329,7 @@ const Booking = () => {
     //     return;
     //   }
     // }
-    // console.log('......', {
+    // // removed log
     //   service: service?._id, 
     //   provider: provider?._id, 
     //   staff: selectedStaff?.staff?._id, 
@@ -365,7 +365,7 @@ const Booking = () => {
       }
     }
     else if (resp.mes) {
-      // console.log('==============', resp);
+      // // removed log
       toast.error(resp.mes);
       fetchData();
       setSelectedStaff({
@@ -401,14 +401,14 @@ const Booking = () => {
 
   const canUseDiscount = (coupon) => {
     if (!currentUser) return false;
-    console.log(coupon)
+    // removed log
     const { date, time } = coupon.expirationDate;
     const expirationDateTime = new Date(`${date.split('/').reverse().join('-')}T${time}:00`); // Chuyển đổi sang ISO format
 
     // Kiểm tra nếu thời gian hết hạn đã qua
     const now = new Date();
-    console.log(expirationDateTime)
-    console.log(now)
+    // removed log
+    // removed log
 
     if (expirationDateTime < now) return false;
 
@@ -434,7 +434,7 @@ const Booking = () => {
                     return stf.firstName.includes(event.target.value) || stf.lastName.includes(event.target.value)
                           || stf.email.includes(event.target.value) || stf.mobile.includes(event.target.value);
                   });
-                  console.log(staffsSearched);
+                  // removed log
                   setStaffs(staffsSearched);
 
               }}

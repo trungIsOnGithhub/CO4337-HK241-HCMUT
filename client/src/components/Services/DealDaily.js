@@ -22,7 +22,7 @@ const DealDaily = () => {
     const fetchDealDaily = async () => {
         const response = await apiGetServicePublic()
         if(response.success){
-            console.log(response)
+            // removed log
             const maxIndex = Math.min(response.services.length, 4) - 1;
             const pr = response.services[Math.round(Math.random() * maxIndex)];
             dispatch(getDealDaily({data:pr?.sv, time: Date.now() + 24*60*60*1000}))

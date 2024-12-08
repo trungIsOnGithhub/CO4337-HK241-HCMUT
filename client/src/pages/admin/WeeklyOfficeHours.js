@@ -24,7 +24,7 @@ const OfficeHours = ({ day, periods, isEnabled, onPeriodChange, onToggleChange, 
           <input
             type="checkbox"
             checked={isEnabled}
-            onChange={() => {console.log("day::::", day); onToggleChange(day)}}
+            onChange={() => {onToggleChange(day)}}
             className="hidden"
           />
           <span

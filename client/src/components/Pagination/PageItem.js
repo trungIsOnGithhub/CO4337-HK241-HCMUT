@@ -10,7 +10,7 @@ const PageItem = ({children}) => {
   const handlePagination = () => { 
     const queries = Object.fromEntries([...params]);
     if(Number(children)) queries.page = children
-    console.log("HEHEHEHEHEHE");
+    // removed log
     navigate({
       pathname: location.pathname,
       search: createSearchParams(queries).toString()

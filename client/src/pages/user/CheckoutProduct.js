@@ -34,7 +34,7 @@ const CheckoutProduct = ({dispatch, navigate}) => {
   const totalSavingPrice = JSON.parse(sessionStorage.getItem('totalSavings'));
   const totalShippingPrice = JSON.parse(sessionStorage.getItem('totalShippingPrice'));
 
-  console.log(providerProductDetails)
+  // removed log
 
   const [selectedPayment, setSelectedPayment] = useState("");
   const paymentMethods = [
@@ -95,12 +95,12 @@ const CheckoutProduct = ({dispatch, navigate}) => {
         const response = await apiCreateOrder(orderData);
 
         if (response.success) {
-            console.log(`Order created successfully for provider ${providerId}`);
+            // removed log
             if(discountObj?.selectedDiscount){
               await apiUpdateCouponUsage({ couponCode: discountObj?.selectedDiscount?.code, userId: current._id });
             }
         } else {
-            console.log(`Failed to create order for provider ${providerId}`);
+            // removed log
         }
       }
 

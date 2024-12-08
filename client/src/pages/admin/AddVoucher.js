@@ -343,7 +343,7 @@ const AddVoucher = () => {
 
     // Update fixedAmount state if voucherType is 'fixed'
     if (voucherType === 'fixed') {
-      console.log('abc');
+      // removed log
       setFixedAmount(prev => {
         // Remove services that are no longer selected
         const updated = prev.filter(item => selectedOptions.some(opt => opt === item.id));
@@ -363,7 +363,7 @@ const AddVoucher = () => {
 
   const handleSelectProductChange = selectedOptions => {
     setSelectedProduct(selectedOptions);
-    console.log(selectedOptions);
+    // removed log
     if (voucherType === 'percentage') {
       setPercentageDiscountProduct(prev => {
         const updated = prev.filter(item => selectedOptions.some(opt => opt === item.id));
@@ -376,7 +376,7 @@ const AddVoucher = () => {
       });
     }
     if (voucherType === 'fixed') {
-      console.log('tesstt');
+      // removed log
       setFixedAmountProduct(prev => {
         const updated = prev.filter(item => selectedOptions.some(opt => opt === item.id));
         selectedOptions.forEach(option => {
@@ -572,8 +572,8 @@ const AddVoucher = () => {
     })
   };
 
-  console.log(fixedAmount)
-  console.log(fixedAmountProduct)
+  // removed log
+  // removed log
 
   return (
     <div className='w-full h-full relative'>

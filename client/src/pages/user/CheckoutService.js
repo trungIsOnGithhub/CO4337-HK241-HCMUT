@@ -47,7 +47,7 @@ const CheckoutService = () => {
     // { id: "zalopay", name: "ZaloPay", icon: SiZalo },
     { id: "cod", name: "Cash on Delivery", icon: TbTruckDelivery, iconColor: "text-green-600" }
   ];
-  console.log(selectedPayment)
+  // removed log
   
   const fetchCheckoutData = async () => {
     dispatch(getCurrent());
@@ -112,7 +112,7 @@ const CheckoutService = () => {
     }
     else if(selectedPayment === 'cod'){
       const payloadCOD = {...payload, status: 'Pending', paymentMethod: 'cod'}
-      console.log(payloadCOD)
+      // removed log
       const response = await apiCreateOrder(payloadCOD)
       if(response.success){
         if (couponCodeFromURL) {

@@ -65,7 +65,7 @@ const CenterChart = ({ providerId }) => {
       return;
     }
 
-    console.log("------", chartData);
+    // removed log
 
     setNewCustomers(customerData.newCustomers);
     setReturningCustomers(customerData.returningCustomers);
@@ -73,7 +73,7 @@ const CenterChart = ({ providerId }) => {
     const sumNumCustomerMonth = (customerData.newCustomers + customerData.returningCustomers) || 1;
     const newCustomerRatio = (+customerData.newCustomers / sumNumCustomerMonth * 100)?.toFixed(2);
     setNewCustomerRatio(newCustomerRatio);
-    // console.log("---", +customerData.returningCustomers);
+    // // removed log
     const returningCustomerRatio = (+customerData.returningCustomers / sumNumCustomerMonth * 100)?.toFixed(2);
     setReturningCustomerRatio(returningCustomerRatio);
 
@@ -81,7 +81,7 @@ const CenterChart = ({ providerId }) => {
     setCanceledAppointments(chartData.canceled);
 
     const sumOrdersChartData = chartData.total || (chartData.finished + chartData.canceled) || 1;
-    // console.log(sumOrdersChartData, "------");
+    // // removed log
     const ratioFinish = (chartData.finished * 100 / sumOrdersChartData)?.toFixed(1);
     const ratioCanceled = (chartData.canceled * 100 / sumOrdersChartData)?.toFixed(1);
 

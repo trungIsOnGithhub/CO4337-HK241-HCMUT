@@ -134,7 +134,7 @@ const DashBoard = () => {
   const fetchNewCustomerTriplet = async (periodData) => {
     const resp = await apiGet3RecentNewCustomerStatistic({ periodData, spid: currentUser.provider_id?._id  });
     if (resp.success && resp.newCustomer?.length) {
-      console.log('++++', resp.newCustomer);
+      // removed log
       return resp.newCustomer;
     }
     return [];
@@ -155,10 +155,10 @@ const DashBoard = () => {
       const periodData = (viewOptionInt > 1) ? "week" : "month";
       const data = await fetchOccupancyTriplet(periodData);
       setOccupancyTriplet(data);
-      console.log({
-        ...currentMetricView,
-        occupancy: viewOptionInt
-      });
+      // removed log
+      //   ...currentMetricView,
+      //   occupancy: viewOptionInt
+      // });
       setCurrentMetricView({
         ...currentMetricView,
         occupancy: viewOptionInt

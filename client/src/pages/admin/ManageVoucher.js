@@ -21,7 +21,7 @@ const ManageVoucher = () => {
 
   const fetchAllCouponsByAdmin = async (params) => {
     const response = await apiGetAllCouponsByAdmin({...params, limit: process.env.REACT_APP_LIMIT})
-    console.log(response)
+    // removed log
     if(response?.success){
       setCoupons(response?.coupons)
       setCounts(response?.counts)

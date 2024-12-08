@@ -21,7 +21,7 @@ import defaultProvider from "../../assets/defaultProvider.jpg";
 const Blogs = () => {
   const location = useLocation();
   useEffect(() => {
-    // ;console.log('=========', location?.state);
+    // ;// removed log
     if (location?.state?.searchKey) {
       setSearchTerm(location.state.searchKey);
     }
@@ -68,7 +68,7 @@ const Blogs = () => {
   //   }
   // });
 
-  // console.log(selectedTags);
+  // // removed log
 
   const fetchTags = async() => {
     let resp = await apiGetAllPostTags({ limit: 10, orderBy: '-numberView -likes' });
@@ -80,7 +80,7 @@ const Blogs = () => {
     }
 
     // const resp = await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
-    // console.log(resp.blogs);
+    // // removed log
   }
   useEffect(() => {
     fetchTags();
@@ -104,7 +104,7 @@ const Blogs = () => {
       // categories
     });
     // let response = await await apiGetTopBlogsWithSelectedTags({limit: 5, selectedTags:['dia-diem-an-uong','an-uong','dia-diem-vui-choi']});
-    console.log(response?.blogs?.hits);
+    // removed log
   
     if(response?.success && response?.blogs?.hits){
       setCurrBlogList(response.blogs.hits);
@@ -118,7 +118,7 @@ const Blogs = () => {
     setIsLoading(false);
   }
   useEffect(() => {
-    // console.log('HHEHEEHEHEEHEHHE');
+    // // removed log
     fetchCurrentBlogList();
 },  [searchedClick, resetClicked, selectedTags]);
 
@@ -126,12 +126,12 @@ const Blogs = () => {
 useEffect(() => {
   (async () => {
     let resp = await apiGetTopProviderAuthorBlogs({limit:5});
-    console.log('=====>>>'+resp.providers);
+    // removed log
     if (resp.success && resp.providers?.length) {
       setTopProviders(resp.providers);
     }
     else {
-      console.log('Cannor fetch top provider data!');
+      // removed log
     }
   })();
 }, []);
@@ -140,7 +140,7 @@ useEffect(() => {
 useEffect(() => {
   if (offset === 0) { return; }
 
-  console.log('OFFSET CHANGEEEEEEEEEEEEEEEED');
+  // removed log
 
     (async () => {
       setIsLoading(true);
@@ -230,7 +230,7 @@ useEffect(() => {
   const {register,formState:{errors}, handleSubmit, watch} = useForm()
   // const [selectedTag, setSelectedTag] = useState(null);
 
-  // console.log(currBlogList)
+  // // removed log
   return (
     <div className='w-main mb-8 mt-4 flex flex-col gap-4 overflow-y-auto'>
       <div className="grid grid-cols-4 gap-4">
@@ -318,7 +318,7 @@ useEffect(() => {
                   <p className="text-gray-600 text-center font-semibold">No blog posts found matching your search criteria.</p>
               ) : (
                 currBlogList?.map((blog, idx) => {
-                  // console.log('====', blog);
+                  // // removed log
                   blog = blog['_source'];
                   return (<div
                       onClick={() => handleChooseBlogPost(blog?._id || blog?.id)}
@@ -419,10 +419,10 @@ useEffect(() => {
                     key={tag?._id}  
                     value={tag?._id}
                     onClick={(e) => {
-                      // console.log(e.target.getAttribute("value"));
+                      // // removed log
                       const selectedVal = e.target.getAttribute("value");
                       setSelectedTags(prev => {
-                        console.log(prev);
+                        // removed log
                         if (!prev.includes(selectedVal)) {
                           return [...prev, selectedVal];
                         }

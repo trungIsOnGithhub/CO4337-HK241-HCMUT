@@ -20,7 +20,7 @@ const ChatContainer = ({messagesEndRef, currentChat, currentUser, socket}) => {
     useEffect(() => {
         setOpenQuestionsMenu(false);
         if(currentChat){
-            console.log('//////////////////////////', currentChat);
+            // removed log
             const fetchMessages = async() => {
                 const response = await apigetAllMessageFromSenderToReceiver({
                     from: currentUser._id,

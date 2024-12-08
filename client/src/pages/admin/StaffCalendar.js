@@ -251,12 +251,12 @@ const StaffCalendar = () => {
   });
   
   const handleSelectEvent = (event) => {
-    console.log(event)
-    console.log(calendarEvents)
+    // removed log
+    // removed log
     setSelectedOrder(calendarEvents.find(order => order.id === event.id));
   };
 
-  console.log(selectedOrder)
+  // removed log
 
   const filteredServices = services.filter((service) =>
     service.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -438,7 +438,7 @@ const StaffCalendar = () => {
 
 
 
-  console.log(selectedServices)
+  // removed log
   return (
     <div className="w-full h-full relative">
       <div className='inset-0 absolute z-0'>

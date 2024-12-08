@@ -137,7 +137,7 @@ const UpdateBlog = () => {
             for (let tag of finalPayload.tags) formData.append('tags', tag)
         }
         for (let [key, value] of formData.entries()) {
-            console.log(`${key}:`, value);
+            // removed log
         }
 
         setIsLoading(true)

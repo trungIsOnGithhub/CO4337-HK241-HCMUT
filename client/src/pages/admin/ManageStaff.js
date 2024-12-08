@@ -92,7 +92,7 @@ const ManageProduct = () => {
   // };
   const fetchStaff = async(params) => {
     const response = await apiGetAllStaffs({...params, limit: process.env.REACT_APP_LIMIT})
-    // console.log('---------', response);
+    // // removed log
     if(response.success){ 
       setStaffs(response.staffs)
       setCounts(response.counts)
@@ -110,7 +110,7 @@ const ManageProduct = () => {
       searchParams['q'] = searchTerm;
     }
 
-    // console.log('____________', searchParams);
+    // // removed log
 
     fetchStaff(searchParams);
   }
@@ -240,17 +240,17 @@ const DataExportSheetModal = ({ rawData, onClose, propsToExport }) => {
   const [workbookName, setWorkbookName] = useState('My Workbook');
 
   const exportExcelFile = () => {
-    // console.log("========>>>", rawData);
+    // // removed log
     if (!rawData) return;
 
     const jsonData = [];
 
     rawData.forEach(item => {
-      // console.log(">>>>>>>>", item);
+      // // removed log
       const newObj = {};
 
       for (const prop of propsToExport) {
-        console.log(":???????" + prop)
+        // removed log
         if (item[prop]) {
           newObj[prop] = item[prop];
         }
@@ -258,7 +258,7 @@ const DataExportSheetModal = ({ rawData, onClose, propsToExport }) => {
 
       jsonData.push(newObj);
 
-      // console.log('=========||||', jsonData);
+      // // removed log
     })
 
     const ws = utils.json_to_sheet(jsonData);

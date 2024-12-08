@@ -114,7 +114,7 @@ const AddPost = () => {
     const response = await apiCreateBlog(formData);
     setIsLoading(false)
     if(response?.success){
-      console.log('create blog successfully')
+      // removed log
       toast.success('Create New Post Blog Successfully');
        // Lọc các tag mới chưa có trong `tags`
       const newTags = blogTag.filter(

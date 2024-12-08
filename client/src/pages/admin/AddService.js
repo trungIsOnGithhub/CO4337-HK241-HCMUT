@@ -75,7 +75,7 @@ const AddService = () => {
     if(invalid === 0){
       const finalPayload = {...data,...payload}
       finalPayload.provider_id = current.provider_id?._id
-      console.log(finalPayload)
+      // removed log
       if(selectedStaff?.length > 0){
         finalPayload.assigned_staff = selectedStaff
       }
@@ -99,7 +99,7 @@ const AddService = () => {
         for (let staff of finalPayload.assigned_staff) formData.append('assigned_staff', staff)
       }
       for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
+        // removed log
       }
 
       setIsLoading(true);

@@ -36,9 +36,9 @@ function ManageSetting() {
   }, []);
   useEffect(() => {
     // dispatch(getCurrent());
-    // console.log("::::::::::::::>>>", current.provider_id);
+    // // removed log
     if (current?.provider_id?.advancedSetting?.minutesBeforeSameDayBook) {
-      // console.log(current.provider_id.advancedSetting.minutesBeforeSameDayBook);
+      // // removed log
       // const hMBSD = current.provider_id.advancedSetting.minutesBeforeSameDayBook/60;
       // const mMBSD = current.provider_id.advancedSetting.minutesBeforeSameDayBook%60;
       setminutesBeforeSameDayBook(current.provider_id.advancedSetting.minutesBeforeSameDayBook);
@@ -47,7 +47,7 @@ function ManageSetting() {
     if (current?.provider_id?.advancedSetting?.showStaffDetailBooking) {
       setShowStaffDetailBooking(current?.provider_id.advancedSetting.showStaffDetailBooking);
     }
-    // console.log('Fetching settings...');
+    // // removed log
   }, [current]);
 
   // Handler to simulate saving settings
@@ -71,7 +71,7 @@ function ManageSetting() {
       minutesBeforeSameDayBook
     };
     
-    console.log('Settings saved:', advancedSetting);
+    // removed log
     // Here you could send the data to an API endpoint
 
     let resp = await apiUpdateCurrentServiceProvider(current.provider_id._id, { advancedSetting });
@@ -205,7 +205,7 @@ function ManageSetting() {
                                       className="text-gray-700"
                                       classNamePrefix="select"
                                       onChange={(o) => {setminutesBeforeSameDayBook(prev => {
-                                        // console.log('=====>' + JSON.stringify(o), " prev:", prev);
+                                        // // removed log
                                         return prev%60 + o.value*60;
                                       })}}
                                     />
@@ -226,7 +226,7 @@ function ManageSetting() {
                                       className="text-gray-700"
                                       classNamePrefix="select"
                                       onChange={(o) => {setminutesBeforeSameDayBook(prev => {
-                                        // console.log('=====>' + JSON.stringify(o), " prev:", prev);
+                                        // // removed log
                                         return Math.trunc(prev/60)*60 + o.value;
                                       })}}
                                     />

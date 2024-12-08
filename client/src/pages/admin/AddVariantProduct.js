@@ -31,7 +31,7 @@ const AddVariantProduct = () => {
         fetchProduct()
     }, [product_id])
     
-    console.log(productData)
+    // removed log
 
     const handlePreviewThumb = async(file) => {
         const base64Thumb = await getBase64(file)
@@ -80,7 +80,7 @@ const AddVariantProduct = () => {
         }
 
         for (let [key, value] of formData.entries()) {
-            console.log(`${key}:`, value);
+            // removed log
         }
         setIsLoading(true)
         const response = await apiAddVariant(formData, product_id)

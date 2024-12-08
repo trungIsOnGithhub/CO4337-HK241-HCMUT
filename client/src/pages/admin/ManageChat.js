@@ -67,7 +67,7 @@ const ManageChat = () => {
         delete q._id;
         delete q.id
       })
-      // console.log(newQna)
+      // // removed log
 
     let resp = await apiAddServiceProvidersGivenQnA({
         provider_id: current.provider_id._id,
@@ -75,7 +75,7 @@ const ManageChat = () => {
     });
 
       if (resp.success && resp.qna) {
-        console.log('--===============  >' + JSON.stringify(resp?.qna?.chatGivenQuestions));
+        // removed log
         setQaItems(resp?.qna?.chatGivenQuestions.map(
           (ele, idx) => {
               return {
@@ -104,7 +104,7 @@ const ManageChat = () => {
   };
 
   const handleEdit = (item) => {
-    console.log('=====', item);
+    // removed log
     setNewQuestion(item.question);
     setNewAnswer(item.answer);
     setEditingId(item.id);
@@ -129,8 +129,8 @@ const ManageChat = () => {
           delete q.id
         });
 
-        // console.log("------------------->>>>>>>", qaItems);
-        // console.log("3412424231>>>>>>>", newQna);
+        // // removed log
+        // // removed log
         // let resp;
           let resp = await apiAddServiceProvidersGivenQnA({
               provider_id: current.provider_id._id,
@@ -138,7 +138,7 @@ const ManageChat = () => {
           });
       
           if (resp.success && resp.qna) {
-            // console.log('--           >' + JSON.stringify(resp?.qna?.chatGivenQuestions));
+            // // removed log
               setQaItems(resp.qna?.chatGivenQuestions.map(
                 (ele, idx) => {
                     return {

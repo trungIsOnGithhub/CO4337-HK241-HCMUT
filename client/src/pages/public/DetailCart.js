@@ -255,7 +255,7 @@ const DetailCart = () => {
             totalSavings: totalSavings
           };
         });
-        // console.log(providerTotalSavingPrice)
+        // // removed log
         const providerTotalShippingPrice = Object.keys(groupedProducts).map(providerId => {
           const provider = groupedProducts[providerId];
           const shippingPrice = shippingPrices[providerId];
@@ -265,7 +265,7 @@ const DetailCart = () => {
             shippingPrice: shippingPrice
           };
         });
-        // console.log(providerTotalShippingPrice)
+        // // removed log
         const providerTotalPrice = Object.keys(groupedProducts).map(providerId => {
           // Tìm totalProductPrice, totalSavings và shippingPrice cho mỗi provider
           const totalProductPrice = providerTotalProductPrice.find(el => el.providerId === providerId)?.totalPrice || 0;
@@ -280,7 +280,7 @@ const DetailCart = () => {
             totalPrice: totalPrice
           };
         });
-        // console.log(providerTotalPrice)
+        // // removed log
         const providerSelectedDiscount = Object.keys(groupedProducts).map(providerId => {
           const provider = groupedProducts[providerId];
           const selectedVoucher = selectedVouchers[providerId];
@@ -380,7 +380,7 @@ const DetailCart = () => {
     return coupon.noLimitPerUser || !userUsage || userUsage.usageCount < coupon.limitPerUser;
   };
 
-  console.log(groupedProducts)
+  // removed log
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">

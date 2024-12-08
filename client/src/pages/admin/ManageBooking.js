@@ -261,7 +261,7 @@ const ManageBooking = () => {
   }, []);
 
   const handleChangeStatusBooking = async(bookingId, status) => {
-    console.log(bookingId, status)
+    // removed log
     const response = await apiUpdateStatusOrder({bookingId, status})
     if(response?.success){
       setShowOptionStatus(null)

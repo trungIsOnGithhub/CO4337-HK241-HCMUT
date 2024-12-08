@@ -10,7 +10,7 @@ import path from 'ultils/path'
 
 const DetailCart = ({location, navigate}) => {
     const {currentCartProduct, current} = useSelector(state => state.user)
-    console.log(current)
+    // removed log
 
     const handleSubmit = () => {
         if(!current?.address){

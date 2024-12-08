@@ -192,7 +192,7 @@
 //   const handleAddSaleEvent = async (data) => {
 //     try {
 //       setIsLoading(true);
-//       console.log(data)
+//       // removed log
 //       const flashSaleData = {
 //         ...data,
 //         promotionApplicationDate,

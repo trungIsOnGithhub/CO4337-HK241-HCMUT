@@ -31,7 +31,7 @@ const Service = ({serviceData, nearMeOption=false, keyToExtract='_source'}) => {
   }
 
   const handleNavigateBookService = () => {
-    // console.log("=====>", serviceData[keyToExtract]);
+    // // removed log
     if(!current){
       return Swal.fire({
         name: "You haven't logged in",
