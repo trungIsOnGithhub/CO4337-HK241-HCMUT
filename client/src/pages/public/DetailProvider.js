@@ -817,12 +817,9 @@ const DetailProvider = () => {
               <div className='w-[90%]'>
                 <div className='w-[800px] h-fit pt-[24px] pb-[48px] mx-auto flex flex-col items-center gap-6'>
                   <div className='w-full text-[22px] leading-7 font-semibold'>Terms & Services</div>
-                  { providerData?.documents?.length ?
+                  { providerData?.document ?
     (
-      <iframe
-        src={`http://docs.google.com/gview?url=${providerData?.documents[0]}&embedded=true`}
-        style={{width:'600px', height:'500px'}}>
-      </iframe>
+      <embed src={`${process.env.REACT_APP_AP_BASE_URL}/${providerData?.document}`} width="500" height="375" type="application/pdf"/>
     )
     : (<p className='text-center'>Provider has no document.</p>) }
                 </div>
