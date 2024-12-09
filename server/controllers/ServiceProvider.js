@@ -191,6 +191,68 @@ const getAllServiceProvider = asyncHandler(async(req, res) => {
     }
 })
 
+
+const updateServiceProviderWithDocs = asyncHandler(async(req, res)=>{
+    const spid = req.params.spid
+    console.log('vuivuiuviuv', req.body, spid);
+    if(Object.keys(req.body).length === 0){
+        throw new Error('Missing input');
+    }
+
+    const { ownerFirstName, ownerLastName, ownerEmail, advancedSetting } = req.body;
+    // if(!ownerFirstName || !ownerLastName || !ownerEmail){
+    //     throw new Error('Missing input');
+    // }
+    if (advancedSetting?.showStaffDetailBooking) {
+        if (advancedSetting.showStaffDetailBooking === 'true') {
+            advancedSetting.showStaffDetailBooking = true;
+        }
+        else {
+            advancedSetting.showStaffDetailBooking = false;
+        }
+    }
+
+    // console.log('files: ', req.files);
+    if(req.file){
+        console.log('file: ', req.file);
+        req.body.documents = [req.file.path];
+        // console.log('HAS FILE');
+        // req.body.images = [req.files.avatar.path];
+    }
+    // if(req.files){
+    //     console.log('file: ', req.files);
+    //     // req.body.images = [req.file.path];
+    //     // console.log('HAS FILE');
+    //     // req.body.images = [req.files.avatar.path];
+    // }
+
+
+    if (req.body.mobile) {
+        const uresp = await User.updateOne({ provider_id: spid },
+            { $set: {
+                mobile: req.body.mobile,
+                firstName: ownerFirstName,
+                lastName: ownerLastName,
+                email: ownerEmail,
+        }});
+        console.log(uresp);
+
+        if (!uresp) {
+            throw new Error('Cannot update corresponding id.');
+        }
+    }
+
+    const response = await ServiceProvider.findByIdAndUpdate(spid, req.body, {new: true})
+
+    console.log(response);
+
+    return res.status(200).json({
+        success: response ? true : false,
+        updatedServiceProvider: response ? response : "Cannot update a Service Provider",
+        mes: response ? 'Success Updated' : 'Failed to Update'
+    });
+})
+
 const updateServiceProvider = asyncHandler(async(req, res)=>{
     const spid = req.params.spid
     console.log('vuivuiuviuv', req.body, spid);
@@ -218,6 +280,13 @@ const updateServiceProvider = asyncHandler(async(req, res)=>{
         // console.log('HAS FILE');
         // req.body.images = [req.files.avatar.path];
     }
+    if(req.files){
+        console.log('file: ', req.files);
+        // req.body.images = [req.file.path];
+        // console.log('HAS FILE');
+        // req.body.images = [req.files.avatar.path];
+    }
+
 
     if (req.body.mobile) {
         const uresp = await User.updateOne({ provider_id: spid },
@@ -476,5 +545,6 @@ module.exports = {
     finalRegisterProvider,
     getServiceProviderByAdmin,
     updateFooterSection,
-    searchSPAdvanced
+    searchSPAdvanced,
+    updateServiceProviderWithDocs
 }

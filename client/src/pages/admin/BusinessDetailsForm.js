@@ -379,12 +379,11 @@ console.log(formData)
                   <button
                     type="button"
                     onClick={() => {removeAvatar(previewUrls)}}
-                    className="absolute -top-2 -right-2 bg-[#0a66c2] text-white rounded-full p-2 hover:bg-red-600 transition-all duration-300 transform hover:scale-110 shadow-lg"
+                    className="absolute-top-2 -right-2 bg-[#0a66c2] text-white rounded-full p-2 hover:bg-red-600 transition-all duration-300 transform hover:scale-110 shadow-lg"
                     aria-label="Remove avatar"
                   >
-                    <FiX size={20} />
-                  </button>
-                  }
+                  <FiX size={20} />
+                  </button> }
                 </div>
               }
 

@@ -3,7 +3,7 @@ import WeeklyOfficeHours from './WeeklyOfficeHours';
 import BusinessDetailsForm from './BusinessDetailsForm';
 import bgImage from '../../assets/clouds.svg';
 import Select from 'react-select';
-import { apiUpdateCurrentServiceProvider } from 'apis';
+import { apiUpdateCurrentServiceProviderWithDocs } from 'apis';
 import Swal from 'sweetalert2';
 import { useSelector, useDispatch } from 'react-redux';
 import { getCurrent } from 'store/user/asyncAction';
@@ -18,8 +18,9 @@ function ManageSetting() {
   const [minTimeCanceling, setMinTimeCanceling] = useState('Disabled');
   const [showStaffDetailBooking, setShowStaffDetailBooking] = useState(false);
   const [daysInAdvance, setDaysInAdvance] = useState(100);
-  const [dateFormat, setDateFormat] = useState('MMMM D, YYYY');
-  const [timeFormat, setTimeFormat] = useState('h:mm a');
+  const [formData, setFormData] = useState({});
+  // const [dateFormat, setDateFormat] = useState('MMMM D, YYYY');
+  // const [timeFormat, setTimeFormat] = useState('h:mm a');
   // // const [timeZone, setTimeZone] = useState('Bangkok');
   // const [firstDayOfWeek, setFirstDayOfWeek] = useState('Monday');
   // const [phoneCountryCode, setPhoneCountryCode] = useState('United States');
@@ -50,6 +51,20 @@ function ManageSetting() {
     // console.log('Fetching settings...');
   }, [current]);
 
+  // const handleAvatarChange = (e) => { //same with this
+  const handleDocumentChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prev) => ({ ...prev, document: file }));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // setPreviewUrls(reader.result);
+        // console.log(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   // Handler to simulate saving settings
   const handleSaveSettings = async () => {
     if (!current?.provider_id?._id) {
@@ -71,10 +86,17 @@ function ManageSetting() {
       minutesBeforeSameDayBook
     };
     
-    console.log('Settings saved:', advancedSetting);
+    // console.log('Settings saved:', advancedSetting);
     // Here you could send the data to an API endpoint
+    const finalPayload = { advancedSetting };
+    const fData = new FormData()
+    for(let i of Object.entries(finalPayload)){
+      fData.append(i[0],i[1])
+    }
+    fData.delete('document')
+    if(formData.document) fData.append('document', formData.document)
 
-    let resp = await apiUpdateCurrentServiceProvider(current.provider_id._id, { advancedSetting });
+    let resp = await apiUpdateCurrentServiceProviderWithDocs(current.provider_id._id, fData);
 
     if (resp.success && resp?.updatedServiceProvider?.advancedSetting) {
       setminutesBeforeSameDayBook(resp.updatedServiceProvider.advancedSetting.minutesBeforeSameDayBook);
@@ -153,17 +175,20 @@ function ManageSetting() {
                   {viewOption === "general" &&
                       <div className="w-3/4 pl-8">
                         {/* Appointment Settings */}
-                        <h2 className="font-semibold text-xl text-gray-800 mb-6">Booking</h2>
+                        <h2 className="font-semibold text-xl text-gray-800 mb-6">General Settings</h2>
                         <div className="space-y-6">
-                          
-                          {/* Default Time Slot Step */}
-                          <div className="flex items-center justify-between">
-                            <label className="text-gray-800 font-medium">Default Time Slot Step</label>
-                            <select value={timeSlotStep} onChange={(e) => setTimeSlotStep(e.target.value)} className="border rounded-lg p-2 w-1/2 text-gray-800">
+
+                          <div className="flex items-center gap-4">
+                            <label className="text-gray-800 font-medium">Uploaded Legal Document</label>
+                            
+                            <input type='file' accept='.pdf,.png,.jpg,.jpeg' onChange={handleDocumentChange}
+                              className="border rounded-lg p-2 w-1/2 text-gray-800 border-gray-300 cursor-pointer">
+                            </input>
+                            {/* <select value={timeSlotStep} onChange={(e) => setTimeSlotStep(e.target.value)} className="border rounded-lg p-2 w-1/2 text-gray-800">
                               <option>15min</option>
                               <option>30min</option>
                               <option>1hr</option>
-                            </select>
+                            </select> */}
                           </div>
                           
                           {/* Use Service Duration as Booking Slot */}
@@ -264,7 +289,7 @@ function ManageSetting() {
 
                         }
                             {/* Global Settings */}
-                            <h2 className="font-semibold text-xl text-gray-800 mt-8 mb-6">Global Settings</h2>
+                            {/* <h2 className="font-semibold text-xl text-gray-800 mt-8 mb-6">Global Settings</h2> */}
                             <div className="grid grid-cols-2 gap-6">
                               {/* <div>
                                 <label className="text-gray-800 font-medium">Date Format</label>

@@ -61,3 +61,9 @@ export const apiSearchProviderAdvanced = (data) => axios({
     method: 'post',
     data
 })
+
+export const apiUpdateCurrentServiceProviderWithDocs = (spid, data) => axios({
+    url: `/service_provider/docs/${spid}`,
+    method: 'put',
+    data
+})

@@ -107,7 +107,10 @@ var ProviderServiceSchema = new mongoose.Schema({
     },
     advancedSetting: {
         type: Object
-    }
+    },
+    documents: [{
+        type: String
+    }]
 },{
     timestamps: true
 });

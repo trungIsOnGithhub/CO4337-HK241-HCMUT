@@ -399,11 +399,12 @@ const DetailProvider = () => {
                 <img src={logoWeb} className='w-12 h-12'/>
                 <span className='font-semibold text-4xl mb-1'>Biz<span className='text-blue-500'>Serv</span></span>
             </div>
-            <span onClick={()=>{setVariable('service')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'service' && 'border-b-2 border-[#15a9e8]')}>Service</span>
-            <span onClick={()=>{setVariable('book')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'book' && 'border-b-2 border-[#15a9e8]')}>Book Now</span>
-            <span onClick={()=>{setVariable('product')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'product' && 'border-b-2 border-[#15a9e8]')}>Product</span>
-            <span onClick={()=>{setVariable('blog')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'blog' && 'border-b-2 border-[#15a9e8]')}>Blog</span>
-            <span onClick={()=>{setVariable('find-us')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'find-us' && 'border-b-2 border-[#15a9e8]')}>Find us</span>
+            <span onClick={()=>{setVariable('service')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'service' && 'border-b-2', providerData?.theme === 'dark' ? 'border-[#15a9e8]' : providerData?.theme === 'light' ? 'border-[#191eb9]' : '')}>Service</span>
+            <span onClick={()=>{setVariable('book')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'book' && 'border-b-2', providerData?.theme === 'dark' ? 'border-[#15a9e8]' : providerData?.theme === 'light' ? 'border-[#191eb9]' : '')}>Book Now</span>
+            <span onClick={()=>{setVariable('product')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'product' && 'border-b-2', providerData?.theme === 'dark' ? 'border-[#15a9e8]' : providerData?.theme === 'light' ? 'border-[#191eb9]' : '')}>Product</span>
+            <span onClick={()=>{setVariable('blog')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'blog' && 'border-b-2', providerData?.theme === 'dark' ? 'border-[#15a9e8]' : providerData?.theme === 'light' ? 'border-[#191eb9]' : '')}>Blog</span>
+            <span onClick={()=>{setVariable('find-us')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'find-us' && 'border-b-2', providerData?.theme === 'dark' ? 'border-[#15a9e8]' : providerData?.theme === 'light' ? 'border-[#191eb9]' : '')}>Find us</span>
+            <span onClick={()=>{setVariable('terms-services')}} className={clsx('font-semibold cursor-pointer capitalize', variable === 'terms-services' && 'border-b-2', providerData?.theme === 'dark' ? 'border-[#15a9e8]' : providerData?.theme === 'light' ? 'border-[#191eb9]' : '')}>Terms & Services</span>
           </div>
         </div>
         <div className='w-full h-[86px]'></div>
@@ -806,6 +807,27 @@ const DetailProvider = () => {
                 </div>
                 </div>
             }
+            </>
+        }
+
+        {
+            variable === 'terms-services' &&
+            <>
+              <div className={clsx('w-full min-h-[476px] flex justify-center', providerData?.theme === 'dark' ? 'bg-[#343a40] text-white' : providerData?.theme === 'light' ? 'bg-[#fff] text-black' : '')}>
+              <div className='w-[90%]'>
+                <div className='w-[800px] h-fit pt-[24px] pb-[48px] mx-auto flex flex-col items-center gap-6'>
+                  <div className='w-full text-[22px] leading-7 font-semibold'>Terms & Services</div>
+                  { providerData?.documents?.length ?
+    (
+      <iframe
+        src={`http://docs.google.com/gview?url=${providerData?.documents[0]}&embedded=true`}
+        style={{width:'600px', height:'500px'}}>
+      </iframe>
+    )
+    : (<p className='text-center'>Provider has no document.</p>) }
+                </div>
+              </div>
+              </div>
             </>
         }
         <div className={clsx('w-full h-[229px]', providerData?.theme === 'dark' ? 'bg-[#2b3035]' : 'bg-[rgba(248,249,250,0.5)]')}>
