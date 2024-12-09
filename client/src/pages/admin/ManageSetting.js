@@ -153,18 +153,18 @@ function ManageSetting() {
                   {viewOption === "general" &&
                       <div className="w-3/4 pl-8">
                         {/* Appointment Settings */}
-                        <h2 className="font-semibold text-xl text-gray-800 mb-6">Booking</h2>
+                        <h2 className="font-semibold text-xl text-gray-800 mb-6">Global Settings</h2>
                         <div className="space-y-6">
                           
                           {/* Default Time Slot Step */}
-                          <div className="flex items-center justify-between">
+                          {/* <div className="flex items-center justify-between">
                             <label className="text-gray-800 font-medium">Default Time Slot Step</label>
                             <select value={timeSlotStep} onChange={(e) => setTimeSlotStep(e.target.value)} className="border rounded-lg p-2 w-1/2 text-gray-800">
                               <option>15min</option>
                               <option>30min</option>
                               <option>1hr</option>
                             </select>
-                          </div>
+                          </div> */}
                           
                           {/* Use Service Duration as Booking Slot */}
                           {/* <div className="flex items-center justify-between">
@@ -248,7 +248,7 @@ function ManageSetting() {
                                 <option>24 hours</option>
                               </select>
                             </div> */}
-                            <div>
+                            {/* <div>
                               <label className="text-gray-800 font-medium">The number of days available for booking in advance</label>
                               <input
                                 type="number"
@@ -256,68 +256,9 @@ function ManageSetting() {
                                 onChange={(e) => setDaysInAdvance(Number(e.target.value))}
                                 className="border rounded-lg p-2 w-full mt-1 text-gray-800"
                               />
-                            </div>
+                            </div> */}
                           </div>
                         </div>
-
-                        {
-
-                        }
-                            {/* Global Settings */}
-                            <h2 className="font-semibold text-xl text-gray-800 mt-8 mb-6">Global Settings</h2>
-                            <div className="grid grid-cols-2 gap-6">
-                              {/* <div>
-                                <label className="text-gray-800 font-medium">Date Format</label>
-                                <select value={dateFormat} onChange={(e) => setDateFormat(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
-                                  <option>MMMM D, YYYY</option>
-                                  <option>DD/MM/YYYY</option>
-                                  <option>MM/DD/YYYY</option>
-                                </select>
-                              </div>
-                              <div>
-                                <label className="text-gray-800 font-medium">Time Format</label>
-                                <select value={timeFormat} onChange={(e) => setTimeFormat(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
-                                  <option>h:mm a</option>
-                                  <option>HH:mm</option>
-                                </select>
-                              </div> */}
-                              {/* <div>
-                                <label className="text-gray-800 font-medium">Time Zone</label>
-                                <select value={timeZone} onChange={(e) => setTimeZone(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
-                                  <option>Bangkok</option>
-                                  <option>UTC</option>
-                                  <option>New York</option>
-                                </select>
-                              </div> */}
-                              {/*<div>
-                                <label className="text-gray-800 font-medium">First Day of the Week</label>
-                                <select value={firstDayOfWeek} onChange={(e) => setFirstDayOfWeek(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
-                                  <option>Monday</option>
-                                  <option>Sunday</option>
-                                </select>
-                              </div> */}
-                              {/* <div>
-                                <label className="text-gray-800 font-medium">Default phone country code</label>
-                                <select value={phoneCountryCode} onChange={(e) => setPhoneCountryCode(e.target.value)} className="border rounded-lg p-2 w-full mt-1 text-gray-800">
-                                  <option>United States</option>
-                                  <option>United Kingdom</option>
-                                  <option>Australia</option>
-                                </select>
-                              </div> */}
-                              {/* <div>
-                                <label className="text-gray-800 font-medium">Default FirstPage</label>
-                                <select className="border rounded-lg p-2 w-full mt-1">
-                                  <option>Dashboard</option>
-                                </select>
-                              </div> */}
-                              {/* <div>
-                                <label className="text-gray-700 font-medium">Dashboard language</label>
-                                <select className="border rounded-lg p-2 w-full mt-1">
-                                  <option>English</option>
-                                </select>
-                              </div> */}
-                            </div>
-
                             <div className="mt-4 flex justify-end space-x-2 gap-4">
               {/* <button onClick={onClose} className="text-gray-500 hover:text-gray-700">Cancel</button> */}
               <button
