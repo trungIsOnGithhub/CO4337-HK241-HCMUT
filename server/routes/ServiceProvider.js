@@ -2,6 +2,7 @@ const router = require("express").Router();
 const ctrls = require('../controllers/ServiceProvider.js')
 const {verifyAccessToken, isAdmin} = require('../middlewares/verify_token')
 const uploader = require('../config/cloudinary.config')
+const fuploader = require('../config/file.config')
 
 router.post('/', uploader.fields([
     {
@@ -18,7 +19,7 @@ router.put('/final_register/:token', ctrls.finalRegisterProvider)
 router.get('/', ctrls.getAllServiceProvider)
 router.put('/updatetheme/:spid', ctrls.updateServiceProviderTheme)
 router.put('/:spid',  uploader.single('avatar'),ctrls.updateServiceProvider)
-router.put('/docs/:spid',  uploader.single('document'),ctrls.updateServiceProviderWithDocs)
+router.put('/docs/:spid', fuploader.single('document'), ctrls.updateServiceProviderWithDocs)
 router.get('/getspbyad', [verifyAccessToken, isAdmin], ctrls.getServiceProviderByAdmin)
 router.get('/:spid', ctrls.getServiceProvider)
 router.post('/qna', ctrls.addServiceProviderQuestion)

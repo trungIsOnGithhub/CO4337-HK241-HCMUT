@@ -199,23 +199,10 @@ const updateServiceProviderWithDocs = asyncHandler(async(req, res)=>{
         throw new Error('Missing input');
     }
 
-    const { ownerFirstName, ownerLastName, ownerEmail, advancedSetting } = req.body;
-    // if(!ownerFirstName || !ownerLastName || !ownerEmail){
-    //     throw new Error('Missing input');
-    // }
-    if (advancedSetting?.showStaffDetailBooking) {
-        if (advancedSetting.showStaffDetailBooking === 'true') {
-            advancedSetting.showStaffDetailBooking = true;
-        }
-        else {
-            advancedSetting.showStaffDetailBooking = false;
-        }
-    }
-
-    // console.log('files: ', req.files);
+    console.log('files: ', req.file);
     if(req.file){
         console.log('file: ', req.file);
-        req.body.documents = [req.file.path];
+        req.body.document = req.file.filename;
         // console.log('HAS FILE');
         // req.body.images = [req.files.avatar.path];
     }
@@ -226,21 +213,6 @@ const updateServiceProviderWithDocs = asyncHandler(async(req, res)=>{
     //     // req.body.images = [req.files.avatar.path];
     // }
 
-
-    if (req.body.mobile) {
-        const uresp = await User.updateOne({ provider_id: spid },
-            { $set: {
-                mobile: req.body.mobile,
-                firstName: ownerFirstName,
-                lastName: ownerLastName,
-                email: ownerEmail,
-        }});
-        console.log(uresp);
-
-        if (!uresp) {
-            throw new Error('Cannot update corresponding id.');
-        }
-    }
 
     const response = await ServiceProvider.findByIdAndUpdate(spid, req.body, {new: true})
 
@@ -529,9 +501,6 @@ const searchSPAdvanced = asyncHandler(async (req, res) => {
         providers: services
     });
 });
-
-
-
 
 module.exports = {
     createServiceProvider,
