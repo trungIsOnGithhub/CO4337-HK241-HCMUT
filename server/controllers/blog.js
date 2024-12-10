@@ -671,6 +671,9 @@ const getAllBlogsByAdmin = asyncHandler(async (req, res) => {
             const sortBy = req.query.sort.split(',').join(' ')
             queryCommand.sort(sortBy)
         }
+        else{
+            queryCommand.sort({createdAt : -1})
+        }
 
         //filtering
         if(req.query.fields){

@@ -177,6 +177,7 @@ const getCouponsByProviderId = asyncHandler(async (req, res) => {
     const coupons = await Coupon.find({ providerId })
         .populate('services', 'name'); // Populate trường services với thông tin name
 
+
     if (coupons.length === 0) {
         return res.status(404).json({ message: 'No coupons found for the given provider ID.' });
     }
@@ -221,6 +222,9 @@ const getAllCouponsByAdmin = asyncHandler(async (req, res) => {
         if(req.query.sort){
             const sortBy = req.query.sort.split(',').join(' ')
             queryCommand.sort(sortBy)
+        }
+        else{
+            queryCommand.sort({createdAt: -1})
         }
 
         //filtering

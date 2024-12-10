@@ -71,6 +71,9 @@ const getAllStaffsByAdmin = asyncHandler(async (req, res) => {
             const sortBy = req.query.sort.split(',').join(' ')
             queryCommand.sort(sortBy)
         }
+        else{
+            queryCommand.sort('-createdAt')
+        }
 
         //filtering
         if(req.query.fields){

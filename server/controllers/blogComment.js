@@ -36,7 +36,7 @@ const getAllCommentsForBlog = asyncHandler(async(req, res)=>{
         path: 'angry',
         select: 'firstName lastName avatar'
     }).
-    sort({ createdAt: -1 });;
+    sort({ createdAt: -1 });
 
     return res.status(200).json({
         success: response ? true : false,

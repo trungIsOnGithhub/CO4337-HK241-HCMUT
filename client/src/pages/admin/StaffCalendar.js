@@ -105,7 +105,7 @@ const StaffCalendar = () => {
   }, [])
 
   const fetchService = async(params) => {
-    const response = await apiGetServiceByAdmin()
+    const response = await apiGetServiceByAdmin({limit:999})
     if(response?.success && response.services){
       setServices(response.services)
     }
