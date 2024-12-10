@@ -45,7 +45,7 @@ const CheckoutService = () => {
   const paymentMethods = [
     { id: "paypal", name: "PayPal", icon: FaPaypal },
     // { id: "zalopay", name: "ZaloPay", icon: SiZalo },
-    { id: "cod", name: "Cash on Delivery", icon: TbTruckDelivery, iconColor: "text-green-600" }
+    { id: "cod", name: "Pay by Cash", icon: TbTruckDelivery, iconColor: "text-green-600" }
   ];
   console.log(selectedPayment)
   
@@ -185,7 +185,7 @@ const CheckoutService = () => {
                     <div>
                       <p className="text-lg font-medium text-gray-900">{method.name}</p>
                       <p className="text-sm text-gray-600">
-                        {method.id === "cod" ? "Pay when you receive your order" : `Pay with ${method.name}`}
+                        {method.id === "cod" ? "Pay when you use service" : `Pay with ${method.name}`}
                       </p>
                     </div>
                   </div>

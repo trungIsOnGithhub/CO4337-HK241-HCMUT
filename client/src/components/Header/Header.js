@@ -41,14 +41,14 @@ const Header = () => {
                 <div className="flex flex-col items-center px-6 border-r">
                     <span className="flex gap-4 items-center">
                         <FaPhoneAlt color='white' />
-                        <span className="font-semibold">(+1800) 000 8808</span>
+                        <span className="font-semibold">1900 8888</span>
                     </span>
-                    <span>Mon-Sat 9:00AM - 8:00PM</span>
+                    <span>Call Support 24/7</span>
                 </div>
                 <div className="flex flex-col items-center px-6 border-r">
                     <span className="flex gap-4 items-center">
                         <MdEmail color='white' />
-                        <span className="font-semibold">SUPPORT@TADATHEMES.COM</span>
+                        <span className="font-semibold">SUPPORT@BIZSERV.COM</span>
                     </span>
                     <span>Online Support 24/7</span>
                 </div>

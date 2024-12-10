@@ -123,7 +123,7 @@ const CustomSliderService = ({services, normal}) => {
                     <span className='text-[14px] text-[#868e96] flex items-center gap-2'><span className='flex gap-1 items-center'><MdOutlineCategory /> Category</span> <span className='font-medium'>{`${service?.sv?.category}`}</span></span>
                 </div>
                 <div className='flex justify-between'>
-                  <Button handleOnclick={()=>handleNavigateLearnMoreService(service?.sv)} style='px-[18px] rounded-md text-black border border-[#868e96] w-fit h-[40px] font-medium text-sm bg-white hover:bg-gray-200'> Learn moree</Button>
+                  <Button handleOnclick={()=>handleNavigateLearnMoreService(service?.sv)} style='px-[18px] rounded-md text-black border border-[#868e96] w-fit h-[40px] font-medium text-sm bg-white hover:bg-gray-200'> Learn more</Button>
                   <Button handleOnclick={()=>handleBookService(service?.sv)} style='px-[18px] rounded-md text-white bg-[#0a66c2] w-fit h-[40px] font-medium text-sm hover:bg-blue-600'> Book now</Button>
                 </div>
               </div>

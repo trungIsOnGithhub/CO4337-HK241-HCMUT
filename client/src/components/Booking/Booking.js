@@ -125,7 +125,9 @@ const Booking = () => {
   };
 
   useEffect(() => {
-    fetchServiceData();
+    if (+currentUser.role === 202) {
+      fetchServiceData(); 
+    }
   }, [params]);
 
   useEffect(() => {
