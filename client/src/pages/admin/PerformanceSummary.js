@@ -125,7 +125,7 @@ function PerformanceSummary({ providerId }) {
             </div>
             <div className="text-sm text-gray-600">
               <div className="flex justify-between mb-1">
-                <span className="font-semibold">Orders</span>
+                <span className="font-semibold">Number of Bookings</span>
                 <span>{service.numberOrders}</span>
               </div>
               <div className="flex justify-between mb-1">
@@ -162,15 +162,15 @@ function PerformanceSummary({ providerId }) {
             </div>
             <div className="text-sm text-gray-600">
               <div className="flex justify-between">
-                <span>Number Of Orders</span>
+                <span className="font-semibold">Number of Bookings</span>
                 <span>{service.numberOrders}</span>
               </div>
               <div className="flex justify-between">
-                <span>Revenue</span>
+                <span className="font-semibold">Revenue</span>
                 <span>{formatPrice(Number(service.revenue))} VND</span>
               </div>
               <div className="flex justify-between items-center mt-2">
-                <span>Occupancy rate</span>
+                <span className="font-semibold">Occupancy rate</span>
                 <span>{(service.occupancy < 100.0 ? service.occupancy : 100.0)?.toFixed(2)}%</span>
               </div>
             </div>

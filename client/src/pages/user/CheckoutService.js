@@ -45,7 +45,7 @@ const CheckoutService = () => {
   const paymentMethods = [
     { id: "paypal", name: "PayPal", icon: FaPaypal },
     // { id: "zalopay", name: "ZaloPay", icon: SiZalo },
-    { id: "cod", name: "Cash when use service", icon: TbTruckDelivery, iconColor: "text-green-600" }
+    { id: "cod", name: "Pay by Cash", icon: TbTruckDelivery, iconColor: "text-green-600" }
   ];
   console.log(selectedPayment)
   
