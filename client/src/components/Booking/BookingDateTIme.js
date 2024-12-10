@@ -321,7 +321,8 @@ const BookingDateTIme = () => {
       originalPrice: originalPrice,
       discountPrice: +discountValue > 0 ? +discountValue : 0,
       coupon: selectedVoucher?._id,
-      tzOffset: (new Date()).getTimezoneOffset()
+      tzOffset: (new Date()).getTimezoneOffset(),
+      staffObj: staff
     });
 
 
@@ -331,6 +332,8 @@ const BookingDateTIme = () => {
     else if (resp.mes) {
       // console.log('==============', resp);
       toast.error(resp.mes);
+
+      await fetchStaffData();
 
       if (type === 'Week') {
         handlePrevNext('in_week');
@@ -387,7 +390,8 @@ const BookingDateTIme = () => {
       originalPrice: originalPrice,
       discountPrice: +discountValue > 0 ? +discountValue : 0,
       coupon: selectedVoucher?._id,
-      tzOffset: (new Date()).getTimezoneOffset()
+      tzOffset: (new Date()).getTimezoneOffset(),
+      staffObj: staff
     })
 
     if (resp.success) {
@@ -403,6 +407,8 @@ const BookingDateTIme = () => {
     else if (resp.mes) {
       console.log('==============', resp);
       toast.error(resp.mes);
+
+      await fetchStaffData();
 
       if (type === 'Week') {
         handlePrevNext('in_week');

@@ -129,14 +129,10 @@ const Booking = () => {
   }, [params]);
 
   useEffect(() => {
-    const tempStaffs = service?.assigned_staff?.map(staff => {
-      staff.nextAvailableDay = getNextAvailableDayInShift(staff?.shifts);
-      return staff;
-    })
 
     setStaffs(service?.assigned_staff);
     fetchProviderData();
-  }, [service]);
+  }, [service, selectedStaff]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -160,7 +156,7 @@ const Booking = () => {
     }
 
     fetchData(); 
-  }, [service]);
+  }, [service, selectedStaff]);
 
   const handleBookDateTime = (el) => { 
     navigate({
@@ -242,7 +238,7 @@ const Booking = () => {
     // });
 
     let resp = await apiUpdateCartService({
-      service: service?._id, 
+      service: service?._id,
       provider: provider?._id,
       staff: el?._id, 
       time: time,
@@ -252,7 +248,8 @@ const Booking = () => {
       discountPrice: +discountValue > 0 ? +discountValue : 0,
       dateTime,
       coupon: selectedVoucher?._id,
-      tzOffset: (new Date()).getTimezoneOffset()
+      tzOffset: (new Date()).getTimezoneOffset(),
+      staffObj: el
     });
 
     if (resp.success) {
@@ -267,6 +264,7 @@ const Booking = () => {
         date: null,
         staff: null
       });
+      fetchServiceData()
     }
     else  {
       toast.error("Error add service to cart!");
@@ -351,7 +349,8 @@ const Booking = () => {
       discountPrice: +discountValue > 0 ? +discountValue : 0,
       dateTime: dateTime,
       coupon: selectedVoucher?._id,
-      tzOffset: (new Date()).getTimezoneOffset()
+      tzOffset: (new Date()).getTimezoneOffset(),
+      staffObj: selectedStaff?.staff
     })
 
     if (resp.success) {
@@ -373,6 +372,7 @@ const Booking = () => {
         date: null,
         staff: null
       }); 
+      fetchServiceData()
     }
     else  {
       toast.error("Error add service to cart!");

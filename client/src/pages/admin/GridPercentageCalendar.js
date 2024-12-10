@@ -45,10 +45,10 @@ const GridPercentageCalendar = () => {
   const startDay = getStartDayOfMonth(selectedMonth, selectedYear);
 
   const getOccupancyColor = (percentage) => {
-    if (percentage >= 81) return 'bg-blue-900';
-    if (percentage >= 41) return 'bg-blue-700';
-    if (percentage >= 21) return 'bg-blue-500';
-    if (percentage > 0) return 'bg-blue-300';
+    if (percentage >= 4) return 'bg-blue-900';
+    if (percentage === 3) return 'bg-blue-700';
+    if (percentage === 2) return 'bg-blue-500';
+    if (percentage === 1) return 'bg-blue-300';
     return 'bg-gray-200';
   };
 
@@ -132,7 +132,7 @@ const GridPercentageCalendar = () => {
             {hoverInfo?.isHovered && (+hoverInfo?.date.split('/')[0]) === day+1 && (
               <div className="absolute top-8 p-2 z-[999] bg-white border border-gray-300 rounded-lg shadow-lg text-sm text-gray-700 w-fit">
                 <div><strong>Date:</strong>&nbsp;{hoverInfo.date}</div>
-                <div><strong>Occupancy:</strong>&nbsp;{hoverInfo.occupancy || 0}%</div>
+                <div><strong>Number of Bookings:</strong>&nbsp;{hoverInfo.occupancy || 0}</div>
               </div>
             )}
           </div>
@@ -144,23 +144,23 @@ const GridPercentageCalendar = () => {
         <div className="text-sm font-semibold">Legend</div>
         <div className="flex items-center mt-2">
           <span className="w-4 h-4 bg-blue-900 rounded-full mr-2"></span>
-          <span className="text-gray-700 text-sm">81% and higher</span>
+          <span className="text-gray-700 text-sm">Higher than 3 orders</span>
         </div>
         <div className="flex items-center mt-2">
           <span className="w-4 h-4 bg-blue-700 rounded-full mr-2"></span>
-          <span className="text-gray-700 text-sm">Between 41% and 80%</span>
+          <span className="text-gray-700 text-sm">Between 2 and 3 orders</span>
         </div>
         <div className="flex items-center mt-2">
           <span className="w-4 h-4 bg-blue-500 rounded-full mr-2"></span>
-          <span className="text-gray-700 text-sm">Between 21% and 40%</span>
+          <span className="text-gray-700 text-sm">Between 1 and 2 orders</span>
         </div>
         <div className="flex items-center mt-2">
           <span className="w-4 h-4 bg-blue-300 rounded-full mr-2"></span>
-          <span className="text-gray-700 text-sm">20% and lower</span>
+          <span className="text-gray-700 text-sm">1 order and lower</span>
         </div>
         <div className="flex items-center mt-2">
           <span className="w-4 h-4 bg-gray-200 rounded-full mr-2"></span>
-          <span className="text-gray-700 text-sm">0%</span>
+          <span className="text-gray-700 text-sm">0 order</span>
         </div>
       </div>
     </div>

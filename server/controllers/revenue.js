@@ -975,21 +975,22 @@ let getOccupancyByDayCurrentMonth = asyncHandler(async (req, res) => {
                 
                     let indexByDate = itemDate - 1;
                     // console.log(item.service, '++++++++==');
-                    occupancyMonthList[indexByDate] += item.service?.duration;
+                    //occupancyMonthList[indexByDate] += item.service?.duration;
+                    occupancyMonthList[indexByDate] += 1;
                     console.log(occupancyMonthList[indexByDate])
                     // console.log('----;;;;-;;;;', item?.service);
-                    workingHoursList[indexByDate] = workingHourByDayMap[itemDayWeek];
+                    // workingHoursList[indexByDate] = workingHourByDayMap[itemDayWeek];
 
             }
         }
     });
     // console.log(occupancyMonthList);
-    for (let idx in occupancyMonthList) {
-        if (workingHoursList[idx] > 0) {
-            occupancyMonthList[idx] = Math.ceil(occupancyMonthList[idx] * 100 / workingHoursList[idx]);
-        }
-        else occupancyMonthList[idx] = 0;
-    }
+    // for (let idx in occupancyMonthList) {
+    //     if (workingHoursList[idx] > 0) {
+    //         occupancyMonthList[idx] = Math.round(occupancyMonthList[idx] * 100 / workingHoursList[idx]);
+    //     }
+    //     else occupancyMonthList[idx] = 0;
+    // }
 
     // console.log(occupancyMonthList, '++++++++++');
     // console.log(workingHoursList, '++++++++++');

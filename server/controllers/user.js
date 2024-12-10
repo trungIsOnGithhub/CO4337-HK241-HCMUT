@@ -11,6 +11,7 @@ const {users} = require('../ultils//constant')
 // const mongoose = require('mongoose');
 const Staff = require('../models/staff')
 const ServiceProvider = require('../models/ServiceProvider')
+const _ = require('lodash');
 
 const makeTokenNumber = () => {
     return Math.floor(100000 + Math.random() * 900000).toString(); // Tạo mã 6 chữ số
@@ -645,7 +646,7 @@ const getMinuteDiff = (date1, date2, tzOffset2) => {
 }
 const updateCartService = asyncHandler(async (req, res) => {
     const {_id} = req.user;
-    const {service, provider, staff, time, date, duration, originalPrice, discountPrice, dateTime, tzOffset, coupon=null} = req.body;
+    const {service, provider, staff, time, date, duration, originalPrice, discountPrice, dateTime, tzOffset, coupon=null, staffObj} = req.body;
 
     if (!service || !provider || !staff || !time || !date || !duration || !originalPrice || !dateTime) {
         throw new Error("Request missing input data!");
@@ -697,6 +698,13 @@ const updateCartService = asyncHandler(async (req, res) => {
             return res.status(404).json({
                 success: false,
                 mes: 'Your chosen staff has been hidden, you can book other staff!'
+            });
+        }
+        
+        if (!_.isEqual(staffObj?.shifts, thisStaff?.shifts)) {
+            return res.status(404).json({
+                success: false,
+                mes: 'Working time of this staff has been changed!'
             });
         }
         // console.log('???????????????????'+thisStaff.work);
