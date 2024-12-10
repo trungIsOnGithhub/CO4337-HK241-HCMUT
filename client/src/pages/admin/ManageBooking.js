@@ -379,7 +379,21 @@ const ManageBooking = () => {
                   </span>
                   <span className='w-[15%] py-2 text-[#00143c] text-sm line-clamp-1 flex items-center justify-center'>{`${el?.userDetails?.lastName} ${el?.userDetails?.firstName}`}</span>
                   <span className='w-[10%] py-2 text-[#00143c] text-sm line-clamp-1 flex items-center justify-center'>{`${el?.serviceDetails?.duration}min`}</span>
-                  <span className='w-[20%] py-2 text-[#00143c] flex items-center justify-center relative cursor-pointer' onClick={()=>{handleShowOptionStatus(el?._id)}}>
+                  <span className='w-[20%] py-2 text-[#00143c] flex items-center justify-center relative cursor-pointer' 
+                        onClick={() => {
+                          const bookingDateTime = new Date(
+                            `${el?.info[0]?.date.split("/").reverse().join("-")}T${el?.info[0]?.time}`
+                          );
+                          const now = new Date();
+                          console.log(bookingDateTime)
+                          console.log(now)
+
+                          if (bookingDateTime >= now) {
+                            handleShowOptionStatus(el?._id)
+                          } else if (bookingDateTime < now) {
+                            toast.error("You cannot update a booking that has already passed.");
+                          }
+                        }}>
                     <div className='w-full flex justify-between items-center border rounded-md px-2 shadow-sm'>
                       <span className='flex gap-[6px] items-center'><FaCircleHalfStroke style={{ transform: 'rotate(90deg)'}} color={el?.status === 'Successful' ? 'green' : el?.status === 'Pending' ? 'orange' : 'red'}/>{el?.status}</span>
                       <FaAngleDown size={10}/>

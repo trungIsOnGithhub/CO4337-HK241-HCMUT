@@ -217,7 +217,9 @@ const ManageBookingDetail = ({ dispatch, navigate }) => {
                             {status}
                           </div>
                           {
-                            status !== 'Cancelled' && 
+                            status !== 'Cancelled' && new Date(
+                            `${booking?.info[0]?.date.split("/").reverse().join("-")}T${booking?.info[0]?.time}`
+                          ) >= new Date() && 
                             <div className="flex space-x-2 mt-2">
                               <button
                                 onClick={() => handleStatusChange("Pending")}

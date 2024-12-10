@@ -384,11 +384,11 @@ const getBlogsBySearchTerm = asyncHandler(async(req, res) => {
     // const endIdx = startIdx + pageSize;
     // blogs = blogs.slice(startIdx, endIdx);
 
-    return res.status(200).json({
-        success: blogs ? true : false,
-        counts: blogs.length,
-        blogs: []
-    })
+    // return res.status(200).json({
+    //     success: blogs ? true : false,
+    //     counts: blogs.length,
+    //     blogs: []
+    // })
 });
 
 const getTopProviderAuthorBlogs = asyncHandler(async(req, res)=>{
