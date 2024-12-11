@@ -7,6 +7,8 @@ const sendMail = require('../ultils/sendMail');
 const crypto = require('crypto');
 const ES_CONSTANT = require('../services/constant');
 const esDBModule = require('../services/es');
+const ESReplicator = require('../services/replicate');
+
 
 const makeTokenNumber = () => {
     return Math.floor(100000 + Math.random() * 900000).toString(); // Tạo mã 6 chữ số
@@ -75,17 +77,32 @@ const createServiceProvider = asyncHandler(async(req, res)=>{
     });
 
     if (!newProvider) {
-        console.log('test333')
+        // console.log('test333')
         res.status(400).json({
             success: false,
             mes: "Cannot Create Provider Register"
         })
     }
     else{
-        console.log('test444')
+        // console.log('test444')
         setTimeout(async()=>{
             await ServiceProvider.deleteOne({bussinessName: req.body.bussinessName + "@" + token})
-        },[15*60*1000])
+        },[15*60*1000]);
+
+
+        const payload = newProvider.toObject(); // if modify output from mongoose, use this
+            // console.log('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbp', payload);
+        const esResult = await ESReplicator.addProvider(payload);
+
+        if (!esResult.success || !esResult.data) {
+            await ServiceProvider.findByIdAndUpdate(newProvider._id, { synced: false });
+            // throw new Error('Canceled update for unresponsed Elastic Connection');
+    
+            return res.status(200).json({
+                success: true,
+                mes: 'Created successfully but temporairily unavailable to search, contact support'
+            });
+        }
     }
 
     user = await User.findOne({mobile: req?.body?.mobile})
@@ -252,13 +269,6 @@ const updateServiceProvider = asyncHandler(async(req, res)=>{
         // console.log('HAS FILE');
         // req.body.images = [req.files.avatar.path];
     }
-    if(req.files){
-        console.log('file: ', req.files);
-        // req.body.images = [req.file.path];
-        // console.log('HAS FILE');
-        // req.body.images = [req.files.avatar.path];
-    }
-
 
     if (req.body.mobile) {
         const uresp = await User.updateOne({ provider_id: spid },
@@ -276,8 +286,21 @@ const updateServiceProvider = asyncHandler(async(req, res)=>{
     }
 
     const response = await ServiceProvider.findByIdAndUpdate(spid, req.body, {new: true})
+    // console.log(response);
+    if (response) {
+        const esResult = await ESReplicator.updateProvider(spid, req.body);
+        if (!esResult.success || !esResult.data) {
+            await Service.findByIdAndUpdate(response._id, { synced: false });
+            // throw new Error('Canceled update for unresponsed Elastic Connection');
+    
+            return res.status(200).json({
+                success: true,
+                mes: 'Created successfully but temporairily unavailable to search, contact support'
+            });
+        }
+    
+    }
 
-    console.log(response);
 
     return res.status(200).json({
         success: response ? true : false,
@@ -502,6 +525,9 @@ const searchSPAdvanced = asyncHandler(async (req, res) => {
     });
 });
 
+
+
+
 module.exports = {
     createServiceProvider,
     getAllServiceProvider,
@@ -514,6 +540,5 @@ module.exports = {
     finalRegisterProvider,
     getServiceProviderByAdmin,
     updateFooterSection,
-    searchSPAdvanced,
-    updateServiceProviderWithDocs
+    searchSPAdvanced
 }
