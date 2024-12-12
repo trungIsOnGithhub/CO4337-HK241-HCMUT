@@ -129,7 +129,6 @@ const Booking = () => {
   }, [params]);
 
   useEffect(() => {
-
     setStaffs(service?.assigned_staff);
     fetchProviderData();
   }, [service, selectedStaff]);

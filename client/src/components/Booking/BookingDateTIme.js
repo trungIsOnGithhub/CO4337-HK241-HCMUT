@@ -96,14 +96,11 @@ const BookingDateTIme = () => {
 
   const canUseDiscount = (coupon) => {
     if (!currentUser) return false;
-    console.log(coupon)
     const { date, time } = coupon.expirationDate;
     const expirationDateTime = new Date(`${date.split('/').reverse().join('-')}T${time}:00`); // Chuyển đổi sang ISO format
 
     // Kiểm tra nếu thời gian hết hạn đã qua
     const now = new Date();
-    console.log(expirationDateTime)
-    console.log(now)
 
     if (expirationDateTime < now) return false;
 
@@ -197,13 +194,15 @@ const BookingDateTIme = () => {
   };
 
   const handlePrevNext = (direction) => {
+    console.log(displayTime)
+    console.log(startOfWeek(displayTime))
     if (direction === 'in_week') {
       const firstDayOfCurrWeek = startOfWeek(displayTime);
       const endDayOfCurrWeek = endOfWeek(displayTime);
 
       fetchBookingTimeOptionsData(firstDayOfCurrWeek, endDayOfCurrWeek);
       // if (firstDayOfPrevMonth < new Date()) {
-      setDisplayTime(new Date());
+      setDisplayTime(startOfWeek(displayTime));
     }
     else if (direction === 'in_month') {
       const firstDayOfCurrMonth = startOfMonth(displayTime);
@@ -219,7 +218,6 @@ const BookingDateTIme = () => {
         const startWeek = startOfWeek(nowPrev7days);
         const endWeek = endOfWeek(nowPrev7days);
 
-        console.log(startWeek.toISOString() + '-----' + endWeek.toISOString());
 
         fetchBookingTimeOptionsData(startWeek, endWeek);
         setDisplayTime(startWeek);
@@ -246,8 +244,6 @@ const BookingDateTIme = () => {
         const startWeek = startOfWeek(nowNext7days);
         const endWeek = endOfWeek(nowNext7days);
 
-        console.log(startWeek.toISOString() + '-----' + endWeek.toISOString());
-
         fetchBookingTimeOptionsData(startWeek, endWeek);
         setDisplayTime(startWeek);
       }
@@ -269,7 +265,6 @@ const BookingDateTIme = () => {
   };
 
   const handleOnClick = async (time) => {
-    // console.log('xxxxxxxx-xxx-' + JSON.stringify(time));
     if (!time?.start || !time?.end) {
       return;
     }
@@ -405,7 +400,6 @@ const BookingDateTIme = () => {
       }
     }
     else if (resp.mes) {
-      console.log('==============', resp);
       toast.error(resp.mes);
 
       await fetchStaffData();
