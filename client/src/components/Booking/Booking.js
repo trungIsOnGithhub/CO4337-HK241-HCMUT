@@ -193,7 +193,7 @@ const Booking = () => {
     const startMM = time.start;
 
     time = convertM2H(time?.start);
-    setSelectedStaff({time, staff:el, date:new Date().toLocaleDateString()});
+    setSelectedStaff({time, staff:el, date:new Date().toLocaleDateString('en-GB')});
     const nowDate = new Date();
     const date = moment(nowDate).format("DD/MM/YYYY");
 
