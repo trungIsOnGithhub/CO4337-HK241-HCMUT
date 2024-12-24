@@ -22,6 +22,8 @@ import BookingHistoryDetail from 'pages/user/BookingHistoryDetail';
 import ForgotPassword from 'pages/public/ForgotPassword';
 import UpdateVariantProduct from 'pages/admin/UpdateVariantProduct';
 
+import TermsAndConditions from './TermsAndConditions';
+
 function App() {
   const dispatch = useDispatch();
   const {isShowModal, modalChildren, isShowCart, isShowMessage, isShowMessageBox, currentChat} = useSelector(state => state.app)
@@ -64,6 +66,7 @@ function App() {
         <Route path={path.VIEW_POST} element={<ViewBlog />} />
         {/* <Route path={path.DETAIL_CART} element={<DetailCart />} /> */}
         {/* <Route path={path.ALL} element={<Home />} /> */}
+        <Route path={path.TERM_AND_CONDITIONS} element={<TermsAndConditions />} />
       </Route>
       <Route path={path.ADMIN} element={<AdminLayout />}>
         <Route path={path.DASHBOARD} element={<DashBoard/>}/>

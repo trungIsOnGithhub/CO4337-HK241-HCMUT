@@ -106,3 +106,8 @@ export const apiGetAdminData = (params) => axios({
     method: 'get',
     params
 })
+
+export const apiUserAcceptTermAndConditions = () => axios({
+    url: `/user/accept_tac`,
+    method: 'get'
+})
