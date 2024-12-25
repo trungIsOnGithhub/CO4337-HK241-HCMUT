@@ -1,26 +1,26 @@
 import React from 'react';
 import logoWeb from './assets/logoWeb.png';
-import Swal from 'sweetalert2';
-import { useSelector } from 'react-redux';
-import { apiUserAcceptTermAndConditions } from 'apis/user';
+// import Swal from 'sweetalert2';
+// import { useSelector } from 'react-redux';
+// import { apiUserAcceptTermAndConditions } from 'apis/user';
 
 const TermsAndConditions = () => {
-  const {current} = useSelector(state => state.user)
-  const handleAccept = async () => {
-    const response = await apiUserAcceptTermAndConditions();
+  // const {current} = useSelector(state => state.user)
+  // const handleAccept = async () => {
+  //   const response = await apiUserAcceptTermAndConditions();
 
-    if(response.success){
-      Swal.fire({
-        icon: 'success',
-        title: 'Terms Accepted',
-        text: 'You have successfully agreed to our Terms and Conditions.',
-        confirmButtonColor: '#4299e1'
-      });
-    }
-    else {
-      Swal.fire('Error', 'Failed to accept Terms and Conditions.', 'error');
-    }
-  };
+  //   if(response.success){
+  //     Swal.fire({
+  //       icon: 'success',
+  //       title: 'Terms Accepted',
+  //       text: 'You have successfully agreed to our Terms and Conditions.',
+  //       confirmButtonColor: '#4299e1'
+  //     });
+  //   }
+  //   else {
+  //     Swal.fire('Error', 'Failed to accept Terms and Conditions.', 'error');
+  //   }
+  // };
   return (
     <div className="bg-slate-500 min-h-screen text-white flex flex-col my-8">
       {/* Header */}
@@ -137,16 +137,16 @@ const TermsAndConditions = () => {
         </section>
       </main>
 
-      {
-        (current && !current.acceptTAC) && (<div className="text-center mt-8">
-          <button
-            onClick={handleAccept}
-            className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600"
-          >
-            I Accepted Above Term and Conditions
-          </button>
-        </div>)
-      }
+      // {
+      //   (current && !current.acceptTAC) && (<div className="text-center mt-8">
+      //     <button
+      //       onClick={handleAccept}
+      //       className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600"
+      //     >
+      //       I Accepted Above Term and Conditions
+      //     </button>
+      //   </div>)
+      // }
 
 
       {/* Footer */}
