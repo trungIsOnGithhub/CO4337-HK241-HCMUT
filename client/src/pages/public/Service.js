@@ -422,7 +422,7 @@ const Services = () => {
         services?.length && <Pagination totalCount={totalServiceCount}/>
       }
       </div>
-      <div className='w-full h-[200px]'>
+      <div className='w-full h-[50px]'>
       </div>
 
       { isLoading &&

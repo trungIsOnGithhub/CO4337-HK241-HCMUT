@@ -13,6 +13,7 @@ import defaultProvider from '../../assets/defaultProvider.jpg'
 import { apiGetCouponsByProductsId, apiRemoveCartProduct } from 'apis'
 import { getCurrent } from 'store/user/asyncAction'
 import clsx from 'clsx'
+import { FaTrashCan } from 'react-icons/fa6'
 
 
 const DetailCart = () => {
@@ -30,6 +31,13 @@ const DetailCart = () => {
     const userLatitude = current?.latitude;
     const userLongitude = current?.longitude;
     const [shippingPrices, setShippingPrices] = useState({});
+
+    const removeCart = async(pid, colorCode, variantId) => {
+        const response = await apiRemoveCartProduct(pid,colorCode,variantId)
+        if(response.success){
+            dispatch(getCurrent())
+        }    
+    }
 
      // Nhóm các sản phẩm theo provider
     useEffect(() => {
@@ -470,11 +478,12 @@ const DetailCart = () => {
                               {`${formatPrice(formatPricee(product?.price))} VNĐ`}
                             </span>
                           )}
+                          <div><span className='font-bold text-[#0a66c2]'>{`x ${product?.quantity}`}</span></div>
                         </div>
                       </div>
   
                       <div className="flex flex-col items-center gap-4">
-                        <div className="flex items-center border-2 border-indigo-100 rounded-lg bg-white shadow-sm">
+                        {/* <div className="flex items-center border-2 border-indigo-100 rounded-lg bg-white shadow-sm">
                           <button
                             // onClick={() =>
                             //   updateQuantity(seller.sellerId, product.id, false)
@@ -498,15 +507,15 @@ const DetailCart = () => {
                           >
                             <FiPlus className="w-5 h-5 text-indigo-600" />
                           </button>
+                        </div> */}
+
+                        <div onClick={()=>{navigate(`/product/${product.category?.toLowerCase()}/${product?.productId}/${product?.title}`)}} className='px-4 py-2 border-2 border-indigo-100 rounded-lg bg-white shadow-sm flex items-center gap-2 hover:bg-blue-400 hover:text-white cursor-pointer overflow-hidden transform hover:scale-105 transition-transform duration-300'>
+                          <span>Edit quantity</span>
                         </div>
   
-                        <button
-                          onClick={() => initiateRemove(product?.product, product?.colorCode)}
-                          className="p-2 text-red-500 hover:bg-red-50 rounded-full transition-colors"
-                          aria-label="Remove item"
-                        >
-                          <FiTrash2 className="w-6 h-6" />
-                        </button>
+                        <span onClick={()=>{removeCart(product?.productId, product?.colorCode, product?.variantId)}} className='h-8 w-8 flex items-center justify-center rounded-full hover:opacity-50 cursor-pointer'>
+                          <FaTrashCan size={20} color='red'/>
+                        </span>
                       </div>
                     </div>
                   ))}

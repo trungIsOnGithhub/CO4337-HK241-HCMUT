@@ -49,7 +49,8 @@ var userSchema = new mongoose.Schema({
         colorCode: {type: String},
         price: {type: Number},
         thumb: {type: String},
-        title: {type: String},  
+        title: {type: String}, 
+        category: {type: String}, 
         provider: {type:mongoose.Types.ObjectId, ref: 'Service_Provider'},
     }],
     address:{

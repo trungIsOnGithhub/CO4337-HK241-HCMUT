@@ -759,8 +759,8 @@ const updateCartService = asyncHandler(async (req, res) => {
 // update cart_product
 const updateCartProduct = asyncHandler(async (req, res) => {
     const {_id} = req.user
-    const {pid, quantity=1, color, colorCode, price, thumb, title, provider, variantId} = req.body
-    if(!pid || !color || !price || !thumb|| !title|| !provider || !colorCode) {
+    const {pid, quantity=1, color, colorCode, price, thumb, title, category, provider, variantId} = req.body
+    if(!pid || !color || !price || !thumb|| !title|| !provider || !colorCode || !category) {
         throw new Error("Missing input")
     }
     else{
@@ -782,7 +782,7 @@ const updateCartProduct = asyncHandler(async (req, res) => {
     
             // neu sp chua them vao gio hang || sp da them nhung khac color
             else {
-                const response = await User.findByIdAndUpdate(_id,{$push:{cart_product:{productId:pid, quantity, color, colorCode, price, thumb, title, provider}}},{new: true})
+                const response = await User.findByIdAndUpdate(_id,{$push:{cart_product:{productId:pid, quantity, color, colorCode, price, category, thumb, title, provider}}},{new: true})
                 return res.status(200).json({
                     success: response ? true : false,
                     mes: response ? 'Updated your cart' : "Something went wrong"
@@ -802,7 +802,7 @@ const updateCartProduct = asyncHandler(async (req, res) => {
     
             // neu sp chua them vao gio hang || sp da them nhung khac color
             else {
-                const response = await User.findByIdAndUpdate(_id,{$push:{cart_product:{variantId:variantId, productId:pid, quantity, color, colorCode, price, thumb, title, provider}}},{new: true})
+                const response = await User.findByIdAndUpdate(_id,{$push:{cart_product:{variantId:variantId, productId:pid, quantity, color, colorCode, price, thumb, title, category, provider}}},{new: true})
                 return res.status(200).json({
                     success: response ? true : false,
                     mes: response ? 'Updated your cart' : "Something went wrong"

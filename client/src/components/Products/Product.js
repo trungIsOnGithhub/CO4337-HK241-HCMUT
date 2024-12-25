@@ -60,7 +60,8 @@ const Product = ({productData}) => {
         price: productData?.price, 
         thumb: productData?.thumb, 
         title: productData?.title, 
-        provider: productData?.provider_id
+        provider: productData?.provider_id,
+        category: productData?.category,
       })
       if(response.success){
         toast.success(response.mes)

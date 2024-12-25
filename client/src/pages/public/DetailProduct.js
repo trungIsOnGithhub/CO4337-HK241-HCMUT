@@ -54,6 +54,7 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
     quantity: 0,
     colorCode: '',
     thumb:'',
+    category: '',
     image: [],
     pid: null,
     variantId: null
@@ -144,6 +145,7 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
         colorCode: product?.colorCode,
         color: product?.color,
         quantity: product?.quantity,
+        category: product?.category,
         pid: product?._id,
         variantId: null
       })
@@ -171,6 +173,7 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
         title: product?.variants?.find(el => el?._id === variantt)?.title,
         color: product?.variants?.find(el => el?._id === variantt)?.color,
         price: product?.price,
+        cetegory: product?.category,
         quantity: product?.variants?.find(el => el?._id === variantt)?.quantity,
         thumb: product?.variants?.find(el => el?._id === variantt)?.thumb,
         image: product?.variants?.find(el => el?._id === variantt)?.image,
@@ -186,6 +189,7 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
         thumb: product?.thumb,
         image: product?.image,
         price: product?.price,
+        category: product?.category,
         colorCode: product?.colorCode,
         quantity: product?.quantity,
         pid: product?._id,
@@ -321,7 +325,8 @@ const DetailProduct = ({isQuickView, data, location, dispatch, navigate}) => {
         thumb: currentProduct?.thumb, 
         title: currentProduct?.title, 
         provider: product?.provider_id,
-        variantId: currentProduct?.variantId
+        variantId: currentProduct?.variantId,
+        category: product?.category
       })
       if(response.success){
         toast.success(response.mes)
