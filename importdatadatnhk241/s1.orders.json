@@ -1,0 +1,1590 @@
+[{
+  "_id": {
+    "$oid": "66377a64e479e46dab038186"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a64e479e46dab038104"
+      },
+      "date": "14/5/2024",
+      "time": "14:35"
+    }
+  ],
+  "status": "Successful",
+  "total": 34151,
+  "orderBy": {
+    "$oid": "66378581e479e46dab0383b8"
+  },
+  "createdAt": {
+    "$date": "2024-05-05T12:24:04.799Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-05T12:24:04.799Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66377a64e479e46dab038188"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377e7ee479e46dab0382fa"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a64e479e46dab038104"
+      },
+      "date": "14/5/2024",
+      "time": "16:35"
+    }
+  ],
+  "status": "Cancelled",
+  "total": 451234,
+  "orderBy": {
+    "$oid": "66378581e479e46dab0383b8"
+  },
+  "createdAt": {
+    "$date": "2024-05-05T12:24:04.799Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-01T09:59:57.387Z"
+  },
+  "__v": 1,
+  "emails": []
+},
+{
+  "_id": {
+    "$oid": "66377a64e479e46dab038109"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "date": "14/5/2024",
+      "time": "12:24"
+    }
+  ],
+  "status": "Cancelled",
+  "total": 86868686,
+  "orderBy": {
+    "$oid": "66386d3276daa06bc350ea88"
+  },
+  "createdAt": {
+    "$date": "2024-05-05T12:24:04.799Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-08T15:45:47.180Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66377a64e479e46dab038198"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66378250e479e46dab03833b"
+      },
+      "provider": {
+        "$oid": "6637808fe479e46dab03831a"
+      },
+      "staff": {
+        "$oid": "66378139e479e46dab03832e"
+      },
+      "date": "14/5/2024",
+      "time": "16:35"
+    }
+  ],
+  "status": "Successful",
+  "total": 105000,
+  "orderBy": {
+    "$oid": "66378581e479e46dab0383b8"
+  },
+  "createdAt": {
+    "$date": "2024-05-05T12:24:04.799Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-05T12:24:04.799Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66377a64e479e46dab038189"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377e7ee479e46dab0382fa"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a64e479e46dab038104"
+      },
+      "date": "16/5/2024",
+      "time": "14:35"
+    }
+  ],
+  "status": "Successful",
+  "total": 9696969,
+  "orderBy": {
+    "$oid": "66386d3276daa06bc350ea88"
+  },
+  "createdAt": {
+    "$date": "2024-05-05T12:24:04.799Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-05T12:24:04.799Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "664c261f5c420bfa67aba477"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "663781cce479e46dab038339"
+      },
+      "provider": {
+        "$oid": "6637808fe479e46dab03831a"
+      },
+      "staff": {
+        "$oid": "663780fde479e46dab03832c"
+      },
+      "date": "21/5/2024",
+      "time": "14:35",
+      "_id": {
+        "$oid": "664c25a65c420bfa67aba46b"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 27,
+  "orderBy": {
+    "$oid": "66378581e479e46dab0383b8"
+  },
+  "createdAt": {
+    "$date": "2024-05-21T04:42:07.786Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-21T04:42:07.786Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "664c26df5c420bfa67aba4bc"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a64e479e46dab038104"
+      },
+      "date": "26/5/2024",
+      "time": "13:52",
+      "_id": {
+        "$oid": "664c26575c420bfa67aba4b0"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 1,
+  "orderBy": {
+    "$oid": "66378581e479e46dab0383b8"
+  },
+  "createdAt": {
+    "$date": "2024-05-21T04:45:19.668Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-21T04:45:19.668Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "664eb1f41e392f354b6f8892"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "664c5f232d016b9c12f94488"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "date": "26/05/2024",
+      "time": "14:52",
+      "_id": {
+        "$oid": "664eb1c71e392f354b6f8885"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 1,
+  "orderBy": {
+    "$oid": "66386d3276daa06bc350ea88"
+  },
+  "createdAt": {
+    "$date": "2024-05-23T03:03:16.313Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-23T03:03:16.313Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "664eb43a1e392f354b6f8934"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "664c5f232d016b9c12f94488"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "date": "14/11/2024",
+      "time": "10:52",
+      "_id": {
+        "$oid": "664eb4251e392f354b6f8927"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 100,
+  "orderBy": {
+    "$oid": "66386d3276daa06bc350ea88"
+  },
+  "createdAt": {
+    "$date": "2024-05-23T03:12:58.694Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-13T23:38:12.141Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67273e181897162035183989"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "6637863ce479e46dab0383d2"
+      },
+      "provider": {
+        "$oid": "66378581e479e46dab0383bb"
+      },
+      "staff": {
+        "$oid": "663785bde479e46dab0383cd"
+      },
+      "date": "05/11/2024",
+      "time": "13:40",
+      "dateTime": {
+        "$date": "2024-11-05T13:40:00.000Z"
+      },
+      "_id": {
+        "$oid": "67273d5f1897162035183978"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 40,
+  "orderBy": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "emails": [],
+  "createdAt": {
+    "$date": "2024-11-03T09:10:48.842Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-03T09:10:48.842Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67274c62b0637de17c7346ac"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "date": "06/11/2024",
+      "time": "22:00",
+      "dateTime": {
+        "$date": "2024-11-06T22:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "67274bb0b0637de17c734695"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 42,
+  "orderBy": {
+    "$oid": "66effae78909a006df85e172"
+  },
+  "emails": [],
+  "createdAt": {
+    "$date": "2024-11-03T10:11:46.368Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-03T10:11:46.368Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67278ac7e5ef33d0ce30c6a5"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377e7ee479e46dab0382fa"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "date": "11/3/2024",
+      "time": "21:40",
+      "dateTime": {
+        "$date": "2024-11-03T21:40:00.000Z"
+      },
+      "_id": {
+        "$oid": "67278a7de5ef33d0ce30c697"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 35,
+  "orderBy": {
+    "$oid": "672785f816fb798dc3206227"
+  },
+  "emails": [],
+  "createdAt": {
+    "$date": "2024-11-03T14:37:59.936Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-03T14:37:59.936Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6737e0914c7ec1b83b424ea7"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a64e479e46dab038104"
+      },
+      "date": "22/11/2024",
+      "time": "12:00",
+      "dateTime": {
+        "$date": "2024-11-22T12:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6737e0914c7ec1b83b424ea8"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "emails": [],
+  "createdAt": {
+    "$date": "2024-11-16T00:00:17.852Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-16T00:00:17.852Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6737e0cb4c7ec1b83b424efd"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a64e479e46dab038104"
+      },
+      "date": "19/11/2024",
+      "time": "19:00",
+      "dateTime": {
+        "$date": "2024-11-19T19:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6737e0cb4c7ec1b83b424efe"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "emails": [],
+  "createdAt": {
+    "$date": "2024-11-16T00:01:15.215Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-16T00:01:15.215Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67381e8980b431b822a75fec"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a64e479e46dab038104"
+      },
+      "date": "16/11/2024",
+      "time": "18:19",
+      "dateTime": {
+        "$date": "2024-11-16T18:19:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "67381e8980b431b822a75fed"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "emails": [],
+  "capturedId": "2K731119WH380464L",
+  "paymentMethod": "paypal",
+  "createdAt": {
+    "$date": "2024-11-16T04:24:41.733Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-16T04:24:41.733Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67382eece3840f16fc54d56a"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a64e479e46dab038104"
+      },
+      "date": "16/11/2024",
+      "time": "15:31",
+      "dateTime": {
+        "$date": "2024-11-16T15:31:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "67382eece3840f16fc54d56b"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "emails": [],
+  "capturedId": "0AN48292HL118052M",
+  "paymentMethod": "paypal",
+  "createdAt": {
+    "$date": "2024-11-16T05:34:36.258Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-16T05:34:36.258Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "673834f6dc691dc1779c5c09"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a64e479e46dab038104"
+      },
+      "date": "19/11/2024",
+      "time": "18:00",
+      "dateTime": {
+        "$date": "2024-11-19T18:00:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "673834f6dc691dc1779c5c0a"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "emails": [],
+  "capturedId": "5FC19763T79637313",
+  "paymentMethod": "paypal",
+  "createdAt": {
+    "$date": "2024-11-16T06:00:22.622Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-16T06:00:22.622Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67386ae1da78f0906d648c2c"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "date": "16/11/2024",
+      "time": "18:46",
+      "dateTime": {
+        "$date": "2024-11-16T18:46:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "67386ae1da78f0906d648c2d"
+      }
+    }
+  ],
+  "status": "Cancelled",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "emails": [],
+  "capturedId": "37J20388WW102003N",
+  "paymentMethod": "paypal",
+  "createdAt": {
+    "$date": "2024-11-16T09:50:25.277Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-16T09:50:25.277Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6738737a7bdf04cd23bb5d60"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a64e479e46dab038104"
+      },
+      "date": "16/11/2024",
+      "time": "19:23",
+      "dateTime": {
+        "$date": "2024-11-16T19:23:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "6738737a7bdf04cd23bb5d61"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "emails": [],
+  "capturedId": "2A785752S8040194V",
+  "paymentMethod": "paypal",
+  "createdAt": {
+    "$date": "2024-11-16T10:27:06.425Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-16T10:27:06.425Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67388232ab952e9f94f161fa"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a64e479e46dab038104"
+      },
+      "date": "26/11/2024",
+      "time": "19:00",
+      "dateTime": {
+        "$date": "2024-11-26T19:00:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "67388232ab952e9f94f161fb"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "emails": [],
+  "capturedId": "7DG05746TL530324F",
+  "paymentMethod": "paypal",
+  "createdAt": {
+    "$date": "2024-11-16T11:29:54.069Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-16T11:29:54.069Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67388f03b177714dd0dfa57b"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377e7ee479e46dab0382fa"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "date": "16/11/2024",
+      "time": "20:30",
+      "dateTime": {
+        "$date": "2024-11-16T20:30:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "67388f03b177714dd0dfa57c"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 880000,
+  "orderBy": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "emails": [],
+  "capturedId": "17D60685U7632134W",
+  "paymentMethod": "paypal",
+  "createdAt": {
+    "$date": "2024-11-16T12:24:35.131Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-16T12:24:35.131Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6738902db05ac137970c53c9"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377e7ee479e46dab0382fa"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "date": "16/11/2024",
+      "time": "21:20",
+      "dateTime": {
+        "$date": "2024-11-16T21:20:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "6738902db05ac137970c53ca"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 880000,
+  "orderBy": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "emails": [],
+  "capturedId": "6G613581AL3558225",
+  "paymentMethod": "paypal",
+  "createdAt": {
+    "$date": "2024-11-16T12:29:33.574Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-16T12:29:33.574Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67399e6f77ed5ee0fcdf6fac"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377e7ee479e46dab0382fa"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "date": "17/11/2024",
+      "time": "17:10",
+      "dateTime": {
+        "$date": "2024-11-17T17:10:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "67399e6f77ed5ee0fcdf6fad"
+      }
+    }
+  ],
+  "status": "Pending",
+  "total": 880000,
+  "orderBy": {
+    "$oid": "66386d3276daa06bc350ea88"
+  },
+  "emails": [],
+  "capturedId": "01914030HF3230328",
+  "paymentMethod": "paypal",
+  "createdAt": {
+    "$date": "2024-11-17T07:42:39.579Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-23T07:48:41.358Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "674108a592171a1f593cd7c5"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377e7ee479e46dab0382fa"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "date": "22/11/2024",
+      "time": "17:10",
+      "dateTime": {
+        "$date": "2024-11-22T17:10:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "67399e6f77ed5ee0fcdf6fad"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 10000,
+  "orderBy": {
+    "$oid": "6613f975bc65bac9278a7b51"
+  },
+  "emails": [],
+  "capturedId": "01914030HF3230328",
+  "paymentMethod": "paypal",
+  "createdAt": {
+    "$date": "2024-11-17T07:42:39.579Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-17T07:42:39.579Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67411d0bad10b5d6d14773c5"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377e7ee479e46dab0382fa"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "date": "23/11/2024",
+      "time": "17:10",
+      "dateTime": {
+        "$date": "2024-11-22T17:10:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "67399e6f77ed5ee0fcdf6fad"
+      }
+    }
+  ],
+  "status": "Cancelled",
+  "total": 10000,
+  "orderBy": {
+    "$oid": "6613f975bc65bac9278a7b51"
+  },
+  "emails": [],
+  "capturedId": "01914030HF3230328",
+  "paymentMethod": "paypal",
+  "createdAt": {
+    "$date": "2024-11-17T07:42:39.579Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-23T07:01:40.948Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "674185d1c0da28979bd63f4d"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a64e479e46dab038104"
+      },
+      "date": "23/11/2024",
+      "time": "18:00",
+      "dateTime": {
+        "$date": "2024-11-23T18:00:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "674185d1c0da28979bd63f4e"
+      }
+    }
+  ],
+  "status": "Cancelled",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "67413eb7caba38e7ac377d31"
+  },
+  "emails": [
+    "trung.nguyen106@hcmut.edu.vn"
+  ],
+  "capturedId": "48G22527K8435161C",
+  "paymentMethod": "paypal",
+  "createdAt": {
+    "$date": "2024-11-23T07:35:45.928Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T09:43:00.292Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "67418972c0da28979bd64e10"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "67380262e2485d6617e7c00c"
+      },
+      "date": "23/11/2024",
+      "time": "18:00",
+      "dateTime": {
+        "$date": "2024-11-23T18:00:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "67418972c0da28979bd64e11"
+      }
+    }
+  ],
+  "status": "Cancelled",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "emails": [],
+  "paymentMethod": "cod",
+  "createdAt": {
+    "$date": "2024-11-23T07:51:14.376Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-23T07:52:45.071Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6742621d83797718f1bd5a1a"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "date": "24/11/2024",
+      "time": "09:00",
+      "dateTime": {
+        "$date": "2024-11-24T09:00:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "6742621d83797718f1bd5a1b"
+      }
+    }
+  ],
+  "status": "Cancelled",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "67413eb7caba38e7ac377d31"
+  },
+  "emails": [
+    "trung.nguyen106@hcmut.edu.vn"
+  ],
+  "paymentMethod": "cod",
+  "createdAt": {
+    "$date": "2024-11-23T23:15:41.180Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T09:43:00.177Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "6742682d28d0960827378816"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "date": "24/11/2024",
+      "time": "08:00",
+      "dateTime": {
+        "$date": "2024-11-24T08:00:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "6742682d28d0960827378817"
+      }
+    }
+  ],
+  "status": "Pending",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "67413eb7caba38e7ac377d31"
+  },
+  "emails": [
+    "trung.nguyen106@hcmut.edu.vn"
+  ],
+  "paymentMethod": "cod",
+  "createdAt": {
+    "$date": "2024-11-23T23:41:33.404Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T09:43:00.809Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "6742687428d0960827378998"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a64e479e46dab038104"
+      },
+      "date": "25/11/2024",
+      "time": "09:00",
+      "dateTime": {
+        "$date": "2024-11-25T09:00:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "6742687428d0960827378999"
+      }
+    }
+  ],
+  "status": "Pending",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "67413eb7caba38e7ac377d31"
+  },
+  "emails": [
+    "trung.nguyen106@hcmut.edu.vn"
+  ],
+  "paymentMethod": "cod",
+  "createdAt": {
+    "$date": "2024-11-23T23:42:44.259Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T09:43:01.128Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "6742689e28d0960827378b08"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377e7ee479e46dab0382fa"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "date": "24/11/2024",
+      "time": "11:20",
+      "dateTime": {
+        "$date": "2024-11-24T11:20:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "6742689e28d0960827378b09"
+      }
+    }
+  ],
+  "status": "Pending",
+  "total": 880000,
+  "orderBy": {
+    "$oid": "67413eb7caba38e7ac377d31"
+  },
+  "emails": [
+    "trung.nguyen106@hcmut.edu.vn"
+  ],
+  "paymentMethod": "cod",
+  "createdAt": {
+    "$date": "2024-11-23T23:43:26.434Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T09:43:00.523Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "674268ef28d0960827378c8c"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "date": "25/11/2024",
+      "time": "08:00",
+      "dateTime": {
+        "$date": "2024-11-25T08:00:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "674268ef28d0960827378c8d"
+      }
+    }
+  ],
+  "status": "Pending",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "67413eb7caba38e7ac377d31"
+  },
+  "emails": [
+    "trung.nguyen106@hcmut.edu.vn"
+  ],
+  "paymentMethod": "cod",
+  "createdAt": {
+    "$date": "2024-11-23T23:44:47.723Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T09:43:00.920Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "6742699c28d0960827378faa"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "673802dee2485d6617e7c028"
+      },
+      "date": "24/11/2024",
+      "time": "20:00",
+      "dateTime": {
+        "$date": "2024-11-24T20:00:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "6742699c28d0960827378fab"
+      }
+    }
+  ],
+  "status": "Cancelled",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "67413eb7caba38e7ac377d31"
+  },
+  "emails": [
+    "trung.nguyen106@hcmut.edu.vn"
+  ],
+  "paymentMethod": "cod",
+  "createdAt": {
+    "$date": "2024-11-23T23:47:40.799Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T09:43:00.124Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "674269bc28d0960827379101"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "673802dee2485d6617e7c028"
+      },
+      "date": "30/11/2024",
+      "time": "22:00",
+      "dateTime": {
+        "$date": "2024-11-30T22:00:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "674269bc28d0960827379102"
+      }
+    }
+  ],
+  "status": "Pending",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "67413eb7caba38e7ac377d31"
+  },
+  "emails": [],
+  "paymentMethod": "cod",
+  "createdAt": {
+    "$date": "2024-11-23T23:48:12.895Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-23T23:48:12.895Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67426b4a28d09608273793bf"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "673802dee2485d6617e7c028"
+      },
+      "date": "24/11/2024",
+      "time": "14:00",
+      "dateTime": {
+        "$date": "2024-11-24T14:00:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "67426b4a28d09608273793c0"
+      }
+    }
+  ],
+  "status": "Cancelled",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "67413eb7caba38e7ac377d31"
+  },
+  "emails": [
+    "trung.nguyen106@hcmut.edu.vn"
+  ],
+  "paymentMethod": "cod",
+  "createdAt": {
+    "$date": "2024-11-23T23:54:50.411Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T09:43:01.220Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "6742c755465cf276dbbf5245"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "673802dee2485d6617e7c028"
+      },
+      "date": "25/11/2024",
+      "time": "22:00",
+      "dateTime": {
+        "$date": "2024-11-25T22:00:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "6742c755465cf276dbbf5246"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "67413eb7caba38e7ac377d31"
+  },
+  "emails": [
+    "trung.nguyen106@hcmut.edu.vn"
+  ],
+  "paymentMethod": "cod",
+  "createdAt": {
+    "$date": "2024-11-24T06:27:33.556Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T09:43:00.661Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "6742cf0daeb7a5bcd3ad92e4"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a64e479e46dab038104"
+      },
+      "date": "25/11/2024",
+      "time": "08:00",
+      "dateTime": {
+        "$date": "2024-11-25T08:00:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "6742cf0daeb7a5bcd3ad92e5"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "67413eb7caba38e7ac377d31"
+  },
+  "emails": [
+    "trung.nguyen106@hcmut.edu.vn"
+  ],
+  "paymentMethod": "cod",
+  "createdAt": {
+    "$date": "2024-11-24T07:00:29.222Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T09:43:01.643Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "6742ef8fa05ac463302fe8a3"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "date": "27/11/2024",
+      "time": "08:00",
+      "dateTime": {
+        "$date": "2024-11-27T08:00:00.000Z"
+      },
+      "discountCode": {
+        "$oid": "6742ec36a05ac463302fe536"
+      },
+      "_id": {
+        "$oid": "6742ef8fa05ac463302fe8a4"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 682500,
+  "orderBy": {
+    "$oid": "67413eb7caba38e7ac377d31"
+  },
+  "emails": [
+    "trung.nguyen106@hcmut.edu.vn"
+  ],
+  "capturedId": "2V283376EV627592N",
+  "paymentMethod": "paypal",
+  "createdAt": {
+    "$date": "2024-11-24T09:19:11.005Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T09:43:00.386Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "6742f6ede64f2faf528a1169"
+  },
+  "info": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "date": "24/11/2024",
+      "time": "18:00",
+      "dateTime": {
+        "$date": "2024-11-24T18:00:00.000Z"
+      },
+      "discountCode": null,
+      "_id": {
+        "$oid": "6742f6ede64f2faf528a116a"
+      }
+    }
+  ],
+  "status": "Successful",
+  "total": 1050000,
+  "orderBy": {
+    "$oid": "67413eb7caba38e7ac377d31"
+  },
+  "emails": [
+    "trung.nguyen106@hcmut.edu.vn"
+  ],
+  "paymentMethod": "cod",
+  "createdAt": {
+    "$date": "2024-11-24T09:50:37.299Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T10:08:01.562Z"
+  },
+  "__v": 1
+},
+{
+  "_id": {
+    "$oid": "674c6516417ca626f54401af"
+  },
+  "info": [
+    {
+      "date": "14/6/2017",
+      "time": "06:08",
+      "dateTime": {
+        "$date": "2017-06-14T07:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "674c6516417ca626f54401b0"
+      }
+    }
+  ],
+  "status": "Pending",
+  "orderBy": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "emails": [],
+  "paymentMethod": "cod",
+  "createdAt": {
+    "$date": "2024-12-01T13:31:02.294Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-01T13:31:02.294Z"
+  },
+  "__v": 0
+}]

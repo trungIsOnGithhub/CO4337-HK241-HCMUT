@@ -1,0 +1,660 @@
+[{
+  "_id": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "firstName": "Longgg",
+  "lastName": "NguyenVanfdd",
+  "email": "nvlong@outlook.com",
+  "mobile": "09046599999",
+  "password": "$2b$10$Q1ViZIW0MQGVJuIr9NB4c.5QJCDn27F8OqrwINLHKIG8nfloLwrqm",
+  "role": "1411",
+  "wishlist": [],
+  "isBlocked": false,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "cart": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a64e479e46dab038104"
+      },
+      "duration": 60,
+      "date": "5/26/2024",
+      "time": "12:52",
+      "_id": {
+        "$oid": "664c35f0b75562533933648f"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2024-05-05T11:47:39.759Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-01T13:31:02.271Z"
+  },
+  "__v": 0,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjM3NzFkYjI0NjNhMzNjNmYzYTM5Y2YiLCJpYXQiOjE3MzE3NTYzODMsImV4cCI6MTczMjM2MTE4M30.BW8u26VnNF_vOFw14iDPGocRVrNQ00uk0AsWx1BnU3k",
+  "lastGeoLocation": {
+    "type": "Point",
+    "coordinates": [
+      106.6608275,
+      10.7772638
+    ]
+  },
+  "chat_users": [
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    },
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    }
+  ],
+  "cart_service": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "coupon": null,
+      "duration": 60,
+      "date": "01/12/2024",
+      "time": "19:00",
+      "originalPrice": 1050000,
+      "discountPrice": 0,
+      "dateTime": {
+        "$date": "2024-12-01T19:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "674c1a917f23f38433035904"
+      }
+    }
+  ],
+  "avatar": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1730643754/ecommerce/qaukkpyqrfjbekcemnyj.png"
+},
+{
+  "_id": {
+    "$oid": "66378581e479e46dab0383b8"
+  },
+  "firstName": "Kim",
+  "lastName": "Nguyen Minh",
+  "email": "kimminh@hcmut.edu.vn",
+  "mobile": "09080304568",
+  "password": "$2b$10$AvT/fIMBRW0R2UwvpYPXx.8Yacgr14LBjA44ep37C5kkIR.yaz5v6",
+  "role": "1411",
+  "wishlist": [],
+  "isBlocked": false,
+  "provider_id": {
+    "$oid": "66378581e479e46dab0383bb"
+  },
+  "cart": [],
+  "createdAt": {
+    "$date": "2024-05-05T13:11:29.283Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-21T04:45:19.622Z"
+  },
+  "__v": 0,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjM3ODU4MWU0NzllNDZkYWIwMzgzYjgiLCJpYXQiOjE3MTYyNjYzOTQsImV4cCI6MTcxNjg3MTE5NH0.QG5vmUnxTTGYQGq6Hv-etB2qpfwzOO86iNn7nSoC4X4"
+},
+{
+  "_id": {
+    "$oid": "66386d3276daa06bc350ea88"
+  },
+  "firstName": "Van",
+  "lastName": "Nguyen",
+  "email": "nhung@hotmail.com",
+  "mobile": "0930138768",
+  "password": "$2b$10$xSvmtTxgAritaxrqSXEXG.7zY2mOvJDSDkS6u3ag82mg34hzlr5MS",
+  "role": "1411",
+  "wishlist": [],
+  "isBlocked": false,
+  "provider_id": {
+    "$oid": "66386d3276daa06bc350ea8b"
+  },
+  "cart": [],
+  "createdAt": {
+    "$date": "2024-05-06T05:40:02.517Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-17T07:42:39.523Z"
+  },
+  "__v": 0,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjM4NmQzMjc2ZGFhMDZiYzM1MGVhODgiLCJpYXQiOjE3MTY0MzI5OTQsImV4cCI6MTcxNzAzNzc5NH0.DDOkK8kTsgoWaVhqGiUImNiOMiJiLphyXXb4uQrfvBQ",
+  "cart_service": [
+    {
+      "service": {
+        "$oid": "66377e7ee479e46dab0382fa"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "coupon": null,
+      "duration": 50,
+      "date": "17/11/2024",
+      "time": "17:10",
+      "originalPrice": 880000,
+      "discountPrice": 0,
+      "dateTime": {
+        "$date": "2024-11-17T17:10:00.000Z"
+      },
+      "_id": {
+        "$oid": "67399e2077ed5ee0fcdf6f8d"
+      }
+    }
+  ],
+  "avatar": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1730643754/ecommerce/qaukkpyqrfjbekcemnyj.png"
+},
+{
+  "_id": {
+    "$oid": "6613f975bc65bac9278a7b50"
+  },
+  "firstName": "viễnn",
+  "lastName": "tríii",
+  "email": "user1@gmail.comm",
+  "mobile": "0373015428",
+  "password": "$2b$10$07z2wWGz2NbD9ar7Zqg3NOOmQLLDjCMTDzt2.4qiNxCnaXhm3rSXa",
+  "role": "1411",
+  "isBlocked": false,
+  "cart": [
+    {
+      "product": {
+        "$oid": "65ff51da8bf186d3bd4e365f"
+      },
+      "quantity": 1,
+      "color": "QUITE BLACK",
+      "price": 20559237,
+      "thumb": "https://digital-world-2.myshopify.com/cdn/shop/products/u3_1024x1024.jpg?v=1491404903",
+      "title": "GOOGLE PIXEL",
+      "_id": {
+        "$oid": "6628052468edb86430db668d"
+      }
+    },
+    {
+      "product": {
+        "$oid": "65ff51da8bf186d3bd4e3662"
+      },
+      "quantity": 1,
+      "color": "DAZZLING WHITE",
+      "price": 13774664,
+      "thumb": "https://digital-world-2.myshopify.com/cdn/shop/products/ss8_1024x1024.jpg?v=1491404867",
+      "title": "SAMSUNG GALAXY TAB S 8.4 LTE",
+      "_id": {
+        "$oid": "66280aad50e56ce1af99d502"
+      }
+    },
+    {
+      "product": {
+        "$oid": "65ff51da8bf186d3bd4e3659"
+      },
+      "quantity": 1,
+      "color": "MINERAL BLACK",
+      "price": 17446889,
+      "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1713332024/ecommerce/mwj95qrf4pc4q5fkvgbd.png",
+      "title": "SONY XPERIA XA 1xxx",
+      "_id": {
+        "$oid": "66280ab550e56ce1af99d517"
+      }
+    },
+    {
+      "product": {
+        "$oid": "65ff51da8bf186d3bd4e365d"
+      },
+      "quantity": 1,
+      "color": "BLACK",
+      "price": 22153607,
+      "thumb": "https://digital-world-2.myshopify.com/cdn/shop/products/iphone_1024x1024.jpg?v=1491404827",
+      "title": "IPHONE 7",
+      "_id": {
+        "$oid": "66281cc69bf8f6c8dd867292"
+      }
+    }
+  ],
+  "createdAt": {
+    "$date": "2024-04-08T14:04:37.530Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-05T12:14:36.977Z"
+  },
+  "__v": 0,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjEzZjk3NWJjNjViYWM5Mjc4YTdiNTAiLCJpYXQiOjE3MTQ5MTEyNzYsImV4cCI6MTcxNTUxNjA3Nn0.w1p-G81YrFi8Ow24GvaC5BUgAt0lcVrU44iF5rWd-Ww",
+  "avatar": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1713874263/ecommerce/zvch91rx4fjsvxxkm4ry.jpg",
+  "address": "aaaaaaaaaaaaa",
+  "wishlist": [
+    {
+      "$oid": "65ff51da8bf186d3bd4e365f"
+    },
+    {
+      "$oid": "65ff51da8bf186d3bd4e3662"
+    },
+    {
+      "$oid": "65ff51da8bf186d3bd4e365d"
+    },
+    {
+      "$oid": "65ff51da8bf186d3bd4e3659"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6613f975bc65bac9278a7b51"
+  },
+  "firstName": "bb",
+  "lastName": "bb",
+  "email": "user2@gmail.com",
+  "mobile": "0123456788",
+  "password": "$2b$10$3vMxMcZZ.NfAbOfneJsSFO31MEAKOgeTdE9dhX95mPUYMxXmhBUHC",
+  "role": "202",
+  "wishlist": [],
+  "isBlocked": false,
+  "cart": [],
+  "createdAt": {
+    "$date": "2024-04-08T14:04:37.530Z"
+  },
+  "updatedAt": {
+    "$date": "2024-04-08T14:04:37.530Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66d6db0f4d51fac323da2b05"
+  },
+  "firstName": "kkkkkk",
+  "lastName": "sssssss",
+  "email": "a3NAa3Mua3M=@998wcqlm0m8wev6",
+  "mobile": "0909090909",
+  "password": "$2b$10$it6Ih6bLHigRLwMjgl/ds.V.WcMEzJUqHDQ/iaColeA4vDmQ3s8fq",
+  "wishlist": [],
+  "isBlocked": false,
+  "provider_id": {
+    "$oid": "66d6db0f4d51fac323da2b08"
+  },
+  "role": "1411",
+  "cart_service": [],
+  "cart_product": [],
+  "createdAt": {
+    "$date": "2024-09-03T09:46:55.178Z"
+  },
+  "updatedAt": {
+    "$date": "2024-09-03T09:46:55.287Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66dd67fa110292760162c9f4"
+  },
+  "firstName": "Trung",
+  "lastName": "Nguyen",
+  "email": "nviettrung202@gmail.com",
+  "mobile": "0909090908",
+  "password": "$2b$10$6dBhKtykHZCmxoDxt8RHAeAoRNFevmUvD8ozj/G9AnpJINC8l5x5i",
+  "wishlist": [],
+  "isBlocked": false,
+  "provider_id": {
+    "$oid": "66dd67fb110292760162c9f7"
+  },
+  "role": "1411",
+  "lastGeoLocation": {
+    "coordinates": []
+  },
+  "cart_service": [],
+  "cart_product": [],
+  "createdAt": {
+    "$date": "2024-09-08T09:01:46.887Z"
+  },
+  "updatedAt": {
+    "$date": "2024-09-08T09:58:03.611Z"
+  },
+  "__v": 0,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmRkNjdmYTExMDI5Mjc2MDE2MmM5ZjQiLCJpYXQiOjE3MjU3ODYyNzUsImV4cCI6MTcyNjM5MTA3NX0.JJvRVAcreTFgrSWdHpo0Dezcyk5XdWxyJBnG376_13c"
+},
+{
+  "_id": {
+    "$oid": "66eff30a7e197e9c00fc077e"
+  },
+  "firstName": "Nguyen",
+  "lastName": "Viet",
+  "email": "trung@hcmut.edu.vn",
+  "mobile": "0909080886",
+  "password": "$2b$10$qpHC5jFQvJp5hRcXKmGAKejdsrfj69eDMrnc9NanZTVOEEfoK1BUO",
+  "wishlist": [],
+  "isBlocked": false,
+  "provider_id": {
+    "$oid": "66eff30b7e197e9c00fc0781"
+  },
+  "role": "1411",
+  "cart_service": [],
+  "cart_product": [],
+  "createdAt": {
+    "$date": "2024-09-22T10:35:54.934Z"
+  },
+  "updatedAt": {
+    "$date": "2024-09-22T10:37:20.638Z"
+  },
+  "__v": 0,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmVmZjMwYTdlMTk3ZTljMDBmYzA3N2UiLCJpYXQiOjE3MjcwMDE0NDAsImV4cCI6MTcyNzYwNjI0MH0.0pa3SuXl54LGjPTN513d-vG40iO_GWh8v9fAL-6dkmQ"
+},
+{
+  "_id": {
+    "$oid": "66effae78909a006df85e172"
+  },
+  "firstName": "Nguyen",
+  "lastName": "Trung",
+  "email": "trung.nguyen@hcmut.edu.vn",
+  "mobile": "0909090886",
+  "password": "$2b$10$MpoqTjoZnGeWFdjAhGLJkOxgQX/fiXhFHjEet60J3Vf3MXpAxP..u",
+  "wishlist": [],
+  "isBlocked": false,
+  "provider_id": {
+    "$oid": "66effae78909a006df85e175"
+  },
+  "role": "1411",
+  "cart_service": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "coupon": null,
+      "duration": 60,
+      "date": "23/11/2024",
+      "time": "09:00",
+      "originalPrice": 1050000,
+      "discountPrice": 0,
+      "dateTime": {
+        "$date": "2024-11-23T09:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "673b4e4d60ad21898f81142f"
+      }
+    }
+  ],
+  "cart_product": [],
+  "createdAt": {
+    "$date": "2024-09-22T11:09:27.878Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-18T14:25:17.943Z"
+  },
+  "__v": 0,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmVmZmFlNzg5MDlhMDA2ZGY4NWUxNzIiLCJpYXQiOjE3MzE3NTY1MzQsImV4cCI6MTczMjM2MTMzNH0.hSTwdE6HVBB1PuBmHWjHER1YxTUeCC4iE8p5_BDX5EY",
+  "chat_users": [
+    {
+      "$oid": "66386d3276daa06bc350ea88"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "672785f816fb798dc3206227"
+  },
+  "firstName": "Huy",
+  "lastName": "Nguyen",
+  "avatar": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1730643754/ecommerce/qaukkpyqrfjbekcemnyj.png",
+  "email": "trivien84@gmail.com",
+  "mobile": "0901666688",
+  "password": "$2b$10$4jOuYqw1ncE/25K0mKVPSOKt64NzO0MGXMVHRFF.tUhWq/e6b2no.",
+  "wishlist": [],
+  "isBlocked": false,
+  "provider_id": {
+    "$oid": "672785f916fb798dc320622a"
+  },
+  "role": "1411",
+  "lastGeoLocation": {
+    "coordinates": []
+  },
+  "chat_users": [],
+  "cart_service": [
+    {
+      "service": {
+        "$oid": "66377e7ee479e46dab0382fa"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "duration": 50,
+      "date": "11/3/2024",
+      "time": "21:40",
+      "price": 880000,
+      "dateTime": {
+        "$date": "2024-11-03T21:40:00.000Z"
+      },
+      "_id": {
+        "$oid": "67278afde5ef33d0ce30c717"
+      }
+    }
+  ],
+  "cart_product": [],
+  "createdAt": {
+    "$date": "2024-11-03T14:17:28.853Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-03T14:38:53.580Z"
+  },
+  "__v": 0,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzI3ODVmODE2ZmI3OThkYzMyMDYyMjciLCJpYXQiOjE3MzA2NDM1MDksImV4cCI6MTczMTI0ODMwOX0.5YpFiUhrKu09s4qanPYL7hJVWXauJbFaNNDeKIobbxI"
+},
+{
+  "_id": {
+    "$oid": "67413eb7caba38e7ac377d31"
+  },
+  "firstName": "Tuan",
+  "lastName": "Nguyen",
+  "avatar": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732329188/ecommerce/ltvpefebhkikt4cy08dc.png",
+  "email": "trung.nguyen106@hcmut.edu.vn",
+  "mobile": "0900260501",
+  "password": "$2b$10$Q1ViZIW0MQGVJuIr9NB4c.5QJCDn27F8OqrwINLHKIG8nfloLwrqm",
+  "wishlist": [],
+  "wishlistProduct": [],
+  "isBlocked": false,
+  "provider_id": null,
+  "role": "202",
+  "lastGeoLocation": {
+    "coordinates": []
+  },
+  "chat_users": [],
+  "cart_service": [
+    {
+      "service": {
+        "$oid": "66377b05e479e46dab038112"
+      },
+      "provider": {
+        "$oid": "663771db2463a33c6f3a39d2"
+      },
+      "staff": {
+        "$oid": "66377a8ce479e46dab038106"
+      },
+      "coupon": null,
+      "duration": 60,
+      "date": "24/11/2024",
+      "time": "18:00",
+      "originalPrice": 1050000,
+      "discountPrice": 0,
+      "dateTime": {
+        "$date": "2024-11-24T18:00:00.000Z"
+      },
+      "_id": {
+        "$oid": "6742f6cfe64f2faf528a1150"
+      }
+    }
+  ],
+  "cart_product": [],
+  "createdAt": {
+    "$date": "2024-11-23T02:32:23.528Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T09:50:37.269Z"
+  },
+  "__v": 0,
+  "address": "Công viên Long Giao, Thị trấn Long Giao, Huyện Cẩm Mỹ, Tỉnh Đồng Nai",
+  "latitude": 10.809956302000046,
+  "longitude": 107.22144267200008
+},
+{
+  "_id": {
+    "$oid": "674d0044677e6c1380b9ac96"
+  },
+  "firstName": "Nguyen",
+  "lastName": "Duy",
+  "email": "ZG5AZ21haWwuY29t@177618",
+  "mobile": "0802338095",
+  "password": "$2b$10$KHfHMmKgDgGU2iJsMQdazu8MDp2jtouolKLyTbAKRUhcjuqtKI5E.",
+  "wishlist": [],
+  "wishlistProduct": [],
+  "isBlocked": false,
+  "provider_id": null,
+  "role": "202",
+  "lastGeoLocation": {
+    "coordinates": []
+  },
+  "chat_users": [],
+  "cart_service": [],
+  "cart_product": [],
+  "createdAt": {
+    "$date": "2024-12-02T00:33:08.687Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-02T00:33:08.687Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "674d0091677e6c1380b9aca4"
+  },
+  "firstName": "Nguyen",
+  "lastName": "Duy",
+  "email": "ZG4xMjNAZ21haWwuY29t@169659",
+  "mobile": "0802338099",
+  "password": "$2b$10$dwp6e2lOX5xV2kzhET/4DuhvVcNtxnAimoNG3ldDgh185IHKGflkq",
+  "wishlist": [],
+  "wishlistProduct": [],
+  "isBlocked": false,
+  "provider_id": {
+    "$oid": "674d0092677e6c1380b9aca7"
+  },
+  "role": "1411",
+  "lastGeoLocation": {
+    "coordinates": []
+  },
+  "chat_users": [],
+  "cart_service": [],
+  "cart_product": [],
+  "createdAt": {
+    "$date": "2024-12-02T00:34:25.941Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-02T00:34:26.248Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "674e3ec761af622af324d8fa"
+  },
+  "firstName": "Nguyen",
+  "lastName": "Duy",
+  "email": "ZG4xMmkzQGdtYWlsLmNvbQ==@912329",
+  "mobile": "0802358099",
+  "password": "$2b$10$5PpsdKfuHiCq0rEbNIViq.ip9o1f1Dh6Y0I7Bq.k5vJZz7WgsmTHe",
+  "wishlist": [],
+  "wishlistProduct": [],
+  "isBlocked": false,
+  "provider_id": {
+    "$oid": "674e3ec761af622af324d8fd"
+  },
+  "role": "1411",
+  "lastGeoLocation": {
+    "coordinates": []
+  },
+  "chat_users": [],
+  "cart_service": [],
+  "cart_product": [],
+  "createdAt": {
+    "$date": "2024-12-02T23:12:07.821Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-02T23:12:07.916Z"
+  },
+  "__v": 0
+}]

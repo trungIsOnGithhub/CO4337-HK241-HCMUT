@@ -1,0 +1,300 @@
+[{
+  "_id": {
+    "$oid": "6768235d9f2edf494cc052b3"
+  },
+  "title": "Wet Brush for Men",
+  "slug": "wet-brush-for-men",
+  "description": [
+    "<div class=\"product-short-description\">\r\n<p>Designed with a man in mind.</p>\r\n<ul>\r\n<li>Features Inteliflex&trade; bristles that are super thin, strong, flexible.</li>\r\n<li>Combs out tangles effortlessly.</li>\r\n<li>Can be used on wet or dry hair and works on extensions  wigs.</li>\r\n</ul>\r\n</div>"
+  ],
+  "price": 88000,
+  "category": "Barber",
+  "quantity": 39,
+  "soldQuantity": 0,
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1734879078/ecommerce/i3niezh8bkwytgvwmapx.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1734879078/ecommerce/thplwubc5d70d38sbsr3.png"
+  ],
+  "color": "Matte Black",
+  "colorCode": "#241f31",
+  "totalRatings": 0,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "specifications": [
+    {
+      "key": "Bristle",
+      "value": "Thin",
+      "_id": {
+        "$oid": "676826e69f2edf494cc052fd"
+      }
+    }
+  ],
+  "isHidden": false,
+  "rating": [],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-12-22T14:34:05.240Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-22T14:49:10.065Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67682a4e9f2edf494cc05341"
+  },
+  "title": "Semilac Basic Gel Flat Brush",
+  "slug": "semilac-basic-gel-flat-brush",
+  "description": [
+    "<h4>Semilac Basic Gel Flat Brush</h4>\r\n<p>Semilac Basic Gel Flat Brush is a <strong>flat brush with a round tip</strong>&nbsp;which is perfect for&nbsp;<strong>gel application</strong>. It is perfect for gels and UV gel polishes. An easy-to-use cap protects the fibres from damage and makes it easy to store the brush. It has the highest quality synthetic fibres which keep their structure during use.</p>\r\n<p><strong>Before first use:</strong></p>\r\n<p>Before the first use, remove the glue which keeps the brush factory sealed using a cotton pad soaked in a nail cleaner.</p>\r\n<p><strong>Care:</strong></p>\r\n<p>Clean the brush when you are done by wiping the fibres with a dry cotton pad to remove lingering product residue, shape the fibres into an even form. This protects the fibres from damage or bending. Put the cap back on at the end.</p>"
+  ],
+  "price": 30000,
+  "category": "Makeup",
+  "quantity": 22,
+  "soldQuantity": 0,
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1734879950/ecommerce/zhgpfehevgd0bbpubrfy.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1734879950/ecommerce/capi0tcotohcbg99rumi.png"
+  ],
+  "color": "Black",
+  "colorCode": "#000000",
+  "totalRatings": 0,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "specifications": [
+    {
+      "key": "Fibre",
+      "value": "flat, rounded",
+      "_id": {
+        "$oid": "67682a4e9f2edf494cc05342"
+      }
+    }
+  ],
+  "isHidden": false,
+  "rating": [],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-12-22T15:03:42.022Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-22T15:03:42.022Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "67682cbf9f2edf494cc0534b"
+  },
+  "title": "Manicure Company Acrylic Nail Manomer",
+  "slug": "manicure-company-acrylic-nail-manomer",
+  "description": [
+    "<p>The Manicure Company Pro Liquid 100ml</p>\r\n<p>The Manicure Company Pro Liquid 100ml is Acrylic Nail Manomer. The composition of The Manicure Company Pro Liquid 100ml gives optimum sculpting time. The initiator is matched for an optimum cure to the catalyst within PRO POWDER.</p>\r\n<p>UV absorbers prevent yellowing and colour fading.</p>\r\n<p>Pro Liquid is based on an EMA formulation and contains no MMA.</p>\r\n<ul>\r\n<li>Should be used in conjunction with &lsquo;Pro Powder&rsquo; for best results.</li>\r\n<li>MMA &amp; HEMA Free</li>\r\n<li>UV Filter stop colour fading</li>\r\n<li>For Professional Use Only</li>\r\n</ul>"
+  ],
+  "price": 86000,
+  "category": "Nail",
+  "quantity": 68,
+  "soldQuantity": 0,
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1734880576/ecommerce/p0a8yozjl5nkjgufs8ow.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1734880576/ecommerce/rwzic1iilk7ywhbaukim.png"
+  ],
+  "color": "Black",
+  "colorCode": "#000000",
+  "totalRatings": 0,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "specifications": [
+    {
+      "key": "Size",
+      "value": "100ml",
+      "_id": {
+        "$oid": "67682cbf9f2edf494cc0534c"
+      }
+    }
+  ],
+  "isHidden": false,
+  "rating": [],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-12-22T15:14:07.574Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-22T15:14:07.574Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "676831399f2edf494cc0538d"
+  },
+  "title": "TZ-6000 Cardio Commercial Treadmill",
+  "slug": "tz-6000-cardio-commercial-treadmill",
+  "description": [
+    "<p>Cutting edge machine with commercial, innovative groove belt with maximum grip and durability for high end performance.</p>\r\n<p>20 levels of automatic incline: burn calories faster.</p>\r\n<p>Advanced cushioning with take the shock out of running.</p>"
+  ],
+  "price": 8600000,
+  "category": "Fitness",
+  "quantity": 8,
+  "soldQuantity": 0,
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1734881721/ecommerce/em1ukh0jwrdj6grokszc.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1734881722/ecommerce/vercgsxhjs5e6swcsnsu.png",
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1734881722/ecommerce/i2aitouapy1etsl9wtzv.png"
+  ],
+  "color": "Black",
+  "colorCode": "#000000",
+  "totalRatings": 0,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "specifications": [
+    {
+      "key": "Power",
+      "value": "2.2 kw",
+      "_id": {
+        "$oid": "676831399f2edf494cc0538e"
+      }
+    },
+    {
+      "key": "Maxload",
+      "value": "200kg",
+      "_id": {
+        "$oid": "676831399f2edf494cc0538f"
+      }
+    },
+    {
+      "key": "Max Speed",
+      "value": "20kph",
+      "_id": {
+        "$oid": "676831399f2edf494cc05390"
+      }
+    }
+  ],
+  "isHidden": false,
+  "rating": [],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-12-22T15:33:13.179Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-22T15:33:13.179Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "676833089f2edf494cc05392"
+  },
+  "title": "Jade Level One Yoga Mat For Beginners",
+  "slug": "jade-level-one-yoga-mat-for-beginners",
+  "description": [
+    "<ul style=\"box-sizing: border-box; margin: 0px 0px 0px 15px; padding: 0px; -webkit-font-smoothing: antialiased; color: #000000; font-family: Futura, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\">\r\n<li style=\"box-sizing: border-box; margin-bottom: 0.25em; -webkit-font-smoothing: antialiased; list-style: disc;\"><strong style=\"box-sizing: border-box; font-weight: var(---font-weight-body-bold); -webkit-font-smoothing: antialiased;\">The perfect mat for the new yogi</strong></li>\r\n<li style=\"box-sizing: border-box; margin-bottom: 0.25em; -webkit-font-smoothing: antialiased; list-style: disc;\"><strong style=\"box-sizing: border-box; font-weight: var(---font-weight-body-bold); -webkit-font-smoothing: antialiased;\">Great grip and cushion</strong>&nbsp;to help you focus on the poses without worrying about slipping or what toxins are in your&nbsp;<a style=\"box-sizing: border-box; color: var(--text); background: 0px 0px; text-decoration: none; -webkit-font-smoothing: antialiased;\" href=\"https://jadeyoga.com/collections/yoga-mats\">mat</a>&nbsp;at an entry-level price</li>\r\n<li style=\"box-sizing: border-box; margin-bottom: 0.25em; -webkit-font-smoothing: antialiased; list-style: disc;\"><strong style=\"box-sizing: border-box; font-weight: var(---font-weight-body-bold); -webkit-font-smoothing: antialiased;\">At 4mm thick</strong>, the Level One is slightly thinner than the&nbsp;<a style=\"box-sizing: border-box; color: var(--text); background: 0px 0px; text-decoration: none; -webkit-font-smoothing: antialiased;\" href=\"https://jadeyoga.com/products/harmony-mat\" target=\"_blank\" rel=\"noopener\">Harmony mat</a>&nbsp;and a bit thicker than the&nbsp;<a style=\"box-sizing: border-box; color: var(--text); background: 0px 0px; text-decoration: none; -webkit-font-smoothing: antialiased;\" href=\"https://jadeyoga.com/products/travel-mat\" target=\"_blank\" rel=\"noopener\">Travel Mat</a>.</li>\r\n<li style=\"box-sizing: border-box; margin-bottom: 0.25em; -webkit-font-smoothing: antialiased; list-style: disc;\"><strong style=\"box-sizing: border-box; font-weight: var(---font-weight-body-bold); -webkit-font-smoothing: antialiased;\">Dimensions:</strong>&nbsp;4mm thick, 24\" wide and 68\" long</li>\r\n<li style=\"box-sizing: border-box; margin-bottom: 0.25em; -webkit-font-smoothing: antialiased; list-style: disc;\"><strong style=\"box-sizing: border-box; font-weight: var(---font-weight-body-bold); -webkit-font-smoothing: antialiased;\">Eco-friendly: Made with natural rubber</strong><span style=\"box-sizing: border-box; -webkit-font-smoothing: antialiased;\">&nbsp;</span>tapped from rubber trees, a renewable resource</li>\r\n<li style=\"box-sizing: border-box; margin-bottom: 0.25em; -webkit-font-smoothing: antialiased; list-style: disc;\"><strong style=\"box-sizing: border-box; font-weight: var(---font-weight-body-bold); -webkit-font-smoothing: antialiased;\">Non-toxic:&nbsp;</strong>Jade mats contain no PVC, EVA or other synthetic rubber, and are made in the United States in compliance with all US environmental, labor and consumer protection laws.</li>\r\n</ul>"
+  ],
+  "price": 59000,
+  "category": "Yoga",
+  "quantity": 88,
+  "soldQuantity": 0,
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1734882185/ecommerce/ofoxdorkd4swn1rl9hed.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1734882184/ecommerce/scvmg7qvyo7h2cyvgss6.png"
+  ],
+  "color": "Blue",
+  "colorCode": "#1a5fb4",
+  "totalRatings": 0,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "isHidden": false,
+  "rating": [],
+  "variants": [],
+  "specifications": [],
+  "createdAt": {
+    "$date": "2024-12-22T15:40:56.197Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-22T15:40:56.197Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "676835749f2edf494cc053a3"
+  },
+  "title": "Fascial Gun Massager Body Relaxation Massage",
+  "slug": "fascial-gun-massager-body-relaxation-massage",
+  "description": [
+    "<p style=\"margin: 0px; padding: 0px; font-size: 14px; color: #000000; font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, sans-serif; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: break-spaces; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; line-height: 1.7; text-align: left;\" data-spm-anchor-id=\"a2a0e.pdp_revamp.product_detail.i2.35501f7e2aLHu3\"><span style=\"margin: 0px; padding: 0px; white-space: break-spaces; font-weight: bold;\" data-spm-anchor-id=\"a2a0e.pdp_revamp.product_detail.i0.35501f7e2aLHu3\">We will carefully test every item before shipment.The quality is guaranteed!</span></p>\r\n<p style=\"margin: 0px; padding: 0px; font-size: 14px; color: #000000; font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, sans-serif; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: break-spaces; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; line-height: 1.7; text-align: left;\"><span style=\"margin: 0px; padding: 0px; white-space: break-spaces;\">Features:1.Safe to use:With protection, overheat protection and other safety protection devices.2.Good performance:Effectively reduce muscle stiffness and pain and increase blood circulation.3.Unique design:Powerful brushless high torque motor classic quiet smoothing technology.</span></p>\r\n<p style=\"margin: 0px; padding: 0px; font-size: 14px; color: #000000; font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, sans-serif; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: break-spaces; background-color: #ffffff; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; line-height: 1.7; text-align: left;\"><span style=\"margin: 0px; padding: 0px; white-space: break-spaces; color: #000000; font-size: 10.5pt;\" data-spm-anchor-id=\"a2a0e.pdp_revamp.product_detail.i1.35501f7e2aLHu3\">The Fascial _Gun Muscle Massager is used to reduce muscle pain, improve blood circulation, and relieve joint pain after a hard workout or prolonged physical workout. It is used by professional athletes and people suffering from multiple sclerosis, arthritis and muscle atrophy.The Fascial _Gun muscle massager uses a Shaking therapy method that combines specific amplitude, Shaking frequency and torque of the massage element</span></p>"
+  ],
+  "price": 1888000,
+  "category": "Yoga",
+  "quantity": 18,
+  "soldQuantity": 0,
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1734882804/ecommerce/tgr2xfgb4a88wrctdslr.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1734882804/ecommerce/dyypeabokyutr8pgctlc.png"
+  ],
+  "color": "Gray",
+  "colorCode": "#9a9996",
+  "totalRatings": 0,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "isHidden": false,
+  "rating": [],
+  "variants": [],
+  "specifications": [],
+  "createdAt": {
+    "$date": "2024-12-22T15:51:16.235Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-22T15:51:16.235Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6768374d9f2edf494cc053e1"
+  },
+  "title": "Ultraform Tips Masterpack Pack of 360",
+  "slug": "ultraform-tips-masterpack-pack-of-360",
+  "description": [
+    "<p style=\"box-sizing: border-box; list-style-type: none; color: rgb(64, 64, 64); font-family: Montserrat, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; text-indent: 0px; text-transform: none; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(250, 250, 250); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\">Salon Services Ultraform Tips Masterpack</p>\r\n<p style=\"box-sizing: border-box; list-style-type: none; color: rgb(64, 64, 64); font-family: Montserrat, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; text-indent: 0px; text-transform: none; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(250, 250, 250); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\">Made from virgin ABS plastic</p>\r\n<p style=\"box-sizing: border-box; list-style-type: none; color: rgb(64, 64, 64); font-family: Montserrat, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; text-indent: 0px; text-transform: none; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(250, 250, 250); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\">Non-yellowing, non-cracking</p>\r\n<p style=\"box-sizing: border-box; list-style-type: none; color: rgb(64, 64, 64); font-family: Montserrat, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; text-indent: 0px; text-transform: none; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: rgb(250, 250, 250); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;\">A pack of 360</p>\r\n<p style=\"margin-top: 0px;margin-right: 0px;margin-bottom: 0px;margin-left: 0px;padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;box-sizing: border-box;list-style-type: none;color: rgb(64, 64, 64);font-family: Montserrat, sans-serif;font-size: 16px;font-style: normal;font-variant-ligatures: normal;font-variant-caps: normal;font-weight: 400;letter-spacing: normal;text-indent: 0px;text-transform: none;word-spacing: 0px;-webkit-text-stroke-width: 0px;text-wrap-mode: wrap;white-space-collapse: collapse;background-color: rgb(250, 250, 250);text-decoration-thickness: initial;text-decoration-style: initial;text-decoration-color: initial;\">&nbsp;</p>\r\n<p style=\"margin-top: 0px;margin-right: 0px;margin-bottom: 0px;margin-left: 0px;padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;box-sizing: border-box;list-style-type: none;color: rgb(64, 64, 64);font-family: Montserrat, sans-serif;font-size: 16px;font-style: normal;font-variant-ligatures: normal;font-variant-caps: normal;font-weight: 400;letter-spacing: normal;text-indent: 0px;text-transform: none;word-spacing: 0px;-webkit-text-stroke-width: 0px;text-wrap-mode: wrap;white-space-collapse: collapse;background-color: rgb(250, 250, 250);text-decoration-thickness: initial;text-decoration-style: initial;text-decoration-color: initial;\"><span style=\"color: #404040; font-family: Montserrat, sans-serif; font-size: 16px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: start; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; background-color: #fafafa; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; display: inline !important; float: none;\">For comfortable and practical nail adhesives, the Salon Services Ultraform Tips are ideal. With luxurious length, these tips are made from ultra durable virgin ABS plastic. Flexible enough for everyday wear, the non-yellowing composition additionally gives them the construction to fit on most types of nail, and prevents cracking. Supplied in a pack of 360.</span></p>"
+  ],
+  "price": 799000,
+  "category": "Nail",
+  "quantity": 3,
+  "soldQuantity": 0,
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1734883276/ecommerce/uxpqv50j2btziumwieqf.png",
+  "image": [
+    "https://res.cloudinary.com/dt4gbimrk/image/upload/v1734883278/ecommerce/rdbcjza4fhsbkuymqxst.png"
+  ],
+  "color": "White",
+  "colorCode": "#ffffff",
+  "totalRatings": 0,
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "specifications": [
+    {
+      "key": "Quantity",
+      "value": "360 packs",
+      "_id": {
+        "$oid": "6768374d9f2edf494cc053e2"
+      }
+    }
+  ],
+  "isHidden": false,
+  "rating": [],
+  "variants": [],
+  "createdAt": {
+    "$date": "2024-12-22T15:59:09.532Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-22T15:59:09.532Z"
+  },
+  "__v": 0
+}]

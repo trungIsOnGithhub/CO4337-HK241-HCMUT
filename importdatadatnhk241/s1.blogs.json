@@ -1,0 +1,404 @@
+[{
+  "_id": {
+    "$oid": "86ab4a4e48c3fcdef93fa455"
+  },
+  "content": [
+    "<p>HIHIHIHIHH</p>"
+  ],
+  "provider_id": "663771db2463a33c6f3a39d2",
+  "tags": [
+    "du-lich",
+    "dia-diem-du-lich"
+  ],
+  "numberView": 8383,
+  "likes": [
+    "6613f975bc65bac9278a7b52",
+    "663771db2463a33c6f3a39cf",
+    "66386d3276daa06bc350ea88"
+  ],
+  "title": "Nhung Dia Diem An Uong Noi Tieng",
+  "dislikes": [
+    "66378581e479e46dab0383b8",
+    {
+      "$oid": "663771db2463a33c6f3a39cf"
+    }
+  ],
+  "thumb": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI",
+  "images": [],
+  "author": {
+    "$oid": "66386d3276daa06bc350ea88"
+  },
+  "createdAt": {
+    "$date": "2024-08-01T08:41:50.456Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-24T11:43:16.896Z"
+  },
+  "__v": 1,
+  "isHidden": true
+},
+{
+  "_id": {
+    "$oid": "68ab4a4e48c3fcdef93fa455"
+  },
+  "content": [
+    "<p>dhajsdlkasdjla<br/>sdasjdlasjldk</p>"
+  ],
+  "provider_id": "66378581e479e46dab0383bb",
+  "tags": [
+    "anuong",
+    "dia-diem-an-uong",
+    "an-uong"
+  ],
+  "numberView": 15,
+  "likes": [
+    "66386d3276daa06bc350ea88"
+  ],
+  "title": "Nhung Dia Diem Du Lich Noi Tieng",
+  "dislikes": [
+    "66378581e479e46dab0383b8",
+    "6613f975bc65bac9278a7b52",
+    "663771db2463a33c6f3a39cf"
+  ],
+  "thumb": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI",
+  "images": [],
+  "author": {
+    "$oid": "66386d3276daa06bc350ea88"
+  },
+  "createdAt": {
+    "$date": "2024-08-01T08:41:50.456Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-27T13:20:51.915Z"
+  },
+  "__v": 1,
+  "isHidden": false
+},
+{
+  "_id": {
+    "$oid": "96ab4a4e48c3fcdef93fa459"
+  },
+  "content": [
+    "<p>dhajsdlkasdjla<br/>sdasjdlasjldk</p>"
+  ],
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "tags": [
+    "dia-diem-vui-choi"
+  ],
+  "numberView": 2,
+  "likes": [],
+  "title": "Dia Diem Vui Choi Noi Tieng",
+  "dislikes": [
+    "66378581e479e46dab0383b8",
+    "6613f975bc65bac9278a7b52",
+    "663771db2463a33c6f3a39cf"
+  ],
+  "thumb": "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.123rf.com%2Fphoto_133391293_creative-blogging-sketch-on-white-brick-wall-background-blog-and-media-concept-3d-rendering.html&psig=AOvVaw0nd0jBQJauaxJrqQ8TtS9z&ust=1699960308658000&source=images&cd=vfe&opi=89978449&ved=0CBEQjRxqFwoTCLia9eTrwIIDFQAAAAAdAAAAABAI",
+  "images": [],
+  "author": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "createdAt": {
+    "$date": "2024-08-01T08:41:50.456Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-27T15:18:41.251Z"
+  },
+  "__v": 1,
+  "isHidden": false,
+  "category": ""
+},
+{
+  "_id": {
+    "$oid": "66e688fb213b154b6b0dce47"
+  },
+  "title": "Khong phai nha hang san vuon 123",
+  "content": [
+    "<p>Lạc v&agrave;o trong những <strong>thiết kế nh&agrave; h&agrave;ng s&acirc;n vườn</strong>, mọi kh&aacute;ch h&agrave;ng đều cảm thấy th&iacute;ch th&uacute; trước vẻ đẹp của những kh&ocirc;ng gian n&agrave;y. Kh&ocirc;ng chỉ đem đến cho thực kh&aacute;ch những m&oacute;n ăn ngon tuyệt vời, m&agrave; những nh&agrave; h&agrave;ng s&acirc;n vườn c&ograve;n ghi dấu ấn bởi thiết kế gần gũi với thi&ecirc;n nhi&ecirc;n, hương vị, m&agrave;u sắc của m&oacute;n ăn h&ograve;a quyện với m&agrave;u xanh tươi m&aacute;t của cỏ c&acirc;y, hoa l&aacute;, đem đến một kh&ocirc;ng gian trong l&agrave;nh v&agrave; thanh b&igrave;nh giữa cuộc sống x&ocirc; bồ, tấp nập.</p>\r\n<h2 id=\"Thiết_kế_nh&agrave;_h&agrave;ng_s&acirc;n_vườn_l&agrave;_g&igrave;?\">Thiết kế nh&agrave; h&agrave;ng s&acirc;n vườn l&agrave; g&igrave;?</h2>\r\n<p>Theo đ&uacute;ng như c&aacute;i t&ecirc;n của m&igrave;nh, <strong>thiết kế nh&agrave; h&agrave;ng s&acirc;n vườn</strong> ch&iacute;nh l&agrave; thiết kế v&agrave; ph&acirc;n bố c&aacute;c tiểu cảnh, sắp xếp c&aacute;c đồ vật, phối hợp m&agrave;u sắc, &aacute;nh s&aacute;ng, thẩm mỹ kiến tr&uacute;c một c&aacute;ch h&agrave;i h&ograve;a nhằm mang đến một bố cục thống nhất, tạo ra một kh&ocirc;ng gian thoải m&aacute;i v&agrave; thư gi&atilde;n cho mọi kh&aacute;ch h&agrave;ng khi đến đ&acirc;y d&ugrave;ng bữa. Do vậy, cũng c&oacute; thể n&oacute;i <strong>thiết kế nh&agrave; h&agrave;ng s&acirc;n vườn</strong> ch&iacute;nh l&agrave; sự kết hợp của nghệ thuật, mỹ thuật v&agrave; khoa học kỹ thuật.</p>\r\n<p><img class=\"fr-fic fr-dib pswp-img\" style=\"width: 100%;\" src=\"https://noithatkendesign.vn/storage/app/media/uploaded-files/san-vuon1.jpg\" alt=\"thiết kế nh&agrave; h&agrave;ng s&acirc;n vườn\" data-result=\"success\"></p>\r\n<p>Đặc điểm nổi bật của những mẫu <strong>thiết kế nh&agrave; h&agrave;ng s&acirc;n vườn</strong> ch&iacute;nh l&agrave; kh&ocirc;ng gian xanh v&agrave; c&aacute;c yếu tố thi&ecirc;n nhi&ecirc;n lu&ocirc;n được tận dụng một c&aacute;ch triệt để. Với một diện t&iacute;ch rộng được bao ph&ugrave; bởi m&agrave;u xanh của cỏ c&acirc;y, đ&atilde; tạo ra một kh&ocirc;ng gian rộng lớn y&ecirc;n b&igrave;nh, tươi m&aacute;t v&agrave; trong l&agrave;nh, đưa mọi kh&aacute;ch h&agrave;ng rời xa những bộn bề vội v&atilde; của cuộc sống để thưởng thức những m&oacute;n ăn d&acirc;n d&atilde; đặc trưng h&ograve;a m&igrave;nh v&agrave;o thi&ecirc;n nhi&ecirc;n.</p>\r\n<p><img class=\"fr-fic fr-dib pswp-img\" style=\"width: 100%;\" src=\"https://noithatkendesign.vn/storage/app/media/uploaded-files/san-vuon2.jpg\" alt=\"thiết kế nh&agrave; h&agrave;ng s&acirc;n vườn\" data-result=\"success\"></p>\r\n<p>Với xu hướng đ&ocirc; thị h&oacute;a nhanh như hiện nay, tại những nơi thị th&agrave;nh tất bật ồn &agrave;o, những <strong>thiết kế nh&agrave; h&agrave;ng s&acirc;n vườn</strong> như một điểm hẹn xanh giữa l&ograve;ng th&agrave;nh phố, đem lại những cảm gi&aacute;c th&acirc;n thuộc v&agrave; gần gũi của đồi n&uacute;i, miền qu&ecirc;. Ch&iacute;nh v&igrave; thế, đ&acirc;y ch&iacute;nh l&agrave; một trong những l&yacute; do khiến cho m&ocirc; h&igrave;nh n&agrave;y ng&agrave;y c&agrave;ng ph&aacute;t triển tại Việt Nam cũng như tr&ecirc;n thế giới.</p>\r\n<p><img class=\"fr-fic fr-dib pswp-img\" style=\"width: 100%;\" src=\"https://noithatkendesign.vn/storage/app/media/uploaded-files/san-vuon3.jpg\" alt=\"thiết kế nh&agrave; h&agrave;ng s&acirc;n vườn\" data-result=\"success\"></p>\r\n<p>&gt;&gt; Xem th&ecirc;m: <a href=\"https://noithatkendesign.vn/thiet-ke-nha-hang-the-gangs-nguyen-hue-ho-tung-mau.html\" target=\"_blank\" rel=\"noopener noreferrer\"><strong><em>Thiết kế qu&aacute;n nhậu s&acirc;n vườn The Gangs Central</em></strong></a></p>\r\n<h2 id=\"B&iacute;_quyết_thiết_kế_nh&agrave;_h&agrave;ng_s&acirc;n_vườn\">B&iacute; quyết thiết kế nh&agrave; h&agrave;ng s&acirc;n vườn</h2>\r\n<h3 id=\"Vật_liệu\">Vật liệu</h3>\r\n<p>Những vật liệu d&ugrave;ng để thiết kế v&agrave; thi c&ocirc;ng nh&agrave; h&agrave;ng đa số đều được đầu tư v&agrave; sở hữu chất lượng tốt như gỗ tự nhi&ecirc;n, sắt, th&eacute;p để tạo n&ecirc;n một kết cấu vững chắc. Ngo&agrave;i ra việc tận dụng trồng nhiều c&acirc;y xanh trong kh&ocirc;ng gian nh&agrave; h&agrave;ng, kh&ocirc;ng chỉ để gi&uacute;p tr&aacute;nh gi&oacute;, giảm tiếng ồn, gi&uacute;p t&aacute;i tạo kh&ocirc;ng kh&iacute; trong l&agrave;nh m&agrave; c&ograve;n t&ocirc; điểm cho kh&ocirc;ng gian th&ecirc;m tho&aacute;ng m&aacute;t v&agrave; gần gũi với thi&ecirc;n nhi&ecirc;n.</p>\r\n<p><img class=\"fr-fic fr-dib pswp-img\" style=\"width: 100%;\" src=\"https://noithatkendesign.vn/storage/app/media/uploaded-files/san-vuon5.jpg\" alt=\"thiết kế nh&agrave; h&agrave;ng s&acirc;n vườn\" data-result=\"success\"></p>\r\n<h3 id=\"Bố_tr&iacute;_c&ocirc;ng_năng\">Bố tr&iacute; c&ocirc;ng năng</h3>\r\n<p><strong>Thiết kế nh&agrave; h&agrave;ng s&acirc;n vườn</strong> thường c&oacute; hai khu vực ch&iacute;nh đ&oacute; l&agrave; khu vực phục vụ ngo&agrave;i trời v&agrave; khu vực phục vụ trong nh&agrave;. Với khu ngo&agrave;i trời, kh&aacute;ch h&agrave;ng sẽ được thường thức những hương vị tuyệt hảo của những m&oacute;n ăn v&agrave; h&ograve;a m&igrave;nh trong kh&ocirc;ng gian tho&aacute;ng đ&atilde;ng của thi&ecirc;n nhi&ecirc;n c&acirc;y cỏ. Mỗi b&agrave;n ăn đều được thiết kế m&aacute;i che, &ocirc; di động hay những chiếc &ocirc; cố định l&agrave;m từ c&acirc;y cỏ, gi&uacute;p khắc phục những vấn đề về thời tiết như nắng, mưa hay những cơn gi&oacute; kh&ocirc;ng qu&aacute; to. C&ograve;n với khu vực trong nh&agrave;, tiện nghi kh&ocirc;ng k&eacute;m những nh&agrave; h&agrave;ng hiện đại kh&aacute;c, thiết kế nội thất gần gũi nhưng vẫn kh&ocirc;ng k&eacute;m phần sang trọng, kh&ocirc;ng gian tho&aacute;ng m&aacute;t v&agrave; y&ecirc;n tĩnh, đem lại những trải nghiệm tuyệt vời d&agrave;nh cho c&aacute;c thực kh&aacute;ch.</p>\r\n<p>&gt;&gt; Xem th&ecirc;m: <a href=\"https://noithatkendesign.vn/tip-trang-tri-trong-thiet-ke-nha-hang-san-vuon-hut-khach.html\" target=\"_blank\" rel=\"noopener noreferrer\"><strong><em>Tips trang tr&iacute; nh&agrave; h&agrave;ng s&acirc;n vườn</em></strong></a></p>\r\n<p><img class=\"fr-fic fr-dib pswp-img\" style=\"width: 100%;\" src=\"https://noithatkendesign.vn/storage/app/media/uploaded-files/san-vuon7.jpg\" alt=\"thiết kế nh&agrave; h&agrave;ng s&acirc;n vườn\" data-result=\"success\"></p>\r\n<p>Ngo&agrave;i ra, nh&agrave; h&agrave;ng s&acirc;n vườn rất th&iacute;ch hợp để tổ chức những bữa ăn gia đ&igrave;nh đ&ocirc;ng vui v&agrave; n&aacute;o nhiệt. C&aacute;c gia đ&igrave;nh khi đến đ&acirc;y sẽ kh&ocirc;ng phải lo lắng về kh&ocirc;ng gian ăn uống cũng như vui chơi v&agrave; thư gi&atilde;n. B&ecirc;n cạnh việc thưởng thức đồ ăn ngon l&agrave;nh v&agrave; bổ dưỡng, mọi người c&oacute; thể c&ugrave;ng nhau đi dạo trong kh&ocirc;ng gian thi&ecirc;n nhi&ecirc;n trong l&agrave;nh, c&oacute; tiếng chim h&oacute;t, tiếng nước r&oacute;c r&aacute;ch chảy v&agrave; chia sẻ với nhau những c&acirc;u chuyện đời thường th&uacute; vị.</p>"
+  ],
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "tags": [
+    "dia-diem-du-lich",
+    "an-uong"
+  ],
+  "numberView": 1,
+  "likes": [
+    {
+      "$oid": "663771db2463a33c6f3a39cf"
+    }
+  ],
+  "dislikes": [],
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732541319/ecommerce/z6139jvyyc4jhiz8bwi2.png",
+  "images": [],
+  "author": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "createdAt": {
+    "$date": "2024-09-15T07:12:59.561Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-25T13:31:45.901Z"
+  },
+  "__v": 0,
+  "comments": [
+    {
+      "postedBy": {
+        "$oid": "663771db2463a33c6f3a39cf"
+      },
+      "comment": "jdlk\nd;lsdsda;;\ndkl;da",
+      "updatedAt": {
+        "$date": "2024-09-15T09:51:43.616Z"
+      },
+      "_id": {
+        "$oid": "66e6ae2fa96bc8f3bb02e627"
+      }
+    },
+    {
+      "postedBy": {
+        "$oid": "663771db2463a33c6f3a39cf"
+      },
+      "comment": "jdlk\nd;lsdsda;;\ndkl;da",
+      "updatedAt": {
+        "$date": "2024-09-15T09:51:53.094Z"
+      },
+      "_id": {
+        "$oid": "66e6ae39a96bc8f3bb02e62a"
+      }
+    },
+    {
+      "postedBy": {
+        "$oid": "663771db2463a33c6f3a39cf"
+      },
+      "comment": "jdlk\nd;lsdsda;;\ndkl;da",
+      "updatedAt": {
+        "$date": "2024-09-15T09:51:59.835Z"
+      },
+      "_id": {
+        "$oid": "66e6ae3fa96bc8f3bb02e62e"
+      }
+    },
+    {
+      "postedBy": {
+        "$oid": "663771db2463a33c6f3a39cf"
+      },
+      "comment": "jdlk\nd;lsdsda;;\ndkl;da",
+      "updatedAt": {
+        "$date": "2024-09-15T09:52:00.261Z"
+      },
+      "_id": {
+        "$oid": "66e6ae40a96bc8f3bb02e633"
+      }
+    },
+    {
+      "postedBy": {
+        "$oid": "663771db2463a33c6f3a39cf"
+      },
+      "comment": "jdlk\nd;lsdsda;;\ndkl;da",
+      "updatedAt": {
+        "$date": "2024-09-15T09:52:00.433Z"
+      },
+      "_id": {
+        "$oid": "66e6ae40a96bc8f3bb02e639"
+      }
+    },
+    {
+      "postedBy": {
+        "$oid": "663771db2463a33c6f3a39cf"
+      },
+      "comment": "jdlk\nd;lsdsda;;\ndkl;da",
+      "updatedAt": {
+        "$date": "2024-09-15T09:52:00.588Z"
+      },
+      "_id": {
+        "$oid": "66e6ae40a96bc8f3bb02e640"
+      }
+    },
+    {
+      "postedBy": {
+        "$oid": "663771db2463a33c6f3a39cf"
+      },
+      "comment": "jdlk\nd;lsdsda;;\ndkl;da",
+      "updatedAt": {
+        "$date": "2024-09-15T09:52:09.614Z"
+      },
+      "_id": {
+        "$oid": "66e6ae49a96bc8f3bb02e648"
+      }
+    },
+    {
+      "postedBy": {
+        "$oid": "663771db2463a33c6f3a39cf"
+      },
+      "comment": "jdlk\nd;lsdsda;;\ndkl;da",
+      "updatedAt": {
+        "$date": "2024-09-15T09:52:09.807Z"
+      },
+      "_id": {
+        "$oid": "66e6ae49a96bc8f3bb02e651"
+      }
+    },
+    {
+      "postedBy": {
+        "$oid": "663771db2463a33c6f3a39cf"
+      },
+      "comment": "aaaaaapapapappapap\naaoaooaoaoao",
+      "updatedAt": {
+        "$date": "2024-09-15T09:57:05.604Z"
+      },
+      "_id": {
+        "$oid": "66e6af718f103eccba414a70"
+      }
+    },
+    {
+      "postedBy": {
+        "$oid": "663771db2463a33c6f3a39cf"
+      },
+      "comment": "aaaaaapapapappapap\naaoaooaoaoao",
+      "updatedAt": {
+        "$date": "2024-09-15T09:59:06.028Z"
+      },
+      "_id": {
+        "$oid": "66e6afea56c00c8964ea3df4"
+      }
+    },
+    {
+      "postedBy": {
+        "$oid": "663771db2463a33c6f3a39cf"
+      },
+      "comment": "uuuuuuuuuuuuuuuuuuu\n88888888888888888",
+      "updatedAt": {
+        "$date": "2024-09-15T10:00:26.653Z"
+      },
+      "_id": {
+        "$oid": "66e6b03a56c00c8964ea3e41"
+      }
+    },
+    {
+      "postedBy": {
+        "$oid": "663771db2463a33c6f3a39cf"
+      },
+      "comment": "dklda;da \ndka;ld",
+      "updatedAt": {
+        "$date": "2024-09-15T10:27:31.634Z"
+      },
+      "_id": {
+        "$oid": "66e6b69346515bcef635d543"
+      }
+    }
+  ],
+  "isHidden": false,
+  "category": "Barber"
+},
+{
+  "_id": {
+    "$oid": "673e6333248779fa41d5e47e"
+  },
+  "title": "French, Italian cuisine featured in pre-wedding cruise party of billionaire Ambani heir",
+  "category": "Hairstylist",
+  "content": [
+    "<p><span class=\"lead_post_detail row\">The second pre-wedding party for Anant Ambani, the son of Indian billionaire Mukesh Ambani, treated 800 guests with dishes from France, Italy and South India.</span></p>\r\n<div class=\"fck_detail\">\r\n<table class=\"tplCaption\" border=\"0\" cellspacing=\"0\" cellpadding=\"3\" align=\"center\" data-widget=\"obj\">\r\n<tbody>\r\n<tr>\r\n<td><img class=\"vne_lazy_image lazyInitial lazyLoaded\" src=\"https://i1-ngoisao.vnecdn.net/2024/06/04/65a2c8f73b517-anant-ambani-and-9242-3776-1717503270.jpg?w=680&amp;h=0&amp;q=100&amp;dpr=1&amp;fit=crop&amp;s=0P4qOB201CpInaWV2mL54Q\" alt=\"Thực đơn tiệc cưới du thuyền của nh&agrave; tỷ ph&uacute; gi&agrave;u nhất ch&acirc;u &Aacute;\" data-natural-h=\"675\" data-natural-width=\"1200\" data-original=\"https://i1-ngoisao.vnecdn.net/2024/06/04/65a2c8f73b517-anant-ambani-and-9242-3776-1717503270.jpg?w=680&amp;h=0&amp;q=100&amp;dpr=1&amp;fit=crop&amp;s=0P4qOB201CpInaWV2mL54Q\" data-original-2x=\"https://i1-ngoisao.vnecdn.net/2024/06/04/65a2c8f73b517-anant-ambani-and-9242-3776-1717503270.jpg?w=680&amp;h=0&amp;q=100&amp;dpr=2&amp;fit=crop&amp;s=XZ30YaJ1ZT0MGlYdUe1iXg\" data-original-video=\"\" data-vertical=\"https://i1-ngoisao.vnecdn.net/2024/06/04/65a2c8f73b517-anant-ambani-and-9242-3776-1717503270.jpg?w=680&amp;h=0&amp;q=100&amp;dpr=2&amp;fit=crop&amp;s=XZ30YaJ1ZT0MGlYdUe1iXg\" data-horizontal=\"https://i1-ngoisao.vnecdn.net/2024/06/04/65a2c8f73b517-anant-ambani-and-9242-3776-1717503270.jpg?w=680&amp;h=0&amp;q=100&amp;dpr=2&amp;fit=crop&amp;s=XZ30YaJ1ZT0MGlYdUe1iXg\" data-width=\"680\" data-pwidth=\"680\" data-was-processed=\"true\"></td>\r\n</tr>\r\n<tr>\r\n<td>\r\n<p class=\"Image\">Anant Ambani, son of billionaire Mukesh Ambani, with his fianc&eacute;e Radhika Merchant. Photo courtesy of Anant's Instagram</p>\r\n</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n<p class=\"Normal\">After the first event in March made global headlines, Anant and his fianc&eacute;e Radhika Merchant held another lavish party on Celebrity Ascent, one of the world&rsquo;s largest cruise ships, for a four-day journey from Italy to the south of France between Wednesday and Saturday last week.</p>\r\n<p class=\"Normal\">The cost of the wedding party was estimated at US$144 million, of which cuisine accounted for a large part as the Ambani family had invited Michelin chefs from around the world to prepare dishes for honored guests.</p>\r\n<p class=\"Normal\">Some Italian dishes on the menu included margherita pizza, risotto ai funghi and Eggplant Parmigiana which uses slices of eggplant that are breaded and fried, then layered with marinara sauce, mozzarella, and Parmesan cheeses, according to the&nbsp;<em>Times of India</em>&nbsp;newspaper.</p>\r\n<table class=\"tplCaption\" border=\"0\" cellspacing=\"0\" cellpadding=\"3\" align=\"center\" data-widget=\"obj\">\r\n<tbody>\r\n<tr>\r\n<td><img class=\"vne_lazy_image lazyLoaded\" src=\"https://i1-ngoisao.vnecdn.net/2024/06/04/110468327-1698-1717503270.jpg?w=680&amp;h=0&amp;q=100&amp;dpr=1&amp;fit=crop&amp;s=W8aSphc5Pf3kwrLysr7V0g\" alt=\"Tiệc cưới 600 người phục vụ của nh&agrave; tỷ ph&uacute; gi&agrave;u nhất ch&acirc;u &Aacute; - 4\" data-natural-h=\"338\" data-natural-width=\"600\" data-original=\"https://i1-ngoisao.vnecdn.net/2024/06/04/110468327-1698-1717503270.jpg?w=680&amp;h=0&amp;q=100&amp;dpr=1&amp;fit=crop&amp;s=W8aSphc5Pf3kwrLysr7V0g\" data-original-2x=\"https://i1-ngoisao.vnecdn.net/2024/06/04/110468327-1698-1717503270.jpg?w=680&amp;h=0&amp;q=100&amp;dpr=2&amp;fit=crop&amp;s=z95EFnCz5FipZ2bx8vxmvQ\" data-original-video=\"\" data-vertical=\"https://i1-ngoisao.vnecdn.net/2024/06/04/110468327-1698-1717503270.jpg?w=680&amp;h=0&amp;q=100&amp;dpr=2&amp;fit=crop&amp;s=z95EFnCz5FipZ2bx8vxmvQ\" data-horizontal=\"https://i1-ngoisao.vnecdn.net/2024/06/04/110468327-1698-1717503270.jpg?w=680&amp;h=0&amp;q=100&amp;dpr=2&amp;fit=crop&amp;s=z95EFnCz5FipZ2bx8vxmvQ\" data-width=\"600\" data-pwidth=\"680\" data-was-processed=\"true\"></td>\r\n</tr>\r\n<tr>\r\n<td>\r\n<p class=\"Image\">Eggplant Parmigiana. Photo by Shutterstock</p>\r\n</td>\r\n</tr>\r\n</tbody>\r\n</table>\r\n<p class=\"Normal\">To serve vegetarian diners, chefs also prepared French-style dishes such as quiche, a savory tart with a flaky crust, creamy filling and a variety of vegetables like spinach, mushrooms and tomatoes.</p>\r\n<p class=\"Normal\">Tarte tatin, a caramel apple tart sometimes made with other fruits such as pears or peaches, was also available.</p>\r\n<p class=\"Normal\">Another vegetarian dish was g&nbsp; &nbsp;</p>\r\n</div>"
+  ],
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "tags": [
+    "dia-diem-vui-choi",
+    "vui-choi",
+    "an-uong",
+    "ff-ff",
+    "iijdal sd"
+  ],
+  "numberView": 2,
+  "likes": [],
+  "dislikes": [],
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732141915/ecommerce/tkjk3f4pqzvqz8qsktys.png",
+  "author": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "isHidden": false,
+  "createdAt": {
+    "$date": "2024-11-20T22:31:15.943Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-25T14:29:01.484Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "673e67c2248779fa41d5e76c"
+  },
+  "title": "kdpoadpokopa",
+  "category": "Barber",
+  "content": [
+    "<p>sdmdkamdl</p>"
+  ],
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "tags": [
+    "dask",
+    "ff-ff",
+    "vuichoi",
+    "jdk kdisadeoa",
+    "dia-diem-vui-choi",
+    "an-uong",
+    "ioioioioioioioioio"
+  ],
+  "numberView": 1,
+  "likes": [],
+  "dislikes": [],
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732143081/ecommerce/ef9tgc2htlghxtztds8j.png",
+  "author": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "isHidden": false,
+  "createdAt": {
+    "$date": "2024-11-20T22:50:42.676Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-20T23:04:01.931Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "673e6940248779fa41d5e7cc"
+  },
+  "title": "jjjj",
+  "category": "Hairstylist",
+  "content": [
+    "<p>hisidjjjjjjjjjjjjjjjjjjjjjjjjjjj</p>"
+  ],
+  "provider_id": {
+    "$oid": "663771db2463a33c6f3a39d2"
+  },
+  "tags": [
+    "dia-diem-vui-choi",
+    "vui-choi",
+    "newnewnewnewe",
+    "nha-hang-san-vuon",
+    "dia-diem-du-lich",
+    "jdk kdisadeoa",
+    "uuuuu  u u u uu u u"
+  ],
+  "numberView": 1,
+  "likes": [],
+  "dislikes": [],
+  "thumb": "https://res.cloudinary.com/dt4gbimrk/image/upload/v1732143463/ecommerce/riiliyum8ig1twjcahjv.png",
+  "author": {
+    "$oid": "663771db2463a33c6f3a39cf"
+  },
+  "isHidden": false,
+  "createdAt": {
+    "$date": "2024-11-20T22:57:04.826Z"
+  },
+  "updatedAt": {
+    "$date": "2024-11-25T13:45:09.778Z"
+  },
+  "__v": 0
+}]
