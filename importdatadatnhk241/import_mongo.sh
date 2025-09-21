@@ -5,6 +5,8 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
+mongosh $1 --eval "db.stats()" > "db_stats_$(date +%Y_%m_%d_%H%M%S)"
+
 mongoimport --db $1 --collection blogs --type json --file s1.blogs.json --jsonArray
 mongoimport --db $1 --collection service_providers --type json --file s1.svprvd.json --jsonArray
 mongoimport --db $1 --collection services --type json --file s1.services.json --jsonArray
