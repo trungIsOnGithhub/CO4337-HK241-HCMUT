@@ -17,3 +17,5 @@ mongoimport --db $1 --collection posttags --type json --file s1.posttags.json --
 mongoimport --db $1 --collection servicecategories --type json --file s1.servicecategories.json --jsonArray
 mongoimport --db $1 --collection products --type json --file s1.products.json --jsonArray
 mongoimport --db $1 --collection productcategories --type json --file s1.servicecategories.json --jsonArray
+
+find "." -type f -name "*.js" -exec sed -i "s/old/new/g" {} \;
